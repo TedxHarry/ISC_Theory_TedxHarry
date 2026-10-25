@@ -1,419 +1,375 @@
 # Building access management is only the beginning
 
-Lesson ID: SYS-005  
-Revision: 1.1
+A connection check succeeds. Accounts appear in SailPoint Identity Security Cloud, or ISC. It is tempting to say, "The application is ready."
 
-An invoice application has been connected to SailPoint Identity Security Cloud, or ISC. Its accounts are visible, a connection check succeeds, and the project team says the application is ready.
+Now consider the first real access request. Someone needs permission to check invoices. Who decides whether that work is appropriate? Which permissions should be added? What if the application rejects the change? Who notices if the same connection stops working next month? And when the person stops checking invoices, who makes sure those permissions are removed?
 
-Then the first employee asks for access.
+Connecting the application has not answered those questions.
 
-Who decides whether she should receive it? Which permission should be added? What happens if the application rejects the change? Who notices? And when she no longer needs the permission, how does it get removed?
+Managing access means keeping the decision, the delivery, and the continuing operation connected. You need to know what the service is supposed to do, establish that it can do it, keep it working, and revisit whether the access is still needed.
 
-A working connection doesn't answer those questions.
+## Start with the work someone needs to do
 
-Connecting the application is part of building an access-management service. That service also needs an agreed design, people who can operate it, a way to investigate failures, and decisions about whether access remains appropriate.
+Suppose an employee needs to read invoices and mark them as reviewed, but must not release payments.
 
-These are connected kinds of work. They don't stop being connected when a project goes live.
+Those are different actions. If you give the employee a broad finance administrator permission just because it makes invoice review work, you may also give them the ability to release payments. A successful task would then hide an access mistake.
 
-## Four kinds of work, not four isolated teams
+First establish the intended boundary: who needs the access, which actions they need, which records they may act on, who can authorize it, and when it should end. Reading invoices for one business area is not necessarily permission to read every invoice.
 
-**Implementation** turns an agreed requirement into a working, tested arrangement. In ISC, that can include connecting systems, representing their access, configuring how access is approved and delivered, and establishing how the result will be checked.
+This is **governance** work: deciding and checking who should have access, for what reason, under whose authority, and for how long. Governance is not limited to a review at the end of a project. It gives the project something meaningful to build.
 
-**Administration** keeps that arrangement operating. It includes maintaining approved configuration, monitoring scheduled work, managing assigned tasks, and coordinating planned changes to the integration.
+The people responsible for the business process and application need to explain what the permissions actually allow. An ISC engineer can configure a permission accurately and still choose the wrong permission if its business meaning is misunderstood.
 
-**Support** investigates a reported or detected problem. It establishes what failed, how widely it failed, and what authorized action can restore the required outcome.
+Next, turn that agreement into a working arrangement. Identify the right account, select the appropriate permissions, establish the decision route, arrange delivery, and test the result. This is **implementation**: turning agreed requirements into a tested service that someone can operate.
 
-**Governance** establishes and reviews the rules and decisions about access: who should have it, why they need it, who may approve it, and whether it should continue.
+Once people depend on it, someone must keep collections running, maintain the integration, check outstanding work, and manage approved configuration changes. That continuing work is **administration**.
 
-Those descriptions concern the work, not job titles. One engineer can contribute to implementation, administration, and support on the same day. A manager's access decision can be governance work without the manager being part of a team called “Governance.”
+If an approved change fails or access stops behaving as expected, someone must investigate the interruption, arrange an authorized correction, and verify recovery. That is **support**.
 
-The distinction helps you recognize what a task needs before choosing an action.
+These are four kinds of responsibility, not four mandatory teams. One engineer may do several of them. What matters is that none disappears between job titles.
 
-| Work | Question it needs to answer | Useful output |
-|---|---|---|
-| Implementation | How will the approved requirement work in this environment? | A tested design, configured integration, and operating instructions |
-| Administration | Is the agreed service operating, and what needs planned maintenance? | Monitored operation, maintained configuration, and tracked follow-up |
-| Support | Why is the expected outcome missing or wrong? | Evidence-based diagnosis, authorized recovery, and verified result |
-| Governance | Is this access justified, and what decision should govern it? | An approved requirement, review decision, or documented exception |
+They also overlap. Support may uncover a design defect that needs implementation work. Administration may find access that needs a governance decision. Go-live does not end those connections.
 
-A support ticket can reveal a design defect. A governance decision can require an implementation change. Administration can detect a failure before a user reports it.
+## How the agreement becomes something ISC can act on
 
-These connections matter more than finding one permanent label for every task.
+Take the invoice-review requirement a little further. Use a deliberately limited design: eligible employees already have one suitable, enabled account in the application. The service will add and later remove the two review permissions. It will not create accounts as part of this release.
 
-## Start with what the application must allow
+An **account** is the record the application uses for a user, with its own identifier, status, and access. An **identity** is ISC's representation of a person. These records are related, but they are not interchangeable. A person can have an ISC identity while still lacking an account in this particular application.
 
-Consider a fictional invoice application. Devi is a finance employee assigned to check supplier invoices. She needs to read an invoice and mark it as reviewed. She must not be able to release a payment.
+ISC needs to know which application account belongs to that person before account-directed work can be trusted.
 
-The application already has an enabled account for her, `inv-15005`, but it does not yet have the invoice-review permissions.
+Within ISC, a **source** represents the connected system or collection of account data being managed. A **connector** provides the integration that reads data and, where supported and configured, performs changes. Creating the source does not replace the application or make every possible operation available.
 
-An **account** is a record through which a person or service uses a particular system. An **identity** in ISC represents the person and brings together information about their accounts and access.
+Reading account data into ISC is called **aggregation**. It gives ISC information about accounts and their access. Reading that an account lacks a permission does not itself add the permission.
 
-The application owner has confirmed these permission meanings:
+The next relationship matters just as much: which identity should this account be associated with? **Account correlation** establishes that association. Configured matching can compare a value on an account with a corresponding value on an identity.
 
-| Application permission | What it allows |
-|---|---|
-| `INVOICE_READ` | Read invoices within the account's assigned business scope |
-| `INVOICE_MARK_REVIEWED` | Mark an invoice as reviewed within that scope |
-| `PAYMENT_RELEASE` | Release a payment |
+For example, an agreed employee identifier may be available in both records. An **attribute** is a named piece of information, such as that identifier. Choosing the attribute is not enough: its values must identify the right person reliably in the relevant population. A duplicated or incorrectly populated identifier can make an apparently convenient match unsafe.
 
-These names and behaviors are invented for the example. A real application might combine or separate permissions differently.
+That association gives account information a person context. It does not prove the person should receive every permission the account could hold.
 
-The approved requirement is that an employee with invoice-checking duties can request the first two permissions, subject to a manager's approval. Payment release is outside this request.
+Now represent the agreed access. An **entitlement** is an access right represented in ISC, such as membership in an application group. In this example, the application exposes separate rights for reading invoices and marking them reviewed. Payment release is separate and excluded.
 
-An **access request** asks for specified access for a person. Approval is the decision that the requested access should be provided under the applicable conditions. It is not the application change itself.
+An **access profile** groups related entitlements from one source. A profile named "Invoice review" can package the two agreed rights so that people request a meaningful set rather than guess which technical permissions they need.
 
-Notice what governance has already contributed. It has established the permitted work, the decision authority, and a boundary that must not be crossed.
+The name alone is not a control. Its contents and the application's restrictions must match the agreed actions and business-area boundary.
 
-If the implementation starts by copying an application's “Finance Administrator” permission because its name sounds suitable, it has skipped that reasoning. A permission that allows invoice review and payment release would not satisfy this requirement.
+An **access request** is a request for access to be provided to an intended recipient. For this service, the organization chooses to make the profile requestable and require the recipient's manager to approve it. That is a configured design choice, not a rule that every ISC request always goes to a manager.
 
-## Translate the requirement into a design that can run
+Approval answers whether this request may proceed. The application still needs the appropriate account changes.
 
-A **source** is ISC's configured representation of an external system or collection of account data. A **connector** provides the integration for reading data and, where supported and configured, making changes.
+**Provisioning** is the process of changing accounts or access in connected systems. Adding the two rights is provisioning work. **Fulfillment** is the work that carries an authorized request through to delivery; depending on the integration and configuration, delivery may involve automated changes or assigned manual work.
 
-The project creates an invoice source. It must establish what the selected integration can actually do.
+For the automated path here, ISC initiates supported changes through the integration. The application then accepts or rejects them. The account's resulting permissions determine what the employee can do there.
 
-A **technical account** is an account used by the integration to communicate with the application. Its permissions determine what the integration can do. It is separate from Devi's account and the permissions she needs for her work.
+The integration also needs authority of its own. A **technical account** is an account used by the integration to communicate with the application. Its privileges determine which operations the application lets that integration perform. This is different from the employee account receiving access.
 
-Can it read the required accounts and permissions? Can it add and remove those permissions? Does the application's technical account have the privileges needed for each operation? Is the needed ISC capability available in the organization's environment?
+A connector may support adding a permission while the configured technical account lacks permission to add it. Conversely, giving an account broad privileges cannot create an operation the connector does not support. Available ISC services, source configuration, connector capability, and application privileges all need to support the chosen design.
 
-Those are separate questions. A connector's supported operation can still fail if its configured technical account lacks the required privilege.
+Follow the connection between the decisions: the business requirement determines the rights; the account association determines whose account is involved; the configured request route determines authorization; the delivery arrangement determines how the approved change reaches the application.
 
-**Aggregation** reads account information into ISC. **Account correlation** associates an account with the appropriate identity using the applicable matching configuration. An **attribute** is a named value on a record, such as an employee number.
+None of those steps can safely stand in for the others.
 
-For this example, Devi's identity and application account both contain employee number `15005`. The implementation uses an agreed employee-number match, with checks that the values are present and identify the right person.
+## What would convince you that the service is ready?
 
-The purpose is not merely to make a record appear. It is to associate `inv-15005` with Devi, so subsequent decisions and changes refer to the intended person's account.
+A passing connection check tells you something about the checks that connector performed. It is not evidence that every required read, grant, and removal operation works.
 
-An **entitlement** is an access item represented from a source, such as one of the application's permissions. An **access profile** bundles related entitlements from a single source.
+Define **acceptance criteria**: observable conditions that must be met before the service is accepted for use.
 
-Here, the team defines an access profile called “Invoice review,” containing `INVOICE_READ` and `INVOICE_MARK_REVIEWED`. It configures the profile for requests with the approved manager-review process.
+For invoice review, you would want evidence that:
 
-**Provisioning** performs account or access changes in a target system. The **target system** is the system receiving the change. For this example, the invoice integration supports adding and removing the two permissions on existing accounts.
+- An authorized request grants the two intended rights to the correct account.
+- The permitted invoice actions work within the agreed business area.
+- Payment release remains unavailable.
+- A rejected request does not grant access through that request.
+- A delivery failure can be found and understood by the people responsible.
+- Removing invoice-review access removes the intended rights while preserving the account and unrelated, justified access.
+- A person without a suitable account is handled through the agreed exception, not silently treated as a successful delivery.
 
-The initial design deliberately covers people who already have one correctly associated invoice account. Creating new application accounts is outside this release. That boundary must be visible to support and to the people requesting access, not hidden in an engineer's memory.
+For these checks, assume no other rule or approved access package independently requires the two review rights. Different ways of receiving the same right can affect removal, so a shared-access situation needs separate analysis.
 
-We also assume that no other access assignment requires these two permissions, and that the application enforces them as described. That keeps later removal behavior clear.
+Why test removal before launch? A service that can add access but cannot withdraw it has only proved half of its intended control. The lack of a user complaint will not reveal that old access remains usable.
 
-The design now has a causal path:
+Use authorized test accounts and non-sensitive records in a suitable **test environment**, a setting intended for controlled checks rather than ordinary business operation. **Production** is the environment used for real work. A test result establishes what happened under the tested conditions; it does not prove that production has identical privileges, data, or configuration.
 
-An eligible employee asks for Invoice review. The configured reviewer makes a decision. If approval allows fulfillment to proceed, ISC attempts the supported permission changes on the associated account. The application applies or rejects those changes. Engineers examine the result and verify the required target behavior.
+The existing-account limit also needs a real operating path. An **exception path** explains what to do when the normal design does not apply. It is not permission to bypass approval.
 
-Configuring those objects is implementation work. Deciding whether invoice review is appropriate for that employee remains governance work.
+Before normal fulfillment, establish that the account requirement is met. If it is not, route the case to the agreed account-onboarding process or responsible owner. Do not assume a label such as "existing accounts only" automatically prevents ISC from attempting account creation. The actual configuration and handling must enforce the intended boundary.
 
-## What would make you accept the implementation?
+If account creation is required later, that is an extension to design and test: which data supplies the account, which operations are supported, who authorizes it, and who operates it afterward?
 
-Suppose a project demonstration shows one approved request and a green connection check.
+A missing capability or untested operation remains a gap. A launch date does not turn it into a passed check.
 
-Would you accept the service on that evidence alone?
+## Go-live passes knowledge and responsibility forward
 
-You know that a connection check succeeded and an approval was recorded. You still need evidence for delivery, boundaries, failure handling, and removal.
+**Go-live** is the point at which the service begins supporting real operation. People who were not involved in the build may now need to maintain it or explain a failure.
 
-**Acceptance criteria** are the observable conditions that must be satisfied before the agreed work is accepted. They translate “make access management work” into checks that can pass or fail.
+They need more than screenshots of the settings.
 
-For the invoice design, useful criteria include:
+They need to know the accepted scope, which account situations are supported, what the access allows, who makes decisions, how delivery works, and where evidence can be found. They also need collection expectations, named operational ownership and backup coverage, known limitations, and a safe route for work outside the design.
 
-- The request changes `inv-15005`, not another employee's account.
-- Approved invoice-review access permits the intended invoice operations.
-- `PAYMENT_RELEASE` is not granted.
-- A denied request doesn't grant the requested permissions.
-- A delivery failure is visible to the people expected to handle it.
-- An authorized removal can remove the review permissions without deleting the account or changing unrelated access.
-- A person without a suitable existing account is handled through the agreed exception path, rather than being treated as a successful fulfillment.
+A **runbook** is operating guidance for a defined situation. It should explain what to check, what the result means, which actions are authorized, what should happen afterward, and when to stop and escalate.
 
-These checks don't have to use real invoices or real payments. Use authorized test accounts and non-sensitive test records in an appropriate environment.
+"Missing access: run aggregation" is not enough.
 
-An **exception path** is the agreed way to handle a case the normal design doesn't cover. It might direct someone to an existing account-creation process. It is not automatic permission to bypass the access decision.
+If the change never received approval, reading account data does not authorize it. If the application rejected a write, another read does not perform that write. If the application has already changed but ISC's collected record is older, a suitable collection may refresh the observation. The action depends on where the expected result stopped.
 
-A **test environment** is a separate place for checking changes without exposing ordinary production work to those experiments. **Production** is the environment used for real operations. Differences between them still need examination: account permissions, connection details, and source data can differ.
+A useful runbook helps you distinguish those conditions before acting.
 
-Testing in one environment is evidence about what was tested there. It is not a guarantee that an unexamined production configuration behaves identically.
+Handover must also preserve the conditions established during testing: required read and write privileges, supported removal behavior, evidence locations, manual alternatives where supported, and unresolved risks. If removal has not been tested, record that honestly.
 
-A connection check also has a limited meaning. Its behavior depends on the connector. Don't assume it tests every read, grant, and removal operation. Verify the capabilities required by the design with evidence appropriate to those operations.
+A **credential** is authentication information, such as a password or token. The operating guide should point authorized staff to the approved procedure for managing it, not contain the secret itself.
 
-The project should test an expected denial as carefully as an expected grant. Otherwise, it can demonstrate that access can be added without demonstrating that inappropriate access can be prevented or removed.
+Good handover lets another engineer understand why the arrangement works and recognize when its assumptions no longer hold.
 
-## The handover needs more than screenshots
+## Administration keeps the agreed service working
 
-**Go-live** is the point at which the agreed service starts being used for real work. It does not mean every future change has already been designed or every future failure has been eliminated.
+A design that worked at launch can stop working without anyone changing the access profile.
 
-Before go-live, the people operating the service need to understand its assumptions and limits.
+A collection can fail. A file can arrive late. An owner can leave. An integration account can lose privileges. Manual work can remain unfinished.
 
-A **runbook** is an operating guide for a defined task or problem. A useful runbook states when to use it, what to check, what actions are authorized, what result to expect, and when to stop or escalate.
+Administration keeps those conditions visible and arranges approved maintenance. For collections, check the expected population and freshness, not just whether a job ended. For failures, retain enough context to identify the source, account, operation, time, and relevant error.
 
-Compare two instructions:
+A **manual task** is work assigned to someone to perform outside the automated change path. Its existence shows that work was assigned. It does not show that the application permission has changed.
 
-> “If access is missing, run aggregation.”
+Monitoring therefore needs responsible people and a response expectation. A report containing errors is useful evidence, but it is not automatically an alerting and response process. Decide who sees the problem, who acts, and what happens when the primary owner is unavailable.
 
-> “Confirm the person, target account, and requested access. Check the request decision and delivery result. If the target already has the correct permission but ISC's collected account data is older, investigate the collection. If delivery failed, inspect the reported error before choosing recovery.”
+Pay particular attention to removal failures and overdue tasks. A person waiting for new access may report a delay. A person who retains access they no longer need may report nothing.
 
-The second instruction explains how to choose the action. The first could send an operator toward a data collection when the actual problem is an application rejecting a write.
+Maintenance needs operation-specific verification too.
 
-For the invoice service, a handover should make these facts available:
+**Credential rotation** replaces authentication information, such as renewing a password or token. Replacing the technical account means switching to a different account, which may have different privileges. These are not the same change.
 
-| Operating fact | Why the next person needs it |
-|---|---|
-| Existing accounts only; one associated account in this release | Prevents treating unsupported account creation as a routine retry |
-| The two permissions in Invoice review and their business scope | Lets support distinguish missing review access from a different requirement |
-| Manager approval is configured | Establishes the expected decision route |
-| Read, grant, and removal capabilities and required privileges | Supports operation-specific validation after maintenance |
-| Where to find request, activity, and target evidence | Makes diagnosis possible without reconstructing the implementation |
-| Collection schedule and expected freshness agreed for this source | Helps distinguish old observations from delivery failures |
-| Failure owner, escalation contact, and manual fallback conditions | Prevents failed work from remaining unowned |
+After either kind of relevant maintenance, verify the operations the service relies on. Successful reading does not by itself prove that adding and removing permissions still works. Routine work can have a significant effect when many users depend on the same integration.
 
-Store references to approved credential-management procedures, not passwords or tokens in the runbook. A **credential** is information used by an account or integration to prove its identity, such as a password or token.
+## Support follows a failed result back to its cause
 
-The support team also needs known limitations and unresolved risks. A handover that says “everything works” but omits an untested removal path transfers uncertainty without telling anyone.
+Now suppose an invoice-review request is approved, but the intended recipient still cannot review invoices.
 
-## Administration keeps the design usable
+An **incident** is an interruption or failure of an expected service. The reported symptom tells you what someone experienced. It does not yet identify the cause.
 
-After go-live, requests continue to arrive. Scheduled collections run. Owners change jobs. Credentials need renewal. The application team changes its maintenance schedule.
+Start by making the missing result specific. Can the person sign in but not open invoices? Can they read invoices but not mark them reviewed? Are they using the account that received the change? Different answers lead to different investigations.
 
-Administration handles this continuing work within agreed authority.
+Then connect the evidence. Find the intended request and recipient, check the decision, identify the account involved, inspect delivery results, and compare them with current application access. A request summary alone cannot explain every downstream result.
 
-For the invoice source, an administrator can check whether scheduled collection completed, whether the expected account population was included, and whether failed changes or manual tasks need attention.
+Consider this supplied evidence:
 
-A **manual task** assigns a change to a person when that part of fulfillment is not performed automatically. Its existence means work has been assigned, not that the application has already changed.
+- The correct manager approved the intended profile.
+- The intended account was selected.
+- The application rejected both permission additions for insufficient integration privileges, before either addition was applied.
+- A current application check shows that neither right is present.
+- Maintenance recently replaced the technical account. Its verified privileges allow reading accounts but not adding or removing permissions.
 
-Don't make “no user complaints” your only measure of service health. A person can be unaware that access should have been removed, and a failed removal might not generate a complaint from them.
+The connection check still passes in this hypothetical integration because that check does not exercise permission changes.
 
-Useful monitoring asks questions that lead to action:
+Now the cause is more precise than "ISC is not working." The application accepted the integration's reads but rejected its writes. Approval and account selection were not the failing steps.
 
-How many delivery operations failed, on which source, and since when? Are removal tasks waiting beyond the agreed handling time? Is a collection recent but missing a portion of the expected population? Has an owner departed without a replacement?
+The recent maintenance is a useful lead, but timing alone would not prove causation. The rejection details and verified privilege difference connect the change to the failure.
 
-The organization decides which signals require an alert and who responds. ISC provides activity, task, and source information; a notification and response arrangement still needs to be designed and operated.
+Resetting the recipient's password would not supply the integration's missing write privilege. Changing an already correct approval route would not supply it either.
 
-A planned maintenance action also needs a defined result. **Credential rotation** replaces the credential used by an integration. After rotation, checking only that the connector can read accounts leaves its write operations unverified.
+Notice the supplied boundary: both writes were rejected before application. Do not assume that every failed request behaves that way. Another incident could leave one permission added and another missing. You need the individual operation results and current account state to distinguish them.
 
-“Routine” describes how familiar the work is. It does not describe how little harm a mistake can cause.
+## Recovery needs an authorized change and a verified result
 
-## When expected access doesn't arrive, the work changes
+The corrective action is not "give the integration unrestricted administrator access."
 
-A month after go-live, Devi submits an Invoice review request. Her manager approves it, but she still cannot review an invoice.
+Establish the privileges required for its supported operations and arrange the appropriate approved correction. The integration should have the authority needed for its work, not unrelated control of the application.
 
-This is a fictional incident. An **incident** is an interruption or failure of an expected service. The report is a starting observation, not a diagnosis.
+Before repeating a failed change, check what exists now. Someone may already have corrected access manually. One part may have succeeded. Another operation may still be running or waiting for a retry.
 
-“Devi can't review invoices” could describe a missing permission, the wrong account, a delivery failure, or a restriction inside the application. It could also be a misunderstanding of what Invoice review is supposed to allow.
+Repeating work without those checks can act on an outdated picture. Use the recovery mechanism supported for the actual operation and its current state; there is no universal retry instruction for every failure.
 
-Support first establishes the intended operation and checks the specific request.
+For the supplied incident, assume neither right was added and no other change is pending. After the approved privilege correction, authorized recovery can attempt the required additions. Verify that the intended account receives both rights, invoice review works within its boundary, and payment release remains unavailable.
 
-In this case, the evidence is:
+That establishes this account's recovery. It does not establish that every affected change has recovered.
 
-| Evidence | What the investigation finds |
-|---|---|
-| Request | Invoice review for Devi, approved by the configured manager |
-| Target account | `inv-15005`, confirmed as the intended account |
-| Provisioning activity | Attempts to add both permissions were rejected for insufficient integration privilege |
-| Current target permissions | Neither requested permission is present |
-| Recent maintenance | The integration was moved to a replacement technical account |
-| Replacement account privileges | Account reading is allowed, but permission changes are not |
+The **scope of impact** is the set of people, accounts, operations, and time period affected by the fault. Look for other failures that used the same integration during that period. Include removals as well as grants. A failed removal can leave access usable even when nobody is asking for help.
 
-The target rejected both additions before applying them. A different incident could involve partial delivery, so don't copy that conclusion without inspecting the individual operations.
+After recovery, there is another question: why did the service allow the defect to go unnoticed?
 
-Here, the recent maintenance is relevant because its changed privilege set explains the failed writes. Merely occurring shortly before a failure would not, by itself, prove causation.
+**Problem investigation** looks for the underlying cause and changes that reduce recurrence. Service can be restored while that follow-up continues.
 
-A connection check still succeeds because, in this fictional integration, that check doesn't exercise the missing permission-change privilege.
+Here, the immediate cause was missing write privileges. The maintenance procedure also accepted a successful read check as sufficient. Updating the procedure to verify the required read, grant, and removal operations addresses that weakness. Review work that failed during maintenance too, rather than testing one fresh request and overlooking the backlog.
 
-The important distinction is between Devi's application account and the integration's technical account. Resetting Devi's password does not supply the connector with the missing write privilege.
+Support has now supplied evidence that improves implementation and administration.
 
-Changing the manager approval process would not fix it either. The intended reviewer already approved the request.
+If investigation instead shows that the required operation is unsupported, retries cannot create it. The service needs a revised integration or an acceptable, supported manual arrangement, with owners, timing, and evidence.
 
-## Recovery is a controlled change, not a guess
+## Access can work correctly and still need to end
 
-Support has identified the failing boundary: the application rejects writes from the replacement integration account.
+Suppose an employee no longer checks invoices but still needs the application account for other duties.
 
-The authorized application administrator and ISC operator now need an approved correction. That could mean granting the replacement account the required, limited integration privileges and checking the configured connection.
+The integration may be healthy. Every earlier grant may have succeeded. Those facts do not justify keeping invoice-review rights indefinitely.
 
-It does not mean granting unrestricted application administration because that seems easier. The required privileges should follow the connector's documented needs and the approved operation scope.
+Governance revisits the need. One mechanism is a **certification campaign**, an organized access-review exercise. A **certification** is the review assigned to a reviewer within that exercise, covering the relevant users and access.
 
-Before recovering the failed requests, inspect their current state. Check for partial changes, manual work already performed, or retries still in progress. An operator should not submit duplicate access changes while another recovery is already running.
+The reviewer needs understandable access descriptions and current work context. Otherwise, a technically complete review can still produce poorly informed decisions.
 
-The exact recovery action depends on the supported behavior for that operation and its current status. There is no single retry instruction that is safe for every failure.
+For the directly requested invoice-review profile, assume no other rule or approved access package requires its rights. A reviewer can decide that the access should be removed. Recording that decision and removing the application permissions are separate events.
 
-For this example, the team confirms that neither permission was added and that no recovery is still pending. After correcting the integration privilege, it uses an authorized supported recovery path. Target checks then confirm that Devi can perform invoice review and has not received payment-release access.
+**Remediation** is carrying out the correction required by a review decision. The applicable review process must be completed, including required sign-off, before treating removal as submitted for execution. Delivery then depends on the supported integration or manual path. Verify the resulting access rather than treating a saved revoke choice as proof of removal.
 
-Support should check the affected population too. If the replacement technical account serves the whole source, Devi might be the first person to report a wider failure. Inspect operations during the affected period, including removals, rather than assuming the issue ended with her ticket.
+The origin of access also matters. A **role** groups access associated with a responsibility. It can be given through a request or through configured assignment criteria: rules that determine who qualifies. If the rules still say a person qualifies, trying to remove one part of the access does not resolve that continuing requirement. Investigate the rule and the person's current information, then correct the applicable policy or design through the authorized process.
 
-The **scope of impact** is the set of people, accounts, operations, and time period affected by the fault. It determines how much recovery and verification are needed.
+Do not falsify accurate employee information just to force access off. Determine whether the current information, assignment rule, or business decision is wrong and correct the right thing through an authorized process.
 
-A service can be restored for Devi while other failed work remains unresolved.
+The **access model** is the way access is defined, grouped, and assigned. Reviews can reveal defects in that model. If people repeatedly receive more access than their work requires, the package or assignment rule may need redesign. If reviewers misunderstand an accurate package because its description is poor, improve the description.
 
-## Fixing the incident doesn't automatically prevent the next one
+A known, urgent withdrawal should follow the appropriate authorized removal process. It should not wait merely because a periodic campaign is scheduled later.
 
-What made this incident possible?
+## Follow the work and evidence between responsibilities
 
-The immediate cause was the missing privilege on the replacement technical account. But the maintenance procedure accepted a successful connection check as sufficient verification.
-
-Correcting the privilege restores the capability. Correcting the maintenance procedure reduces the chance of repeating the same mistake.
-
-**Problem investigation** examines the cause behind incidents and what would prevent recurrence. It can continue after the immediate service interruption has been resolved.
-
-For this example, the follow-up is to revise the runbook so replacement integration accounts are validated against the required read, add, and remove operations. The team also adds a review of failed work after the change.
-
-That follow-up draws on implementation knowledge: which operations were designed and tested in the first place? It becomes administration guidance: what must be verified during future maintenance? It gives support better evidence when a failure recurs.
-
-If investigation instead reveals that the chosen integration cannot support a required operation, that is a design limitation. Repeating the same attempted write won't turn an unsupported capability into a supported one.
-
-The service needs a revised design, such as an approved manual fulfillment path, with its own ownership and evidence requirements.
-
-## Governance continues while the service is running
-
-Later, Devi moves to supplier coordination. She remains employed and still needs her invoice account for another permitted activity, but invoice checking is no longer part of her duties.
-
-Nothing about a healthy connection or successful past approval proves that Invoice review remains appropriate.
-
-A **certification campaign** organizes the review of existing access. A **certification** is an assigned review within it. The designated reviewer examines its access items and makes the decisions supported for them, such as retaining or removing the requested access in this example.
-
-In this example, the review includes Devi's Invoice review access. The reviewer has her current responsibilities and the permission description, and decides it should be removed.
-
-That decision is governance work. **Remediation** is the work required to carry out the decision, such as removing access that was marked for revocation.
-
-The approved removal must proceed through the applicable supported process, and someone must verify the result. A recorded revoke decision isn't evidence that the application has already removed the permissions.
-
-Our example assumes the profile was granted through a request and that no other assignment requires its permissions. Real assignments must be inspected before reasoning about removal. Those conditions don't describe every combination of access assignments or overlapping permissions.
-
-A **role** groups access for a responsibility and can be assigned through configured criteria or requests. Where ongoing criteria still require access, the decision and the assignment design need attention together. Don't falsify correct employee data to force a desired result.
-
-Governance can therefore generate new implementation work. The **access model** is how access is defined, grouped, and assigned. If reviews repeatedly find that the same access is too broad, that model may need redesign. If the permissions are appropriate but their descriptions mislead reviewers, the descriptions need correction and review.
-
-A recurring review is not a substitute for handling a known urgent removal. The organization needs a route for acting when the requirement changes, not only when the next campaign happens.
-
-## Follow the information around the loop
-
-The connections look like this:
+The relationships look like this:
 
 ```text
-Governance: approved need and access boundaries
-                         |
-                         | requirement
-                         v
-Implementation: design, configure, test, and hand over
-                         |
-                         | accepted service and operating guide
-                         v
-Administration: operate, monitor, and maintain
-                         |
-                         | detected or reported failure
-                         v
-Support: diagnose, recover, and verify
-             |                         |
-             | corrected operation     | design defect or new need
-             v                         v
-      Administration              Implementation
+Governance
+approved need and access boundaries
+                 |
+                 v
+Implementation
+tested service and operating guidance
+                 |
+                 v
+Administration
+operate, monitor and maintain
+                 |
+          detected problem
+                 |
+                 v
+Support
+diagnose, recover and verify
+       |                   |
+       v                   v
+Restored operation    Design correction
+       |                   |
+Administration       Implementation
 
-Access reviews and operating evidence
-                         |
-                         v
-Governance: retain, remove, or revise the requirement
-                         |
-                         v
-Authorized execution and verification of the decision
+Operating evidence and access reviews
+                 |
+                 v
+Governance: retain, remove or revise
 
-These are human work and evidence handoffs,
+Arrows show work and evidence handoffs,
 not automatic ISC execution stages.
 ```
 
-The arrows show what one kind of work provides to another. Implementation passes on an accepted service and operating knowledge. Administration passes failures and evidence into support. Support can return a restored service or identify a design change.
+Governance supplies the justified need and limits. Implementation supplies the tested arrangement and operating knowledge. Administration supplies ongoing observation. Support supplies diagnosis, recovery, and evidence of defects.
 
-Governance receives information from operation and access reviews, then decides whether the requirement or existing access should change.
+The order is not a rule that one responsibility must finish before another starts. Operational evidence can change the original requirement. A review can trigger removal, which itself needs delivery and verification. A support investigation can reveal a governance question rather than a broken connection.
 
-This is not a fixed sequence in which an organization finishes governance, then finishes implementation, and never returns to either. The work overlaps because both the business and its systems keep changing.
+The useful handoff includes what is known, what remains uncertain, who can decide, and what result needs to be established next.
 
-## Separate the screen action from the consequence
+## Understand what an ISC screen is showing you
 
-A visible action in ISC can start work beyond the page you're looking at.
+The interface brings several kinds of work together, but a status belongs to a particular record or operation.
 
-Editing an access definition changes configuration. **Identity processing** evaluates identity information and applicable access configuration; applying changes can cause wider access recalculation and provisioning. Its completion doesn't prove every target operation succeeded.
+A request view shows requested access and decision progress. Provisioning Activity and Account Activity help investigate delivery actions and errors. A task view shows assigned manual work. Certification views show review decisions and their progress.
 
-Opening a request shows recorded request information. Provisioning Activity and Account Activity help investigate delivery. A manual-task page shows assigned work. A review page records decisions.
+Connect the screen to the work behind it. "Approved" describes a decision. It does not mean that the application accepted every required change. An older collected account record may also lag behind a later application observation, so compare times before concluding that another write is necessary.
 
-These views help you operate the service, but they aren't interchangeable evidence.
+Configuration has its own consequences. **Identity processing** recalculates identity information and applicable access requirements. Applying relevant configuration changes can start that evaluation and lead to provisioning work. Completion of processing is not a test that every resulting application change succeeded.
 
-This distinction also matters when someone says, “Just undo the change.”
+That distinction matters when someone asks you to undo a change.
 
-**Rollback** means returning a change to an earlier state. Restoring an earlier configuration doesn't necessarily reverse access changes that have already reached applications.
+**Rollback** means returning something to an earlier state. Restoring an earlier configuration and correcting rights already delivered to accounts are separate tasks. The definition describes what ISC should use; the application's permissions are effects that may already exist.
 
-For example, deleting an ISC access profile does not remove its entitlements from people who previously held it. Removing granted access is called **deprovisioning**. Removing the definition and removing the target access are different actions.
+For ordinary, continuously held entitlements, deleting an access-profile definition does not itself remove the entitlements previously granted through it. **Deprovisioning** means removing access. Deleting the package is not a substitute for arranging the applicable access removal.
 
-Before releasing a change, plan for both: how to stop further unwanted effects and how to correct effects already delivered. Identify what can be reversed, what requires separate remediation, and what evidence must be preserved.
+Before changing or deleting a profile, check where it is used and how people received its access. A role or another configuration may depend on it, and the supported correction must account for that relationship. Do not try to bypass those dependencies.
 
-That is implementation planning, administration execution, support recovery, and governance authority meeting in one change.
+Plan both parts: stop further unwanted effects, then correct the effects already delivered. Preserve evidence of the affected population and grants so that you can verify the correction without removing unrelated, justified access.
 
-## A different application may need a different delivery model
+## What changes when delivery is manual?
 
-Now replace the invoice application with a supplier portal whose approved integration can only read an account file. It cannot add or remove portal permissions.
+Suppose another application supplies an account file but has no automated permission-write integration.
 
-Can ISC still contribute to governing that access?
+The file can still tell ISC about accounts and access. It cannot change the application's permissions merely because ISC reads it.
 
-Yes, within the capabilities configured for the source and the available services. Collected access can inform reviews, and a supported manual fulfillment arrangement can assign work to an operator. The actual portal change must still be made and verified.
+Establish whether the available services and supported configuration provide the needed manual fulfillment or remediation path. Do not assume every read-only source automatically supplies a complete process.
 
-Implementation must describe that arrangement honestly. Administration tracks file freshness and assigned work. Support investigates missing files or overdue fulfillment. Governance decides who should hold the access and whether the manual control is acceptable.
+Where the arrangement is supported, an assigned operator makes the change in the application. A task can instruct that work; it cannot perform the permission change by itself. The accepted service needs a responsible operator, a completion expectation, evidence of the application change, and an updated account observation where required.
 
-Don't describe the service as automatic removal merely because a removal task is created automatically.
+All four responsibilities still matter. Implementation defines the arrangement and verifies its limits. Administration watches file freshness and unfinished work. Support investigates missing files or overdue changes. Governance decides whether the controls and actual removal timing meet the requirement.
 
-The accepted design might require a portal administrator to remove access, record the target evidence, and provide an updated file. If the business requires a removal speed that the proposed manual process cannot reliably meet, the gap needs a decision before go-live.
+If the business needs access withdrawn faster than the manual arrangement can achieve, the requirement is unmet. Change the design or obtain an appropriate, explicit decision about the risk. "The connector is read-only" explains a limitation; it does not resolve it.
 
-You either change the design or have the appropriate authority address the risk. Silently treating an unmet requirement as “a connector limitation” leaves the service unable to meet its promise.
+## Reason through the next action
 
-## Decide what work is actually needed
+### An approved request has no suitable account
 
-### Case 1: requests are approved, but the account is missing
+The agreed service supports existing accounts only. A request is approved, but delivery has not completed. Someone suggests repeatedly retrying until an account appears.
 
-An employee's approved Invoice review request has not completed. Support is told that the employee has no invoice account. The first release explicitly supports existing accounts only. Someone suggests rerunning the same request until it works.
+What would you establish before acting? Is this a failed supported operation, or a case outside the design?
 
-What should happen?
+**Worked reasoning**
 
-**Reasoning:** First confirm that the account is genuinely absent, rather than merely uncollected or associated incorrectly. If it is absent, use the documented exception route. The current design doesn't promise automatic account creation.
+First check whether the account is genuinely absent. It may exist in the application but not have been collected or correctly associated in ISC.
 
-If the organization now wants account creation included, that needs a requirement and implementation change covering required account data, supported creation behavior, testing, and operations. Repeatedly attempting an unsupported path is not a design.
+If it is absent, follow the agreed exception and inspect whether any creation or other work has already been initiated. Do not assume the design label prevented it. Escalate unexpected activity through the authorized process.
 
-### Case 2: a reviewer asks support to keep access
+Automatic account creation needs an accepted design of its own: required data, supported operations, appropriate privileges, testing, and operational ownership. Retrying does not supply those things.
 
-A reviewer selected removal during a review, then informally asks a support engineer to ignore it because the employee might need it someday.
+### One grant works again, but other failures remain
 
-Should the engineer quietly stop the removal?
+The integration privilege has been corrected and one grant has been verified. There are 12 other failed operations from the affected period, including three removals. Their present outcomes have not been checked.
 
-**Reasoning:** No. The request conflicts with the recorded decision and gives no approved current justification. The authorized decision owner must resolve the change through the organization's supported process, including any required exception and review date.
+Can the incident be closed?
 
-Support should establish whether removal is pending, running, or already complete and communicate that state. It must not assume a chat message cancels a submitted operation. If access has already been removed, restoring it is a separate access action requiring appropriate authorization.
+**Worked reasoning**
 
-### Case 3: Devi's request works after the repair
+The verified grant establishes one recovery, not the state of the other operations.
 
-After correcting integration privileges, Devi's recovered request succeeds. Twelve other operations failed during the same period, including three removals. Their current states haven't been checked.
+Identify their accounts, current access, operation results, and any running or pending work. Arrange recovery according to those facts and the supported mechanisms. Include the three removals according to their risk and required timing, even if no user has complained.
 
-Is the incident fully resolved?
+Record what has recovered and what remains unresolved. Prevention work may continue after service recovery, but unchecked affected delivery is not evidence of complete recovery.
 
-**Reasoning:** Devi's recovery is one verified result, not evidence about the other operations. Identify the affected accounts, inspect operation and target states, determine whether recovery is already underway, and coordinate the outstanding work.
+### A reviewer changes their mind after choosing removal
 
-The removals need attention according to their risk and required timing. Do not treat them as less important simply because no employee has complained.
+A reviewer records removal, then sends support an informal message asking to keep the access because it might be useful someday.
 
-### Case 4: delete the profile to undo a mistaken grant
+What authority and execution state would you need to establish?
 
-An access profile was configured with an excessive permission and granted to users. An administrator proposes deleting the profile as the complete fix.
+**Worked reasoning**
 
-What is missing?
+Resolve the instruction with the authorized decision owner. Establish a current reason to retain access or the appropriate exception, including any required end or review date. An informal possibility of future use is not automatically sufficient justification.
 
-**Reasoning:** Deleting the definition doesn't remove the entitlements already granted. The team needs to identify the affected population and target permissions, stop further unwanted grants through an appropriate controlled change, and arrange authorized remediation of existing access.
+Check whether the review was finalized and whether removal is unstarted, pending, running, or complete. Use the supported process for an authorized change of decision. A message does not prove that submitted work was cancelled.
 
-Preserve evidence of the faulty definition and delivered effects. Verify that excessive access is removed without losing access that remains justified. Updating configuration and repairing target state are separate parts of the correction.
+If access is already removed, restoring it is a separately authorized action. Do not hide that action by rewriting the explanation of the earlier removal.
 
-## Plan the work for a new service
+### A faulty access profile is deleted after granting excess rights
 
-A warehouse portal is being added to access management. The approved requirement is that supervisors may adjust stock quantities after approval, while other warehouse staff may only read them.
+An access profile contained more access than intended and has already been granted to accounts. Deleting its definition is proposed as the entire fix.
 
-The integration can read accounts. Automated permission changes have not been confirmed. The business wants a pilot next week.
+What would that leave unresolved?
 
-Write what you would need before accepting that pilot, what operations must receive at handover, and what happens if access removal fails afterward.
+**Worked reasoning**
 
-**One defensible approach:** First agree the pilot population, permission meanings, approvers, and required removal timing. Establish whether the integration supports the necessary writes with the required privileges. Don't infer that from successful reading.
+Existing permissions can remain after the definition is deleted. Separate stopping new unwanted grants from correcting existing ones.
 
-If automated changes aren't available, evaluate a supported manual process with a named operator and realistic completion expectations. The decision owner must accept the actual delivery model, not an assumption of automation.
+Preserve the configuration and grant evidence needed to identify the affected population. Use an appropriate controlled change to stop further effects. Check the access requirements and related configurations that still apply, then arrange supported, authorized removal of excessive rights from the relevant accounts.
 
-Test the intended grants, expected denials, removal, failure visibility, and account association using safe test records. Confirm that stock adjustment is unavailable to read-only users. Record any untested requirement as a gap, not a passed check.
+Verify the resulting application permissions and preserve justified access. The absence of the old profile name is not proof that its unwanted permissions are gone.
 
-At handover, provide the design boundaries, evidence locations, operating procedures, owner coverage, and recovery/escalation conditions. When a removal later fails, support establishes the affected account, permission, operation state, and current target access. Authorized operators restore the required state and verify it. Governance resolves any disputed entitlement to retain access, while a recurring design or maintenance defect becomes tracked corrective work.
+## Apply the reasoning to a different service
 
-Different teams may divide those tasks differently. What cannot disappear is the connection between the decision, its implementation, daily operation, and verified correction.
+A proposed warehouse portal service has two populations: staff who read stock records, and supervisors who may adjust stock after approval. Account-file collection works. Automated permission changes have not been verified. The pilot is planned for next week, and access must be removed within an agreed deadline when responsibility ends.
 
-If a colleague asks how these kinds of work fit together, you can explain it this way:
+What would you need before accepting the service, and what would the operating team need afterward?
 
-> Governance establishes what access should be allowed and reviews whether it remains justified. Implementation turns that requirement into a tested service. Administration keeps the service operating, and support investigates and corrects failures. Evidence from operation and support feeds back into both the design and the access decisions. Go-live starts real operation; it doesn't end responsibility for the result.
+Pause on the uncertain point: the ability to read accounts has been established; the ability to deliver and withdraw the required access has not.
+
+**Worked reasoning**
+
+Start with the work boundaries: which records each population may use, what "adjust" permits, who can authorize it, and when access must end. Then establish the actual grant and removal capabilities, required privileges, and reliable account association.
+
+If automated delivery is unavailable, assess a supported manual alternative. Identify who performs it, how quickly they can act, and how completion is evidenced. If it cannot meet the withdrawal deadline, obtain a design or risk decision before acceptance.
+
+Test permitted actions, excluded actions, rejection, removal, exceptions, and failure visibility using appropriate accounts and data. Untested write behavior remains untested, however close the pilot date is.
+
+Handover should explain the accepted limits, expected collection freshness, decision ownership, operational coverage, evidence locations, and conditional recovery guidance. When a later failure occurs, support needs to identify the account, missing operation, delivery state, and current application result before selecting a correction.
+
+A disputed need goes back to the authorized decision owner. A recurring delivery defect goes back into design and operating improvements. Different teams can divide this work differently, but the decisions, actions, and evidence still need to connect.
+
+Try explaining the whole service without starting with a settings screen: what access is justified, how that becomes a tested arrangement, how it stays operational, how a failure is recovered, and how changing work leads to access being reconsidered and, where needed, actually removed.

@@ -1,348 +1,416 @@
 # Signing in, using a permission, and where ISC fits
 
-*Lesson SYS-002 · Revision 1.1*
+You sign in to an application, and its home page opens. Then you select Invoices, and the application refuses to show them.
 
-Devi checks supplier invoices for the Finance team. She already has an account in the finance application. When she opens it, her organization's sign-in service verifies her, and the application shows her name.
+Your sign-in worked. So why can't you read the invoices?
 
-She can open the home page. She cannot open the invoice queue.
+The application is answering two different questions.
 
-Her manager says, "I've approved the access." The support team says, "Her sign-in succeeded."
+During sign-in, it checks the identity you're claiming to use. That verification is called **authentication**.
 
-Both statements can be true while the invoice queue remains unavailable.
+When you ask to read an invoice, it needs another answer: is the account you're using allowed to read this information? That decision is called **authorization**.
 
-Let's separate what each statement tells us. The sign-in result concerns the identity being used. The manager's decision concerns whether Devi should receive access. Neither statement, by itself, tells us which permission the finance application is currently using for her account.
+An **account** is a record in a particular system, used by a person or another actor. A **permission** is an allowed action or access right associated with that account. Being allowed to enter the application doesn't mean the account has every permission inside it.
 
-Devi and this application are fictional. We'll use two invented permissions: `INVOICE_VIEW` for reading invoices and `PAYMENT_RELEASE` for releasing payments. Her work requires invoice reading, not payment release.
+To explain the invoice denial, we need to find which account you're using and which access rule refused the operation. A successful sign-in alone cannot answer those questions.
 
-## What did the successful sign-in actually establish?
+Where does SailPoint Identity Security Cloud, or **ISC**, fit? It can help manage whether that account should receive the required access and carry out the configured change. The application still enforces its rules when you use it.
 
-**Authentication** verifies a claimed identity. When Devi signs in, the system checks evidence associated with the identity she is claiming to use. A username identifies the claim; entering a username alone doesn't prove it.
+## What happens between signing in and opening an invoice?
 
-For example, a sign-in process could verify a password and require a second factor. **Multifactor authentication**, or MFA, uses evidence from different factor categories, such as something the person knows and something they possess. Entering the same password twice doesn't provide two different factors.
+Start with an application that checks sign-in information itself. You enter a username and password.
 
-Successful authentication means the evidence satisfied the applicable authentication requirements. It doesn't mean, "Give this person every permission."
+The username tells the application which identity you're claiming. Anyone could type that username, so the username alone isn't proof. The application also checks the required evidence, in this case the password.
 
-Now consider **authorization**. This is the decision about whether an identified user or other actor is allowed to access a resource or perform an action.
+Some sign-ins require evidence from different categories. A password is something you know; a supported security device can provide evidence of something you possess. Using different categories is **multifactor authentication**, or **MFA**. Entering the same password twice doesn't add a different factor.
 
-The resource could be the invoice queue. The action could be reading an invoice or releasing a payment. A **permission** expresses an allowed action or access right.
+Once the application accepts the evidence and permits entry, it needs to connect your later actions to the signed-in account. Otherwise, when you select Invoices, how would it know whose request it is handling?
 
-In our example, the application checks whether Devi's account has `INVOICE_VIEW` before returning invoice data. If it doesn't, the application denies that action even though it has already accepted her sign-in.
+A **session** maintains that connection across requests. It lets the application recognize that the next request belongs to an already signed-in account rather than making you repeat the whole sign-in for every click.
 
-Keep the question specific:
+Consider a common browser design. The application keeps a session record on its server, linked to your account. It sends the browser a session identifier in a **cookie**, a small piece of data that the browser stores and sends with matching requests to that application.
 
-- Authentication: which identity has been verified?
-- Authorization: may that identity perform this action on this resource?
+You select Invoices. The browser sends the request with that cookie. The server checks that the session is still valid and finds the account connected to it.
 
-These are different decisions, not necessarily different products or screens. A single application can perform both. A sign-in service can also apply access policies, such as whether a user may enter a particular application. Don't assume every rejection during sign-in means the password was wrong.
+Now it can ask the authorization question: may this account read invoices?
 
-For example, valid authentication evidence can still be followed by a denial because the user isn't assigned to the application. Investigating that result requires the policy decision, not another password reset.
+For a small hypothetical rule, suppose an enabled account needs a permission we'll call **Read invoices**. The server checks the account's current permission for each invoice request. If the permission is absent, it refuses to return the invoices. A separate permission, **Release payments**, controls payment release.
 
-## Where does ISC enter the picture?
+These are illustrative permission names, not built-in SailPoint permissions.
 
-SailPoint Identity Security Cloud, or ISC, helps an organization govern and administer access across connected systems.
+With Read invoices present and Release payments absent, the same signed-in account can read invoices but cannot release a payment. Both results follow the rules. A password reset wouldn't add the missing payment permission, and granting invoice reading wouldn't automatically permit payment release.
 
-**Identity governance** concerns whether access is appropriate, who is responsible for the decision, and whether it should continue. For Devi, the business question is: does her invoice-checking responsibility justify `INVOICE_VIEW`, and who can approve that access?
+The cookie also doesn't grant every action. In this design, it helps the server find the session and its account; the application still checks whether the requested action is allowed.
 
-**Provisioning** is the process of carrying out account or access changes. Here, the required change is adding `INVOICE_VIEW` to the correct finance account. Provisioning can also involve account creation or removal of access, when the integration and configuration support those operations.
+### Where does the visible page fit?
 
-Governance establishes what should happen. Provisioning carries out the change. The application's authorization checks use the resulting access state when Devi works.
+The browser page, sign-in form, and buttons are the **front end**, the part you interact with. The **back end** is the server-side work that receives requests, checks records, and decides what response to return.
 
-A manager can also be said to "authorize" access in the business sense. Here, when we discuss the application's authorization check, we mean its decision to allow or deny a particular operation, not the manager's earlier approval.
+You see an invoice button. Behind it, a request has to reach the application, the session has to be accepted, the right account has to be identified, and the invoice permission has to pass its check before the data is returned.
 
-There is a possible gap between each of those stages. An approved change can fail to reach the application. A correctly delivered permission can still be insufficient for a different action.
+Hiding a payment button can make the interface clearer, but hiding it isn't sufficient protection. Someone could send the protected request without using that button. A trusted part of the system, such as the application server or a **gateway** that handles incoming requests, must enforce the rule.
 
-An **access request** asks for an access item to be assigned to a particular recipient. In ISC, the item must be configured for requests, and the approval requirements depend on its configuration. A request isn't a sign-in attempt. It asks for access to be changed, not for the application to authenticate the requester.
+Authentication and authorization are therefore different decisions even when the same application performs both. They don't have to appear as separate screens or come from separate products.
 
-For this example, `INVOICE_VIEW` is requestable, Devi's manager is the configured approver, and the request is for access to begin without a future start date. There is no additional activation step. These are example conditions, not requirements for every ISC request.
+## What would ISC need to change?
 
-If the manager approves, ISC can proceed with the configured fulfillment path. **Fulfillment** means getting the requested change carried out, whether through a supported automated connection or assigned manual work.
+Suppose your work requires invoice reading, but your application account doesn't have Read invoices.
 
-If the manager rejects this request, this request must not be treated as a grant. That doesn't prove Devi has no invoice access through another assignment. You still need the account's actual state to answer that question.
+There are two things to settle. Should you have that access? If yes, how will it reach your account?
 
-## Which records are we talking about?
+**Identity governance** addresses the first question: whether access is appropriate, who is responsible for deciding, and whether the need continues. ISC helps organizations govern identities and access across connected systems.
 
-An **account** is a system-specific record used to represent a user or another actor. Devi has a finance account, and she also has a sign-in account with the organization's sign-in service. Those records belong to different systems, even if their usernames look alike.
+An **access request** asks for specified access for a person. That person is the **recipient**. If you request invoice reading for yourself, you're the recipient; the request is asking for an access change, not trying to sign you in.
 
-An **identity** in ISC is the record that brings together information about the person and their associated accounts and access. Devi's ISC identity isn't the finance account itself.
+The organization decides which items people may request and which review is required. An item marked **requestable** is available to request. That doesn't mean everyone who requests it will receive it.
 
-A **source** is ISC's configured representation of a system or collection of account data. A **connector** supplies the integration used to read that system and, where supported and configured, perform changes.
+Suppose the configured reviewer approves your business need. The decision now permits the requested change to proceed, but the application account still needs to be updated.
 
-**Account correlation** is the association of a collected source account with the appropriate ISC identity. This relationship helps ISC connect a finance account to Devi. It does not authenticate someone using that account.
+**Provisioning** is the work of making account or access changes in connected systems. ISC can initiate a supported change so that the application account receives the approved permission. The application must accept and apply that change.
 
-The application receiving a provisioning change is called the **target system**. The same finance system is a source of account information when ISC reads it and a target when ISC sends it a change.
+This is why “approved” and “can use it” aren't interchangeable. Approval answers whether the change may proceed. Provisioning carries out the change. The application later checks the resulting account when you use it.
 
-An **entitlement** represents an access right on a source, such as a group membership or application permission. A group brings accounts together so a system can apply shared access rules to its members. In this example, ISC represents `INVOICE_VIEW` as an entitlement.
+You may hear a manager say, “I've authorized the access.” Here, the manager means they approved the business need. When the application authorizes an invoice request, it is checking whether that particular operation is allowed. The word is being used for two related but different decisions.
 
-Look at the relationships before following the change:
+A denied access request doesn't grant anything through that request. It also doesn't prove the account has no existing access. The same permission might already be present for another reason, so you still need to inspect the account and how it received access.
 
-| Record or configuration | Relevant fact in this example |
-|---|---|
-| Devi's ISC identity | Represents Devi and is associated with her finance account |
-| Finance account `fin-12002` | Already exists and currently lacks `INVOICE_VIEW` |
-| Finance source and connector | Configured to read accounts and add this permission |
-| `INVOICE_VIEW` entitlement | Represents the finance application's invoice-reading permission |
-| Finance application's permission rule | Allows invoice reading when the account has `INVOICE_VIEW` |
-| Sign-in integration | Maps the verified sign-in identifier to `fin-12002` |
+## How does ISC know which account should receive it?
 
-There are two distinct associations here. Account correlation connects records within ISC's identity model. The sign-in integration connects a verified sign-in identity to an application account. Correct correlation in ISC doesn't prove the sign-in integration selects the same account.
+The access request concerns a person. The application change concerns an account. ISC needs a reliable connection between the two.
 
-That difference becomes useful when investigating a user with two accounts. You can provision the intended permission successfully and still have the user sign in to a different account.
+An ISC **identity** is the person-level record that brings together information about a person and their associated accounts and access. The identity isn't the application login account itself.
 
-## Follow the access change before following the sign-in
+For example, one person can have an account in the sign-in system and a different account in the invoice application. Both records concern that person, but changing one doesn't automatically change the other. Matching usernames wouldn't make them the same record either.
 
-For this path, assume Devi has one relevant finance account, the request identifies her correctly, and the connector supports the requested permission change.
+To bring the application's account information into ISC, an administrator configures a **source**. A source represents the system or collection of account data ISC manages. A **connector** provides the integration used to read that information and perform supported changes.
 
-First, the submitted request identifies the recipient and the requested access. The manager reviews it against Devi's work and approves it.
+When ISC reads account information from the source, that collection is called **account aggregation**. It gives ISC information about accounts and their access as reported by the source.
 
-Next, ISC's provisioning process uses the configured integration to request the change on `fin-12002`. The business approval supplies permission to proceed; it doesn't itself edit the finance account.
+ISC then needs to establish whose account each collected record is. **Account correlation** matches and associates the account with the appropriate identity. With that relationship established, ISC can connect the requested access for a person to the account being managed.
 
-The finance system must accept and apply the operation. If the integration lacks permission to update accounts, or the target rejects the requested value, an approval can remain in the request history while the attempted change fails.
+Notice what correlation answers: “Which identity does this account belong with in ISC?” It doesn't verify a password or decide which account an application will select during sign-in. Those are different jobs.
 
-In the successful version of our example, the target adds `INVOICE_VIEW`. It doesn't add `PAYMENT_RELEASE`, change Devi's password, or sign her in. None of those is part of the requested operation.
+ISC also needs to represent the access being requested. An **entitlement** represents a right on a source, such as an application permission or a group membership. A **group** brings accounts together so a system can apply shared access rules to its members.
 
-The engineer then examines the reported operation result and the target account state. These checks answer different questions: what did the provisioning operation report, and what does the account now contain?
+The application's rules give the entitlement its practical effect. A membership matters because the application uses it to allow something; collecting its name into ISC doesn't create that behavior.
 
-**Account aggregation** reads account data from a source into ISC. A subsequent successful collection of the relevant account and its permissions can update ISC's view of what the finance system reports. Reading the permission back is different from sending the change.
+When the application receives a change, we call it the **target system**. It can be the source of account information during a read and the target of an account update during provisioning. These names describe the direction of the work, not two different copies of the application.
 
-Don't turn this into a rule that another aggregation is always the next automatic step after every provisioning action. The collection mechanism, schedule, and connector behavior need to be checked. Nor does collecting account data require Devi to sign in.
+There can also be two accounts involved in making the update. With a connector that uses an **integration account**, that account performs the work in the application. The **recipient account** is the account receiving the permission.
 
-For a system without an automated write path, the delivery stage can instead involve a person completing assigned work in that system. Recording the task as complete is a report about the work; the target account remains the place to verify the resulting permission.
+The integration account needs authority to make the change. The recipient account needs the resulting permission to read invoices. Those are different requirements: a failure to update the recipient may concern the integration account's privileges, not the recipient's password.
 
-## Now follow Devi into the application
+Not every connector uses a dedicated user account. Some use another supported authentication mechanism. The same question remains: is the integration authorized to perform this operation on the intended account?
 
-Our finance application uses a separate **identity provider**, abbreviated **IdP**. An identity provider maintains identity information and provides authentication services that other systems can rely on. It can also apply policies controlling access to applications.
+## Follow the requested permission into the application
 
-The finance application trusts this provider for sign-in. This arrangement uses **federation**: one system accepts identity information issued by another under an established trust configuration.
+Let's trace one successful change. Your application account already exists, is enabled, and is correctly correlated with your ISC identity. It is the only relevant account for this request, and it lacks Read invoices.
 
-**Single sign-on**, or SSO, describes the experience of using an existing sign-in to enter participating applications without independently entering credentials for each one. Policies can still require another authentication step. SSO does not promise unrestricted access or an absence of future prompts.
+The organization has enabled entitlement requests and made this item requestable and visible to you. You request it for yourself. In this illustration, your correct manager is the configured reviewer; manager review isn't mandatory for every request design.
 
-For this example, the integration uses **Security Assertion Markup Language**, or SAML, a standard for exchanging identity and authentication information. A SAML **assertion** is a structured statement issued by the identity provider about the user and authentication. The receiving application must validate it rather than trusting arbitrary browser-supplied text.
+The request has no future start date or additional activation requirement. That matters because even an approved request can otherwise be waiting for a configured start condition.
 
-The finance application is the **service provider** in this relationship: it receives the assertion and supplies the application service.
+Your manager reviews the need and approves it. ISC can now proceed with the configured delivery work, often called **fulfillment**.
 
-A **session** lets a system associate subsequent requests with a signed-in user without repeating the full sign-in exchange for every click. The provider's sign-in session and the finance application's session are separate. An existing session at the provider doesn't, by itself, prove that the application has established its own.
+For the automated path here, the connector supports adding this permission, provisioning is enabled, connectivity works, and the integration account has the privileges needed to update your account. These conditions explain why ISC can attempt the change through this connection.
 
-Here is the successful path in our configured example:
+ISC initiates the supported operation. The application receives it and adds Read invoices to the intended recipient account.
 
-1. **Devi opens the finance application.** With no usable application session, the application directs her browser to the identity provider.
-2. **The provider establishes her authenticated identity.** It checks the required evidence or uses an existing acceptable sign-in session. Its applicable access policies must also permit entry.
-3. **The provider issues a sign-in response for the finance application.** The browser carries it back. The trust configuration determines which provider and signing information the application accepts.
-4. **The application validates the response.** It checks that the sign-in information came from the trusted provider, hasn't been altered, is intended for this application, and is valid for use now. Information arriving through the browser is not sufficient proof by itself.
-5. **The application identifies the finance account.** In this example, a configured identifier mapping selects `fin-12002`. The account already exists and is enabled.
-6. **The application establishes a session.** Subsequent browser requests can now be associated with the signed-in user under the application's session rules.
-7. **Devi asks to read invoices.** The application checks the permission required for that operation and, because `fin-12002` now has `INVOICE_VIEW`, returns the permitted data.
+What changed? That account gained one permission. Its password didn't change. Release payments remains absent. No new account had to be created because the required account already existed. You haven't been signed in by the provisioning operation.
 
-A session is not a permanent grant of every action. The application still needs to enforce authorization for protected operations.
+When you later sign in and ask to read an invoice, the application's current-permission check now finds Read invoices and allows reading under the rule we supplied. Payment release is still denied.
 
-In this example, opening a payment-release action is denied because `PAYMENT_RELEASE` is absent. Nothing has malfunctioned. Devi has the access her work requires, and the application is enforcing the distinction.
+The connection between the two processes is the same account and its permission. Provisioning changes that permission; the application uses it when deciding whether to allow the operation.
 
-Other applications can authenticate against their own account records instead of using a separate identity provider. The location of authentication changes; the distinction between verifying identity and permitting an operation does not.
+### How do you know the change reached the account?
 
-## Put the two processes beside each other
+Look at the operation result and the target account. A reported success describes the operation's reported outcome. A current target check establishes what the account has now. A later change could make those observations differ without changing what the earlier report said.
 
-The arrows below show the order within each illustrated process. They don't show a required set of network services or a universal ISC execution pipeline.
+Aggregation provides another observation: ISC reads account information back from the source. That can update its recorded view of the permission.
+
+Reading a permission is different from granting it. Aggregation can happen while you're signed out, and its timing depends on the source's collection mechanism and schedule. Don't assume every provisioning operation is immediately followed by account aggregation.
+
+Some supported fulfillment designs use manual work instead of an automated update. An assigned person makes the change in the application and records the task as complete. The completion record reports that work; checking the target account confirms its result.
+
+## What if another system handles sign-in?
+
+So far, the application has verified sign-in information itself. Many organizations instead use a central sign-in system that applications trust.
+
+That system is an **identity provider**, or **IdP**. It maintains identity information and provides authentication services. The application can rely on its verified sign-in information instead of checking a separate application password.
+
+The agreement to accept identity information from another system is called **federation**. It requires configured trust: the application must know which provider it accepts and how to validate what that provider sends.
+
+This can support **single sign-on**, or **SSO**. You sign in through the provider, and an existing acceptable sign-in can be used to enter other participating applications without independently entering credentials for each one.
+
+SSO doesn't mean every application action is allowed. It also doesn't promise you will never see another prompt. The provider's policies may require more authentication evidence for a particular entry attempt.
+
+The provider can also control whether you're allowed to enter an application at all, for example through an application assignment. Valid authentication followed by an entry-policy denial is possible. A rejection around sign-in therefore isn't automatically evidence of a bad password.
+
+### How does the provider tell the application?
+
+One common arrangement uses **Security Assertion Markup Language**, or **SAML**, a standard for exchanging identity and authentication information.
+
+The provider issues a response containing an **assertion**, a structured statement about the user and authentication. The application receives that information as the **service provider**, the system supplying the application service.
+
+The application doesn't trust the statement merely because it arrived through your browser. It validates it against the configured trust and protocol requirements.
+
+Here is the selected path from opening the application to reading an invoice. Assume the application already trusts the provider and can match the verified sign-in information to your existing, enabled account. It uses the browser-cookie session design and current-permission rule we traced earlier.
+
+1. You open the application without a usable application session. It directs your browser to the identity provider.
+2. The provider verifies you using the required evidence or an existing acceptable provider session. Its application-entry policies must also permit this attempt.
+3. The provider issues a response for the application. Your browser carries it back.
+4. The application validates the response. Among its checks, it establishes that the information came from the trusted provider, hasn't been altered, is intended for this application, and is valid for use now.
+5. The application uses the verified sign-in identifier to select your existing, enabled application account.
+6. It establishes its own application session and sends the browser its session identifier in the application cookie.
+7. You ask to read invoices. The browser includes that cookie; the server validates the session, finds its account, and checks the account's current Read invoices permission.
+
+With Read invoices present, reading succeeds under the supplied rule. Without Release payments, payment release remains denied. The SAML response didn't grant every permission inside the application.
+
+This is a conceptual trace of one common arrangement, not every message or validation requirement in a SAML implementation. Applications that verify sign-in locally use a different verification path, but still need to connect the user to an account and enforce access rules.
+
+The provider and the application also have separate sessions. You can have a usable provider session while the application has not yet accepted a response or established its own session. In the cookie design above, later invoice requests carry the application session identifier; they don't repeat the whole SAML response on every click.
+
+## How does the application select the right account?
+
+Step 5 matters because a verified person and a selected application account are not the same thing. The application needs a configured way to connect them.
+
+Consider a separate small mapping example. The SAML assertion contains **NameID**, an identifier for the person the assertion is about. Suppose this application is configured to compare that value with an account field called **externalLogin**.
+
+Here, externalLogin is an illustrative application field. It isn't an ISC setting or a field every SAML application must have.
+
+The application has two existing, enabled accounts:
+
+- **account-a** has externalLogin value **subject-a**.
+- **account-b** has externalLogin value **subject-b**.
+
+After the response is validated, its NameID contains **subject-a**. The application compares that value with the two records. It matches account-a, so that is the account used for the session.
+
+If the validated incoming value changes to subject-b while the records and mapping stay the same, the application selects account-b instead. If it is subject-c, neither account matches. In this example, the application permits entry only through a matching existing account, so entry fails. Automatically creating an account would require a different supported design.
+
+This comparison shows why we need the actual incoming value, chosen account field, and stored account values to explain the outcome. Knowing that “SSO succeeded” doesn't identify the account by itself.
+
+ISC could correctly associate both accounts with one person. That correlation would still be separate from the application's comparison at sign-in. A permission delivered to account-a won't help an operation checked against account-b merely because both belong to the same person.
+
+## Put the access change and the sign-in beside each other
+
+The requested change can happen while you're signed out. When you sign in later, the application doesn't need to ask the manager to approve the same access again. It needs to check the account selected for the operation.
+
+The separate paths below use the successful request, federated sign-in, and current-permission rule we've supplied.
 
 ```text
-CHANGE ACCESS: one approved request in this example
+CHANGE ACCESS
+Configured request and review
+  denied -> no grant from this request
+  approved
+     |
+     v
+ISC initiates supported target operation
+  rejected -> investigate delivery
+  applied
+     |
+     v
+Intended account has Read invoices
 
-ISC request for INVOICE_VIEW on Devi's finance account
-    |
-    v
-Configured manager approval
-    | rejected -> no grant from this request
-    | approved
-    v
-ISC provisioning through the finance connector
-    | failure -> investigate; approval is not delivery
-    | target accepts and applies the change
-    v
-Finance account fin-12002 now has INVOICE_VIEW
+USE ACCESS
+Application directs browser to IdP
+     |
+     v
+IdP verifies user and applies entry policy
+  denied -> this entry path stops
+  permitted
+     |
+     v
+Application validates sign-in response
+and maps to an existing enabled account
+  unusable -> application entry fails
+  usable
+     |
+     v
+Application establishes session and cookie
+     |
+     v
+Later request includes session cookie
+     |
+     v
+Server validates session and finds account
+     |
+     v
+Current invoice permission check
+  absent  -> deny reading
+  present -> allow under supplied rule
 
-
-USE ACCESS: a later visit to the finance application
-
-Devi opens the finance application
-    |
-    v
-Identity provider verifies identity and applies entry policies
-    | denied -> no successful entry through this path
-    | permitted
-    v
-Application validates the response and maps the user
-    | invalid response or no usable account -> entry fails
-    | valid response and enabled account fin-12002
-    v
-Application establishes a session
-    |
-    v
-Devi requests invoice data
-    |
-    v
-Application checks INVOICE_VIEW for that account
-    | absent  -> deny invoice reading
-    | present -> allow invoice reading in this example
-
-
-OBSERVE ACCESS: separate collection, not a sign-in step
-
-Finance account data -> account aggregation -> ISC account view
+OBSERVE ACCESS, separately
+Target records -> aggregation -> ISC view
 ```
 
-The connection between the first two processes is the account's permission state. Provisioning changes that state; the application's authorization check uses it.
+Each arrow shows what must happen before the next step in that selected path. It doesn't show private ISC services or promise a processing time.
 
-ISC is not shown approving every invoice-opening click. In this architecture, the application enforces the operation using its configured access information. Don't add a live call to ISC unless the actual integration requires one.
+Changing access and using access meet at the application's account record. One path adds the permission; the other selects an account and checks it. If they concern different accounts, the intended connection is missing.
 
-The diagram separates a successful target change from subsequent collection into ISC. The observation arrow means data is read back, not that aggregation grants access.
+The observation path runs in the other direction: account information comes from the target into ISC. That information may lead a configured access process to initiate another change, but reading the information and making the resulting change remain separate operations.
 
-The example also assumes the application reads the current account permission for the invoice operation. A different application could use permission information captured earlier in a session or a token. A **token** is a data object presented to a system as evidence for a particular security purpose. Its meaning, validation, and useful lifetime depend on the token type and integration.
+In this architecture, ISC isn't called to decide whether each invoice-opening click is allowed. The application performs that check. Only expect a live ISC decision call if the actual integration calls for one.
 
-That difference affects when changed permissions become effective. There is no universal "wait five minutes" answer.
+Human investigation is separate again. An engineer compares the request, operation, account and application evidence; the diagram doesn't make that verification an automatic ISC step.
 
-## What happens behind the screen?
+## What does a status on an ISC screen actually prove?
 
-The **front end** is the part the user interacts with, such as the browser page, sign-in prompt, and invoice button. The **back end** is the server-side processing that handles requests, accesses records, and enforces decisions.
+Suppose you see an approved request in ISC. It tells you about the request decision. To know whether the access arrived, you still need the delivery result and relevant account state.
 
-Suppose the finance page hides the payment-release button from Devi. That can help her understand what is available, but hiding a button isn't sufficient security. Someone could send a request without using that button.
+Provisioning activity concerns operations and their reported outcomes. Check which account and change the activity refers to, especially if an identity has more than one account.
 
-A protected payment-release operation needs an authorization check at a trusted enforcement point, such as the application's server or a configured gateway. A gateway is a component that handles requests on their way to a service. The browser's appearance alone must not decide whether money can be released.
+A collected account view shows information obtained from the source at a particular time. If someone changed the account afterward, that view may no longer describe the current application record.
 
-In our example, when Devi selects the invoice queue, the browser asks the application for invoice data. The server identifies the session, checks `INVOICE_VIEW` for the associated account, and either returns the data or denies the request.
+These screens are useful because they answer different questions. Before treating a status as the explanation for a user's experience, ask: which decision or record is this, which account does it concern, and when was it observed?
 
-The screen is showing the result of that processing. It is not showing an ISC approval being reevaluated.
+The invoice page has a similar boundary. Its response reflects application processing. Seeing the page open doesn't establish that ISC rechecked the manager's approval at that moment.
 
-ISC's screens also display different kinds of evidence. Request history records the access decision. Provisioning activity records describe attempted account operations and their reported outcomes. A collected account view describes data obtained from the source.
+## Where can an apparently correct setup still fail?
 
-Before trusting a visible status, ask: which record is this, which account and operation does it refer to, and when was it recorded?
+An approval can be correct while the target rejects the update. For example, the integration account may lack authority to modify the recipient. Repeating the manager's approval wouldn't supply that authority. Inspect the operation's error and the required integration privileges.
 
-## Why can the permission exist while access still fails?
+The update can also succeed while sign-in selects another account. Compare the delivered-to account with the account actually connected to the session. Don't change ISC correlation simply because the operation was denied; first establish whether the wrong relationship is in ISC or in the application's sign-in mapping.
 
-Let's change one condition at a time.
+The provider can authenticate you while the application rejects its response. The application may not accept the trust information or some other part of the exchange. Provider success tells you one part worked, not that the receiving application accepted everything.
 
-**The request is approved, but the target operation failed.** The business decision succeeded; delivery didn't. Examine the operation and error for the relevant source and account. Repeating approval doesn't repair the target rejection.
+### What if the application is using older permission information?
 
-**The permission was added to `fin-12002`, but sign-in selects another account.** Investigate the identifier returned during sign-in and how the application maps it. Changing ISC correlation without establishing that it is wrong would address a different association.
+Our original rule checks current account permissions on each operation. Some applications instead keep access information from an earlier point, such as when the session began.
 
-**The identity provider accepted the user, but the application rejected the response.** Authentication at the provider doesn't establish that the receiving application accepted the trust exchange. Check the application-side failure and the configured trust relationship.
+That saved information is a **snapshot**. The current account can change while the session continues using the earlier copy, depending on the application's design.
 
-**The correct account has the permission, but an older session still uses earlier access information.** First establish how that application handles permission changes. A controlled new-session test can help distinguish stale session information from an incorrect permission mapping. It is a diagnostic test, not a universal fix.
+You may also encounter a **token**, a data object presented as evidence for a particular security purpose. Its meaning, validation, and lifetime depend on the kind of token and the integration. Some session or token designs carry earlier access information rather than rereading the account for every action.
 
-**The application has another condition for the action.** For example, change our fictional application's rule so invoice reading requires both `INVOICE_VIEW` and membership in the invoice's business unit. The entitlement alone is now insufficient. You need the full application rule, including the business-unit value, to explain the denial.
+First establish what the application actually checks. An authorized, controlled test with a new session can help determine whether an older session is affecting the result. It is a diagnostic test, not a universal repair or a guarantee that other sessions were ended.
 
-**The user cannot even reach the application.** A network failure or unavailable service doesn't become an authorization problem merely because the user says, "I don't have access." Locate where the attempt stopped before proposing an access change.
+### What if the permission isn't the whole rule?
 
-Each variation changes the next useful check. That's why "ISC says she has access" isn't a complete diagnosis.
+Change the invoice rule so reading requires both Read invoices and membership in the invoice's business unit. Holding the permission is now only part of the requirement.
 
-## What about removing access?
+If the account has Read invoices but belongs to another business unit, denial follows this changed rule. Investigating only the entitlement would miss the second condition.
 
-Suppose Devi stops checking invoices. The organization decides she should lose `INVOICE_VIEW`.
+These are **native access rules**, meaning rules enforced in the application itself. Find the complete deployed rule before concluding that a permission is ineffective.
 
-Removing that permission, disabling an account, preventing new sign-ins, and ending an existing session are different actions.
+Finally, if the request cannot reach a working application, the failure may be network or service availability rather than authorization. “I have no access” describes the experience, not the cause.
 
-In our original example, removing `INVOICE_VIEW` causes the next invoice permission check to deny the operation. Devi can still sign in and use the application's permitted home-page features because the account itself remains enabled.
+Waiting a fixed interval or resetting a password doesn't resolve all these different conditions. Find where the attempt stopped and choose the next observation from there.
 
-Now change the application behavior: it stores a permission snapshot when the session begins and continues using that snapshot. Changing the account record alone does not establish when that existing session stops permitting invoice access.
+## If the permission is removed, what stops working?
 
-The application and sign-in teams must establish the supported session-expiry or revocation behavior. **Revocation** means withdrawing previously granted access or validity; the specific thing revoked could be a permission, a session, or a token.
+Return to the original rule: each invoice request checks the account's current Read invoices permission.
 
-For an urgent departure, checking only the ISC identity label or the completion of one removal operation is insufficient. The required outcome has to include the relevant target accounts, sign-in routes, and existing sessions. Direct application sign-in also matters if it is allowed independently of the identity provider.
+Remove that permission from the account. While it is absent, the next invoice check denies reading. The account is still enabled, so the person may still sign in and use permitted home-page functions.
 
-Don't assume an ISC access-removal operation automatically ends every session in every application. Verify the integration's actual actions and the application's enforcement behavior.
+Removing one permission is therefore different from disabling the account, preventing new sign-ins, or ending an existing session. **Revocation** means withdrawing access or validity. Whenever someone says “revoke access,” ask what needs to be withdrawn.
 
-## Does signing in to ISC change these distinctions?
+### Could the permission come back?
 
-No. ISC itself is an application people sign in to.
+There are two records to consider: what the application account currently has, and what ISC still requires it to have.
 
-An organization can configure ISC to accept sign-in from an external identity provider. In that relationship, ISC is the service provider. This is separate from ISC governing accounts and access in the identity provider or in other applications.
+An approved entitlement request can leave an ongoing **assignment** in ISC, a record connecting the identity with that requested access. The application permission shows what is present now; the assignment records the access that remains assigned through the request.
 
-Once someone has signed in to ISC, their permissions within ISC determine which administrative operations they may perform. ISC **user levels** are sets of permissions within the platform. Being able to enter ISC doesn't make someone an administrator.
+Suppose an administrator removes the entitlement directly from the source account but leaves the requested assignment in place. SailPoint documents that this requested entitlement is reprovisioned at the next aggregation. **Reprovisioning** means provisioning it again.
 
-There are therefore two different meanings to watch for when someone says, "Devi has access in SailPoint":
+The important distinction is that the source edit removed the permission, not the continuing assignment. Collection reveals the source state; the resulting write attempts to restore the still-assigned entitlement. Successful restoration also depends on the target accepting that write.
 
-- She can sign in and perform permitted actions within ISC.
-- ISC records or manages her access to another system.
+For a lasting withdrawal through this request route, use the supported requested-entitlement revocation process and verify the target result. Check how the access was granted: other assignment mechanisms have their own removal requirements. Don't assume this specific behavior describes every entitlement found by aggregation.
 
-Ask which one they mean.
+### What about a session that's already open?
 
-ISC can also govern access associated with a supported SSO provider integration. For example, changing a governed group can affect which application that provider makes available to a user. That doesn't automatically establish the user's detailed invoice or payment permissions inside the application. The mapping between the group, application entry, and internal rights has to be understood.
+Now consider the different application design that keeps a permission snapshot in the session. Removing Read invoices from the account doesn't, by itself, establish when that session will stop allowing reading.
+
+The application and sign-in teams need to establish how the relevant session or token expires or can be invalidated. Removing the requested assignment, removing the target permission, and ending an active session address different records and need separate evidence.
+
+For an urgent departure, the required outcome may include changes to target accounts, central sign-in routes, and existing sessions. If direct application sign-in can bypass the central provider, that route needs attention too.
+
+An ISC identity label or one completed removal operation doesn't prove that all entry paths and sessions have ended. The useful question is what each change actually affects and whether the intended access has stopped through every relevant route.
+
+## What if you're signing in to ISC itself?
+
+ISC is also an application people enter. An organization can configure an external identity provider for that sign-in. In that relationship, ISC is the service provider receiving the trusted information.
+
+Once you're signed in, your permissions inside ISC determine what you can do there. ISC **user levels** define sets of platform permissions; being signed in doesn't make everyone an administrator.
+
+This is different from ISC managing your account in another application. “The person has access in SailPoint” is ambiguous: do they have permission to use an ISC function, or does ISC record or manage access in an external system?
+
+ISC can also govern access through supported SSO-provider integrations. For example, a governed group or application assignment can affect whether the provider makes an application available.
+
+That can influence application entry without granting every native permission inside the application. Understand what the provider assignment controls and what the application checks separately. The available governance also depends on the supported integration and licensing; it isn't a capability to assume for every provider.
 
 ## Work through the evidence
 
-The following records are fictional, simplified evidence, not exact ISC log formats. The times show order within each case, not promised processing speeds.
+The observations below are hypothetical. They aren't exact ISC log formats or results from a tenant. The times establish event order, not processing-speed promises.
 
-### Case 1: approved, but unable to open invoices
+### Approval, missing permission, successful sign-in
 
-The finance connector uses an **integration account**, an account authorized to perform its work in the target system. This is separate from Devi's account.
+The request was approved. Activity then reported that the integration account lacked permission to modify the intended recipient account. A current target check confirms Read invoices is absent. The person subsequently signs in successfully but is denied invoice reading.
 
-You receive these observations:
+Which part failed? Would resetting the person's password address these facts?
 
-- At 09:00, the manager approved Devi's request for `INVOICE_VIEW`.
-- At 09:02, the provisioning result reported that the finance integration account lacked permission to modify `fin-12002`.
-- At 09:05, the application owner checked `fin-12002`; `INVOICE_VIEW` was absent.
-- At 09:06, Devi successfully signed in, but invoice reading was denied.
+### One account received the change; another is in use
 
-What failed? Would resetting Devi's sign-in password address the supplied evidence?
+An operation reports Read invoices added to account-a, and its current target record contains the permission. The application session identifies account-b, whose current record lacks it. Both accounts relate to the same person; their purposes and intended sign-in mapping haven't yet been established.
 
-**Reason it through.** The failed stage is the attempted target change. The integration account's insufficient update permissions explain why the requested change was rejected.
+Do the observations contradict successful delivery to account-a? What would you establish before changing either account?
 
-The target observation confirms the required permission was absent at 09:05. The subsequent sign-in succeeded, so resetting Devi's password does not address the demonstrated delivery failure.
+### An earlier collected view differs from a later decision
 
-The next step is to examine the integration's required privileges with the responsible application team, correct the authorized configuration through the organization's change process, and arrange a controlled retry where appropriate. Verify the target result afterward. Do not grant broad administrator access merely to make the error disappear.
+At 10:00, ISC collected Read invoices on an account. At 10:20, an administrator removed it directly in the application. At 10:25, the application denied invoice reading. No later collection or other account-information refresh has reached ISC.
 
-### Case 2: delivered to one account, used through another
+Does the older collected view establish that the later denial is wrong? What else would you check before treating the direct removal as a lasting withdrawal?
 
-The finance application has two accounts associated with Devi:
+### The permission was removed, but an existing session still works
 
-- `fin-12002` has `INVOICE_VIEW`.
-- `fin-archive-12002` does not.
+The requested-entitlement assignment has been revoked, and the correct target account is verified without Read invoices at the time of an invoice request. No other grant applies. An existing application session still returns invoice data, but you haven't established whether the deployed application checks current permissions or uses an earlier session snapshot.
 
-The current application session identifies the user as `fin-archive-12002`. The ISC provisioning record identifies `fin-12002`.
+What must you establish to explain the continued reading? How would the expected result differ between those two designs? Does permission removal prove that the session itself has ended?
 
-Is the successful provisioning result contradicted by the user's failure?
+### MFA succeeded, but the permission was inappropriate
 
-**Reason it through.** No. The change and the attempted use concern different accounts. Investigate which account Devi should use and why the sign-in mapping selected the archive account.
+A person passes MFA and releases a payment. Application evidence shows that the account held Release payments and the configured rule allowed the action. The accountable business owner confirms the person's work should never include payment release.
 
-The evidence doesn't justify copying permissions to both accounts or deleting either account immediately. First confirm their purposes and the intended mapping. A correction should restore the intended account selection, not conceal it with extra permissions.
+Which part needs investigation? Would stronger authentication alone remove the inappropriate capability?
 
-### Case 3: a collected view differs from the application
+## Compare your reasoning with the facts
 
-At 10:00, ISC collected `INVOICE_VIEW` on `fin-12002`. At 10:20, an application administrator removed it directly. At 10:25, the application denied invoice reading. You are told no later collection or other refresh of that account has reached ISC.
+For the rejected change, delivery failed under the integration account's authority. The target check confirms the missing permission. Successful sign-in doesn't repair either fact, and resetting the recipient's password wouldn't give the integration account authority to update it.
 
-Does the 10:00 ISC view prove the application made the wrong decision?
+Examine the error and required integration privileges with the responsible team. Make an authorized correction and arrange a controlled retry where appropriate, then verify the target result. Granting broad administrator rights merely to make the error disappear would skip the question of what authority the integration actually needs.
 
-**Reason it through.** No. It describes an earlier observation. The supplied 10:20 change explains why the later application state differs.
+For the two accounts, delivery and use concern different records. Read invoices reached account-a; the operation was checked against account-b. Those observations can both be correct.
 
-Check the authorized reason for the direct removal and the current target record, then establish how ISC's account information will be refreshed. Do not automatically regrant the permission just to make the older view and newer state agree.
+Establish what each account is for and which one sign-in should select. The evidence doesn't justify copying permissions to both accounts or deleting one immediately. Correct the intended relationship rather than adding access to conceal a mapping problem.
 
-### Case 4: strong authentication, excessive access
+For the earlier collected view, the 10:20 removal happened after the 10:00 collection. The application can therefore deny reading at 10:25 while ISC still displays the earlier permission.
 
-A user passes MFA and releases a payment. The application logs show the account had `PAYMENT_RELEASE`, and the application's rule allowed the operation. The business owner then confirms that this user's work should never include payment release.
+Check the reason for removal, the current account, how the access was assigned, and the supported refresh path. If the requested assignment is still active, a later aggregation can lead to reprovisioning. Appropriate assignment revocation matters to a lasting withdrawal. Regranting access just to make the application agree with an old collected view would skip the business decision.
 
-Did successful authentication make this access appropriate?
+For the continuing session, establish its actual account and the application's deployed rule. Also inspect whether the session retains earlier access information.
 
-**Reason it through.** No. Authentication verified the claimed identity under the configured requirements. The application also applied its configured permission rule. The unresolved problem is why the account had an inappropriate permission.
+If the application checks the same account's current permission for each invoice request, confirmed absence at that check means reading should be denied under the original rule. Continued reading conflicts with that explanation and calls for operation-specific evidence and verification of the deployed behavior.
 
-Investigate the assignment origin, business approval or policy basis, and any direct application changes. The governance and access-administration process needs correction. Increasing the number of authentication prompts would not, by itself, remove that permission.
+If it instead uses a still-valid earlier snapshot, the snapshot can explain continued reading until the supported controls invalidate or replace that access information. The facts make this a possibility, not a proven cause. Permission removal, assignment revocation, and session termination need their own evidence. Repeating approval or assuming a universal wait wouldn't establish them.
 
-## Explain an unfamiliar case
+For the excessive permission, authentication and the configured application rule both worked. The account was recognized and held the right that allowed payment release. What failed was the match between the access and the person's approved work.
 
-A document application uses a corporate identity provider. A contractor can sign in and read documents but cannot export them.
+Investigate how Release payments was assigned, the approval or policy basis, and any direct application changes. More authentication prompts don't remove an inappropriate permission.
 
-For this fictional application, its server permits export only when an enabled account has `DOC_EXPORT`. There are no other export conditions, and the server reads current permissions for each export request.
+## Apply the same reasoning to document export
 
-ISC contains an approved request for `DOC_EXPORT` on account `doc-728`. The connector reports that it successfully added the permission to `doc-728`. You have no current application account record and no evidence of which account the contractor's session uses.
+A contractor can sign in to a document application and read documents but cannot export them.
 
-Explain to the application owner:
+For this independent hypothetical rule, export requires an enabled account with **Export documents**. The server checks current permissions for every export request, with no additional export conditions.
 
-1. What each piece of evidence establishes.
-2. What remains unproven.
-3. Which observations you need before choosing a corrective action.
+ISC contains an approved request targeting **account-x**, and the connector reports adding Export documents there. You have neither a current target record nor evidence identifying the account used by the contractor's session.
 
-**A supported explanation would sound like this:**
+What do you know, what remains unproven, and which observations would help you choose the next action?
 
-"The contractor can enter the application and read documents, but that doesn't establish export permission. The ISC request records approval, and the connector reports a change to `doc-728`. We still need to confirm that this account currently has `DOC_EXPORT` and that the contractor's session uses this account. Please check both against the time of the failed export."
+Sign-in and document reading don't establish permission to export. Approval tells you about the request decision; the connector report tells you about the reported change to account-x. You still need the account's current permission and enabled state, together with the account used by the session at the failed export.
 
-If the permission is absent, investigate delivery and later changes. If the session uses another account, investigate the account mapping. If both checks are confirmed and the account is enabled, the observed denial conflicts with the supplied simple export rule. Inspect the operation-specific application evidence and verify that the documented rule matches the deployed behavior.
+If the permission is absent, investigate delivery and later changes. If the session uses another account, investigate mapping.
 
-You haven't guessed a fix. You've identified the missing facts that distinguish the possible causes.
+If the same enabled account has Export documents at the relevant check and all the supplied conditions hold, denial conflicts with the stated rule. Inspect the export operation's evidence and verify that the deployed application actually follows that rule. Don't quietly add an unexplained condition to make the original explanation fit.
 
-Before closing that conversation, explain why asking ISC to approve the same request again would not resolve an account-mapping error. The approval answers whether the change is allowed. It doesn't select the account the application uses when the contractor signs in.
+Another approval wouldn't repair an account-mapping error. It permits an access change to proceed; it doesn't select the account used at sign-in.
+
+When someone says “access isn't working,” follow what was decided, what changed, which account is being used, and what the application checks. Connecting those observations explains the result; any one of them alone can leave the cause unresolved.

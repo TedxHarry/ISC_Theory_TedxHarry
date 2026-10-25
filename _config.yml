@@ -1,8 +1,8 @@
 title: "SailPoint ISC Theory"
 description: "Understand the system. Follow the data, decisions, and access."
 url: "https://tedxharry.github.io"
-baseurl: "/ISC_Theory_Learning"
-repository: "TedxHarry/ISC_Theory_Learning"
+baseurl: "/ISC_Theory_TedxHarry"
+repository: "TedxHarry/ISC_Theory_TedxHarry"
 lang: en
 markdown: kramdown
 kramdown:

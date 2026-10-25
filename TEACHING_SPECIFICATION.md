@@ -1,4 +1,8 @@
-# ISC course teaching specification, version 2.6
+# ISC course teaching specification, version 3.1
+
+Concept-led approach adopted October 25, 2026, after the user's review of the SYS-005 and COR-004 pilots. Apply it to existing lessons in course order, one complete revision at a time, and to future lessons. Older lessons retain their previous status until individually revised and reviewed.
+
+Version 3.1 records the explanation and pacing standard approved after the SYS-002 revision 2.2 read-through on October 25, 2026. It strengthens the existing concept-led approach; it does not mark earlier lessons rereviewed or impose a common lesson layout.
 
 ## What every lesson must accomplish
 
@@ -31,11 +35,11 @@ For example, establish what an access request asks for before describing approva
 
 The opening must make any example understandable immediately: what already exists, what is missing or changing, and what outcome is expected.
 
-Use Devi when a named employee helps. Every lesson that uses her must re-establish the relevant facts, even if she appeared in an earlier lesson. Include her background only when it affects the explanation.
+Teach the concept directly. Do not organize revised lessons around a fictional company, a named employee, or a continuing story. Do not introduce a biography, application brand, employee number, or object ID merely to make an explanation look concrete.
 
-Other scenarios can use unnamed employees, records, or applications.
+Retain small neutral examples when they reveal the mechanism: selected field values, permission boundaries, configuration fragments, changed inputs, or supplied operation results. Include only details that change the reasoning or are needed to identify the relevant object. State hypothetical assumptions without implying a real tenant observation.
 
-Give each independent lesson's named example its own employee number and account identifiers. Record them in the author example register and use them consistently within the lesson, its diagram sources, and worked answers. Reusing Devi's name does not establish a continuing biography across lessons. A deliberately continued scenario must preserve or explicitly explain changed facts.
+Removing a story must not remove the conditions that make an explanation valid. Establish what exists, which values or configuration apply, what is being evaluated, and what result is supplied. Record any necessary example values in the author records and keep them consistent with diagrams and worked answers. Existing example-register entries remain historical until their lessons are individually revised.
 
 Preserve the meaning of recurring terms using the author terminology register. Reintroduce each required term in the current situation, with depth proportional to its role in the explanation. Do not replace essential explanation with a glossary link or repeat a long definition block when a short contextual explanation is enough.
 
@@ -59,13 +63,44 @@ Technical explanations describe supported, documented mechanisms. Internal imple
 
 State the conditions behind an outcome. A failed comparison, an unsuccessful operation, and a failed overall process must not be treated as interchangeable conclusions.
 
+### A consistent standard, not a fixed lesson template
+
+Purpose, meaning, mechanism, connections, conditions, and evidence are coverage checks for the author, not a mandatory sequence of learner-facing sections. Start where the topic becomes clearest and introduce each necessary term before depending on it.
+
+Let the subject determine the headings, sequence, length, example detail, assessment format, and use of diagrams or tables. There is no quota or target count for sections, diagrams, tables, examples, cases, questions, or words. The approved pilots demonstrate an approach, not layouts to reproduce.
+
+Use a table for a comparison that is easier to inspect side by side, a diagram for relationships or flow that are easier to see, and prose where it teaches more clearly. Do not add a visual merely because another lesson has one. Explain a useful normal mechanism without burying it in repeated cautions; place essential qualifications beside the steps they govern, then develop meaningful changed conditions or failures.
+
+Make important transitions explicit. Identify what information or result passes forward, who or what uses it, and why the next action follows. Do not imply that a saved configuration, decision, attempted operation, recorded result, and verified target state are interchangeable.
+
+### Build understanding through connected reasoning
+
+Detail must help the learner make sense of the subject, not merely increase the amount of information. A definition followed by a list of stages is insufficient when the learner still cannot explain why those stages exist or how they connect.
+
+Establish a recognizable problem, operation, comparison, or record before depending on abstract distinctions. Explain what is happening in plain language, introduce the technical term when its purpose is clear, and develop the mechanism without skipping the steps between a stated input and its result. This is a pacing principle, not a mandatory opening formula.
+
+For each important concept, check that the explanation makes these points clear where relevant:
+
+- What the concept means, which problem it solves, and why it is needed in the current situation.
+- Which people, systems, records, attributes, or values participate, and how they relate.
+- What starts the work, what information or configuration is used, and what happens at each meaningful stage.
+- Why a comparison, decision, or operation produces its result under the supplied conditions.
+- What changes, what remains unchanged, and how the result is used by the next step or a separate process.
+- How a meaningful changed condition affects the result, and which evidence supports or challenges the explanation.
+
+These are author checks, not required learner-facing headings, a fixed sequence, or an obligation to repeat the same explanation for every supporting word. Give each supporting concept enough depth for its role; fully explain mechanisms the learner must reason about. Structure, length, diagrams, tables and question counts remain topic-dependent.
+
+Complete an understandable basic mechanism before adding integration variants or dense implementation detail, where that ordering helps. Put essential conditions beside the steps they govern, then develop additional rules and failures as explicit variations. Do not turn concept-led writing into compressed technical prose or remove the explanatory bridges when removing a fictional story.
+
+During author review, trace whether a reader can follow who does what, with which information, why the result follows, and what happens next. Check first-use meanings and the connections between paragraphs, not just term presence or coverage counts. Clearer author narration and successful structural checks do not substitute for observed beginner teach-back.
+
 ## How the narration should feel
 
 Write as if the author is sitting beside one learner, patiently explaining the subject and working through the reasoning together. Be personal, polite, friendly, and clear. Use simple English and precise technical terms.
 
 Address the reader naturally with "you." Use "let's" or "we" when tracing a record, comparing values, or working through a decision together. Warmth should come from attentive explanation, useful questions, and addressing likely confusion, not greetings, forced slang, praise, or repeated reassurance.
 
-Introduce terminology when it becomes relevant. Develop the explanation through connected paragraphs, concrete records, and cause-and-effect reasoning.
+Introduce terminology when it becomes relevant. Develop the explanation through connected paragraphs, purposeful concrete detail, and cause-and-effect reasoning. Use a brief recap at a difficult transition when it helps; do not repeat a definition or warning merely to fill a recurring section.
 
 Questions should help the learner think: "What does this observation establish?" or "Which record would need to change?"
 
@@ -112,6 +147,8 @@ Results identify gaps by subject. An overall score does not replace that guidanc
 ## How understanding will be assessed
 
 Checkpoints use formats appropriate to the subject: explain, predict, trace, investigate, and compare designs.
+
+Choose questions to expose the topic's actual misunderstandings, not to match a standard case count. Where useful, place prompts before the worked reasoning so the learner can attempt them first. Include changed-context reasoning rather than relying only on repetition of the lesson's phrasing. A tooltip or worked answer cannot replace teaching the mechanism in the explanation.
 
 Each question-bank entry includes:
 
@@ -181,7 +218,7 @@ This is the authoritative checklist for lesson quality. The course design and re
 ### Author review
 
 1. Confirm that the lesson answers its learning question and explains why the subject matters in routine work. Check its scope against the course design: distinguish its main subject from supporting explanations and topics whose full treatment belongs elsewhere.
-2. Read the lesson independently. Every necessary term, example assumption, and transition must be understandable without another lesson or remembered story. Reintroduce Devi's relevant circumstances when she appears.
+2. Read the lesson independently. Every necessary term, example assumption, and transition must be understandable without another lesson or remembered story. Remove unnecessary fictional context while retaining the values, conditions, and object distinctions needed for reasoning.
 3. Check the depth appropriate to the subject: objects, inputs, configuration, triggers, decisions, dependencies, processing, outcomes, and evidence. Explain why stages connect, what changes, and what remains unchanged. Do not replace reasoning with definitions or placeholders.
 4. Trace the successful example and useful variations or failures. Change a meaningful condition where it helps test the mechanism. Explain the changed result and avoid implying universal behavior from one configured example.
 5. Verify technical behavior against official SailPoint documentation. Record references and the verification date in the author reference records, mapped to the relevant lesson sections or claims. Identify relevant connector, configuration, licensing, availability, and version conditions. Keep ISC and IdentityIQ behavior separate; do not invent implementation internals or claim unperformed tenant testing.
@@ -209,3 +246,7 @@ This is the authoritative checklist for lesson quality. The course design and re
 The [course register](COURSE_REGISTER.md) identifies the current lesson and next action. The [folder guide](README.md) defines the one-lesson-at-a-time workflow.
 
 Save each complete learner lesson in its own file. Do not draft a batch of partial lessons or reduce a lesson to meet a file-size, word-count, or schedule target. Track author review and learner validation separately.
+
+During the concept-led revision pass, revise the existing lesson path, preserving its permanent ID and recoverable baseline in repository history. Map the previous lesson's essential coverage and assessment purposes to the revision. Removal of narrative overhead or duplication is allowed; omission of a needed concept, causal step, condition, evidence boundary, or useful transfer check is not. Word counts alone do not establish preserved quality or depth.
+
+Update the current revision, source verification, comparison record, and next revision target after reviewing each file. Do not mark the remaining lessons revised because the standard changed, and do not integrate a pilot out of sequence merely because its draft exists. Continue new-lesson authoring from its recorded reservation after the revision pass, unless the user changes priorities.

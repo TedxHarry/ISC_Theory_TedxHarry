@@ -1,0 +1,42 @@
+ESTABLISH THE MANAGER
+HR confirms the effective relationship
+     |
+     v
+Current record made available to ISC
+     |
+     v
+ISC collects data and processes identity
+     |
+     v
+Engineer verifies manager relationship
+     |
+     v
+Relationship available for request routing
+
+DECIDE AND DELIVER ACCESS
+Manager confirms the work need
+Application owner defines the access
+     |
+     v
+Configured reviewer decides
+  rejected -> no grant from this request
+  approved
+     |
+     v
+ISC sends supported directory update
+  rejected -> investigate the operation
+  applied
+     |
+     v
+Intended account joins invoice-readers
+     |
+     v
+Application recognizes the membership
+     |
+     v
+Read invoices allowed; no payment release
+
+HUMAN VERIFICATION AND CLOSURE
+Teams supply evidence for their part
+Coordinator checks unresolved work
+Outcome confirmed before case closure

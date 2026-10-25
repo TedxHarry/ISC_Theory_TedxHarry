@@ -1,0 +1,32 @@
+CHANGE ACCESS
+Approved business requirement
+     |
+     v
+Configured, authorized removal
+     |
+     v
+ISC attempts supported target operation
+  rejected -> this removal not completed
+  applied
+     |
+     v
+Target account permissions change
+     |
+     v
+Application applies its access rules
+     |
+     v
+Protected operation allowed or denied
+
+OBSERVE ACCESS
+Target account data
+     |
+     v
+Aggregation within configured scope
+     |
+     v
+ISC's collected account information
+
+HUMAN COMPARISON
+Compare requirement, records and behavior
+Check account, scope, time and conditions

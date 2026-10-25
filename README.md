@@ -6,11 +6,13 @@ The course is for beginners and freshers with some IAM knowledge. Its purpose is
 
 ## GitHub and reading site
 
-- [Repository: ISC_Theory_Learning](https://github.com/TedxHarry/ISC_Theory_Learning)
-- [Read the available lessons](https://tedxharry.github.io/ISC_Theory_Learning/)
+- [Repository: ISC_Theory_TedxHarry](https://github.com/TedxHarry/ISC_Theory_TedxHarry)
+- [Read the available lessons](https://tedxharry.github.io/ISC_Theory_TedxHarry/)
 - [Publishing and update instructions](author/PUBLISHING.md)
 
 The repository contains the complete working files. GitHub Pages presents the ninety-one available lessons; planning documents and author references remain outside the reading site. Deployment does not change learner-validation or publication-review status.
+
+This separate concept-led edition was created at the user's request on October 25, 2026. All six Module 1 lessons are revised; the other eighty-five lessons retain their existing versions until individually revised. Continue new-version authoring in this ISC_Theory_TedxHarry folder. The original ISC_Theory_Learning repository and reading site remain independent and unchanged.
 
 Use **Hide lessons** / **Show lessons** to collapse or expand the navigation panel. Each module heading independently opens or closes its lesson list. The current lesson's module starts open; on the home page, the first module starts open.
 
@@ -147,7 +149,11 @@ Navigation regression checks use Node.js: run `npm ci`, then `npm test`. These d
 
 There is no fixed word count or maximum lesson count. Split a lesson when its subject requires another independently understandable learning unit, not to satisfy an arbitrary length limit. Never replace required reasoning with a summary, outline, or placeholder.
 
-Examples can use Devi, but every lesson supplies its own context. A learner must not need to remember her from another lesson. Supporting ISC concepts are explained within the lesson that uses them.
+The concept-led approach explains the subject directly, without a fictional company or named employee carrying the lesson. Use small neutral examples only where their details help explain the mechanism. Supporting ISC concepts are explained within the lesson that uses them. Structure and visual/question counts follow the topic, not a template.
+
+The revision pass began October 25, 2026 with SYS-001. Revise existing files in course order, one complete lesson at a time; keep the remaining lessons available without marking them revised prematurely. The course register identifies the current revision target and preserves the next new-lesson reservation separately.
+
+The user authorized creation and publication of this current snapshot to the new repository and GitHub Pages site on October 25, 2026. That request supersedes the earlier local-only hold for this publication. Continue later lesson revisions locally, one file at a time, and publish further changes when asked. Do not push this edition to the original ISC_Theory_Learning repository.
 
 ## File conventions
 

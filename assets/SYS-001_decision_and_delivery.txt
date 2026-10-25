@@ -1,0 +1,23 @@
+Access request submitted in ISC
+                |
+                v
+Reviewer decides business need
+    | denies             | approves
+    v                    v
+No grant from      ISC initiates change
+this request             |
+                         v
+                  Connector sends it
+                         |
+                         v
+                  Target processes it
+                    |             |
+                 accepts       rejects
+                    |             |
+                    v             v
+              Permission      Unchanged
+                added       in this case
+
+Human verification:
+operation evidence + current target state
+required action works; extra right absent

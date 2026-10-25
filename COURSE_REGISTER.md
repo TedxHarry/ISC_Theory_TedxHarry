@@ -1,18 +1,37 @@
 # ISC Theory: course register
 
-Last updated: October 24, 2026.
+Last updated: October 25, 2026.
 
 This is the working record of what exists, what has been reviewed, and what comes next. A planned topic is not a completed lesson. Author review and real learner validation are recorded separately.
 
 ## Current position
 
-The course design and teaching specification are saved. Ninety-one complete learner lessons have been authored: **SYS-001, Why does an organization need ISC?**, revision 1.3; **SYS-002, Signing in, using a permission, and where ISC fits**, revision 1.1; **SYS-003, Who owns what when access needs to change?**, revision 1.1; **SYS-004, What should be allowed, what ISC records, and what actually works**, revision 1.1; **SYS-005, Building access management is only the beginning**, revision 1.1; **SYS-006, Follow the access problem across the systems**, revision 1.1; **FND-001, Identity and account**, revision 1.3; **FND-002, Sources, connectors, and the systems they connect to**, revision 1.0; **FND-003, Account, identity, and entitlement attributes**, revision 1.0; **FND-004, Entitlements, access profiles, and roles**, revision 1.0; **FND-005, Sources, access applications, catalogs, and sign-in**, revision 1.0; **FND-006, Object IDs, account identifiers, and names: which record are we talking about?**, revision 1.0; **FND-007, One identity, multiple accounts: which account are we talking about?**, revision 1.0; **ARC-001, The ISC tenant: what SailPoint runs, and what your organization still owns**, revision 1.0; **ARC-002, Virtual Appliances and clusters: where does the connection work happen?**, revision 1.0; **ARC-003, SaaS connectors: where does the connection work happen?**, revision 1.0; **ARC-004, Where does IQService fit?**, revision 1.0; **ARC-005, The connection works. Why does the change still fail?**, revision 1.0; **ARC-006, A button, an API call, or automation: what is ISC actually doing?**, revision 1.0; **ARC-007, Signing into ISC and changing a password: which system is doing the work?**, revision 1.0; **ARC-008, The request was accepted. What actually finished?**, revision 1.0; **SRC-001, What will this source actually represent?**, revision 1.0; **SRC-002, Authoritative for what: the person, a value, a login, or a change?**, revision 1.0; **SRC-003, The connector supports it. What can this source actually do?**, revision 1.0; **SRC-004, An account schema: which fields describe the account, and which ones identify it?**, revision 1.0; **SRC-005, The value looks right. Is it the right kind of value?**, revision 1.0; **SRC-006, The group exists. Why doesn't the account's access connect to it?**, revision 1.0; **SRC-007, The read finished. Did it include the right accounts?**, revision 1.0; **SRC-008, HR approved the extension. Who makes sure the new date reaches the right place?**, revision 1.0; **AGG-001, The account changed. What should change in ISC?**, revision 1.0; **AGG-002, The group is in ISC. Does Devi have it?**, revision 1.0; **AGG-003, Every account was read. Why wasn't this one re-evaluated?**, revision 1.0; **AGG-004, Only the changed accounts arrived. What does that tell us?**, revision 1.0; **AGG-005, The account refreshed. What actually changed?**, revision 1.0; **AGG-006, The run finished. How current is the data?**, revision 1.0; **AGG-007, The account is missing. Should ISC remove it?**, revision 1.0; **AGG-008, The aggregation ended. What did it actually establish?**, revision 1.0; **AGG-009, Where did the account stop matching what we expected?**, revision 1.0; **IDN-001, Where does an ISC identity come from?**, revision 1.0; **IDN-002, What does an identity profile actually control?**, revision 1.0; **IDN-003, How does an account value become an identity value?**, revision 1.0; **IDN-004, Which source should supply this identity attribute?**, revision 1.0; **IDN-005, Two worker records. Which identity profile governs the person?**, revision 1.0; **IDN-006, The account arrived. Why is the identity incomplete?**, revision 1.0; **IDN-007, The mapping is correct. What else will change?**, revision 1.0; **IDN-008, Where did this identity value come from?**, revision 1.0; **COR-001, The account was imported. Why isn't it on the person's identity?**, revision 1.0; **COR-002, Which account field is ISC comparing with which identity field?**, revision 1.0; **COR-003, Which identifier will still point to the right person tomorrow?**, revision 1.0; **COR-004, The first comparison found no match. What happens next?**, revision 1.0; **COR-005, The account has no clear owner in ISC. What is actually missing?**, revision 1.0; **COR-006, The matching rule changed. What happens to accounts that are already linked?**, revision 1.0; **COR-007, The account is on the right identity now. What did the manual correction actually fix?**, revision 1.0; **COR-008, HR names a manager. How does ISC know which identity that means?**, revision 1.0; **COR-009, The account or manager looks wrong. Where would you start the investigation?**, revision 1.0; **TRN-001, The source already has a value. Do we need a transform?**, revision 1.0; **TRN-002, What is this transform actually going to return?**, revision 1.0; **TRN-003, Which characters should this calculation keep?**, revision 1.0; **TRN-004, A fallback returned a value. Is it the right value?**, revision 1.0; **TRN-005, Are we translating a code or choosing an outcome?**, revision 1.0; **TRN-006, Which moment does this date actually mean?**, revision 1.0; **TRN-007, What does each operation pass to the next one?**, revision 1.0; **TRN-008, What has to change before this value is calculated again?**, revision 1.0; **TRN-009, The calculation returned a value. What actually went wrong?**, revision 1.0; **PRC-001, The data changed. Which process needs to act?**, revision 1.0; **PRC-002, What change actually starts identity processing?**, revision 1.0; **PRC-003, The date arrived. When will ISC process the identity?**, revision 1.0; **PRC-004, The mapping is saved. What still needs to happen?**, revision 1.0; **PRC-005, The identity changed. Which results should change with it?**, revision 1.0; **PRC-006, Inactive in ISC. Inactive for which process?**, revision 1.0; **PRC-007, The job started. Why do the screens still disagree?**, revision 1.0; **PRC-008, The data changed. Where did the expected result stop?**, revision 1.0; **ENT-001, A group appears in ISC. What access does it actually represent?**, revision 1.0; **ENT-002, The entitlement name changed. Is it still the same access?**, revision 1.0; **ENT-003, The catalog has four items. Who actually holds them?**, revision 1.0; **ENT-004, The membership was removed. Why does access still work?**, revision 1.0; **ENT-005, The entitlement has an owner. Do we know what it allows?**, revision 1.0; **ENT-006, This entitlement looks wrong. What exactly needs fixing?**, revision 1.0; **APF-001, Why give a set of entitlements a name?**, revision 1.0; **APF-002, Which entitlements actually belong in the same bundle?**, revision 1.0; **APF-003, What should a profile's name, description and owner tell you?**, revision 1.0; **APF-004, The profile is enabled. Who actually receives its access?**, revision 1.0; **APF-005, The profile appeared. Did ISC actually grant new access?**, revision 1.0; **APF-006, The profile changed. What happens to people who already have it?**, revision 1.0; **APF-007, If two profiles share an entitlement, what does revoking one remove?**, revision 1.0; **ROL-001, What access does this responsibility actually require?**, revision 1.0; **ROL-002, What is actually inside this role?**, revision 1.0; **ROL-003, Who should receive this role, and how does ISC decide?**, revision 1.0; **ROL-004, The same role was granted in two ways. What changes?**, revision 1.0; **ROL-005, Her department changed. Why does she still have the role?**, revision 1.0; and **ROL-006, One role was removed. Why does some access remain?**, revision 1.0.
+Publication destination update, October 25, 2026: the user authorized a separate repository and working-edition Pages site for this concept-led version, ISC_Theory_TedxHarry. This authorizes publication of the current snapshot despite the earlier local-only hold. Continue later authoring in this new repository, retaining FND-001 as the next revision; do not update the original ISC_Theory_Learning site. See the [publication record](author/NEW_REPOSITORY_PUBLICATION_2026-10-25.md). Subsequent lesson revisions remain local until publication is requested again.
+
+The course design and teaching specification are saved. Ninety-one complete learner lessons have been authored: **SYS-001, Why does an organization need ISC?**, revision 2.0; **SYS-002, Signing in, using a permission, and where ISC fits**, revision 2.2; **SYS-003, Who owns what when access needs to change?**, revision 2.0; **SYS-004, What should be allowed, what ISC records, and what actually works**, revision 2.0; **SYS-005, Building access management is only the beginning**, revision 2.0; **SYS-006, Follow the access problem across the systems**, revision 2.0; **FND-001, Identity and account**, revision 1.3; **FND-002, Sources, connectors, and the systems they connect to**, revision 1.0; **FND-003, Account, identity, and entitlement attributes**, revision 1.0; **FND-004, Entitlements, access profiles, and roles**, revision 1.0; **FND-005, Sources, access applications, catalogs, and sign-in**, revision 1.0; **FND-006, Object IDs, account identifiers, and names: which record are we talking about?**, revision 1.0; **FND-007, One identity, multiple accounts: which account are we talking about?**, revision 1.0; **ARC-001, The ISC tenant: what SailPoint runs, and what your organization still owns**, revision 1.0; **ARC-002, Virtual Appliances and clusters: where does the connection work happen?**, revision 1.0; **ARC-003, SaaS connectors: where does the connection work happen?**, revision 1.0; **ARC-004, Where does IQService fit?**, revision 1.0; **ARC-005, The connection works. Why does the change still fail?**, revision 1.0; **ARC-006, A button, an API call, or automation: what is ISC actually doing?**, revision 1.0; **ARC-007, Signing into ISC and changing a password: which system is doing the work?**, revision 1.0; **ARC-008, The request was accepted. What actually finished?**, revision 1.0; **SRC-001, What will this source actually represent?**, revision 1.0; **SRC-002, Authoritative for what: the person, a value, a login, or a change?**, revision 1.0; **SRC-003, The connector supports it. What can this source actually do?**, revision 1.0; **SRC-004, An account schema: which fields describe the account, and which ones identify it?**, revision 1.0; **SRC-005, The value looks right. Is it the right kind of value?**, revision 1.0; **SRC-006, The group exists. Why doesn't the account's access connect to it?**, revision 1.0; **SRC-007, The read finished. Did it include the right accounts?**, revision 1.0; **SRC-008, HR approved the extension. Who makes sure the new date reaches the right place?**, revision 1.0; **AGG-001, The account changed. What should change in ISC?**, revision 1.0; **AGG-002, The group is in ISC. Does Devi have it?**, revision 1.0; **AGG-003, Every account was read. Why wasn't this one re-evaluated?**, revision 1.0; **AGG-004, Only the changed accounts arrived. What does that tell us?**, revision 1.0; **AGG-005, The account refreshed. What actually changed?**, revision 1.0; **AGG-006, The run finished. How current is the data?**, revision 1.0; **AGG-007, The account is missing. Should ISC remove it?**, revision 1.0; **AGG-008, The aggregation ended. What did it actually establish?**, revision 1.0; **AGG-009, Where did the account stop matching what we expected?**, revision 1.0; **IDN-001, Where does an ISC identity come from?**, revision 1.0; **IDN-002, What does an identity profile actually control?**, revision 1.0; **IDN-003, How does an account value become an identity value?**, revision 1.0; **IDN-004, Which source should supply this identity attribute?**, revision 1.0; **IDN-005, Two worker records. Which identity profile governs the person?**, revision 1.0; **IDN-006, The account arrived. Why is the identity incomplete?**, revision 1.0; **IDN-007, The mapping is correct. What else will change?**, revision 1.0; **IDN-008, Where did this identity value come from?**, revision 1.0; **COR-001, The account was imported. Why isn't it on the person's identity?**, revision 1.0; **COR-002, Which account field is ISC comparing with which identity field?**, revision 1.0; **COR-003, Which identifier will still point to the right person tomorrow?**, revision 1.0; **COR-004, The first comparison found no match. What happens next?**, revision 1.0; **COR-005, The account has no clear owner in ISC. What is actually missing?**, revision 1.0; **COR-006, The matching rule changed. What happens to accounts that are already linked?**, revision 1.0; **COR-007, The account is on the right identity now. What did the manual correction actually fix?**, revision 1.0; **COR-008, HR names a manager. How does ISC know which identity that means?**, revision 1.0; **COR-009, The account or manager looks wrong. Where would you start the investigation?**, revision 1.0; **TRN-001, The source already has a value. Do we need a transform?**, revision 1.0; **TRN-002, What is this transform actually going to return?**, revision 1.0; **TRN-003, Which characters should this calculation keep?**, revision 1.0; **TRN-004, A fallback returned a value. Is it the right value?**, revision 1.0; **TRN-005, Are we translating a code or choosing an outcome?**, revision 1.0; **TRN-006, Which moment does this date actually mean?**, revision 1.0; **TRN-007, What does each operation pass to the next one?**, revision 1.0; **TRN-008, What has to change before this value is calculated again?**, revision 1.0; **TRN-009, The calculation returned a value. What actually went wrong?**, revision 1.0; **PRC-001, The data changed. Which process needs to act?**, revision 1.0; **PRC-002, What change actually starts identity processing?**, revision 1.0; **PRC-003, The date arrived. When will ISC process the identity?**, revision 1.0; **PRC-004, The mapping is saved. What still needs to happen?**, revision 1.0; **PRC-005, The identity changed. Which results should change with it?**, revision 1.0; **PRC-006, Inactive in ISC. Inactive for which process?**, revision 1.0; **PRC-007, The job started. Why do the screens still disagree?**, revision 1.0; **PRC-008, The data changed. Where did the expected result stop?**, revision 1.0; **ENT-001, A group appears in ISC. What access does it actually represent?**, revision 1.0; **ENT-002, The entitlement name changed. Is it still the same access?**, revision 1.0; **ENT-003, The catalog has four items. Who actually holds them?**, revision 1.0; **ENT-004, The membership was removed. Why does access still work?**, revision 1.0; **ENT-005, The entitlement has an owner. Do we know what it allows?**, revision 1.0; **ENT-006, This entitlement looks wrong. What exactly needs fixing?**, revision 1.0; **APF-001, Why give a set of entitlements a name?**, revision 1.0; **APF-002, Which entitlements actually belong in the same bundle?**, revision 1.0; **APF-003, What should a profile's name, description and owner tell you?**, revision 1.0; **APF-004, The profile is enabled. Who actually receives its access?**, revision 1.0; **APF-005, The profile appeared. Did ISC actually grant new access?**, revision 1.0; **APF-006, The profile changed. What happens to people who already have it?**, revision 1.0; **APF-007, If two profiles share an entitlement, what does revoking one remove?**, revision 1.0; **ROL-001, What access does this responsibility actually require?**, revision 1.0; **ROL-002, What is actually inside this role?**, revision 1.0; **ROL-003, Who should receive this role, and how does ISC decide?**, revision 1.0; **ROL-004, The same role was granted in two ways. What changes?**, revision 1.0; **ROL-005, Her department changed. Why does she still have the role?**, revision 1.0; and **ROL-006, One role was removed. Why does some access remain?**, revision 1.0.
 
 FND-001 was written as a foundation pilot before the course was developed in sequence. It belongs with Module 2's object relationships. That pilot did not itself complete Module 1, Module 2, or the whole course.
 
-The current lesson is ROL-006. It has received documentation-based author review and is ready for the user's read-through and further feedback, not marked learner-validated or publication-ready. Keep revisions in the same lesson file. Do not open several lesson drafts in parallel.
+The current work is SYS-006 revision 2.0 under teaching specification v3.1. It follows a precise missing-permission problem through collected data, mapping selection, identity values, role eligibility, delivery and application use, with changed-evidence reasoning. The current revision record reconciles 58 baseline coverage items and fifteen primary references. SYS-001 through SYS-005 remain unchanged. All six Module 1 lessons have now received individual concept-led revision; beginner teach-back, graphical publication review and formal approval remain pending. Keep revisions in the same files, one lesson per task. FND-001 is next after this read-through; it was not opened in this task. ROL-007 remains the paused next-new-lesson reservation. Save locally only: do not push to GitHub or deploy Pages until asked.
 
 FND-001 established the teaching approach as a pilot and has now been reviewed in its Module 2.1 position. Authoring has continued through Module 12.6, ROL-006. All nine Module 7 lessons and all nine Module 8 lessons are authored. All eight Module 9 lessons are authored. All six Module 10 lessons and all seven Module 11 lessons are authored. The first six Module 12 lessons are authored; Module 12.7 onward remains planned. All eight Module 3 lessons, all eight Module 4 lessons, all nine Module 5 lessons and all eight Module 6 lessons are authored; learner validation and formal publication approval remain pending. Resolve known content issues before opening the next writing task and track learner validation separately.
+
+## Concept-led revision pass
+
+The user preferred the SYS-005 pilot, reviewed the process-heavy COR-004 pilot, and approved course-wide adoption on October 25, 2026. Teaching specification v3.1 retains the concept-led approach and adds the user's approved explanation/pacing checks: direct concept-led mentoring, minimal neutral technical examples, complete coverage, and topic-dependent structure with no quotas. These are author checks, not a fixed set of learner headings.
+
+| Revision-pass item | Status |
+|---|---|
+| Existing authored lessons | 91; no lesson removed or added by this revision |
+| Complete concept-led revisions | 6 of 91: SYS-001 revision 2.0, SYS-002 revision 2.2 and SYS-003 through SYS-006 revision 2.0 |
+| Still awaiting individual revision | 85; existing versions remain available, not implicitly upgraded |
+| Current revised lesson | SYS-006 revision 2.0; connected explanation and documentation-based author review; learner validation and formal publication approval pending |
+| Next revision target | FND-001, existing file, after SYS-006 read-through; do not open another lesson in this task |
+| Coverage and verification records | [SYS-001 revision 2.0](author/revisions/SYS-001_Concept_Led_Revision_Record.md); [SYS-002 revision 2.2](author/revisions/SYS-002_Concept_Led_Revision_Record.md); [SYS-003 revision 2.0](author/revisions/SYS-003_Concept_Led_Revision_Record.md); [SYS-004 revision 2.0](author/revisions/SYS-004_Concept_Led_Revision_Record.md); [SYS-005 revision 2.0](author/revisions/SYS-005_Concept_Led_Revision_Record.md); [SYS-006 revision 2.0](author/revisions/SYS-006_Concept_Led_Revision_Record.md) |
+| Accepted approach pilots | SYS-005 pilot integrated and rechecked in revision 2.0; historical pilot files remain unchanged. COR-004 pilot will be integrated and rechecked when reached in course order |
+| New-lesson authoring | ROL-007 reserved, paused during this pass |
+
+The revised sources are saved locally for review. No push or Pages deployment is permitted during this pass unless the user changes that instruction. Earlier SYS-001 revision 1.3, SYS-002 revision 1.1, SYS-003 revision 1.1, SYS-004 revision 1.1, SYS-005 revision 1.1 and SYS-006 revision 1.1 are recoverable at baseline commit 90b9f298860b0bc26d26259f084e129ac59331e0. Deployment, beginner validation, and formal publication approval are distinct checks.
 
 ## Saved documents
 
@@ -21,12 +40,12 @@ FND-001 established the teaching approach as a pilot and has now been reviewed i
 | [README](README.md) | Entry point, file conventions, and one-lesson-at-a-time workflow | Saved |
 | [Course design and contents](COURSE_DESIGN_AND_CONTENTS.md) | Full course architecture, module outcomes, detailed lesson topics, assessments, and scope | Saved working design; lesson topics are plans, not authored lessons |
 | [Teaching specification](TEACHING_SPECIFICATION.md) | Authoritative explanation, independence, narration, assessment, evidence, and review standards; current version is recorded in that file | Saved authoring standard |
-| [SYS-001: Why does an organization need ISC?](lessons/SYS-001_Why_an_Organization_Needs_ISC.md) | Complete learner-facing opening lesson for Module 1 | Revision 1.3 saved; feedback revisions checked, source-link cleanup checked, learner validation pending |
-| [SYS-002: Signing in, using a permission, and where ISC fits](lessons/SYS-002_Authentication_Authorization_and_ISC.md) | Complete learner-facing lesson for Module 1.2 | Revision 1.1 saved; feedback revisions checked, author-reviewed, learner validation pending |
-| [SYS-003: Who owns what when access needs to change?](lessons/SYS-003_Who_Owns_What_in_Identity_and_Access.md) | Complete learner-facing lesson for Module 1.3 | Revision 1.1 saved; feedback revisions checked, author-reviewed, learner validation pending |
-| [SYS-004: What should be allowed, what ISC records, and what actually works](lessons/SYS-004_Intended_Known_and_Effective_Access.md) | Complete learner-facing lesson for Module 1.4 | Revision 1.1 saved; feedback revisions checked, author-reviewed, learner validation pending |
-| [SYS-005: Building access management is only the beginning](lessons/SYS-005_Implementation_Administration_Support_and_Governance.md) | Complete learner-facing lesson for Module 1.5 | Revision 1.1 saved; feedback revisions checked, author-reviewed, learner validation pending |
-| [SYS-006: Follow the access problem across the systems](lessons/SYS-006_Following_an_Access_Problem_Across_the_Enterprise.md) | Complete learner-facing lesson for Module 1.6 | Revision 1.1 saved; feedback revisions checked, author-reviewed, learner validation pending |
+| [SYS-001: Why does an organization need ISC?](lessons/SYS-001_Why_an_Organization_Needs_ISC.md) | Complete learner-facing opening lesson for Module 1 | Concept-led revision 2.0 saved; documentation-based author review; learner validation and formal approval pending |
+| [SYS-002: Signing in, using a permission, and where ISC fits](lessons/SYS-002_Authentication_Authorization_and_ISC.md) | Complete learner-facing lesson for Module 1.2 | Concept-led revision 2.2 saved locally with beginner-focused explanation rebuilt and previous technical corrections retained; learner validation and formal approval pending |
+| [SYS-003: Who owns what when access needs to change?](lessons/SYS-003_Who_Owns_What_in_Identity_and_Access.md) | Complete learner-facing lesson for Module 1.3 | Concept-led revision 2.0 saved locally under teaching specification v3.1; documentation-based author review complete; learner validation and formal approval pending |
+| [SYS-004: What should be allowed, what ISC records, and what actually works](lessons/SYS-004_Intended_Known_and_Effective_Access.md) | Complete learner-facing lesson for Module 1.4 | Concept-led revision 2.0 saved locally under teaching specification v3.1; documentation-based author review complete; learner validation and formal approval pending |
+| [SYS-005: Building access management is only the beginning](lessons/SYS-005_Implementation_Administration_Support_and_Governance.md) | Complete learner-facing lesson for Module 1.5 | Concept-led revision 2.0 saved locally under teaching specification v3.1; documentation-based author review complete; learner validation and formal approval pending |
+| [SYS-006: Follow the access problem across the systems](lessons/SYS-006_Following_an_Access_Problem_Across_the_Enterprise.md) | Complete learner-facing lesson for Module 1.6 | Concept-led revision 2.0 saved locally under teaching specification v3.1; documentation-based author review complete; learner validation and formal approval pending |
 | [FND-001: Identity and account](lessons/FND-001_Identity_and_Account.md) | Complete learner-facing foundation pilot | Revision 1.3 saved; review details below |
 | [FND-002: Sources, connectors, and the systems they connect to](lessons/FND-002_Sources_Connectors_and_Connected_Systems.md) | Complete learner-facing lesson for Module 2.2 | Revision 1.0 saved; author-reviewed, learner validation pending |
 | [FND-003: Account, identity, and entitlement attributes](lessons/FND-003_Account_Identity_and_Entitlement_Attributes.md) | Complete learner-facing lesson for Module 2.3 | Revision 1.0 saved; author-reviewed, learner validation pending |
@@ -127,17 +146,17 @@ FND-001 established the teaching approach as a pilot and has now been reviewed i
 | Title | Why does an organization need ISC? |
 | File | [SYS-001_Why_an_Organization_Needs_ISC.md](lessons/SYS-001_Why_an_Organization_Needs_ISC.md) |
 | Course placement | Module 1.1: the business problems that lead an organization to implement ISC |
-| Revision | 1.3 |
-| Content status | Complete authored lesson with a traced access request, failure and manual-fulfillment variations, continuing-access reasoning, questions, worked answers, and a transfer exercise |
-| Author review | Revision 1.1 reviewed for first-use explanations and diagram consistency on October 19, 2026; revision 1.2 checked for source-citation relocation and preservation of teaching content; review notes below; revision 1.3 received targeted feedback review on October 20, 2026 |
-| Documentation check | October 19, 2026; official references read for the mechanisms used; links now preserved in the author reference records |
-| Tenant testing | Not performed; scenarios and permission names are fictional |
+| Revision | 2.0 |
+| Content status | Complete concept-led revision with a permission illustration, request/decision/delivery trace, failure and manual-fulfillment distinctions, ongoing-access reasoning, questions, worked answers and transfer |
+| Author review | Documentation-based review against teaching specification v3.0 on October 25, 2026; baseline coverage mapped in the revision record; earlier reviews retained below as history |
+| Documentation check | October 25, 2026; current official references mapped in the revision record linked from author reference records |
+| Tenant testing | Not performed; neutral permission labels, configuration conditions and outcomes are hypothetical |
 | Learner validation | Pending; no beginner read-through or teach-back observed |
-| Publication status | Not approved for publication; publication review pending |
+| Publication status | Revision 2.0 saved locally; deployment not performed; learner validation and formal publication approval pending |
 | Known unresolved content issues | None identified in the author review; further reviewer or learner feedback may reveal issues |
-| Next action | Preserve SYS-001 for further feedback and learner validation; SYS-002 was opened following the user's instruction to continue |
+| Next action | User read-through and separate learner validation; next authoring turn revises SYS-002 in place under the same concept-led standard |
 
-#### Author-review notes for SYS-001
+#### Historical author-review notes for SYS-001 revisions 1.x
 
 - Scope: explains business need, fragmented information, decision ownership, access delivery, retained access, and evidence. Supporting mechanisms are introduced only to make those relationships understandable; detailed configuration remains in its planned lessons.
 - Standalone context: Devi's work, existing account, missing permission, and expected outcome are stated. The opening distinguishes a confirmed missing permission from an access-denied symptom alone.
@@ -153,9 +172,9 @@ FND-001 established the teaching approach as a pilot and has now been reviewed i
 - Rechecked the official access-request, provisioning, and provisioning-monitoring documentation for the changed explanations and flow. Other references retain the preceding review; this is not a new tenant test.
 - Updated the teaching specification to v2.4 so first-use meaning and purposeful diagrams are explicit requirements for future lessons.
 
-Diagram assets: [viewable image](assets/SYS-001_request_flow.png), [vector artwork](assets/SYS-001_request_flow.svg), [editable Mermaid source](assets/SYS-001_request_flow.mmd), and [structured diagram source](assets/SYS-001_request_flow.json). Revision 1.1 embedded the image. Current revision 1.3 embeds the synchronized [text flow](assets/SYS-001_request_flow.txt); the earlier image and vector assets are retained as historical renderings of the same decision paths.
+Historical diagram assets: [viewable image](assets/SYS-001_request_flow.png), [vector artwork](assets/SYS-001_request_flow.svg), [editable Mermaid source](assets/SYS-001_request_flow.mmd), and [structured diagram source](assets/SYS-001_request_flow.json). Revision 1.1 embedded the image; revision 1.3 embedded its [text flow](assets/SYS-001_request_flow.txt). These assets remain historical and are not current revision 2.0 illustrations. Revision 2.0 uses the synchronized [concept-led decision/delivery flow](assets/SYS-001_decision_and_delivery.txt).
 
-Diagram verification: canonical JSON schema and Mermaid static checks passed. The SVG is separately laid-out artwork for the same nodes and paths, not output from a Mermaid renderer. It was rendered locally in Edge for image delivery and visual inspection; this does not establish Mermaid-renderer acceptance or publication-format validation. Keep all diagram assets synchronized when revising the flow.
+Historical diagram verification: canonical JSON schema and Mermaid static checks passed. The SVG is separately laid-out artwork for those earlier nodes and paths, not output from a Mermaid renderer. It was rendered locally in Edge for image delivery and visual inspection; this does not establish Mermaid-renderer acceptance or revision 2.0 publication-format validation. Keep the current inline flow synchronized with its current asset; historical assets retain their earlier revision meaning.
 
 Reference-maintenance note: the current [SailPoint administration documentation](https://documentation.sailpoint.com/saas/help/sources/index.html) displays SailPoint Human Fabric naming. This course retains the user's requested ISC title. Confirm product naming and packaging during publication review; the lesson does not infer that every capability visible in the newer documentation navigation belongs in the ISC core course.
 
@@ -170,17 +189,17 @@ Unique example number 11001, informal LCS wording, campaign/certification distin
 | Title | Signing in, using a permission, and where ISC fits |
 | File | [SYS-002_Authentication_Authorization_and_ISC.md](lessons/SYS-002_Authentication_Authorization_and_ISC.md) |
 | Course placement | Module 1.2: identity governance, authentication, and application authorization |
-| Revision | 1.1 |
-| Content status | Complete lesson with connected explanations, a two-process flow and separate observation path, failure variations, four worked cases, and a transfer exercise |
-| Author review | Revision 1.0 reviewed against the teaching specification on October 20, 2026; scope, first-use explanations, conditional examples, evidence, and worked reasoning checked; revision 1.1 received targeted feedback review on October 20, 2026 |
-| Documentation check | October 20, 2026; official SailPoint documentation, Microsoft identity documentation, and OWASP authorization guidance; section mappings in author reference records |
-| Tenant testing | Not performed; application rules, accounts, permissions, timestamps, and outcomes are fictional |
+| Revision | 2.2 |
+| Content status | Concrete sign-in/invoice opening and complete basic session/permission trace before ISC delivery and federated detail; contextual term meanings and causal transitions; all prior technical coverage retained, with one synchronized three-path diagram, five checkpoints and independent transfer |
+| Author review | October 25, 2026 explanation/pacing read-through under teaching specification v3.0; 52 coverage mappings refreshed against revision 2.2 and all seven 2.1 corrections retained; 2.0/2.1 measurements are historical, not proof of beginner understanding |
+| Documentation check | October 25, 2026; official SailPoint, Microsoft and OWASP references and applicability boundaries mapped in the current revision record |
+| Tenant testing | Not performed; native rules, times, outcomes, selected cookie design and account-a/account-b/account-x/externalLogin/subject-a/subject-b/subject-c mapping values are hypothetical |
 | Learner validation | Pending; no beginner read-through or teach-back observed |
-| Publication status | Not approved for publication; publication-format and learner checks pending |
-| Known unresolved content issues | None identified in author review; actual application enforcement and session behavior require project-specific verification |
-| Next action | Preserve SYS-002 for further feedback and learner validation; SYS-003 was opened following the user's instruction to continue |
+| Publication status | Revision 2.2 saved locally; no staging, commit, push or deployment; learner validation, graphical publication-format review and formal approval pending |
+| Known unresolved content issues | The user accepted revision 2.2's explanation style on October 25, 2026; independent beginner teach-back remains pending. Native mapping, enforcement, assignment removal and sessions require project-specific verification; no guarantee of comprehension is recorded |
+| Next action | Explanation style accepted by the user; SYS-003 was opened following approval to continue. Separate beginner validation remains pending |
 
-#### Author-review notes for SYS-002
+#### Historical author-review notes for SYS-002 revisions 1.x
 
 - Scope stays on responsibilities and connections. Protocol configuration, detailed entitlement modeling, lifecycle design, and team ownership receive fuller treatment in their planned lessons.
 - The opening re-establishes Devi's work and existing account. Authentication, authorization, governance, access requests, provisioning, and supporting ISC objects are explained before the walkthrough relies on them.
@@ -190,7 +209,7 @@ Unique example number 11001, informal LCS wording, campaign/certification distin
 - Four worked cases and a transfer exercise test delivery failure, account mismatch, stale data, excessive access, and missing evidence. Answers explain the next useful check rather than inventing a universal fix.
 - Narration review removed unexplained protocol-check terminology by explaining signatures, audience, and recipient. No lesson source links, course-method announcements, or claims of guaranteed learner confidence were added.
 
-Diagram source: [editable text flow](assets/SYS-002_access_and_signin_flow.txt). The same text is embedded in the lesson so a diagram renderer is not required. The labeled branches, example identifiers, and observation direction were checked against the lesson and worked cases. Text synchronization and local-file checks are recorded separately from publication rendering; no graphical rendering or publication-format visual validation is claimed.
+Historical revision 1.x diagram: [editable text flow](assets/SYS-002_access_and_signin_flow.txt). Its named-example labels are retained as history, not current revision 2.2 content. The current revision embeds the synchronized [identity, permission and use flow](assets/SYS-002_identity_permission_and_use.txt). Source checks are distinct from graphical publication-format validation.
 
 #### Feedback revision 1.1
 
@@ -203,17 +222,19 @@ Unique example number 12002 and a shorter conceptual sign-in validation step; de
 | Title | Who owns what when access needs to change? |
 | File | [SYS-003_Who_Owns_What_in_Identity_and_Access.md](lessons/SYS-003_Who_Owns_What_in_Identity_and_Access.md) |
 | Course placement | Module 1.3: responsibilities of HR, directory teams, application owners, managers, and ISC engineers |
-| Revision | 1.1 |
-| Content status | Complete lesson with responsibility distinctions, a manager-data investigation, handoff diagram, ownership and user-level explanations, four worked cases, and a supplier-portal transfer exercise |
-| Author review | Revision 1.0 reviewed against the teaching specification on October 20, 2026; first-use explanations, business/product distinctions, evidence boundaries, examples, and answers checked; revision 1.1 received targeted feedback review on October 20, 2026 |
-| Documentation check | October 20, 2026; official SailPoint references mapped in the author reference records |
-| Tenant testing | Not performed; people, identifiers, group mappings, task examples, and times are fictional |
+| Revision | 2.0 |
+| Content status | Complete concept-led explanation connecting decision authority, effective HR data, manager matching, existing work, native permission meaning, delivery, assignments and verified handoffs; one comparison table, one synchronized diagram, four checkpoints and independent vendor-portal transfer |
+| Author review | October 25, 2026 under teaching specification v3.1; 65 baseline coverage mappings and causal/first-use review recorded in the current revision record; certification-remediation assignment corrected and distinguished from general entitlement provisioning |
+| Documentation check | October 25, 2026; 15 official references and applicability limits mapped in the current revision record |
+| Tenant testing | Not performed; manager fields/values, directory group mapping, task observations and clock times are hypothetical |
 | Learner validation | Pending; no beginner read-through or teach-back observed |
-| Publication status | Not approved for publication; publication-format and learner checks pending |
-| Known unresolved content issues | None identified in author review; responsibility assignments, integration capabilities, and existing request behavior must be verified in each implementation |
-| Next action | Preserve SYS-003 for further feedback and learner validation; SYS-004 was opened following the user's instruction to continue |
+| Publication status | Revision 2.0 saved locally; no staging, commit, push or deployment; learner validation, graphical publication-format review and formal approval pending |
+| Known unresolved content issues | No unresolved content error identified in this author pass; actual responsibility agreements, connector capabilities, task assignments, manager configuration and existing-request handling require project-specific verification; comprehension remains unvalidated |
+| Next action | Preserved after the user's instruction to continue to SYS-004; separate beginner validation remains pending |
 
-#### Author-review notes for SYS-003
+Current comparison, sources, assessment and executed checks: [SYS-003 revision 2.0 record](author/revisions/SYS-003_Concept_Led_Revision_Record.md). Current editable diagram: [decisions, changes and handoffs](assets/SYS-003_decisions_changes_and_handoffs.txt).
+
+#### Historical author-review notes for SYS-003 revisions 1.x
 
 - The organizational model is explicitly recommended practice, not a product-mandated organization chart. It distinguishes decision authority, execution, coordination, and verification.
 - HR, managers, application owners and administrators, directory operators, ISC engineers, security, support, and audit have concrete responsibilities without implying that every organization uses separate teams.
@@ -224,7 +245,7 @@ Unique example number 12002 and a shorter conceptual sign-in validation step; de
 - First-use review moved directory/group explanations before the access mapping table. The lesson contains no external source citations, course links, forced biography, or course-method announcements.
 - Four worked cases address incorrect mappings, excessive application rights, owner-versus-admin confusion, and incomplete manual removal. The transfer exercise accepts different arrangements when authority, execution, coordination, and evidence are specified.
 
-Diagram source: [editable responsibility handoffs](assets/SYS-003_responsibility_handoffs.txt). The diagram is embedded as text in the lesson. It separates data responsibility from request delivery and labels human verification; it is not a universal backend pipeline. Source synchronization and local-file checks are distinct from publication-format rendering, which remains pending.
+Historical diagram source: [editable responsibility handoffs](assets/SYS-003_responsibility_handoffs.txt). This was embedded in revision 1.x and is retained unchanged; the current diagram is linked above. It separates data responsibility from request delivery and labels human verification; it is not a universal backend pipeline. Source synchronization and local-file checks are distinct from publication-format rendering, which remains pending.
 
 #### Feedback revision 1.1
 
@@ -237,17 +258,19 @@ Unique example number 13003 and consistent campaign/certification meanings; manu
 | Title | What should be allowed, what ISC records, and what actually works |
 | File | [SYS-004_Intended_Known_and_Effective_Access.md](lessons/SYS-004_Intended_Known_and_Effective_Access.md) |
 | Course placement | Module 1.4: intended access, ISC information, and effective application access |
-| Revision | 1.1 |
-| Content status | Complete lesson with scoped access examples, change and observation paths, a timed removal case, four worked questions, a two-account transfer exercise, and a teach-back answer |
-| Author review | Revision 1.0 reviewed against the teaching specification on October 20, 2026; first-use explanations, causal reasoning, evidence boundaries, narration, and example consistency checked; revision 1.1 received targeted feedback review on October 20, 2026 |
-| Documentation check | October 20, 2026; official SailPoint, Microsoft, and OWASP references mapped in the author records |
-| Tenant testing | Not performed; accounts, permissions, application behavior, timestamps, and results are fictional |
+| Revision | 2.0 |
+| Content status | Complete concept-led explanation with the basic collection/removal/authorization flow before deeper record distinctions, two event tables, one synchronized diagram, four worked checkpoints, two-account transfer and independent teach-back |
+| Author review | October 25, 2026 under teaching specification v3.1; 62 baseline coverage mappings, first-use/cause/effect review, timeline consistency and selected requested-entitlement reprovisioning clarification recorded separately |
+| Documentation check | October 25, 2026; 17 official SailPoint, Microsoft and OWASP references and limits mapped in the current revision record |
+| Tenant testing | Not performed; permission labels, account placeholders, application rules, observations and times are hypothetical |
 | Learner validation | Pending; no beginner read-through or teach-back observed |
-| Publication status | Not approved for publication; learner and publication-format checks pending |
-| Known unresolved content issues | None identified in author review; actual integration coverage, grant paths, and session behavior require implementation-specific verification |
-| Next action | Preserve SYS-004 for further feedback and learner validation; SYS-005 was opened following the user's instruction to continue |
+| Publication status | Revision 2.0 saved locally; no staging, commit, push or deployment; learner validation, graphical publication-format checks and formal approval pending |
+| Known unresolved content issues | No unresolved content error identified in this author pass; native grant paths, account identity, integration coverage, processing effects, session enforcement and observation timing require implementation-specific verification; comprehension remains unvalidated |
+| Next action | Preserved after the user's instruction to continue to SYS-005; separate beginner validation remains pending |
 
-#### Author-review notes for SYS-004
+Current comparison, references, assessments and executed checks: [SYS-004 revision 2.0 record](author/revisions/SYS-004_Concept_Led_Revision_Record.md). Current editable diagram: [change, observation and evidence](assets/SYS-004_change_observation_and_evidence.txt).
+
+#### Historical author-review notes for SYS-004 revisions 1.x
 
 - The three-view distinction is a teaching model, not a set of ISC status fields. Business requirements are distinguished from configuration, assignments, operation history, collected observations, and runtime behavior.
 - Devi's account, read/export permissions, effective deadline, and retained-access requirement are established without relying on prior lessons.
@@ -258,7 +281,7 @@ Unique example number 13003 and consistent campaign/certification meanings; manu
 - Read-only investigation is separated from retries, collection, and processing that can have operational effects. No universal remediation sequence or fixed timing is promised.
 - Four worked cases and the supplier-portal transfer exercise require scoped evidence and preservation of legitimate access. Narration was reviewed for direct, patient explanation without source links or course-method commentary.
 
-Diagram source: [editable change and observation flow](assets/SYS-004_access_change_and_observation.txt). The same diagram is embedded in the lesson. Text synchronization and local-link checks are separate from graphical rendering and publication-format validation, which have not been performed.
+Historical diagram source: [editable change and observation flow](assets/SYS-004_access_change_and_observation.txt). This was embedded in revision 1.x and remains unchanged; the current asset is linked above. Text synchronization and local-link checks are separate from graphical rendering and publication-format validation, which have not been performed.
 
 #### Feedback revision 1.1
 
@@ -271,17 +294,19 @@ Unique example number 14004; Search date-query GMT/browser-display behavior sele
 | Title | Building access management is only the beginning |
 | File | [SYS-005_Implementation_Administration_Support_and_Governance.md](lessons/SYS-005_Implementation_Administration_Support_and_Governance.md) |
 | Course placement | Module 1.5: how implementation, administration, support, and governance work relate |
-| Revision | 1.1 |
-| Content status | Complete lesson with an application-service example, acceptance and handover reasoning, incident recovery and prevention, governance follow-up, a handoff diagram, four worked cases, and a warehouse-portal transfer exercise |
-| Author review | Revision 1.0 reviewed against the teaching specification on October 20, 2026; scope, first-use explanations, operational reasoning, diagram, and worked answers checked; revision 1.1 received targeted feedback review on October 20, 2026 |
-| Documentation check | October 20, 2026; official SailPoint references mapped in the author records |
-| Tenant testing | Not performed; application, permission names, records, integration behavior, and incident results are fictional |
+| Revision | 2.0 |
+| Content status | Concept-led revision with connected beginner explanations, acceptance and handover, continuing administration, evidence-led recovery, governance follow-up, one work/evidence diagram, four worked cases and warehouse transfer |
+| Author review | Revision 2.0 reviewed under teaching specification 3.1 on October 25, 2026; baseline and pilot coverage reconciled in the current revision record; beginner validation is separate |
+| Documentation check | October 25, 2026; ten official sources mapped in the current author record |
+| Tenant testing | Not performed; neutral permission, integration and incident facts are hypothetical, not observed tenant results |
 | Learner validation | Pending; no beginner read-through or teach-back observed |
 | Publication status | Not approved for publication; learner and publication-format checks pending |
 | Known unresolved content issues | None identified in author review; actual connector capabilities, release availability, assignment origins, and recovery behavior require environment-specific verification |
-| Next action | Preserve SYS-005 for further feedback and learner validation; SYS-006 was opened following the user's instruction to continue |
+| Next action | Preserved after the user's instruction to continue to SYS-006; separate beginner validation remains pending |
 
-#### Author-review notes for SYS-005
+Current coverage, references, assessments and executed checks: [SYS-005 revision 2.0 record](author/revisions/SYS-005_Concept_Led_Revision_Record.md). Current editable diagram: [work and evidence handoffs](assets/SYS-005_work_and_evidence_handoffs.txt).
+
+#### Historical author-review notes for SYS-005 revisions 1.x
 
 - Explains categories of work and their feedback, rather than repeating SYS-003's team-ownership map or presenting a mandatory organization chart.
 - Re-establishes Devi's invoice-checking duty, existing account, missing review permissions, and prohibited payment-release capability. The chosen release deliberately excludes automatic account creation.
@@ -293,7 +318,7 @@ Unique example number 14004; Search date-query GMT/browser-display behavior sele
 - A read-only integration variation makes manual execution and agreed service expectations explicit. No automatic write capability is invented.
 - Four worked cases and the transfer exercise require decisions, evidence, safe verification, and unresolved-gap handling. Source links and teaching-method announcements remain outside the learner file.
 
-Diagram source: [editable service-work handoffs](assets/SYS-005_service_work_handoffs.txt). The diagram labels human work and evidence transfers rather than automatic ISC stages. Exact text synchronization and local links are checked separately from publication rendering, which remains pending.
+Historical diagram source: [editable service-work handoffs](assets/SYS-005_service_work_handoffs.txt), preserved unchanged. The current asset is linked above. Text synchronization and local-link checks remain separate from graphical rendering and publication-format validation, which are pending.
 
 #### Feedback revision 1.1
 
@@ -306,17 +331,19 @@ Unique example number 15005 and consistent campaign/certification meanings. Supp
 | Title | Follow the access problem across the systems |
 | File | [SYS-006_Following_an_Access_Problem_Across_the_Enterprise.md](lessons/SYS-006_Following_an_Access_Problem_Across_the_Enterprise.md) |
 | Course placement | Module 1.6: following an access problem across the enterprise using a system map |
-| Revision | 1.1 |
-| Content status | Complete lesson with a connected record/decision map, department-input investigation, corrected path, changed-evidence variations, four worked cases, and a contractor/location transfer exercise |
-| Author review | Revision 1.0 reviewed against the teaching specification on October 20, 2026; definitions, dependencies, example conditions, evidence, narration, and worked reasoning checked; revision 1.1 received targeted feedback review on October 20, 2026 |
-| Documentation check | October 20, 2026; official SailPoint documentation, OWASP authorization guidance, and Microsoft session documentation mapped in author records |
-| Tenant testing | Not performed; records, codes, times, account/permission names, application rules, and results are fictional |
+| Revision | 2.0 |
+| Content status | Concept-led revision tracing collection, selected mapping input, identity, criteria, delivery and use; narrow dependency diagram, corrected continuation, changed-evidence variations, four worked cases and contractor transfer |
+| Author review | Revision 2.0 reviewed under teaching specification 3.1 on October 25, 2026; baseline coverage reconciled and connected explanation reviewed; observed beginner validation remains separate |
+| Documentation check | October 25, 2026; fifteen primary references mapped in the current revision record |
+| Tenant testing | Not performed; neutral records, values, times, configuration, application rules and results are hypothetical |
 | Learner validation | Pending; no beginner read-through or teach-back observed |
 | Publication status | Not approved for publication; learner and publication-format checks pending |
 | Known unresolved content issues | None identified in author review; each real implementation requires its own mapping authority, grant path, processing, connector, and enforcement evidence |
-| Next action | Preserve SYS-006 for further feedback and learner validation; FND-001 has been reviewed and FND-002 authored following the user's instruction to continue |
+| Next action | User read-through and separate beginner validation; then revise FND-001 in place, locally only |
 
-#### Author-review notes for SYS-006
+Current coverage, references, assessment mapping and executed checks: [SYS-006 revision 2.0 record](author/revisions/SYS-006_Concept_Led_Revision_Record.md). Current editable diagram: [records, decisions and delivery](assets/SYS-006_records_decisions_and_delivery.txt).
+
+#### Historical author-review notes for SYS-006 revisions 1.x
 
 - Combines the system relationships into one investigation. It does not promise complete troubleshooting coverage for every connector or expose invented internal ISC services.
 - Establishes Devi's effective transfer, existing reporting account, successful sign-in, denied report operation, and required permission before tracing the records.
@@ -329,7 +356,7 @@ Unique example number 15005 and consistent campaign/certification meanings. Supp
 - First-use explanations include identity profiles, authoritative populations, mappings, criteria, roles/profiles/entitlements, processing, provisioning, and separately configured attribute synchronization.
 - Four worked cases and the contractor/location transfer require causal reasoning and missing-evidence identification. No source links, forced story continuity, or teaching-method announcements are present.
 
-Diagram source: [editable enterprise access map](assets/SYS-006_enterprise_access_map.txt). It is embedded as a text diagram and distinguishes dependencies, selected inputs, criteria branches, collection, and human checking. Exact source synchronization and local links are checked separately from graphical or publication-format rendering, which remains pending.
+Historical diagram source: [editable enterprise access map](assets/SYS-006_enterprise_access_map.txt), preserved unchanged. Revision 2.0 uses the narrower current asset linked above. Source synchronization and local links are checked separately from graphical publication rendering, which remains pending.
 
 #### Feedback revision 1.1
 
@@ -1986,6 +2013,8 @@ This cleanup does not constitute fresh technical verification, tenant testing, l
 
 ## Next lesson in course order
 
+The active next task is revising existing SYS-003 under teaching specification v3.0, locally only. This replaces continuing new-lesson authoring for now. The following reservation is preserved, not opened.
+
 All six Module 1 lessons, all seven Module 2 lessons, all eight Module 3 lessons, all eight Module 4 lessons, all nine Module 5 lessons, all eight Module 6 lessons, all nine Module 7 lessons, all nine Module 8 lessons and all eight Module 9 lessons are authored. Learner validation and formal publication review remain separate pending stages. All six Module 10 lessons and all seven Module 11 lessons are authored. The first six Module 12 lessons are authored; Module 12.7 onward remains planned.
 
 The next new lesson is Module 12.7:
@@ -2009,7 +2038,7 @@ Use separate status fields rather than a single ready label. If a review has not
 
 ## Course-level work still ahead
 
-- Write the remaining lessons, one complete file at a time.
+- Revise the existing lessons in course order under the concept-led approach, one complete file at a time; all six Module 1 lessons, SYS-001 through SYS-006, are revised and FND-001 is next. Save locally without pushing or deploying until asked. Resume the remaining new lessons from reserved ROL-007 when the revision pass is complete or the user changes priorities.
 - Develop the optional readiness diagnostic and its subject-specific routing and retry questions.
 - Finalize displayed module numbering before publication, including the split lifecycle modules 16A, 16B, and 16C. Keep permanent lesson IDs stable.
 - Build the glossary and supporting reference aids as authored lessons establish their terminology. Do not substitute these aids for explanations inside lessons.

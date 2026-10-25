@@ -1,12 +1,12 @@
 # Repository and GitHub Pages
 
-Repository: https://github.com/TedxHarry/ISC_Theory_Learning
+Repository: https://github.com/TedxHarry/ISC_Theory_TedxHarry
 
-Reading site: https://tedxharry.github.io/ISC_Theory_Learning/
+Reading site: https://tedxharry.github.io/ISC_Theory_TedxHarry/
 
 ## Source and deployment
 
-The existing ISC_Theory course folder is the repository root. Markdown lessons in lessons/ remain the editable teaching source. GitHub Pages builds the main branch at the repository root using its supported Jekyll build.
+The separate ISC_Theory_TedxHarry folder is this edition's repository root. Markdown lessons in lessons/ remain the editable teaching source. GitHub Pages builds the main branch at the repository root using its supported Jekyll build. The original ISC_Theory folder, repository and site are preserved separately.
 
 _config.yml defines the project base path and excludes authoring material from the reading site. The original lessons do not need added front matter: the supported optional-front-matter plugin and path defaults apply _layouts/lesson.html. Relative diagram links remain valid because lessons retain their directory and HTML basename.
 
@@ -20,7 +20,15 @@ Save and review the affected lesson. Update the course manifest when adding a le
 
 Check the Pages build result and the live affected lesson after a push. Verify the complete content, links, images, tables, and diagrams. Saving or deploying a lesson does not change its learner-validation or publication-review status.
 
-## Publishing scope
+## Concept-led edition publication
+
+The user authorized this new public repository and Pages site on October 25, 2026. The snapshot contains all ninety-one existing lessons, with SYS-001 through SYS-006 individually revised under the concept-led approach. The remaining eighty-five lessons retain their existing revisions. All author records, pilots and historical assets are preserved. No lesson is shortened for deployment.
+
+See the [new-repository publication record](NEW_REPOSITORY_PUBLICATION_2026-10-25.md) for the exact deployed revision and verification results. Working-edition deployment is not beginner validation or formal publication approval. Future authoring continues with FND-001 in this repository; further publishing still follows the user's instructions.
+
+## Historical publishing notes inherited from ISC_Theory_Learning
+
+The entries below describe earlier development and deployments of the original edition. Their counts and next-lesson reservations are historical, not the current revision target.
 
 Initial deployment covers seven existing lessons: SYS-001 through SYS-006 and the FND-001 foundation pilot. The rest of the curriculum remains planned. No glossary interaction, learner account system, progress tracking, or analytics is added.
 

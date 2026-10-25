@@ -1,0 +1,43 @@
+CHANGE ACCESS
+Configured request and review
+  denied -> no grant from this request
+  approved
+     |
+     v
+ISC initiates supported target operation
+  rejected -> investigate delivery
+  applied
+     |
+     v
+Intended account has Read invoices
+
+USE ACCESS
+Application directs browser to IdP
+     |
+     v
+IdP verifies user and applies entry policy
+  denied -> this entry path stops
+  permitted
+     |
+     v
+Application validates sign-in response
+and maps to an existing enabled account
+  unusable -> application entry fails
+  usable
+     |
+     v
+Application establishes session and cookie
+     |
+     v
+Later request includes session cookie
+     |
+     v
+Server validates session and finds account
+     |
+     v
+Current invoice permission check
+  absent  -> deny reading
+  present -> allow under supplied rule
+
+OBSERVE ACCESS, separately
+Target records -> aggregation -> ISC view

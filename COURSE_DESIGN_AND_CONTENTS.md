@@ -35,7 +35,7 @@ Small configuration examples and API responses are included when they reveal beh
 
 The course order follows concept dependencies. Each lesson provides enough context and supporting explanation to be independently understandable. Optional links provide additional depth.
 
-Fictional companies and employees support explanations. No continuing fictional story is required to understand later material. Examples state their relevant data, configuration, connector capabilities, and starting state.
+Concept-led mentoring provides the explanation. Revised lessons do not depend on fictional companies or named employees. Small neutral examples retain only the data, configuration, connector capabilities, starting conditions, and outcomes needed to understand the mechanism. The SYS-005 and COR-004 pilots informed this approach; their section order and visual counts are not course templates.
 
 ### Every substantial topic must reach sufficient depth
 
@@ -52,7 +52,7 @@ Fictional companies and employees support explanations. No continuing fictional 
 | Failure behavior | How missing data, conflicting conditions, unsupported operations, and partial failures affect the outcome. |
 | Engineering judgment | How to choose an approach, assess a change, or investigate a symptom. |
 
-These are topic-level requirements. Individual lessons use the structure that best explains their subject. There is no fixed word count or maximum lesson count.
+These are topic-level requirements, not compulsory section headings. Individual lessons use the structure that best explains their subject. There is no fixed word count, maximum lesson count, or quota for diagrams, tables, examples, or questions. Existing lessons are being revised from the beginning, one at a time, without reducing required coverage; the course register distinguishes revised lessons from those still awaiting the pass.
 
 ### Lessons use several teaching formats
 

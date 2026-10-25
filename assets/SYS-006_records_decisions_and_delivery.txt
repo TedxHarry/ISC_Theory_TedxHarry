@@ -1,0 +1,42 @@
+HR: FIN                  Directory: OPS
+   |                           |
+aggregation               aggregation
+   v                           v
+Collected FIN             Collected OPS
+   \                           /
+    \                         /
+     Department mapping selects
+          directory input
+                 |
+                 v
+Identity department: OPS
+Employment status: ACTIVE, from HR
+                 |
+        identity processing
+                 v
+Role: department FIN AND status ACTIVE?
+        /                     \
+      no                       yes
+      |                         |
+      v                         v
+No new grant              Role assigned
+from this path                  |
+                                v
+                         Required access
+                         profile contents
+                                |
+                           provisioning
+                                v
+                         Reporting account
+                         applied/rejected
+                                |
+                         application check
+                                v
+                         Viewing allowed
+                         or denied
+
+Separate observation:
+Reporting account --aggregation--> ISC
+
+Arrows show example dependencies,
+not ISC's internal service topology.

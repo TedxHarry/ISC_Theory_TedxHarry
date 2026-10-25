@@ -1,419 +1,434 @@
 # What should be allowed, what ISC records, and what actually works
 
-Lesson ID: SYS-004  
-Revision: 1.1
+A temporary assignment ends at 09:00. The person must still be able to read reports, but must no longer be able to export them.
 
-Devi works in operations. She uses a reporting application to read daily reports. For a temporary assignment, she was also allowed to export those reports into a file.
+At 09:06, SailPoint Identity Security Cloud, or **ISC**, still lists export access. The application administrator checks the reporting account and finds export access there too.
 
-That assignment ends at 09:00 today. From then on, she should still be able to read reports, but she should no longer be able to export them.
+The two records agree. Is the access correct?
 
-At 09:06, an engineer checks SailPoint Identity Security Cloud, or ISC. The access information still shows the export permission. An application administrator checks the reporting application and finds the same permission on Devi's account.
+No. They agree about something that should no longer be allowed.
 
-Both systems agree.
+Later, an authorized administrator removes export access. The application now refuses exports, but ISC still displays the earlier information.
 
-Is the access correct?
+This time the records disagree, although the application is enforcing the required restriction.
 
-No. Their agreement tells us that their records match. It doesn't tell us whether Devi should still have that access.
+To explain either situation, you need to connect the requirement, the work performed, the information collected, and the application's actual decision. Comparing two screens alone leaves those connections unanswered.
 
-Now imagine that the administrator removes the export permission correctly. The application stops allowing exports, but ISC's collected information hasn't yet caught up.
+## What exactly needs to stop, and what must remain?
 
-The systems disagree. Yet the application is now enforcing the right restriction.
+“Remove reporting access” could mean several different changes. It might mean stopping sign-in, reading, exporting, or administration. Those actions don't have the same effect on the person's work.
 
-When you're investigating access, you need more than a match between two screens. You need to know what each screen represents, when its information became true, and what the organization wanted to happen.
+A **permission** allows an action or access to a resource. For this hypothetical reporting application, call the two permissions **Read reports** and **Export reports**.
 
-## First, make “access” specific enough to check
+Read reports allows reading the daily operations reports. Export reports allows exporting that same report collection to a file. The labels are illustrative, not built-in SailPoint permissions.
 
-“Devi has access to reporting” is too broad for this investigation.
+The requirement is to remove export while preserving reading and leaving the existing account enabled. Disabling the whole account would stop export, but would also stop legitimate reading. That would solve the wrong problem.
 
-Does that mean she can sign in? Read one report? Read every report? Export data? Change another person's permissions?
+An **account** is a record in a particular system used by a person or another actor. An ISC **identity** represents the person and connects their identity information, associated accounts, and access.
 
-Let's make the example precise. The names, times, records, and results here are fictional.
+The identity and the reporting account are related records, not one object. Before comparing evidence, establish that you're examining the account actually used for the operation. A correct result about another account wouldn't answer this question.
 
-| Item | What it means in this example |
-|---|---|
-| Person | Devi, an operations employee |
-| Application account | `report-14004`, the account Devi uses in the reporting application |
-| `REPORT_READ` | Permission to read the daily operations reports |
-| `REPORT_EXPORT` | Permission to export those reports to a file |
-| Requirement from 09:00 | Keep reading available; stop exporting |
-| Account requirement | Keep the existing account enabled |
+The report collection matters too. Permission to export a different collection wouldn't establish whether these daily operations reports can be exported.
 
-An **account** is a record in a particular system through which a person or service uses that system. An **identity** in ISC represents the person and brings together information about their associated accounts and access. Devi's identity and her reporting account are related records, not the same object.
+For the main example, assume one relevant existing, enabled reporting account. Its direct permissions determine reading and export; there is no alternative grant of export. The application checks current account permissions for each operation. We'll examine different grant and session conditions separately.
 
-The account name matters. If you inspect one account while Devi uses another, you can produce a perfectly accurate answer about the wrong account.
+All names, times, records, and outcomes here are hypothetical. Times are on the same day in the same time zone. The 09:00 deadline is the business requirement, not a guarantee that an ISC expiry setting enforces every application's restriction at that exact second.
 
-The permission's scope matters too. Here, both permissions concern daily operations reports. A permission for a different report collection would not answer our question.
+## Where does “should be allowed” come from?
 
-For this application, assume the administrator has confirmed that these are direct account permissions, that no other permission grants export, and that the application checks current permissions when handling each export operation. We'll change those conditions later.
+**Intended access** is what the organization has decided should be allowed for the person, under the relevant conditions and for the applicable period.
 
-The 09:00 deadline is a business requirement. It is not a claim that an ISC expiry setting guarantees enforcement in every application at that exact second.
+In this case, temporary export ends at 09:00. Reading continues. Both parts belong in the requirement, because a removal can be too broad as well as too narrow.
 
-## What should Devi be allowed to do?
+The decision might come from an approved job-access policy, a manager's approved request, an application owner's decision, or an authorized removal instruction. Establish which decision applies and who has authority to make it.
 
-The first view is **intended access**: what the organization has decided should be allowed, for whom, under which conditions, and for how long.
+An **access request** asks for specified access for a person. Its approval records the decision about that request; it doesn't itself edit the reporting account.
 
-For Devi, the requirement is:
+Time is part of that decision. Last week's genuine approval can explain why export was granted without justifying why it is still available after the approved period ends.
 
-> From 09:00, account `report-14004` must retain `REPORT_READ` and must no longer be able to export the daily operations reports.
+There is also a difference between the approved requirement and the configuration intended to implement it.
 
-Notice that this states both what must stop and what must remain.
+Suppose an engineer configures permanent export access for everyone in Operations, although the approved policy permits export only during a temporary assignment. The systems could follow that setting perfectly and still provide inappropriate access.
 
-Disabling the entire account would stop exports, but it would also prevent legitimate reading. That would not satisfy the requirement.
+First ask whether the configuration expresses the approved requirement. Then ask whether the systems carried it out correctly. Successful execution of the wrong requirement isn't a correct business outcome.
 
-Where does intended access come from? It can come from an approved job-access policy, a manager's approved request, an application owner's decision, or an approved removal instruction. The organization must identify which decision applies and who has authority to make it.
+## How did export reach the ISC screen?
 
-An **access request** asks for specified access for a specified person. Approval records a decision about that request. It doesn't, by itself, prove that an application has changed.
+The permission exists in the reporting application. ISC needs a way to obtain information about that account.
 
-For temporary access, you also need the applicable period. An approval from last week can be genuine while no longer authorizing today's access.
+A **source** is ISC's configured representation of a system or account-data collection. A **connector** provides the integration used to read the information and perform supported changes.
 
-Don't let the configured rule replace the business requirement in your reasoning.
+The reporting source therefore represents information about the application; it isn't the application itself.
 
-Suppose an engineer configures permanent export access for every operations employee, although the approved policy permits export only during a temporary assignment. ISC can execute that configuration correctly and still produce the wrong business outcome.
+ISC represents a source access right, such as an application permission or group membership, as an **entitlement**. In this example, Read reports and Export reports are represented as entitlements.
 
-There are two separate questions:
+**Account aggregation** reads source account information into ISC. The data can cover a configured account population or, for a supported change-based collection, relevant changes since an earlier collection.
 
-1. Does the configuration express the approved requirement?
-2. Did the systems carry out that configuration correctly?
+Suppose the relevant collection obtained both permissions at 08:45. ISC now has an observation that the reporting account held read and export in the collected data.
 
-A successful answer to the second question cannot repair a mistake in the first.
+At 08:45, that observation agrees with the temporary assignment. After 09:00, it is still an accurate description of what was collected earlier. It isn't automatically evidence of the account's current state or of what should be allowed now.
 
-## What does ISC actually know?
+That distinction explains why an old permission can remain on a screen after a target change. The displayed information needs a new observation or another supported update before you can treat it as reflecting that change.
 
-ISC holds information used to manage access, but that information does not all have the same meaning.
+## What work was needed to remove it?
 
-A **source** is ISC's configured representation of a connected system or collection of account data. A **connector** provides the integration that reads data and, where supported and configured, makes changes.
+Reading the account doesn't remove a permission. A change has to reach the application.
 
-In this example, the reporting source represents the reporting application's accounts in ISC. It is not the reporting application itself.
+**Provisioning** is the work of making account or access changes through a supported integration. Here, ISC initiates an operation to remove Export reports.
 
-An **entitlement** is an access item represented from a source, such as a group membership or application permission. Here, `REPORT_READ` and `REPORT_EXPORT` are represented as entitlements.
+The reporting application is the **target system**, the system receiving the change. For the illustrated automated path, the connector supports this removal, provisioning is enabled, and the authorized change has been initiated. The target still needs to accept and apply the operation.
 
-Now look at the kinds of information an engineer can encounter.
+The integration also needs authority to perform the update.
 
-### A definition says what an access item means
+With a connector that uses an **integration account**, that technical account performs work in the target. It isn't the **recipient account**, the person's reporting account whose permission is changing.
 
-An access item can exist in ISC's access model without being assigned to Devi.
+An **integration privilege** is authority held by the integration to perform an operation. The integration might be allowed to read reporting accounts while lacking authority to remove their permissions.
 
-For example, an **access profile** bundles related entitlements from one source. A profile named “Operations reporting” might contain `REPORT_READ`. Its definition tells us what the bundle contains. Finding that definition does not establish that Devi holds it.
+Those are separate capabilities. A successful account collection doesn't prove the connection can perform a removal. Some integrations use another supported authentication mechanism rather than a dedicated user account, but the operation still requires appropriate authority.
 
-A **role** can group access for a business responsibility. A configured role assignment can be a reason ISC seeks to provide access. Before treating that assignment as evidence of a completed target change, you still need to check what happened.
+In our example, the target rejects the removal because the integration lacks the required removal privilege. The approved instruction exists and the attempt occurred; the specific account change did not complete.
 
-Names also need interpretation. “Basic reporting” sounds harmless, but its configured entitlements determine what is included. The application's own permission rules determine what those entitlements allow.
+A failed removal doesn't become successful because the account was collected afterward. A newer read could confirm that export is still present, but would not supply the missing write authority.
 
-### A decision or assignment explains why access is being managed
+## What does the application permit at 09:06?
 
-A request record can tell you what someone asked for and the recorded decision. An assignment can show a relationship between an identity and an access item.
+The administrator finds Export reports on the correct target account. An authorized check using non-sensitive test data also succeeds in exporting a report.
 
-Neither should be read without context.
+**Effective access** is what the application permits for the account, operation, resource, and conditions being considered. Here, the tested account can still export the daily operations reports.
 
-**Identity processing** evaluates identity information and applicable access configuration; it is distinct from the application enforcing a permission. During this processing, ISC can detect an access profile when a user already holds its required entitlements.
+**Authorization** is the application's decision about whether an operation is allowed. Under our supplied rule, it checks the account's current Export reports permission for each export request. The permission is still present, so the application allows the operation.
 
-That detected profile is useful information about the access ISC recognizes. Its presence alone does not prove that ISC originally delivered those entitlements.
+The business restriction is therefore unmet.
 
-If you need to explain how access arrived, investigate its history. Don't invent a delivery story from a current access label.
+Notice what each observation contributes. The target record establishes that the permission is present. The controlled check establishes that this export worked under the tested conditions. The rejected provisioning operation explains why that particular attempt didn't remove the permission.
 
-### An activity record describes work, not every current condition
+### Where does the visible button fit?
 
-**Provisioning** is the process of making account or access changes in another system. Removing `REPORT_EXPORT` is a provisioning change when ISC sends that supported removal to the reporting application.
+The page and its controls are the **front end**, the part the person sees and interacts with. The trusted application services handling the request are the **back end**.
 
-Provisioning activity can help establish which change was attempted, for which account, and what result or error was reported. In a manual fulfillment arrangement, a task instead records the work assigned to a person.
+Hiding an Export button changes the interface. It doesn't establish that the back end rejects an export request reaching it through another supported interface.
 
-Read the actual operation and its stage. A request decision, a submitted change, and a reported successful operation answer different questions.
+The restriction needs to be enforced where the protected request is handled. A meaningful check must establish whether export was allowed or refused, rather than relying only on the button's appearance.
 
-Even a genuine successful operation is historical evidence. A different administrator could change the account afterward. You also need to know whether the reported operation covered the exact permission and account being investigated.
+A failed test also needs its cause. “Service unavailable” might mean the request never reached a working permission check. That isn't the same evidence as an authorization denial.
 
-### Collected account data describes what ISC obtained
+A **session** connects later application requests to a signed-in user. An expired session can stop a request too, without demonstrating that the export permission has been removed. Establish the relevant account and valid sign-in conditions when interpreting an application result.
 
-**Aggregation** reads account data from a source into ISC. Depending on the integration and aggregation method, the collection can cover a full set of accounts or supported changes since an earlier collection.
+## Put the first observations in order
 
-If ISC collected `REPORT_EXPORT` on `report-14004` at 08:45, that gives us an observation of the permission in the collected data. It doesn't establish that the permission is still present at 09:15.
+The sequence explains why the matching records at 09:06 don't show a successful restriction.
 
-These are different meanings within “what ISC knows”: definitions, decisions, assignments, attempted operations, and collected observations. They aren't one universal current-state indicator.
+| Time | Event or observation | What it establishes |
+|---|---|---|
+| 08:45 | ISC collects Read reports and Export reports | Both appear in the collected account data. |
+| 09:00 | The approved temporary export period ends | Export should stop; reading should remain. |
+| 09:02 | An authorized export-removal operation is initiated through ISC | The change is being attempted. |
+| 09:03 | The target rejects it for missing integration removal privilege | This attempted removal did not complete. |
+| 09:05 | The administrator checks the target account | Both permissions are still present. |
+| 09:06 | A safe, authorized export check succeeds | Export is still permitted under the tested conditions. |
 
-The distinction is our way of reading evidence. “Intended,” “known,” and “effective” are not three ISC status fields you should expect to find on a screen.
+The failed write and the current target evidence fit together. ISC's old collected view happens to agree with the target because the attempted removal didn't change it.
 
-This gives you a way to read the interface. An identity's Access tab presents represented access items. An account detail view presents account information and attributes. Provisioning reports and Account Activity help you inspect change activity. None of those screens is a live test of whether the reporting application will allow an export.
+“Run aggregation again” doesn't address that demonstrated failure. It can provide another observation, but the team needs an authorized correction to the delivery path or another approved removal method.
 
-## What can the application actually allow?
+If continued export creates an immediate risk, escalate under the organization's incident process. Waiting for a display update doesn't contain the capability to export.
 
-**Effective access** is what the application will permit for the account, operation, resource, and conditions being considered.
+This sequence concerns one explicitly rejected removal. A change with several operations can have mixed outcomes. If an operation's result is uncertain rather than rejected, inspect its actual result and current target state before deciding what failed or repeating it.
 
-The **target system** is the system receiving an account or access change. Here, the reporting application is the target.
+## What changes after a separate manual correction?
 
-Its account permissions are one part of the answer. Its enforcement rules determine how those permissions affect an operation.
+For this example, the application owner authorizes a manual correction by the application administrator.
 
-**Authorization** is the application's decision about whether an operation is allowed. In our example, the application checks `REPORT_EXPORT` when the account attempts an export. With the permission present, the export is allowed. Without it, the export is denied.
+An **assignment** connects an ISC identity with an access item. Before making a target-only change, the engineer checks whether an ongoing assignment or rule would cause export to be restored. For this correction, no continuing configured requirement calls for export.
 
-The user-facing page is the **front end**. The trusted application services handling the export are the **back end**. Hiding an Export button on the front end is not sufficient evidence that the back end rejects an export request.
+The administrator removes only Export reports, leaving Read reports and the account's enabled state unchanged.
 
-You want the actual permission check to enforce the restriction, including when a request reaches the back end through another supported interface.
+| Time | Event or observation | What it establishes |
+|---|---|---|
+| 09:12 | The administrator removes Export reports directly in the target | A separate corrective action occurs. |
+| 09:13 | A target check finds reading present and export absent | The inspected account permissions match the requirement. |
+| 09:14 | Controlled checks allow reading and deny export for a permission reason | The tested behavior matches the requirement. |
+| 09:15 | ISC still displays the information collected at 08:45 | This collected view hasn't incorporated the correction. |
+| 09:20 | A permitted collection obtains the corrected account data | The relevant ISC account information now reflects the corrected permissions. |
 
-A successful export establishes that the operation worked under the tested conditions. It does not prove access to every report or through every account.
+At 09:15, making the target match the old ISC observation would put Export reports back. That would undo the correction.
 
-A failed export needs more interpretation. An unavailable application, an expired sign-in session, and an authorization denial can all stop an operation. Only the last directly tells us that the tested operation was refused for a permission reason.
+The approved requirement tells you which outcome is wanted. Current target and application evidence tell you whether that outcome has been achieved within the checked scope. The older observation tells you about unfinished information maintenance.
 
-A **session** is the application's continuing context for a signed-in user. Applications differ in when they reevaluate permissions and how they end existing sessions. Don't assume that removing a permission automatically invalidates every session or every previously issued credential.
+The 09:20 collection is a supplied event, not an automatic round trip guaranteed after every change. A real integration may update information through another supported mechanism. Establish what actually updated the relevant record.
 
-For our reporting application, we have explicitly assumed current-permission checks on each operation. That makes the main example straightforward. It is a condition to verify in a real project, not a property ISC can impose on every application.
+### What should happen to the failed operation's history?
 
-## Follow the change in both directions
+Keep it as a failure. The manual correction is a different action; it doesn't turn the 09:03 rejection into a successful ISC operation.
 
-There are two useful directions to keep in view: changing the target and learning about the target.
+Record the correction and the evidence connecting it to the original issue. Otherwise, someone reading only the failed activity might reasonably think the target remains unchanged.
+
+The deadline was also missed. Correct behavior at 09:14 doesn't establish that export stopped at 09:00.
+
+Preserve the verified timeline and any unresolved exposure interval. Permission observations and a safe test don't prove whether real business data was exported. That requires relevant usage evidence under the organization's process.
+
+An accurate explanation can therefore say that the current restriction is verified while also acknowledging late enforcement, a failed original operation, and pending record maintenance.
+
+## See the change and observation as different directions
+
+The same target account connects these paths. One changes its permissions; the other obtains information about them.
 
 ```text
-CHANGE PATH: seek the required target state
-
+CHANGE ACCESS
 Approved business requirement
-          |
-          v
-ISC configuration and authorized change
-          |
-          v
-Provisioning attempt through supported integration
-          |
-          +-- rejected --> Required target change not completed
-          |
-          +-- applied ---> Target account permissions change
-                                      |
-                                      v
-                         Application enforces its own rules
-                                      |
-                                      v
-                         Operation permitted or denied
+     |
+     v
+Configured, authorized removal
+     |
+     v
+ISC attempts supported target operation
+  rejected -> this removal not completed
+  applied
+     |
+     v
+Target account permissions change
+     |
+     v
+Application applies its access rules
+     |
+     v
+Protected operation allowed or denied
 
-OBSERVATION PATH: collect information about the target
-
+OBSERVE ACCESS
 Target account data
-          |
-          v
-Aggregation within configured collection scope
-          |
-          v
-ISC account information
+     |
+     v
+Aggregation within configured scope
+     |
+     v
+ISC's collected account information
 
-HUMAN CHECK: compare requirement, records, and target evidence.
-These paths do not guarantee an immediate round trip.
+HUMAN COMPARISON
+Compare requirement, records and behavior
+Check account, scope, time and conditions
 ```
 
-The change path shows an attempted supported operation, not guaranteed delivery. Its rejection branch means the specific illustrated removal was not completed. A more complex change containing multiple operations can require checking each operation separately.
+The arrows show dependencies in the selected paths, not ISC's private service architecture. The rejection branch concerns this removal; it doesn't summarize every operation in a larger request.
 
-The observation path reads information back. Reading that information is not itself proof that the business requirement has been enforced.
+Observation can happen independently of a write. It doesn't have to wait for a user sign-in, and it isn't itself proof that the business restriction was enforced.
 
-The human check is shown separately because the diagram does not describe a universal automatic ISC comparison that corrects every difference. Nor does it describe ISC's internal service architecture.
+The human comparison is separate because this isn't a universal automatic ISC routine that repairs every difference. Collection can also lead to configured processing and another change, which is why the surrounding configuration matters before starting it.
 
-Collection can lead to further configured processing, and that processing can initiate other changes. This is why “run aggregation” isn't always a harmless way to refresh a screen.
+The manually performed correction from the timeline reaches the target through a separate authorized operator, not through a second successful pass along the illustrated ISC write path.
 
-## At 09:06, agreement hides the problem
+## Why can different ISC records seem to tell different stories?
 
-Let's inspect the fictional events. All times below are on the same day in the same time zone.
+So far, we've used a collected permission and a provisioning result. ISC also contains access definitions, decisions, and assignments. Each answers a different question.
 
-| Time | Event or observation | What it establishes |
-|---|---|---|
-| 08:45 | ISC collects both reporting permissions on `report-14004` | The collected account data includes read and export |
-| 09:00 | The approved temporary export period ends | Export is no longer intended; reading remains intended |
-| 09:02 | An authorized removal of `REPORT_EXPORT` is initiated through ISC | A change is being attempted |
-| 09:03 | The target rejects the removal because the integration lacks the required removal privilege | This removal attempt did not complete |
-| 09:05 | The application administrator reads the current account permissions | Read and export are both still present |
-| 09:06 | An authorized check using non-sensitive test data successfully exports a report | The tested export operation is still permitted |
+### A bundle definition doesn't tell you who currently holds it
 
-The **integration privilege** here is the reporting-system permission held by the technical account used by the connector. It is different from Devi's permission to export reports.
+An **access profile** bundles related entitlements from one source. For example, a reporting profile might contain Read reports.
 
-The connector can have enough privilege to read account data while lacking permission to remove an entitlement. Being able to collect the account is therefore not proof that the integration can make the required change.
+Opening that definition tells you what the bundle contains. It doesn't establish that a particular person holds it, or that every entitlement has reached the person's target account.
 
-What should you conclude at 09:06?
+A friendly name such as “Basic reporting” doesn't settle the contents either. Inspect the configured entitlements, then establish what the application permits through them.
 
-The business requirement is unmet. The current target record and the controlled operation establish that export remains available. The failed provisioning attempt explains why this particular attempted correction did not remove it.
+A **role** groups access for a business responsibility. A role assignment can be a reason ISC seeks to provide access. The definition, assignment, delivery, and later application use are still different observations.
 
-ISC's older collected observation happens to agree with the current target. That agreement isn't evidence that the process worked. In this case, it is consistent with the change failing.
+This is also where the approved policy must be checked. If a supposedly reading-only profile contains Export reports too, matching records can demonstrate delivery of the wrong configuration.
 
-Could you resolve the issue simply by collecting the account again?
+### An assignment explains a relationship, not necessarily its whole history
 
-No. A new collection of the unchanged account would still find export. It could provide a newer observation, but reading the permission does not remove it.
+An assignment can help explain why access is being managed. A request can document a decision to assign it; a configured role can provide a different basis.
 
-The team needs an authorized correction to the failed delivery path or another approved way to perform the removal. If continued export creates an immediate risk, that also needs escalation under the organization's incident process. Waiting for a display to update is not a containment action.
+**Identity processing** evaluates identity data and applicable configuration. It can update identity information and initiate configured access changes. Completing this evaluation doesn't validate that target provisioning succeeded.
 
-## At 09:14, disagreement no longer means the same thing
+During processing, ISC can also recognize that a user already holds all the entitlements required by an access profile. That recognition is **detection**: the access profile is associated with the identity based on already-held access.
 
-For this example, the application owner authorizes a manual correction by the application administrator. The engineer confirms that there is no remaining configured assignment requiring export to be granted again.
+Seeing the detected profile doesn't prove ISC originally provisioned those entitlements. It tells you what ISC recognized in the information it evaluated. To explain how the access arrived, inspect the relevant history.
 
-The administrator removes only `REPORT_EXPORT`. This is an approved target-side change, not a second successful ISC provisioning attempt.
+### Activity describes work; collected data describes an observation
 
-| Time | Event or observation | What it establishes |
-|---|---|---|
-| 09:12 | Administrator removes `REPORT_EXPORT` from `report-14004` | A separate corrective action is performed in the target |
-| 09:13 | Target account check finds `REPORT_READ` present and `REPORT_EXPORT` absent | The inspected account permissions match the requirement |
-| 09:14 | Controlled checks confirm reading succeeds and export is denied for a permission reason | The tested application behavior matches the requirement |
-| 09:15 | ISC's collected account information still reflects the 08:45 observation | This ISC view hasn't yet incorporated the manual correction |
-| 09:20 | A permitted collection obtains the corrected account data and updates the relevant ISC account information | The collected view now reflects the corrected permissions |
+A provisioning report can tell you which operation was attempted, for which account, and what outcome or error was reported.
 
-At 09:15, blindly trying to make the target match the older ISC observation would restore export. That would undo the correction.
+In a supported manual-fulfillment arrangement, an assigned person carries out the change. **Fulfillment** means getting the access change performed. A task records assigned work and its completion status; target evidence is still needed to confirm the result.
 
-Which view should direct the next action? The approved requirement tells you which outcome is wanted. Current, correctly scoped target evidence tells you whether it has been achieved. The older observation tells you that ISC's information needs attention.
+Even a genuine success report is historical. The operation might have affected a different permission, or a later administrator might have changed the account again.
 
-This is why “make the systems match” is not a complete instruction.
+The collected account view has another boundary: it describes information obtained from the source within the relevant collection's scope. The time you open that view doesn't make the source observation newer.
 
-The original provisioning failure should remain part of the history. A later manual correction does not turn the 09:03 operation into a success. Record how the requirement was ultimately satisfied and connect that evidence to the original issue.
+This is why the phrase “ISC shows access” needs a follow-up question: which record is showing what?
 
-The deadline was also missed. Correct access at 09:14 does not prove that the 09:00 restriction took effect on time. Preserve the known exposure period and investigate any required usage evidence under the organization's process; the permission records alone don't tell you whether real business data was exported.
+An identity's Access tab presents represented access items. Account details present account information and attributes. Provisioning reports and Account Activity help inspect change activity. None performs a live export test merely because you open it.
 
-The collection at 09:20 is a selected event in this example, not an ISC timing guarantee. A real integration might update information through other supported behavior. Check what actually happened rather than assuming every successful change is followed by the same collection sequence.
+“Intended,” “recorded” or “known,” and “effective” are ways of reasoning about this evidence. They aren't three ISC status fields or competing product screens called “sources of truth.”
 
-## A fresh-looking screen can still contain older information
+## Which time does a timestamp actually describe?
 
-You open an ISC page at 09:30. What does that timestamp tell you?
+Suppose you open the account page at 09:30.
 
-Only that you looked at the page at 09:30.
+That establishes when you inspected it. It doesn't establish that the target account was read at 09:30.
 
-It doesn't tell you when the application account was last read or whether the displayed field has incorporated the change you're investigating.
+Several times can matter:
 
-Keep these times separate:
+- **Effective time** is when the approved requirement starts to apply.
+- **Target event time** is when a change occurs in the application.
+- **Collection time** is when the relevant account information is obtained.
+- **Display or search availability time** is when an update becomes available in the view being used.
+- **Inspection time** is when you look at the page or export the evidence.
 
-- **Effective time:** when the business requirement starts to apply.
-- **Target event time:** when a change actually occurs in the application.
-- **Collection time:** when the relevant account information is obtained.
-- **Display or search availability time:** when that information becomes available in the view you're using.
-- **Inspection time:** when you read the screen or export the report.
+These labels describe evidence, not five timestamp fields guaranteed on every ISC page. You may need to combine collection records, operation records, and application observations.
 
-These are evidence labels, not a promise that every ISC screen supplies five timestamp fields. You may need to combine operation records, collection records, and application evidence.
+ISC **Search** lets you query searchable information about identities, access, and activity. It isn't a fresh query to the reporting application for each search you submit.
 
-ISC Search provides a searchable representation of information. Updates aren't guaranteed to appear in Search at the exact moment another view changes. Synchronization timing depends on what changed and system conditions.
+An update can reach one ISC view before it becomes visible in Search. **Synchronization** here means bringing another view or service's information up to date. Its timing depends on the kind of change and system conditions, so don't assume one fixed delay for all information.
 
-**Synchronization** here means bringing information in another service or view up to date. It does not mean that Search is contacting the reporting application each time you submit a query.
+An empty search result therefore needs interpretation. Was the query scoped to the correct identity, account relationship, source, and access item? Was the relevant information collected and made searchable?
 
-If a query doesn't find Devi's export permission, check the query's scope, the identity and account relationship, and the freshness of the relevant information before concluding that the permission is absent.
+Time zones matter when comparing evidence too. SailPoint documents that date-based Search queries use **Greenwich Mean Time**, or **GMT**, while displayed Search dates use the browser's time zone.
 
-When comparing times from different systems, convert them to a common time zone. SailPoint documents that date-based Search queries use Greenwich Mean Time, or GMT, while displayed Search dates use the browser's time zone. A displayed time and a query value can therefore look different while referring to the same instant.
+Convert times to a common zone before putting them into one sequence. A query value and a displayed value can look different while representing the same instant.
 
-A careful investigation records both the time and its meaning. “Screenshot taken at 09:30” and “target permission checked at 09:30” are not interchangeable statements.
+“Screenshot taken at 09:30” and “target permission checked at 09:30” remain different claims, even after the time zones agree.
 
-## Fresh information can still be incomplete
+## Can a recent collection still miss important access?
 
-Suppose an aggregation completed a minute ago. Does that mean ISC has a complete picture of every way Devi can export?
+Yes. Freshness tells you about age; coverage tells you what was included.
 
-Not necessarily.
+A **filter** limits the records included in a collection. An **attribute** is a named value on a record, such as an account identifier or a permission list. An account **schema** describes the attributes ISC represents and how they are organized.
 
-A collection reads the data its integration and configuration cover. A **filter** limits which records are included. An **attribute** is a named value on a record, such as an account identifier or a list of permissions. The account **schema** describes which attributes ISC represents and how they're organized.
+A collection can finish successfully while excluding another account population. It can also lack a permission the integration doesn't expose or represent. A recent collection isn't automatically a complete picture of everything the person can do.
 
-You need to establish whether the relevant account and permission are actually included. A successful collection of one account population does not prove coverage of a separate administrator account or an application permission that the integration doesn't expose.
+First establish that the relevant account and permission are actually included. Then consider how the application grants the capability.
 
-Consider a reporting application that grants export through either a direct permission or membership in a privileged application group. A **group** brings accounts together so the application can assign access to its members. Removing the direct permission doesn't remove the group's separate grant.
+### What if export comes through a group as well?
 
-That changes the assumptions of our main example. It doesn't make the example's removal mechanism wrong. It means the real access requirement needs a wider check than that mechanism alone provides.
+A **group** brings accounts together so a system can apply shared access rules to its members.
 
-Likewise, if an application keeps permissions in an existing session, a fresh sign-in test and an old-session test can produce different results. Where the requirement includes stopping existing use, the verification must address existing sessions too.
+Change the application design so export is allowed through either a direct Export reports permission or membership in a privileged application group. Removing the direct permission now leaves another grant path.
 
-Missing evidence should make your conclusion narrower:
+The direct removal can succeed while export still works through the group. The failed overall restriction doesn't prove the individual removal failed; it proves that removing that path wasn't sufficient.
 
-> “I don't see export in the collected attributes for this account.”
+This is a different rule from our main example, which explicitly excluded alternative grants. Identify the actual rule and its inputs before choosing another change.
 
-That is more defensible than:
+### What if an old session keeps earlier access information?
 
-> “Devi cannot export anything.”
+The main example checks current permissions for every operation. Another application may keep permission information captured when the session began.
 
-To reach the second conclusion, you need evidence covering the relevant accounts, grant paths, resources, and session conditions. Even then, state the scope and time of the checks rather than promising that access can never change again.
+In that design, the target account can be updated while the existing session continues using earlier information. A new sign-in test and an old-session test can then produce different results.
 
-## Decide what kind of gap you're looking at
+Establish the application's actual enforcement and supported session-expiry or invalidation behavior. Don't declare a stale session proven merely because export continues; other grant paths or an unexpected account could also explain it.
 
-Before changing anything, separate four questions.
+If the requirement includes stopping existing use, its verification must address existing sessions. Permission removal alone doesn't establish that every session or previously issued credential has stopped being accepted.
 
-**Is the requirement clear and authorized?** If one owner says export must stop and another says it must continue, a data refresh won't resolve that disagreement. The decision needs resolution by the appropriate authority.
+A careful conclusion stays within the evidence: “Export isn't present in the collected attributes for this account” is narrower than “The person cannot export anything.”
 
-**Does the configuration express that requirement?** If an ongoing assignment still requires export, a manual removal can conflict with future configured processing. Inspect the applicable assignment logic before deciding that removal is a lasting correction.
+The broader conclusion needs evidence covering the relevant accounts, grant paths, resources, and session conditions. Record its scope and time, because later changes can alter the result again.
 
-**Did the required target change occur?** A rejection, a manual task awaiting completion, or a change sent to the wrong account belongs here. Read operation-level evidence and current target information.
+## Why can “refresh it” be the wrong next action?
 
-**Do ISC's relevant views reflect the target evidence?** If the target is correct but the collected view is older, investigate collection scope, results, and subsequent visibility. Don't undo a correct target change just to match an old record.
+Start by identifying the gap.
 
-The term **reconciliation** is used for comparing records or states and addressing differences. When someone asks you to “reconcile the access,” ask what is being compared, which requirement should govern the outcome, and whether they mean investigation or an actual corrective change. Don't assume they are naming one universal ISC action.
+If the business owners disagree about whether export should stop, collection won't settle their decision. If the configuration grants permanent export against a temporary-access policy, retrying its operations won't repair the requirement it expresses.
 
-Start with read-only checks where they can answer the question. A retry repeats an operation; it isn't merely another observation. If the first attempt's outcome is uncertain, understand the current state and the operation's behavior before repeating it.
+If the target rejected the removal, inspect the operation and required authority. If it applied to the wrong account, fix the account-selection problem. If another grant path still allows export, inspect that path and its business basis.
 
-The same caution applies to aggregation and identity processing. Processing can evaluate configured access and start provisioning, but its completion does not validate successful target provisioning.
+If the target is correct and ISC's observation is old, investigate collection scope, results, and subsequent visibility. Don't undo the correct target state to make it match an older observation.
 
-Choose an action because its mechanism addresses the diagnosed gap, not because its name sounds like “refresh everything.”
+The term **reconciliation** is often used for comparing records or states and addressing differences. Ask what is being compared, which requirement governs the result, and whether the requested action is investigation or an actual correction. It isn't the name of one universal ISC repair.
 
-## What evidence would let you close the issue?
+Use read-only checks when they can answer the question. A **retry** repeats an operation; it isn't simply another observation. An uncertain first result calls for current-state and operation checks before repeating a potentially state-changing action.
 
-For Devi's requirement, an adequate closure explanation needs to join the decision to the outcome.
+Aggregation reads data, but the resulting information can be used by configured processes that initiate writes. Identity processing can evaluate access requirements and start provisioning without proving that provisioning succeeded.
 
-First, identify the authorized restriction and its effective time. Then identify `report-14004` and the reporting permissions in scope.
+There is a concrete reason to inspect continuing assignments before a target-only removal. For entitlements assigned through access requests, SailPoint documents that removing the entitlement directly from the source account leads to **reprovisioning**, another attempt to provision it, at the next aggregation. The target must still accept and apply that write for access to return.
 
-Explain that the initial ISC removal failed, that an authorized administrator performed a separate correction, and that current target evidence confirmed export absent while read remained present.
+The source read and the resulting write are different operations. The assignment still requires the access, so a direct target edit alone may not provide a lasting withdrawal. Use the supported requested-access revocation process and verify its result; other grant origins have their own rules.
 
-Include the controlled behavioral checks and their conditions. Here, the application checks current permissions, there are no alternate grants in scope, reading works, and export is denied for a permission reason.
+That is why our manual-correction example explicitly establishes that no continuing requirement will restore export. A collection isn't a substitute for resolving the access assignment.
 
-Finally, account for ISC's information. If collection is still pending, say so and assign the remaining follow-up. Don't report every record synchronized when only the target correction has been confirmed.
+## What would let you close the issue accurately?
 
-A short operational update at 09:15 could say:
+Join the requirement to the verified outcome.
 
-> Export removal is confirmed for reporting account `report-14004`; reading remains available. The administrator performed the approved correction after the ISC operation failed. Target permissions and controlled application checks support the result. ISC's collected view still contains the earlier permission; collection follow-up remains open.
+For this example, identify the authorized 09:00 restriction, the exact reporting account, the daily reports in scope, and the reading capability that must remain.
 
-This distinguishes a confirmed target result from unfinished record maintenance. Whether the overall ticket can close with that follow-up separate depends on the organization's process.
+Explain that the ISC removal was rejected, then an authorized administrator performed a separate correction. Current target permissions and controlled application checks support the corrected result.
 
-## Work through these before checking the answers
+State the conditions: this account is enabled, Read reports remains, Export reports is absent, no alternate grant applies, and the application checks current permissions for the tested operations.
 
-### 1. The screenshot is newer than the change
+Then account for remaining work. At 09:15, the target result is verified but the collected view is still old. Assign that follow-up instead of reporting that every record is synchronized.
 
-An engineer initiates an export-removal operation at 11:00. A colleague opens ISC at 11:10 and sees export listed. The last relevant account collection was at 10:30. No target evidence after 11:00 is supplied.
+A useful update could say:
 
-Has the removal failed? What would you check next?
+> Export removal is confirmed for the reporting account, and reading remains available. An administrator performed the approved correction after the ISC operation failed. Target permissions and controlled application checks support the result. ISC's collected view still shows the earlier permission; collection follow-up remains open. The missed deadline is recorded separately.
 
-**Reasoning:** The screenshot cannot settle that question. It shows an observation older than the attempted change. The removal might have succeeded or failed.
+Whether the overall ticket can close while the collection follow-up remains open depends on the organization's process. A precise update lets the responsible people make that decision without confusing containment, record maintenance, and historical evidence.
 
-Check the operation result and the current target permission for the exact account. If target evidence confirms the correct state, investigate updating ISC's relevant observation. If the permission remains, investigate the removal rather than treating collection as the corrective action.
+## Work through these observations
 
-### 2. Every configured step succeeded
+### A newer screenshot, an older observation
 
-The approved policy permits reading only. The configured access profile contains both read and export. The person receives both permissions, provisioning reports success, and the collected account data matches the target.
+An engineer initiates export removal at 11:00. A colleague opens ISC at 11:10 and sees export listed. The last relevant account collection was at 10:30. No target evidence after 11:00 is supplied.
+
+Has the removal failed? Which observation would help you choose the next action?
+
+The screenshot can't settle that question. The collected information predates the attempted change, so the removal might have succeeded or failed.
+
+Check the operation result and the current target permission for the exact account. If the target is correct, investigate updating ISC's relevant observation. If export remains, investigate delivery and later changes rather than treating another read as the removal.
+
+### Everything succeeded, but too much access arrived
+
+The approved policy permits reading only. The configured access profile contains read and export. Both reach the person, provisioning reports success, and the collected account data matches the target.
 
 Where is the problem?
 
-**Reasoning:** The configuration does not express the approved policy. Agreement and successful execution demonstrate that the wrong configured access was delivered, not that the requirement was satisfied.
+The configuration doesn't express the approved policy. Successful execution and matching records show that the configured access was delivered, not that it was appropriate.
 
-Compare the approved requirement with the access profile's contents. Involve the decision owner and assess who else is affected before changing a shared definition. Correcting one account alone would leave the broader configuration problem unresolved.
+Compare the profile's contents with the authorized requirement. Involve the decision owner and assess who else uses that shared definition before making a controlled correction. Editing one account alone leaves the wider design problem unresolved.
 
-### 3. Search returns no result
+### No Search result, but target access is present
 
-A search for export access returns no result for an employee. The application administrator finds export on an account believed to belong to that employee.
+A search returns no export access for an employee. The application administrator finds export on an account believed to belong to that employee.
 
-Should the administrator add another permission to make ISC recognize it?
+Should another permission be added to make ISC recognize it?
 
-**Reasoning:** No. There is no evidence that another grant is needed. Confirm the account's ownership and its relationship to the ISC identity, then check collection coverage, query scope, and synchronization.
+No. The observations don't establish a need for another grant.
 
-The empty result establishes only that this search did not return the expected information. It doesn't establish target absence or authorize extra access.
+Confirm the account's ownership and association with the ISC identity, collection coverage, query scope, and synchronization. The empty result tells you that this query didn't return the expected information; it doesn't prove absence in the target or authorize extra access.
 
-### 4. The removal worked, but the test still exports
+### One grant disappeared, but export still works
 
-The application confirms that a direct export permission is absent. A controlled test still exports successfully. You don't yet know whether the account has group-based access or whether the existing session retains earlier permissions.
+The application's direct export permission is absent on the account used for an authorized test. The test still exports successfully. You haven't established whether the account has group-based export access or whether the session retains earlier permissions.
 
-What can you conclude?
+Did the direct removal fail? Has the overall restriction been achieved?
 
-**Reasoning:** The direct permission is absent, but effective export access remains under the tested conditions. The business restriction has not been demonstrated.
+The direct permission is absent, but effective export remains under the tested conditions. The broader restriction hasn't been demonstrated.
 
-Investigate the application's other grant paths and session behavior. Don't claim the removal operation failed merely because another route still permits export. Equally, don't claim the overall access-removal requirement succeeded merely because one direct grant disappeared.
+Inspect other grant paths and session behavior. Don't declare the direct removal unsuccessful solely because another route might permit export, and don't declare the requirement satisfied solely because one grant disappeared.
 
-## Try the same reasoning in an unfamiliar application
+## Apply the reasoning to two portal accounts
 
-A supplier portal has two accounts for one employee: `supplier-218` and `supplier-admin-218`.
+One employee has two accounts in a supplier portal: **standard-account** and **admin-account**.
 
-The approved requirement says the employee may read supplier records but must no longer change supplier bank details, through either account.
+The approved requirement permits reading supplier records but prohibits changing supplier bank details through either account.
 
-You receive this evidence:
+You have this evidence:
 
-- ISC Search shows no bank-edit entitlement on the employee's identity.
-- A target administrator confirms that `supplier-218` has read-only permissions.
-- A test of changing bank details fails with “service unavailable.”
-- Nobody has inspected `supplier-admin-218`, and the relevant collection time is unknown.
+- ISC Search shows no bank-edit entitlement on the identity.
+- The target administrator confirms that standard-account has read-only permissions.
+- An attempted bank-detail change fails with “service unavailable.”
+- Nobody has inspected admin-account, and the relevant collection time is unknown.
 
-Would you confirm that the requirement has been met? Write the next checks in the order you would pursue them.
+Would you confirm that the requirement is met? Explain the next checks and why each matters.
 
-**One defensible answer:** No. The evidence covers only part of the requirement. A service failure doesn't establish permission denial, and the second account is unexamined.
+You cannot yet confirm it. The unexamined account remains part of the requirement. The service error doesn't establish that authorization refused editing. The unknown collection time also limits the Search evidence.
 
-Confirm the two account identifiers and ownership with the portal administrator. Inspect current permissions and other grant paths for both accounts, including any session conditions relevant to continued use. Check whether the collected ISC information includes both accounts and when it was obtained.
+Confirm both account identifiers and ownership with the portal administrator. Inspect current permissions and other grant paths for both, including session conditions relevant to continued use. Establish whether ISC collected both accounts and when the relevant information was obtained.
 
-Arrange authorized verification using a safe test record or equivalent application evidence, without changing real supplier bank information. Confirm that editing is rejected for an authorization reason while legitimate reading remains available. Record the scope and time of those checks.
+Arrange authorized verification using a safe test record or equivalent application evidence, without changing real supplier bank information. Verify that editing is rejected for an authorization reason while legitimate reading remains available.
 
-These checks can be coordinated in parallel where responsibilities allow. The reasoning requirement is not one fixed order; it is that the unexamined account, unreliable test result, and unknown ISC observation are all addressed.
+Record the scope and time of the checks. Teams can coordinate them in parallel where appropriate; there isn't one mandatory investigation order. The requirement is to address all material evidence gaps before claiming the outcome.
 
-Now explain the distinction to a colleague without using the reporting example:
+## Explain the distinction without the reporting example
 
-> Intended access tells us what should be allowed. ISC records definitions, decisions, activity, and information obtained about access; each record has a scope and a time. Effective access is what the application actually permits under the conditions being checked. We compare those views to find whether the problem is the requirement, its configuration, delivery, visibility, or enforcement. Matching records alone don't prove that access is appropriate.
+Try explaining why matching records alone don't establish appropriate access.
+
+Intended access tells you what the organization has authorized for the relevant period and conditions. ISC contains several kinds of records, each with its own meaning, scope, and time. Effective access concerns what the application actually permits under the conditions being checked.
+
+Connecting those observations helps locate a problem in the requirement, configuration, delivery, information visibility, or application enforcement. The next action follows from that explanation, not from a general instruction to make two screens agree.

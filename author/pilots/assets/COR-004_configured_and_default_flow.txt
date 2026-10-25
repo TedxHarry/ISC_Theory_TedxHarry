@@ -1,0 +1,19 @@
+Account evaluated; no manual override
+                  |
+                  v
+Configured pairing 1
+  no match -> configured pairing 2
+                  |
+          +-------+-------+
+          |               |
+   unique intended     no match
+        match             |
+          |               v
+          |        default name match?
+          |          |           |
+          |     unique match   no match
+          |          |           |
+          v          v           v
+       associated             uncorrelated
+
+Human check: right account and owner?

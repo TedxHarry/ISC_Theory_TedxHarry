@@ -10,10 +10,11 @@ On October 19, 2026, the existing citations were relocated from both lessons. Th
 
 ## SYS-001
 
-- Current lesson: [SYS-001](../lessons/SYS-001_Why_an_Organization_Needs_ISC.md), revision 1.3.
+- Current lesson: [SYS-001](../lessons/SYS-001_Why_an_Organization_Needs_ISC.md), concept-led revision 2.0.
+- Current source verification and baseline-coverage mapping: [SYS-001 revision 2.0 record](revisions/SYS-001_Concept_Led_Revision_Record.md), October 25, 2026. The references and assessment mappings below describe revisions 1.x unless explicitly updated; their old headings and named example are historical, not the current learner narration.
 - Source-bearing revision before relocation: 1.1.
 - Documentation check recorded by the preceding authoring work: October 19, 2026.
-- Current revision 1.3: example identifiers, LCS shorthand, campaign/certification wording, and diagram presentation revised on October 20, 2026. The earlier citation relocation is preserved in the source-bearing history.
+- Historical revision 1.3: example identifiers, LCS shorthand, campaign/certification wording, and diagram presentation revised on October 20, 2026. The earlier citation relocation is preserved in the source-bearing history.
 - Learner validation and publication approval: pending; see the course register for the review history.
 
 ### Sources by lesson section
@@ -52,7 +53,7 @@ Unique example number 11001, informal LCS wording, campaign/certification distin
 
 Diagram source for revision 1.3: [editable inline request flow](../assets/SYS-001_request_flow.txt). It preserves the manager-decision, application-result, and human-verification boundaries. Prior image/vector/structured assets are retained; this revision does not claim they were newly rendered.
 
-### Assessment intent for the current SYS-001 checkpoints
+### Assessment intent for the historical SYS-001 revision 1.x checkpoints
 
 | Exercise | Understanding tested | Expected reasoning and acceptable alternatives | Misconception exposed |
 |---|---|---|---|
@@ -110,12 +111,13 @@ Added as author assessment metadata on October 20, 2026. FND-001 remains revisio
 
 ## SYS-002
 
-- Current lesson: [SYS-002](../lessons/SYS-002_Authentication_Authorization_and_ISC.md), revision 1.1.
-- Documentation checked: October 20, 2026.
+- Current lesson: [SYS-002](../lessons/SYS-002_Authentication_Authorization_and_ISC.md), concept-led revision 2.2.
+- Current coverage, source mapping and review: [SYS-002 revision 2.2 record](revisions/SYS-002_Concept_Led_Revision_Record.md), October 25, 2026. The explanation now begins with sign-in and invoice denial, completes the basic account/session/permission flow, then develops ISC delivery and federated sign-in. All 52 baseline mappings and the 2.1 requested-entitlement, concrete mapping, cookie/session, actor and checkpoint corrections remain. The record separates historical 2.0/2.1 checks from current results and retains pending beginner validation. The section mappings, named example, diagram and notes below describe historical revisions 1.x. SYS-001 revision 2.0 remains unchanged by this task.
+- Historical revision 1.x documentation check: October 20, 2026.
 - Review method: read official sources for the mechanisms taught; distinguish general identity standards and security guidance from ISC product behavior.
 - The finance and document applications, permission rules, account identifiers, event times, and outcomes are fictional teaching examples. No tenant or application test was performed.
 - Author review completed for revision 1.0; learner validation and publication review remain pending.
-- The existing SYS-001 and FND-001 source records retain their earlier verification dates. This new lesson's research does not constitute re-review of those lessons.
+- Historical scope note: the original SYS-002 research did not constitute re-review of SYS-001 or FND-001. Their current records retain their own review dates.
 
 ### Sources by lesson section and claim
 
@@ -171,7 +173,16 @@ Unique example number 12002 and a shorter conceptual sign-in validation step; de
 
 ## SYS-003
 
-- Current lesson: [SYS-003](../lessons/SYS-003_Who_Owns_What_in_Identity_and_Access.md), revision 1.1.
+- Current lesson: [SYS-003](../lessons/SYS-003_Who_Owns_What_in_Identity_and_Access.md), concept-led revision 2.0.
+- Current coverage, source mapping and review: [SYS-003 revision 2.0 record](revisions/SYS-003_Concept_Led_Revision_Record.md), October 25, 2026, under teaching specification v3.1. It records 65 coverage mappings, connected explanations, 15 official sources, four checkpoint purposes, vendor transfer and the task-assignment correction.
+- General manual entitlement provisioning and certification manual remediation are taught separately. The removal checkpoint now uses a completed review and the documented source-owner task path; inspect actual task assignment in each implementation.
+- Learner validation, graphical publication-format review and formal approval remain pending. Local only, with no tenant operation or publication.
+
+### Historical references and review for revisions 1.x
+
+The following material is retained as history. In particular, its named employee, old diagram and entitlement-owner removal-case wording do not describe revision 2.0.
+
+- Historical baseline: SYS-003 revision 1.1; the sources, example, diagram and claims below describe that revision, not the current learner file.
 - Documentation checked: October 20, 2026.
 - Review method: official SailPoint documentation for product mechanisms and configured ownership behavior; separate author-developed operational guidance for team responsibilities and handoffs.
 - Organizational responsibilities are a practical model to agree with each organization, not requirements imposed by ISC. Fictional directory-group mappings do not establish a real connector's capabilities.
@@ -230,7 +241,16 @@ Unique example number 13003 and consistent campaign/certification meanings; manu
 
 ## SYS-004
 
-- Current lesson: [SYS-004](../lessons/SYS-004_Intended_Known_and_Effective_Access.md), revision 1.1.
+- Current lesson: [SYS-004](../lessons/SYS-004_Intended_Known_and_Effective_Access.md), concept-led revision 2.0.
+- Current coverage, sources and review: [SYS-004 revision 2.0 record](revisions/SYS-004_Concept_Led_Revision_Record.md), October 25, 2026 under teaching specification v3.1. It records 62 coverage mappings, 17 official references, the two timelines, narrow diagram, four checkpoint purposes, two-account transfer and teach-back.
+- The rewrite follows the collected permission, failed delivery and actual application check before broader record definitions. It preserves the different grant/session variants and adds a scoped requested-entitlement reprovisioning explanation.
+- Documentation-based author review is separate from observed beginner validation, graphical publication review and formal approval. Local only; no tenant operation, staging, commit or publication.
+
+### Historical references and review for revisions 1.x
+
+The following material is retained as history. Its named employee, account identifiers, original diagram and original section order don't describe revision 2.0.
+
+- Historical baseline: SYS-004 revision 1.1. The section mappings, named example, old asset and notes below describe that revision, not the current learner source.
 - Documentation checked: October 20, 2026.
 - Review method: official product documentation for ISC records, collection, processing, and Search; Microsoft documentation for application-owned session boundaries; OWASP guidance for trusted authorization enforcement.
 - The intended/recorded/effective distinction and investigation method are author-developed teaching models, not named ISC states or mandatory workflows.
@@ -292,7 +312,17 @@ Unique example number 14004; Search date-query GMT/browser-display behavior sele
 
 ## SYS-005
 
-- Current lesson: [SYS-005](../lessons/SYS-005_Implementation_Administration_Support_and_Governance.md), revision 1.1.
+- Current lesson: [SYS-005](../lessons/SYS-005_Implementation_Administration_Support_and_Governance.md), revision 2.0, October 25, 2026, under teaching specification 3.1.
+- Current coverage comparison, ten official references, explanation/assessment review and executed checks: [SYS-005 concept-led revision record](revisions/SYS-005_Concept_Led_Revision_Record.md).
+- Current diagram: [work and evidence handoffs](../assets/SYS-005_work_and_evidence_handoffs.txt), embedded verbatim in the learner file. Historical diagram and pilot assets remain unchanged.
+- Neutral permission and incident illustrations replace the named narrative. Existing-account scope is a design requirement to enforce, not an automatic prevention setting. Decision, execution and observed target effects remain separate.
+- Author review is documentation-based. No tenant execution, beginner teach-back, graphical publication validation or formal publication approval has occurred.
+
+### Historical reference record: revisions 1.x
+
+The following preserves the October 20 review and its original example assumptions. It is not the current learner revision or a renewal of those historical checks.
+
+- Historical lesson: SYS-005 revision 1.1 (recoverable at baseline commit 90b9f298860b0bc26d26259f084e129ac59331e0).
 - Documentation checked: October 20, 2026.
 - Review method: official SailPoint documentation for product concepts and supported behavior; author-developed operational guidance for acceptance, handover, incident management, and change control.
 - The four work categories are a practical model, not named ISC execution stages, mandatory departments, or a claimed formal service-management certification.
@@ -350,7 +380,17 @@ Unique example number 15005 and consistent campaign/certification meanings. The 
 
 ## SYS-006
 
-- Current lesson: [SYS-006](../lessons/SYS-006_Following_an_Access_Problem_Across_the_Enterprise.md), revision 1.1.
+- Current lesson: [SYS-006](../lessons/SYS-006_Following_an_Access_Problem_Across_the_Enterprise.md), revision 2.0, October 25, 2026, under teaching specification 3.1.
+- Current coverage reconciliation, fifteen primary references, assessment/explanation review and executed checks: [SYS-006 concept-led revision record](revisions/SYS-006_Concept_Led_Revision_Record.md).
+- Current diagram: [records, decisions and delivery](../assets/SYS-006_records_decisions_and_delivery.txt), embedded verbatim. The historical enterprise map remains unchanged.
+- Neutral report-viewing evidence replaces the named employee narrative. Selected input, evaluated condition, required access, attempted write and usable application result remain distinct.
+- Documentation-based author review only. No tenant action, beginner teach-back, graphical publication validation or formal publication approval has occurred.
+
+### Historical reference record: revisions 1.x
+
+The following retains the October 20 review and its original example assumptions. It is not the current learner revision or a renewal of historical checks.
+
+- Historical lesson: SYS-006 revision 1.1, recoverable at baseline commit 90b9f298860b0bc26d26259f084e129ac59331e0.
 - Documentation checked: October 20, 2026.
 - Review method: official SailPoint documentation for representations, mappings, criteria, processing, delivery, and observations; OWASP and Microsoft primary guidance for authorization and session boundaries.
 - All named employee records, values, times, configured conditions, and application behavior are fictional. No tenant operation, source aggregation, provisioning, or application test was performed.
