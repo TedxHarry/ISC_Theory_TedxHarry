@@ -33,7 +33,7 @@ The user preferred the SYS-005 pilot, reviewed the process-heavy COR-004 pilot, 
 | Accepted approach pilots | SYS-005 pilot integrated and rechecked in revision 2.0; historical pilot files remain unchanged. COR-004 pilot will be integrated and rechecked when reached in course order |
 | New-lesson authoring | ROL-007 reserved, paused during this pass |
 
-The revised sources are saved locally for review. No push or Pages deployment is permitted during this pass unless the user changes that instruction. Earlier SYS-001 revision 1.3, SYS-002 revision 1.1, SYS-003 revision 1.1, SYS-004 revision 1.1, SYS-005 revision 1.1 and SYS-006 revision 1.1 are recoverable at baseline commit 90b9f298860b0bc26d26259f084e129ac59331e0. Deployment, beginner validation, and formal publication approval are distinct checks. Earlier FND-001 revision 1.3, FND-002 through FND-007 revisions 1.0 and ARC-001 revision 1.0 are recoverable at the new repository's publication commit 895c6b5b295c926d5397239db521abc1c8b639d1. The six revised SYS lessons are published; FND-001 through FND-007 and ARC-001 revisions 2.0 are local only.
+The revised sources are saved locally for review. No push or Pages deployment is permitted during this pass unless the user changes that instruction. Earlier SYS-001 revision 1.3, SYS-002 revision 1.1, SYS-003 revision 1.1, SYS-004 revision 1.1, SYS-005 revision 1.1 and SYS-006 revision 1.1 are recoverable at baseline commit 90b9f298860b0bc26d26259f084e129ac59331e0. Deployment, beginner validation, and formal publication approval are distinct checks. Earlier FND-001 revision 1.3, FND-002 through FND-007 revisions 1.0 and ARC-001 revision 1.0 are recoverable at the new repository's publication commit 895c6b5b295c926d5397239db521abc1c8b639d1. The October 26 working-edition publication includes all fourteen individually revised lessons through ARC-001: six SYS lessons, FND-001 through FND-007 and ARC-001. The published content snapshot is ff290f28d43d9ee69f847d09388c3bcb18e3b81d; Pages build and complete changed-lesson content checks passed. Future revisions continue locally. See the current publication record.
 
 ## Saved documents
 
@@ -378,7 +378,7 @@ Unique example number 16006 propagated through records, account names, map, and 
 | Documentation check | October 25, 2026; thirteen primary references mapped in the current revision record |
 | Tenant testing | Not performed; records, values, matching configuration and results are hypothetical |
 | Learner validation | Not yet performed with a beginner learner |
-| Publication status | Revision 2.0 saved locally only; site still shows revision 1.3. Beginner validation, graphical review and formal approval pending |
+| Publication status | Revision 2.0 published in the October 26 working-edition snapshot ff290f28; Pages build and live content checks passed. Beginner validation, full graphical review and formal approval remain pending |
 | Next action | Preserved after the user's instruction to continue to FND-002; separate beginner validation remains pending |
 
 Current coverage, primary sources, assessments and executed checks: [FND-001 revision 2.0 record](author/revisions/FND-001_Concept_Led_Revision_Record.md). Current editable [identity/account map](assets/FND-001_identity_and_associated_accounts.txt).
@@ -417,7 +417,7 @@ Teaching specification v2.2 now requires a personal, polite, friendly mentor voi
 | Diagram source | [Collection and authorized changes](assets/FND-002_collection_and_authorized_changes.txt); exact inline synchronization checked separately from publication rendering |
 | Tenant execution | Not performed; neutral account names, permissions, integration conditions, timings and outcomes are hypothetical |
 | Learner validation | Pending; no beginner read-through or transfer test performed |
-| Publication status | Revision 2.0 saved locally only; published revision 1.0 unchanged. Learner validation, graphical review and formal approval pending |
+| Publication status | Revision 2.0 published in the October 26 working-edition snapshot ff290f28; Pages build and live content checks passed. Beginner validation, full graphical review and formal approval remain pending |
 | Unresolved author content issues | None identified in this review; learner comprehension remains untested |
 | Next action | Preserved after the user's instruction to continue to FND-003; separate beginner validation remains pending |
 
@@ -441,7 +441,7 @@ The lesson introduces authoritative-source and identity-profile roles only as ne
 | Diagram sources | [Read, calculate and sync](assets/FND-003_read_calculate_and_sync.txt) and [membership reference and details](assets/FND-003_membership_reference_and_details.txt); exact source checks separate from graphical publication review |
 | Tenant execution | Not performed; neutral record values, source names, conversion and outcomes are hypothetical |
 | Learner validation | Pending; no observed beginner read-through or teach-back |
-| Publication status | Revision 2.0 local only; working-edition site retains revision 1.0; no new deployment |
+| Publication status | Revision 2.0 published in the October 26 working-edition snapshot ff290f28; Pages build and live content checks passed. Beginner validation, full graphical review and formal approval remain pending |
 | Unresolved author content issues | None identified in documentation-based review; learner comprehension and graphical publication review remain untested |
 | Next action | Preserved after the user's instruction to continue to FND-004; separate beginner validation remains pending |
 
@@ -461,7 +461,7 @@ Current coverage reconciliation, references, assumptions and assessments: [FND-0
 | Diagram sources | [Access-object map](assets/FND-004_role_profile_entitlement_map.txt) and [assignment/account changes](assets/FND-004_identity_assignment_and_account_changes.txt); source matching separate from graphical publication review |
 | Tenant execution | Not performed; neutral account context, sources, permission values, criteria and outcomes are hypothetical |
 | Learner validation | Pending; no observed beginner read-through or teach-back |
-| Publication status | Revision 2.0 local only; working-edition site retains revision 1.0; no new deployment |
+| Publication status | Revision 2.0 published in the October 26 working-edition snapshot ff290f28; Pages build and live content checks passed. Beginner validation, full graphical review and formal approval remain pending |
 | Unresolved author content issues | None identified in documentation-based review; comprehension and graphical publication review remain untested |
 | Next action | Preserved after the user's instruction to continue to FND-005; separate beginner validation remains pending |
 
@@ -481,7 +481,7 @@ Current coverage, references, assessments and checks: [FND-004 revision 2.0 reco
 | Diagram sources | [Business grouping/directory source](assets/FND-005_business_grouping_and_directory_source.txt) and [request/change/separate sign-in](assets/FND-005_request_change_and_separate_sign_in.txt); exact source matching separate from graphical publication review |
 | Tenant execution | Not performed; neutral records, group meanings, profile/application names and outcomes are hypothetical |
 | Learner validation | Pending; no observed beginner read-through or teach-back |
-| Publication status | Revision 2.0 local only; working-edition site retains revision 1.0; no new deployment |
+| Publication status | Revision 2.0 published in the October 26 working-edition snapshot ff290f28; Pages build and live content checks passed. Beginner validation, full graphical review and formal approval remain pending |
 | Unresolved author content issues | None identified in documentation-based review; learner comprehension and graphical publication review remain untested |
 | Next action | Preserved after the user's instruction to continue to FND-006; separate beginner validation remains pending |
 
@@ -501,7 +501,7 @@ Current coverage, references, assumptions, assessments and checks: [FND-005 revi
 | Diagram sources | [Account/source/identity references](assets/FND-006_account_record_source_and_identity.txt) and [definition/membership references](assets/FND-006_definition_and_membership_references.txt); exact source checks separate from graphical publication review |
 | Tenant execution | Not performed; neutral business number, login/native keys, technical-ID stand-ins, warehouse facts and outcomes are hypothetical |
 | Learner validation | Pending; no observed beginner read-through or teach-back |
-| Publication status | Revision 2.0 local only; working-edition site retains revision 1.0; no new deployment |
+| Publication status | Revision 2.0 published in the October 26 working-edition snapshot ff290f28; Pages build and live content checks passed. Beginner validation, full graphical review and formal approval remain pending |
 | Unresolved author content issues | None identified in documentation-based review; learner understanding and graphical publication review remain untested |
 | Next action | Preserved after the user's instruction to continue to FND-007; separate beginner validation remains pending |
 
@@ -521,7 +521,7 @@ Current coverage, fifteen primary references, assumptions, assessments and verif
 | Diagram sources | [Person/sources/accounts](assets/FND-007_person_sources_and_separate_accounts.txt) and [automatic/requested choice](assets/FND-007_automatic_and_requested_account_choice.txt); exact source/width validation separate from graphical publication review |
 | Tenant execution | Not performed; neutral account/source labels, 10482 comparison, usage data, permission meanings, payroll facts and outcomes are hypothetical |
 | Learner validation | Pending; no beginner read-through or transfer test performed |
-| Publication status | Revision 2.0 local only; published FND-007 remains 1.0; graphical review and formal publication approval pending |
+| Publication status | Revision 2.0 published in the October 26 working-edition snapshot ff290f28; Pages build and live content checks passed. Beginner validation, full graphical review and formal approval remain pending |
 | Unresolved author content issues | None identified in documentation-based review; learner comprehension remains untested |
 | Next action | Preserved after the user's instruction to continue to ARC-001; separate beginner validation remains pending |
 
@@ -543,7 +543,7 @@ All seven Module 2 lessons have now been individually revised. This is a local a
 | Diagram sources | [Hosted tenant/connection/target](assets/ARC-001_hosted_tenant_connection_and_target.txt) and [approved change/external permission](assets/ARC-001_approved_change_external_permission.txt); exact source/width checks separate from graphical publication review |
 | Tenant execution | Not performed; supplier-reader, svc-supplier, supplier.view, UTC timeline, privileges, document-service conditions and outcomes are hypothetical |
 | Learner validation | Pending; no beginner read-through or transfer test performed |
-| Publication status | Revision 2.0 local only; published ARC-001 remains 1.0; graphical review and formal publication approval pending |
+| Publication status | Revision 2.0 published in the October 26 working-edition snapshot ff290f28; Pages build and live content checks passed. Beginner validation, full graphical review and formal approval remain pending |
 | Unresolved author content issues | None identified in documentation-based review; learner comprehension remains untested |
 | Next action | User read-through and separate beginner validation; then revise ARC-002 in place, locally only |
 
