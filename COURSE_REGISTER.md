@@ -565,7 +565,7 @@ The responsibility model is operational rather than contractual. Vendor/customer
 | Diagram sources | [Sources/cluster/running members](assets/ARC-002_sources_cluster_and_running_members.txt) and [connection initiation/work](assets/ARC-002_connection_initiation_and_work.txt); exact source/width checks separate from graphical publication review |
 | Tenant execution | Not performed; Assets-Production, Operations-Directory, asset-reader, svc-assets, asset.read, assets-prod, va-01/va-02, HTTPS/443 target, failure conditions and Payroll transfer are hypothetical |
 | Learner validation | Pending; no beginner read-through or transfer test performed |
-| Publication status | Revision 2.0 included in authorized October 26 batch 2; see current publication verification. Earlier publication/local-only statements are historical; beginner validation and formal approval pending |
+| Publication status | Revision 2.0 published in October 26 batch 2, content 85704f716a460e935bcb30c0af7aa7ea588304f6; exact-commit Pages build and live-content checks passed; beginner validation, full graphical review and formal approval pending |
 | Unresolved author content issues | None identified in documentation-based review; learner comprehension remains untested |
 | Next action | Preserved after the user's instruction to continue to ARC-003; separate beginner validation remains pending |
 
@@ -587,7 +587,7 @@ Source association, running-member polling, cloud communication, target connecti
 | Diagram sources | [Runtime/API paths](assets/ARC-003_runtime_and_external_api_paths.txt) and [collection/supported change](assets/ARC-003_collected_data_and_supported_change.txt); exact source/width checks separate from graphical publication review |
 | Tenant execution | Not performed; Projects-Production, Delivery-Prod/Delivery-Test, project-reader, isc-project-prod, project.view, API behaviour and incident outcomes are hypothetical |
 | Learner validation | Pending; no beginner read-through or transfer test performed |
-| Publication status | Revision 2.0 included in authorized October 26 batch 2; see current publication verification. Earlier publication/local-only statements are historical; beginner validation and formal approval pending |
+| Publication status | Revision 2.0 published in October 26 batch 2, content 85704f716a460e935bcb30c0af7aa7ea588304f6; exact-commit Pages build and live-content checks passed; beginner validation, full graphical review and formal approval pending |
 | Unresolved author content issues | None identified in documentation-based review; learner comprehension remains untested |
 | Next action | Preserved after the user's instruction to continue to ARC-004; separate beginner validation remains pending |
 
@@ -609,7 +609,7 @@ Runtime location doesn't supply API reachability, account-specific authority or 
 | Diagram sources | [ISC/VA/IQService/directory](assets/ARC-004_isc_va_iqservice_and_directory.txt) and [connection/admission/target checks](assets/ARC-004_connection_admission_and_target_checks.txt); exact source/width checks separate from graphical publication review |
 | Tenant execution | Not performed; docs-reader, Engineering Directory, ENG-Docs-Readers, CORP role labels, eng-prod, va-01/va-02, iqservice.corp.example and incident/script evidence are hypothetical |
 | Learner validation | Pending; no beginner read-through or transfer test performed |
-| Publication status | Revision 2.0 included in authorized October 26 batch 2; see current publication verification. Earlier publication/local-only statements are historical; beginner validation and formal approval pending |
+| Publication status | Revision 2.0 published in October 26 batch 2, content 85704f716a460e935bcb30c0af7aa7ea588304f6; exact-commit Pages build and live-content checks passed; beginner validation, full graphical review and formal approval pending |
 | Unresolved author content issues | None identified in documentation-based review; learner comprehension remains untested |
 | Next action | Preserved after the user's instruction to continue to ARC-005; separate beginner validation remains pending |
 
@@ -631,7 +631,7 @@ IQService is not a VA replacement or universal write-only service. Client admiss
 | Diagram sources | [Runtime operation paths](assets/ARC-005_runtime_operation_paths.txt) and [evidence/scoped action/recovery](assets/ARC-005_evidence_scoped_action_and_recovery.txt); exact source/width checks separate from graphical publication review |
 | Tenant execution | Not performed; Orders-Production, Orders-Prod, orders-reader, svc-orders, orders.export, orders-prod, va-01/va-02, audit/errors and design-transfer facts are hypothetical |
 | Learner validation | Pending; no beginner read-through or transfer test performed |
-| Publication status | Revision 2.0 included in authorized October 26 batch 2; see current publication verification. Earlier publication/local-only statements are historical; beginner validation and formal approval pending |
+| Publication status | Revision 2.0 published in October 26 batch 2, content 85704f716a460e935bcb30c0af7aa7ea588304f6; exact-commit Pages build and live-content checks passed; beginner validation, full graphical review and formal approval pending |
 | Unresolved author content issues | None identified in documentation-based review; learner comprehension remains untested |
 | Next action | Preserve for read-through and separate beginner validation; ARC-006 revision followed the user's instruction to continue |
 
@@ -653,7 +653,7 @@ The readiness comparison isn't a fixed ISC execution order. The second diagram d
 | Diagram sources | [Request entry, processing and delivery](assets/ARC-006_request_entry_processing_and_delivery.txt) and [Event filter, execution and choice](assets/ARC-006_event_filter_execution_and_choice.txt); inline matches, maximum widths 37 and 41 characters |
 | Tenant execution | Not performed; reports-reader, report.read, Reports-Production, Read reports, svc-reports, department values/events, Workflow paths and scheduler transfer are hypothetical; no actual API/token/Workflow/connector/target operation |
 | Learner validation | Pending; no actual beginner read-through or transfer test performed |
-| Publication status | Revision 2.0 included in authorized October 26 batch 2; see current publication verification. Earlier publication/local-only statements are historical; beginner validation and formal approval pending |
+| Publication status | Revision 2.0 published in October 26 batch 2, content 85704f716a460e935bcb30c0af7aa7ea588304f6; exact-commit Pages build and live-content checks passed; beginner validation, full graphical review and formal approval pending |
 | Unresolved author content issues | None identified in documentation-based review; beginner comprehension, full graphical review and formal approval remain pending |
 | Next action | Preserve for read-through and separate beginner validation; ARC-007 revision followed the user's instruction to continue |
 
@@ -675,7 +675,7 @@ UI/API alternatives are corresponding supported business operations, not identic
 | Diagram sources | [Browser, IdP and ISC session](assets/ARC-007_browser_idp_and_isc_session.txt), [Directory credential check and session](assets/ARC-007_directory_credential_check_and_session.txt) and [Password operation and target result](assets/ARC-007_password_operation_and_target_result.txt); inline matches, maximum widths 38, 38 and 39 characters |
 | Tenant execution | Not performed; support-user, directory-user, Support-Production, svc-support, reserved mapping emails, authentication/reset/group/session results and purchasing transfer are hypothetical; no actual account, policy, credential, authentication, recovery or target operation |
 | Learner validation | Pending; no actual beginner read-through or transfer test performed |
-| Publication status | Revision 2.0 included in authorized October 26 batch 2; see current publication verification. Earlier publication/local-only statements are historical; beginner validation and formal approval pending |
+| Publication status | Revision 2.0 published in October 26 batch 2, content 85704f716a460e935bcb30c0af7aa7ea588304f6; exact-commit Pages build and live-content checks passed; beginner validation, full graphical review and formal approval pending |
 | Unresolved author content issues | None identified in documentation-based review; beginner comprehension, full graphical review and formal approval remain pending |
 | Next action | Preserve for read-through and separate beginner validation; ARC-008 revision followed the user's instruction to continue |
 
@@ -697,7 +697,7 @@ SSO trust, authenticated-user mapping, account correlation, password delivery, t
 | Diagram sources | [Request, decision, delivery and verification](assets/ARC-008_request_decision_delivery_and_verification.txt), [Required effects and partial result](assets/ARC-008_required_effects_and_partial_result.txt) and [Target change and account observation](assets/ARC-008_target_change_and_account_observation.txt); inline matches, maximum widths 39, 41 and 36 characters |
 | Tenant execution | Not performed; stock-user, Stock-Production, svc-stock, stock.read/stock.export, profile, UTC trace, manual/ticket/query cases and payroll transfer are hypothetical; no actual request, authority correction, recovery, collection, ticket, target inspection or business test |
 | Learner validation | Pending; no actual beginner read-through or transfer test performed |
-| Publication status | Revision 2.0 included in authorized October 26 batch 2; see current publication verification. Earlier publication/local-only statements are historical; beginner validation and formal approval pending |
+| Publication status | Revision 2.0 published in October 26 batch 2, content 85704f716a460e935bcb30c0af7aa7ea588304f6; exact-commit Pages build and live-content checks passed; beginner validation, full graphical review and formal approval pending |
 | Unresolved author content issues | None identified in documentation-based review; beginner comprehension, full graphical review and formal approval remain pending |
 | Next action | Preserve for read-through and separate beginner validation; SRC-001 revision followed the user's instruction to continue |
 
@@ -719,7 +719,7 @@ All eight Module 3 lessons are now individually revised, without implying learne
 | Diagram sources | [External environments and source records](assets/SRC-001_external_environments_and_source_records.txt) and [Agreed accounts and selected read](assets/SRC-001_agreed_accounts_and_selected_read.txt); inline matches, maximum widths 37 and 40 characters |
 | Tenant execution | Not performed; Warehouse-Prod/Warehouse-Test, Warehouse Production, warehouse-user/warehouse-admin, svc-warehouse, workerRef W-17, inventories/selection/results and payroll proposal are hypothetical; no source/account/filter/schema/credential/correlation/collection/provisioning or deletion operation |
 | Learner validation | Pending; no actual beginner read-through or transfer test performed |
-| Publication status | Revision 2.0 included in authorized October 26 batch 2; see current publication verification. Earlier publication/local-only statements are historical; beginner validation and formal approval pending |
+| Publication status | Revision 2.0 published in October 26 batch 2, content 85704f716a460e935bcb30c0af7aa7ea588304f6; exact-commit Pages build and live-content checks passed; beginner validation, full graphical review and formal approval pending |
 | Unresolved author content issues | None identified in documentation-based review; beginner comprehension, full graphical review and formal approval remain pending |
 | Next action | Preserve for read-through and separate beginner validation; SRC-002 revision followed the user's instruction to continue |
 
@@ -741,7 +741,7 @@ Population is the project's design set, not a new required ISC object. Normal co
 | Diagram sources | [Profile-backed identity and account matching](assets/SRC-002_profile_backed_identity_and_account_matching.txt) and [Selected profile and mapped inputs](assets/SRC-002_selected_profile_and_mapped_inputs.txt); inline matches, maximum widths 41 and 38 characters |
 | Tenant execution | Not performed; employee-record/contractor-record/directory-user/expense-user, workerRef W-24, one identity, priorities/mappings/processed results and acquisition transfer are hypothetical; no identity/source/profile/priority/data/credential/authentication/processing or target change |
 | Learner validation | Pending; no actual beginner read-through or transfer test performed |
-| Publication status | Revision 2.0 included in authorized October 26 batch 2; see current publication verification. Earlier publication/local-only statements are historical; beginner validation and formal approval pending |
+| Publication status | Revision 2.0 published in October 26 batch 2, content 85704f716a460e935bcb30c0af7aa7ea588304f6; exact-commit Pages build and live-content checks passed; beginner validation, full graphical review and formal approval pending |
 | Unresolved author content issues | None identified in documentation-based review; beginner comprehension, full graphical review and formal approval remain pending |
 | Next action | User read-through and separate beginner validation; then revise SRC-003 in place, locally only |
 

@@ -21,4 +21,14 @@ Publication banners in individual revision records and reference records superse
 
 ## Deployment verification
 
-Publication preparation is complete. Exact-commit Pages and live-content verification will be recorded after the push.
+Content commit [85704f716a460e935bcb30c0af7aa7ea588304f6](https://github.com/TedxHarry/ISC_Theory_TedxHarry/commit/85704f716a460e935bcb30c0af7aa7ea588304f6) was pushed to main. GitHub Pages reported built for that exact commit with no error.
+
+- All four navigation/disclosure checks and staged whitespace checks passed.
+- All 91 live lesson routes returned HTTP 200, retained all 91 ordered navigation links and the correct current lesson, and showed all 12 module disclosures.
+- All nine changed lessons retained every checked normalized prose paragraph, heading, list item and table cell: 1,648 content units in total. Complete code/diagram blocks matched source.
+- The nine lessons contain 20 exact inline diagrams and 17 tables. No learner content was shortened or omitted by deployment.
+- All 40 current/historical assets for the nine lesson IDs returned HTTP 200 and matched local text after line-ending normalization.
+- No shared layout, styles, navigation implementation or course manifest changed. All 91 learner files remain available.
+- Original ISC_Theory_Learning remote main was checked again and remains 90b9f298860b0bc26d26259f084e129ac59331e0. No write targeted that repository or its site.
+- These are source/render/deployment checks, not a complete graphical review, actual beginner validation or formal publication approval.
+- A subsequent documentation-only commit records these results without changing published learner content. SRC-003 continues locally afterward.
