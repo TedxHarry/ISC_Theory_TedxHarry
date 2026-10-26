@@ -1,370 +1,319 @@
 # One identity, multiple accounts: which account are we talking about?
 
-Devi works in warehouse operations. Her employee number is `27007`. She checks stock each day and, under a separate authorization, maintains settings in the Stockroom application.
+A person can use one account for ordinary work and a separate account for administration. Both accounts belong to the same person, but they serve different purposes and carry different permissions.
 
-She uses `stock-27007` for daily work and `stock-admin-27007` for the approved settings work. The organization deliberately keeps those accounts separate so that ordinary work doesn't require administrative privileges.
+Now suppose that person needs to export stock reports from the ordinary account. Giving the permission to the administrative account would leave the original need unresolved.
 
-Now she needs permission to export stock reports from her daily account.
+This is why “give this person access” is sometimes incomplete. We also need to establish which account should receive it.
 
-An engineer opens her details in SailPoint Identity Security Cloud, or ISC, and sees both Stockroom accounts associated with the same person.
+## One person can have accounts across systems and within one system
 
-Is that a duplicate to clean up? Should new access go to both accounts? If one account is disabled, has Devi lost access to the whole application?
+An **identity** in SailPoint Identity Security Cloud, or ISC, is the person-level record. It brings together information about a person and the accounts associated with them.
 
-Let's inspect what those relationships actually mean before changing anything.
+An **account** is a record in another system. A directory account might support corporate sign-in; an application account might hold permissions for work in that application. ISC keeps a representation of the account using information collected from that system.
 
-## One person doesn't imply one account
+The external account and its ISC representation have different jobs. The application uses its account when handling access. ISC uses the collected representation when governing that access.
 
-An **identity** is ISC's person-level representation of Devi. It connects information about her with the accounts and access associated with her.
+A **source** is ISC's configured representation of a system or collection of account data. A **connector** provides the integration used to read that data and, where supported and configured, make changes.
 
-An **account** is a record in a particular system. The external system uses that record for its own account and access behavior. ISC holds a representation of it, including the data collected through the integration.
+Consider these four collected records, all associated with one existing ISC identity:
 
-Devi can have an HR record, a corporate directory account, and application accounts while still being one person. She can also have two accounts in the same application for different purposes.
-
-Here is the fictional situation we will inspect. Each row is one account represented in ISC.
-
-| Account shown | Source and purpose | Teaching account ID |
+| Account | ISC source | Purpose |
 |---|---|---|
-| `hr-27007` | People HR, employment information | `A-71` |
-| `dir-27007` | Corporate Directory, ordinary corporate account | `A-72` |
-| `stock-27007` | Stockroom production, daily work | `A-73` |
-| `stock-admin-27007` | Stockroom production, approved settings administration | `A-74` |
+| `hr-worker` | HR-Workers | Employment record |
+| `directory.user` | Corporate-Directory | Ordinary corporate account |
+| `stock-daily` | Warehouse-Production | Daily stock work |
+| `stock-admin` | Warehouse-Production | Separately approved settings administration |
 
-A **source** is ISC's configured representation of a system or collection of account data. The **connector** is the integration used to read its information and perform supported changes.
-
-There are three sources in this example, not four. Stockroom production supplies two account records through the same source.
-
-Devi's ISC identity has the teaching ID `I-71`. The short letter-number IDs in this explanation stand in for real ISC object IDs. They aren't identifiers for real operations.
-
-All four accounts are already associated with `I-71` in the supplied example. They aren't accounts created by opening the identity page.
+There are three sources here. Warehouse-Production supplies two accounts through the same source. Four account rows therefore describe four accounts across three sources, associated with one identity.
 
 ```text
-Identity I-71: Devi
-Employee number: 27007
+One existing ISC identity
   |
-  +-- People HR / S-71
-  |     +-- A-71: hr-27007
+  +-- HR-Workers
+  |     +-- hr-worker
   |
-  +-- Corporate Directory / S-72
-  |     +-- A-72: dir-27007
+  +-- Corporate-Directory
+  |     +-- directory.user
   |
-  +-- Stockroom production / S-73
-        +-- A-73: stock-27007
-        +-- A-74: stock-admin-27007
+  +-- Warehouse-Production
+        +-- stock-daily
+        +-- stock-admin
 
-One identity, three sources, four account records.
-Both Stockroom accounts remain separate.
+Branches show account associations.
+They do not combine account rights.
 ```
 
-The branches show associations and source context. They don't mean the identity logs in through HR, that every account receives the same permissions, or that the accounts share a password.
+Read the branches as relationships between records. The two warehouse accounts remain separate even though you can reach both from the same person-level view. The branches do not describe a sign-in route or shared passwords.
 
-This is a **one-to-many relationship**: one identity can be associated with multiple account records. For the personal accounts here, each account has one associated person-level identity.
+This is a **one-to-many relationship**: one identity is associated with several account records. For the personal accounts shown here, each account has one associated person-level identity.
 
-Don't reverse that into a rule that a shared service account should be correlated to every human who uses it. Responsibility for a shared or non-human account is a different relationship from the personal-account associations shown here.
+Shared accounts and accounts used by software need their own responsibility model. A person responsible for a service account is not necessarily the person the account represents. Don't turn the diagram into a rule that a shared account should be correlated to every human who uses it.
 
-## Why would the same source have two accounts?
+## Two accounts can be deliberate
 
-Separate administrative and daily accounts are one reason. The administrative account can carry rights that should not be present during ordinary work.
+The warehouse arrangement is approved: ordinary work uses `stock-daily`; maintaining settings uses `stock-admin`. Keeping administrative permissions off the ordinary account limits the rights used during daily work.
 
-Other situations need investigation. A replacement account can coexist with an old account during a controlled migration. A former account can remain disabled for a retention period. An accidental duplicate can also exist.
+Other reasons for seeing two accounts include a controlled replacement, an old disabled account retained for a period, and an accidental duplicate. The account count alone cannot distinguish them.
 
-Those examples don't have the same business meaning.
+Begin with the purpose and the actual records. Are there two genuinely different external accounts, or two ISC records that appear to represent the same external account? If they are different external accounts, does each still have an approved use?
 
-“Two accounts” tells you how many represented accounts exist. It doesn't tell you whether the arrangement is approved, whether both are needed, or whether one is a mistake.
+Those questions matter because the corrections differ. An unnecessary external account may need an authorized retirement. An incorrect representation may need a data or integration correction. Removing whichever row looks older can disrupt approved work without fixing the cause.
 
-For Devi, the supplied policy permits both Stockroom accounts and defines different uses for them. The account names are helpful clues, but the policy and account records establish the intended purposes. ISC doesn't infer an approved administrative design merely because a username contains `admin`.
+Account names help you investigate, but they do not establish approval. The word `admin` in a login is a clue; the approved purpose, permissions and account evidence establish what the account is for.
 
-Before describing an account as a duplicate, establish what makes it redundant. Does it represent the same external account twice, or a genuinely separate external account? Does it have an approved purpose? Is it still enabled? Does it contain access that must be reviewed?
+## How ISC connects both accounts to the same person
 
-A duplicate ISC representation and an unnecessary external account are different problems. Deleting something before you distinguish them can hide the evidence or disrupt legitimate work.
+**Aggregation** reads account and access information from a source into ISC. An **attribute** is a named field on a record, such as employee number, department or account purpose.
 
-## Correlation connects the accounts; it doesn't merge them
+After account data is available, **account correlation** establishes which ISC identity an account belongs to by comparing configured account and identity attributes.
 
-**Aggregation** collects account or entitlement information from a source into ISC. An **attribute** is a named value on a record, such as an employee number, login, or account-purpose value.
+For example, suppose the warehouse source is configured to compare account `employeeNumber` with the identity's employee-number attribute. Both warehouse accounts contain `10482`, and the intended existing identity has `10482`. The supplied data identifies that person uniquely.
 
-**Account correlation** matches and assigns a source account to an ISC identity. Configuration determines which account and identity attributes are compared.
+The comparison can associate each account with that identity. It establishes two relationships: the daily account belongs to this person, and the administrative account belongs to this person.
 
-Suppose both Stockroom accounts carry an employee-number attribute of `27007`. The configured comparison finds the intended identity with employee number `27007`. In this example each account becomes associated with `I-71`.
+Neither account is absorbed into the other. Their identifiers, permissions, credentials and enabled or disabled states remain separate. Linking them does not sign the person into either account.
 
-Read that as two account associations:
+The matching value must also be trustworthy. A number copied onto the wrong account can produce a match to the wrong person. A reused employee number can undermine an otherwise sensible comparison. Verify the account's real purpose and the reliable person information when investigating an unexpected association.
 
-- `A-73` is associated with `I-71`.
-- `A-74` is associated with `I-71`.
+An **authoritative source** supplies the population from which ISC establishes person identities. Here, HR-Workers serves that purpose. An **identity profile** configures that population, including how identity attributes are populated from source data.
 
-It isn't a command to combine `A-73` and `A-74` into one account.
+The warehouse accounts are being connected to an existing identity. That is a different situation from finding two person-level identity records for one worker. Investigate authoritative records and identity creation if the person is duplicated; account correlation is not a general identity-merge process.
 
-Their account identifiers, permissions, and states remain distinct. Correlation doesn't copy administrative permissions into the daily account, share their credentials, or sign Devi into either account.
+## The person can have access that one of their accounts lacks
 
-The example assumes the employee-number data identifies the intended person correctly. A value can be copied to the wrong account or reused under a poor numbering policy. A successful configured match is not independent proof that the business data is correct.
+An **entitlement** is an access item represented from a source, such as a permission or group membership. To interpret it, you need to know what the connected system allows through that item.
 
-If the admin account actually belongs to another employee, its association with Devi is wrong even if a configured comparison found a matching value. Check the source account and authoritative person evidence before correcting the association.
+For this warehouse example:
 
-An **authoritative source** supplies a population through which ISC establishes person identities. In this example People HR has that role. An **identity profile** provides the configuration for that population, including mappings for identity information.
+- `stock.read` allows viewing stock information.
+- `stock.configure` allows maintaining application settings.
+- `stock.export` allows exporting stock reports.
 
-Two Stockroom accounts associated with one existing identity are not the same as two authoritative person identities for Devi. If two person-level identity records appear, investigate identity creation and authoritative-source design as a separate issue. Don't treat account correlation as a general-purpose identity merge.
+Before the export change, the collected information is:
 
-## Each account keeps its own information
-
-An identity attribute describes the person-level record. An account attribute describes one represented account.
-
-For Devi, the identity's department can be Warehouse Operations. Her Stockroom daily account can have the account-purpose attribute `usage=Daily`, while the admin account has `usage=Admin`.
-
-Those account values aren't contradictory person departments. They answer a different question: what is this account used for?
-
-Likewise, the identity's display name doesn't require every account to have an identical login. A person can be represented as Devi while using different usernames in different systems.
-
-How does an identity attribute obtain a value? Through its configured mapping and any calculation involved. The presence of multiple correlated accounts doesn't mean ISC concatenates all their attributes or automatically makes their values agree.
-
-For a concrete value-lookup example, an **Account Attribute transform** is configured logic that reads an attribute from an account on a specified source. With multiple accounts, its documented default starts with the oldest account by creation date. If that attribute is null, meaning no value, the default behavior looks for a non-null value on a later account. Filtering, sorting, and first-account settings can change that behavior.
-
-That oldest-account default belongs to this value lookup. It is not a universal rule for choosing where to grant permission.
-
-If an identity mapping reads from a source with multiple accounts for that person, inspect its input-selection logic. Don't assume the provisioning selection setting also selects the input for every identity calculation. These are different uses of account data.
-
-A collected attribute also isn't automatically a write instruction. Changing the person-level department does not, by correlation alone, update every connected account. A supported, configured provisioning mechanism is needed for an external change.
-
-## Access belongs to a particular account in a particular system
-
-An **entitlement** is an access item represented from a source, such as a group membership or permission.
-
-In this fictional Stockroom application, the permissions have these meanings:
-
-- `stock.read` permits viewing stock information.
-- `stock.configure` permits maintaining application settings.
-- `stock.export` permits exporting stock reports.
-
-Before the new export requirement, the collected account data says:
-
-| Stockroom account | Purpose value | Collected entitlement values |
+| Account | Account attribute `usage` | Collected permissions |
 |---|---|---|
-| `stock-27007`, `A-73` | `Daily` | `stock.read` |
-| `stock-admin-27007`, `A-74` | `Admin` | `stock.configure` |
+| `stock-daily` | `Daily` | `stock.read` |
+| `stock-admin` | `Admin` | `stock.configure` |
 
-Both rows are associated with Devi. The permissions are not interchangeable between the rows.
+The person has a route to settings administration through the administrative account. The daily account does not carry that permission.
 
-If an identity-level view shows access associated with a person, follow the details to the source and account before deciding which login has that access. “Devi has Stockroom settings access” is useful person-level information. “Her daily account has settings access” is a more specific claim that requires account-level evidence.
+This explains why a person-level statement needs care. “This person has settings access” may describe their overall access correctly. It does not establish that their daily login can maintain settings. Equally, finding no settings permission on the daily account does not establish that the person has no administrative access.
 
-The same applies in the other direction. The absence of `stock.configure` on her daily account does not prove that she has no administrative access anywhere. Her admin account is another path to inspect.
+The **front end** is the interface you read. The **back end** is the processing and record relationships behind it. An identity page can bring related access together while the account records still describe separate accounts. A source's account list can repeat the same associated person beside several rows.
 
-This is why a review or support investigation needs both views: the person's overall exposure and the specific accounts carrying it.
+Repeated person names in that list do not prove duplicate identities. Check which identity record the rows refer to, which source supplied them, and which external accounts they represent. This describes visible record relationships, not a particular private database design.
 
-The front end is the interface you read. The backend is the application processing behind it. An identity page can bring related records together for a readable person-level view while the underlying account records still describe different accounts. A source's account list can show Devi's identity beside more than one row because more than one account is associated with her.
+Also check when the information was collected. Aggregation gives ISC an observation of the source; a saved permission or disabled flag is not a fresh query to the application every time you open the page.
 
-Repeated person names in that account list don't, by themselves, prove duplicate identity records. Inspect the account identifiers and source context.
+## Follow the export change through one account
 
-Also remember what produced the information. Collected access is an observation from aggregation, not a live guarantee that every external account still has exactly that state.
+An **access profile** bundles related entitlements from one source. In this example, **Export stock reports** contains `stock.export` from Warehouse-Production.
 
-## Which account should receive the export permission?
+An **access request** asks for specified access for a specified recipient. The **requester** starts it; the **recipient** is the identity intended to receive the access. Someone can request for themselves or, where allowed, for another person.
 
-An **access profile** bundles related entitlements from one source. For this example, the profile **Export stock reports** contains `stock.export` from Stockroom production.
+**Provisioning** carries out supported account or access changes. The request establishes what is being asked for; provisioning attempts to deliver the permitted change.
 
-The business requirement is precise: add export access to `stock-27007`, Devi's daily account. It does not authorize giving export access to her admin account.
+For this change, neither warehouse account has `stock.export`, and the identity does not already hold Export stock reports. Both accounts are correctly associated with the person. The profile is available for the permitted request, and the configured integration supports the required permission update.
 
-**Provisioning** is carrying out supported account or access changes. Identifying Devi as the recipient is necessary, but it isn't the whole provisioning target. The process must also resolve the relevant source account.
+The requirement is to add export access to `stock-daily` while leaving the approved administrative account unchanged.
 
-There are two different paths to understand.
+When the Request Center request involves multiple accounts on the profile's source, the requester selects the account to receive access. Here, that choice must be `stock-daily`. Selecting the right person alone does not settle the account choice.
 
-### An automatic assignment can use account criteria
+The required review then decides whether the requested access is allowed. Approval authorizes the work; it does not establish that the external system accepted the update.
 
-A **role** groups access needed for a responsibility or population. A **lifecycle state** represents a configured business stage, such as active employment, that can drive applicable account and access actions.
+The **target account** is the external account the operation is intended to change. After approval, the integration attempts the change for the selected target account. In the successful outcome we are considering, current warehouse-system evidence confirms `stock.export` on `stock-daily`, with the administrative account unchanged. A later collection records the new daily-account permission in ISC.
 
-When an access profile is automatically provisioned through an automated role assignment or lifecycle state, its **Multiple Account Options** can determine which of an identity's accounts on that source receives the access.
+Each piece of evidence answers a different question:
 
-For Devi's two Stockroom accounts, imagine a configured criterion comparing the account attribute `usage` with `Daily`.
+| Evidence | What it establishes |
+|---|---|
+| Request details | Recipient, requested profile and selected account |
+| Provisioning activity | Account/source involved, attempted change and reported result |
+| Current external account check | Permission actually present on the checked account at that time |
+| Later collected account data | What ISC has subsequently recorded from the source |
 
-The supplied data makes `A-73` the single match. `A-74` has `usage=Admin`, so it doesn't match that criterion.
+The checks in the last two rows are verification work. They are not extra steps that every request automatically performs in that order or at a fixed interval.
 
-The reason for the selection is the configured comparison against account data. It isn't that `A-73` appears first on a screen, was created earlier, or has a shorter username.
+Now change the account choice. Suppose the requester selects `stock-admin`, and current target evidence confirms export access there. The operation may have succeeded for its selected target while leaving the daily-account requirement unmet.
 
-For this automatic access-profile mechanism, no matching account or more than one matching account causes provisioning to fail. If manual account selection is enabled, the source owner can be asked to choose through a task form. Selection and fulfilling the access remain separate; an additional manual fulfillment task can be needed.
+Before granting export to the daily account as well, establish the approved correction for the extra administrative-account grant. Preserve legitimate rights, address unintended access, and check both accounts afterward. A second grant alone would leave the first mistake in place.
 
-The source owner is the identity assigned responsibility for that source. That responsibility doesn't automatically give the owner administrator privileges in Stockroom.
+## Automatic assignment makes a separate account choice
 
-### A request uses its own account selection
+A **role** groups access for a responsibility or population. A **lifecycle state** represents a configured business stage, such as active employment, that can drive account and access actions. ISC can automatically assign an access profile through these mechanisms when the applicable configuration calls for it.
 
-An **access request** asks for specified access for a specified recipient. The **requester** initiates the request; the **recipient** is the identity intended to receive the access. They can be different people.
+Choosing the recipient and choosing one of that recipient's accounts are separate decisions. A role's assignment logic can identify who needs access; account-selection logic determines where the profile's access should go.
 
-For Request Center access requests involving multiple accounts on the source, the requester selects the account that should receive access. The automatic access-profile criteria just described do not govern that request selection.
+For an access profile automatically provisioned through an automated role assignment or lifecycle state, **Multiple Account Options** can select among the identity's accounts on that source.
 
-So don't tell a requester, “Choose either account; the Daily filter will correct it later.”
+Suppose the profile criterion is `usage Equals Daily`. ISC evaluates the account-purpose data against that criterion. With the supplied values, only `stock-daily` matches. That is why it is selected. Its position in a list, shorter login or age does not explain this selection.
 
-The choice needs to reflect the intended account. Review should retain that account context, and the resulting provisioning evidence must identify what was actually attempted.
+For this mechanism, zero matching accounts or more than one matching account causes provisioning to fail. ISC does not resolve two matches by applying the oldest-account rule used by a different feature.
 
-Here is the comparison for an identity with multiple accounts on the profile's source:
+If the organization enables manual account selection, the source owner can receive a task form to choose the account. A **source owner** is the identity assigned responsibility for that source. That responsibility does not automatically grant administrative privileges in the external application. Choosing an account also does not complete delivery; a further manual fulfillment task might be needed.
+
+Two boundaries are especially relevant to a daily/admin design:
+
+- These automatic profile criteria do not apply to access requests. The request path uses the requester's account selection.
+- These criteria are not applied when the identity has only one account on the source. A `Daily` criterion therefore cannot, by itself, protect every possible remaining-account arrangement.
+
+Here are the two selection contexts side by side in one map:
 
 ```text
-Access profile: Export stock reports
-Source: Stockroom production / S-73
-Recipient: identity I-71
-  |
-  +-- Automatic role/lifecycle profile assignment
-  |     |
-  |     +-- Evaluate configured account criteria
-  |           +-- One match --> Selected account
-  |           +-- Zero/many --> Provisioning fails
-  |                 Manual selection if enabled
-  |
-  +-- Request Center access request
-        |
-        +-- Requester selects intended account
+Profile: Export stock reports
+Source: Warehouse-Production
+Recipient: one existing identity
 
-Selecting an account is not proof of delivery.
-Inspect the actual operation and target result.
+Automatic profile assignment
+  via role or lifecycle state
+  |
+  +-- Account criteria
+        +-- One match: select account
+        +-- Zero/many: provisioning fails
+              Manual choice if enabled
+
+Request Center request
+  |
+  +-- Requester selects account
+
+Account choice is not delivery evidence.
 ```
 
-The branches compare documented selection contexts. They aren't a universal processing sequence for every ISC feature. Other operations, direct role entitlements, and connector-specific changes need their own applicable behavior checked.
+Follow one branch for the applicable assignment path. The branches compare how an account is chosen; they are not successive stages of the same request. Manual choice is conditional on the organization enabling it.
 
-The automatic multiple-account criteria are not applied when the identity has only one account on that source. If the only remaining account is the administrative one, don't assume a `Daily` criterion is a universal safety gate. Validate the account population and the design's behavior for that condition.
+If a requester selects the administrative account, the automatic `Daily` criterion does not redirect that request to the daily account. If the daily account is retired and only the administrative one remains, that criterion is outside its documented multiple-account scope.
 
-“Which person qualifies?” and “which account should receive it?” are separate questions.
+Other operations, roles containing entitlements directly, and connector-specific changes require their own applicable selection behavior. The map describes these access-profile contexts.
 
-## Already having the profile creates another limit
+## One profile on the identity does not mean the permission is on both accounts
 
-Suppose Devi already has the access profile Export stock reports associated with her identity through a previous request for the admin account. The daily account still lacks `stock.export`.
+Suppose Export stock reports is already associated with the identity through an earlier request for `stock-admin`. The daily account still lacks `stock.export`.
 
-Can she simply request the same profile again and select the daily account?
+Requesting the same profile again for the daily account is blocked by the documented profile behavior: a profile can be associated with an identity only once. The existing association does not establish export access on every account.
 
-The documented access-profile request behavior does not allow that. An access profile can be associated with an identity only once, so an identity that already has it cannot request it again for another account.
+Individual entitlement requests or access bundled into roles are documented alternatives when the same access is needed on multiple accounts. Before using either, establish the approved design, requestability, recipient and account selection, required authorization and supported fulfillment. An alternative grant path still has to satisfy the access controls.
 
-SailPoint identifies individual entitlement requests or access bundled into roles as alternatives when the same access is needed on multiple accounts. Those alternatives still require a suitable design, account selection, authorization, and supported fulfillment. They aren't permission to bypass the original access controls.
+Keep this separate from the earlier successful request, where the identity did not already hold the profile. The existing assignment changes what can be requested.
 
-First establish what the identity already holds and on which account the target permission exists. Don't treat a blocked repeat profile request as proof that the daily account already has the permission.
+## Reading a value is another kind of account selection
 
-## Follow one complete change
+An **identity attribute** describes the person-level record. An **account attribute** describes one account. The identity can have department `Warehouse Operations` while the two warehouse accounts have different `usage` values. Those values describe different things.
 
-Return to the original case: neither Stockroom account has `stock.export`, and Devi doesn't already hold the Export stock reports profile.
+An identity's display name also does not require identical account logins across systems. Accounts can keep their own identifiers and names while referring to the same person.
 
-The configured source supports the required membership or permission update. The request process permits the requested access and uses the organization's required review. The requester selects the daily account `A-73`.
+An identity **mapping** specifies where an identity value comes from. A **transform** is configured logic that obtains or calculates a value. When a mapping reads from a source with two accounts, it needs a way to determine which account supplies the input.
 
-After approval, the integration attempts the supported change for that account. Approval is the decision to allow the requested work; it isn't the result of the external operation.
+For example, an **Account Attribute transform** reads a specified field from an account on a specified source. Its default sorts by account creation date, oldest first, and returns the first non-null value. **Null** means no value. Filters and sort settings can change the eligible accounts and their order. Setting `accountReturnFirstLink` to true returns the first account's value even when it is null.
 
-For the successful fictional outcome, current Stockroom account evidence confirms `stock.export` on `stock-27007`. A later collection records that permission on `A-73`. The admin account remains unchanged.
+This rule concerns reading a value. It does not select the account that receives export permission. Inspect the mapping or transform for input selection and the applicable assignment or request mechanism for change targeting.
 
-Notice the separate evidence:
+Correlation alone neither combines all account values into one identity value nor makes different account values agree. Likewise, calculating a new identity department is not, by itself, an instruction to update every external account. An external change needs the supported, configured change mechanism.
 
-- The request identifies the recipient, requested profile, and selected account.
-- The provisioning activity identifies the source account, attempted change, and reported result.
-- The target observation establishes the permission on the intended external account at the checked time.
-- The later collected account data shows what ISC has recorded from the source.
+## Signing in does not combine the accounts' permissions
 
-These are not four names for one status. They answer different questions.
+**Authentication** verifies a claimed identity for sign-in. **Authorization** determines whether an operation is permitted.
 
-Now change one fact: the requester selected `A-74`, and the supplied target evidence confirms that the admin account received `stock.export`.
+In this example, the warehouse application checks the permissions of the account used in the current application context. If `stock.export` is present only on `stock-admin`, signing in as `stock-daily` does not gain that permission through the ISC association.
 
-The system may have carried out that selected operation successfully while the business requirement remains unmet. Don't automatically repeat the grant on the daily account and ignore the extra admin permission. Establish the approved correction, preserve legitimate existing rights, and verify both accounts after the correction.
+An application may use **single sign-on**, where it relies on sign-in established through an **identity provider**, the service that verifies the sign-in, rather than asking for a separate login each time. Its configuration still needs to identify the intended application account. That sign-in mapping is separate from ISC correlation.
 
-That is an account-targeting problem, not evidence that Devi needs another person-level identity.
+If the application opens the administrative account when the person expects the daily one, inspect the actual sign-in mapping and resulting application-account context. A correlation rerun does not, by itself, change those sign-in rules.
 
-## A sign-in uses an account, not a combined permission bag
+Applications can implement delegated permissions or other authorization models. Check the actual application's behavior before applying this example's account-based checks to it.
 
-**Authentication** verifies a claimed identity for sign-in. **Authorization** decides whether a particular operation is allowed.
+## Disabling one account concerns that account
 
-In this example, Stockroom checks permissions on the account used for the current application context. When Devi signs in as `stock-27007`, her daily account's rights apply. Signing in as `stock-admin-27007` uses the admin account's rights.
+Suppose current warehouse-system evidence confirms that `stock-admin` is disabled while `stock-daily` remains enabled.
 
-ISC's correlation of both accounts to Devi doesn't merge those runtime permissions.
+This account change does not, by itself, disable the daily account or change the person's employment status. The person may still have approved daily access.
 
-An external single-sign-on arrangement can map a sign-in to an application account. That mapping is separate from ISC account correlation. If the application signs Devi into the admin account when she expected the daily account, examine the actual sign-in mapping and application-account context rather than assuming an ISC correlation rerun will repair it.
+A person-level lifecycle state and an account's enabled or disabled state answer different questions. Lifecycle configuration can initiate applicable actions across accounts. To establish the result, inspect what actions were configured, which accounts they concerned, and what completed.
 
-Actual applications can have delegated access or other authorization rules. Check the application's design; don't generalize this fictional account-based permission model to every system.
+There is a further distinction between disabling an account and ending existing sessions. A **session** is an application's continuing signed-in context. Whether account disablement stops that existing context depends on the application's behavior. Verify session handling rather than treating a collected disabled flag as proof that every session has ended.
 
-## Disabling one account doesn't answer every access question
+For an administrative-account retirement, establish which account is being retired, what access should remain, and whether any unintended path remains usable. The person's continued presence in ISC is not evidence that the administrative-account retirement failed.
 
-Suppose the admin account `stock-admin-27007` is confirmed disabled in Stockroom. The daily account remains enabled.
+## A missing relationship does not remove external access
 
-The account action concerns the admin record. It doesn't, by itself, disable the daily account, change Devi's employment status, or prove that she has lost access through every other account.
+An **uncorrelated account** has not been matched to an authoritative identity in ISC. It may still exist and remain enabled in the external system.
 
-An identity's lifecycle state and an individual account's enabled/disabled state are different information. A lifecycle configuration can initiate actions across accounts, but you need to inspect the configured actions and their outcomes. The person-level state isn't proof that each external action succeeded.
+An account linked to the wrong person is a different issue. It has an association, but the association is incorrect. Looking only at uncorrelated accounts will miss such wrong-person relationships.
 
-Disabling an account is also different from ending every existing application session. A **session** is the application's continuing signed-in context. Verify how that application treats existing sessions when an account is disabled. Don't infer session termination from the ISC association or a collected disabled flag alone.
+Removing an account representation from ISC is also different from deleting the external account. If the account still exists on the source, it can be collected again during the next complete source aggregation.
 
-For a legitimate administrative-account retirement, the question isn't simply “does Devi still appear in ISC?” It is which account was retired, which access remains approved, what actions were completed, and whether she retains any unintended path.
+Start an investigation by establishing the external system and environment, the account's actual identifier, and the corresponding ISC record. Confirm the person and approved purpose. Then compare the source data with the person information and correlation configuration, and inspect account-specific permissions, state, relevant assignments and operation history.
 
-## Don't remove the relationship to hide the problem
+That evidence helps locate the defect: source data, person association, access design, fulfillment or the external account itself. Plan the authorized correction for the actual defect.
 
-An account can exist in the external system without being matched to an authoritative identity in ISC. That is an **uncorrelated account**. It doesn't mean the external account has been disabled or deleted.
+External deletion must be supported by the source's integration and authorized for that account. If it is needed, also inspect continuing access requirements. SailPoint documents that an active role assignment requiring entitlements on that source can cause the deleted account to be recreated during the next identity refresh. Deleting an account without resolving the continuing requirement can bring the symptom back.
 
-An account associated with the wrong person is a different case: the correlation is incorrect, rather than absent. Don't assume a search for uncorrelated accounts will reveal every wrong-person association.
+## Work through the account decisions
 
-Likewise, removing an account representation from ISC is different from deleting the external account. SailPoint documents that a source account removed from ISC can be collected again during the next complete source aggregation if it still exists on the source.
+### 1. Four account rows
 
-If the requirement is to stop an unnecessary external account from being used, deleting its displayed ISC row isn't evidence that the requirement has been met.
+The four accounts in the opening table all refer to the same ISC identity record. Two are on Warehouse-Production. A colleague calls them four duplicate identities.
 
-Start with read-only investigation:
+**Worked reasoning:** The supplied facts show one identity with four account representations across three sources. Two separate warehouse accounts share one source. Investigate actual identity records if identity duplication is suspected; account-row counts do not establish it.
 
-1. Identify the external system, environment, account identifier, and corresponding ISC account record.
-2. Confirm who the account represents and what purpose is approved.
-3. Compare the source attributes with the person information and correlation configuration.
-4. Inspect account-specific permissions, state, relevant assignments, and operation history.
-5. Decide whether the defect is in source data, association, access design, fulfillment, or the actual external account.
+### 2. The permission is present, but the daily login cannot use it
 
-Only then plan the authorized correction. An association error needs different work from an unnecessary but correctly associated account. An intended account receiving the wrong permission is a different problem again.
+The identity-level view shows `stock.export`. Account details and current target evidence place it only on `stock-admin`. Exporting while using `stock-daily` fails.
 
-Also inspect continuing access requirements before deleting an external account. A role that still requires source access can cause account creation again under the documented provisioning behavior. Removing a record without resolving why access is required can produce a return of the symptom.
+Does that establish a broken application permission check?
 
-## Check your reading of the account map
+**Worked reasoning:** The supplied daily account lacks the permission, so the failure fits this application's stated account-based behavior. Trace the intended account, request selection, provisioning activity and current sign-in context. Also establish whether the administrative-account grant was approved. A person-level access item does not give every account the same rights.
 
-### 1. Four rows, how many identities?
+### 3. Both accounts have `usage=Daily`
 
-The four accounts in the opening table all refer to `I-71`. Two belong to Stockroom production. A colleague says that four rows prove four duplicate identities.
+An automatic profile assignment uses `usage Equals Daily`, but both warehouse accounts now have that collected value. Someone proposes letting ISC choose the older one.
 
-**Worked reasoning:** The supplied facts show one identity associated with four account representations across three sources. The two Stockroom rows are separate accounts on one source. Inspect identity IDs to investigate identity duplication; don't use an account-row count as an identity count.
+**Worked reasoning:** Multiple matches cause the applicable provisioning to fail. The Account Attribute transform's oldest-first default is not a provisioning tie-breaker. Investigate the purpose data and selection design. If manual account selection is enabled, inspect its task; a completed choice still needs fulfillment evidence.
 
-### 2. The right permission is on the wrong login
+### 4. The request selects Admin
 
-An identity-level view shows `stock.export`. Account details and current target evidence place it only on `stock-admin-27007`. Devi cannot export while using `stock-27007`.
+A Request Center request selects `stock-admin`. The profile has the automatic `Daily` criterion, so a reviewer expects the daily account to receive the permission.
 
-Should you conclude that the application's permission check is broken?
+**Worked reasoning:** Those criteria do not govern request account selection. Review the selected account against the requirement and inspect the actual attempted target. Do not rely on the automatic setting to repair a knowingly wrong request selection.
 
-**Worked reasoning:** Not from these facts. The daily account lacks the permission in the supplied evidence, while the admin account has it. Check the intended account, request selection, provisioning activity, and current application-account context. The identity-level access observation does not make both accounts equivalent. A correction also needs to address whether the admin grant was approved.
+### 5. Only the administrative account remains
 
-### 3. Two accounts match the automatic criterion
+The daily account is retired. The administrative account is the identity's only account on Warehouse-Production. Someone says `usage Equals Daily` guarantees that automatic profile access cannot concern it.
 
-For automatic profile provisioning, both Stockroom accounts have collected `usage=Daily`, and the configured criterion is `usage Equals Daily`.
+**Worked reasoning:** The multiple-account criteria are not applied to a single-account identity on that source. The criterion alone does not provide the claimed protection. Inspect the remaining account's purpose, assignment design and applicable provisioning behavior before predicting the outcome.
 
-Will ISC safely choose the older account?
+### 6. The administrative row disappears from ISC
 
-**Worked reasoning:** No such tie-breaker follows from this mechanism. More than one match causes that provisioning to fail. Verify why both collected values match the criterion and whether the design correctly expresses the intended account purpose. If manual selection is enabled, inspect the relevant selection task. A manual choice still isn't proof that the permission was delivered.
-
-### 4. The requester picked Admin
-
-The automatic profile setting selects `usage=Daily`, but a Request Center request selects the admin account. A reviewer assumes the automatic setting will redirect the grant to the daily account.
-
-**Worked reasoning:** That assumption is wrong for the documented request path. These automatic criteria don't apply to access-request account selection. Review the selected account against the business requirement and inspect what the provisioning record actually targets. Don't approve a knowingly wrong account on the assumption that the filter will repair it.
-
-### 5. Only one account remains
-
-The daily account has been retired. The only correlated Stockroom account is the admin account. An engineer argues that `usage Equals Daily` guarantees an automatic profile assignment cannot concern that admin account.
-
-**Worked reasoning:** Multiple Account Options criteria are not applied for an identity with only one account on that source. The criterion alone doesn't establish the claimed protection. Review the assignment design, remaining account's purpose, and the applicable provisioning behavior. Don't infer a safe outcome from a filter whose documented scope doesn't cover this population.
-
-### 6. The second account disappeared from ISC
-
-Someone removes the admin account's representation from ISC. There is no supplied external delete/disable result, and the account still exists in Stockroom.
+The account representation is removed from ISC, but the external administrative account still exists. No external disable or delete result is supplied.
 
 Has administrative access been removed?
 
-**Worked reasoning:** No. Removing the ISC representation isn't an external disable or delete. It can be collected again during a complete source aggregation. Establish the authorized target change, the continuing assignment requirements, and current external account/access evidence. Hiding the account row doesn't resolve the access risk.
+**Worked reasoning:** The row removal establishes no external disablement or deletion. A complete aggregation can collect the account again. Establish the approved external change, continuing assignment requirements, and current account and access evidence. Removing its visibility does not meet an external retirement requirement.
 
-## Use a different application and trace it yourself
+## Apply the reasoning to payroll
 
-A payroll analyst has one ISC identity associated with two accounts on the Payroll production source:
+One ISC identity is associated with two accounts on Payroll production:
 
 | Account | Approved purpose | Supplied observation |
 |---|---|---|
 | `pay-review` | Daily payroll review | Enabled; `pay.view` |
 | `pay-support` | Separately authorized technical support | Enabled; `pay.configure` and `pay.export` |
 
-The new requirement is to allow exports from `pay-review`. The support account's existing export permission is approved for its separate duties.
+Here, `pay.view` allows payroll viewing, `pay.configure` allows settings work, and `pay.export` allows payroll export. The support account's existing export permission is approved for its separate duties.
 
-The analyst's identity already has an Export payroll access profile from a prior request for `pay-support`. A colleague proposes requesting that same profile again for `pay-review`. Another proposes removing `pay-support` from ISC because “the second account is the problem.”
+The new requirement is export access on `pay-review`. The Export payroll access profile bundles `pay.export` from Payroll production. The identity already has this profile from an earlier request for `pay-support`.
 
-Explain what each proposal misses, what needs to be established before a change, and how you would verify a correct outcome.
+One colleague proposes requesting the same profile again for `pay-review`. Another proposes removing the support account's ISC row because there should be only one account.
 
-**Worked reasoning:** One person can legitimately have both accounts. Their purposes and permissions are separate, and the support account's approved export right must be preserved.
+Before reading on, explain what each proposal misses, what needs to be established before a change, and what a correct result would look like.
 
-The documented profile request limit prevents requesting an already-associated access profile again for another account. Investigate an approved design using the supported alternatives, such as an individual entitlement request or access bundled into roles. Confirm requestability, recipient and account selection, required authorization, and connector support. Don't assume the example authorizes any particular configuration change.
+**Worked reasoning:** Two accounts can be legitimate, and their approved purposes explain why they are separate. Preserve the support account's approved access.
 
-Removing the support account's ISC representation doesn't fulfill the export requirement on the daily account and doesn't delete the external support account.
+The profile's once-per-identity association prevents the proposed repeat profile request for another account. Investigate an approved design using an individual entitlement request or access bundled into roles. Check requestability, the intended recipient and account, authorization and connector support. These supplied facts do not authorize a particular configuration change.
 
-A correct outcome requires `pay.export` on `pay-review`, preservation of the approved support access, and no unintended new permissions. Inspect the selected account and operation results, then current target evidence for both accounts. Later collected data should be read as the recorded observation, not substituted for the target check.
+Removing the support account's ISC representation neither gives export access to the review account nor deletes the external support account.
 
-Explain the distinction to a teammate without the table: correlation tells you which person an account is associated with; account selection tells you which account an operation concerns. Neither statement, on its own, proves that the desired access has been delivered.
+A correct outcome puts `pay.export` on `pay-review`, preserves the approved support rights, and adds no unintended permissions. Trace the selected account and operation result, check both current external accounts, and distinguish those checks from what a later collection records.
+
+Explain the connection to a teammate in your own words: correlation establishes which person an account belongs to; input selection chooses an account to read from; change targeting chooses the account an operation concerns. Evidence of the operation and the external result is still needed to establish delivery.

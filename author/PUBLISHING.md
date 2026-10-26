@@ -26,6 +26,10 @@ The user authorized this new public repository and Pages site on October 25, 202
 
 See the [new-repository publication record](NEW_REPOSITORY_PUBLICATION_2026-10-25.md) for the exact deployed revision and verification results. Working-edition deployment is not beginner validation or formal publication approval. Future authoring continues with FND-001 in this repository; further publishing still follows the user's instructions.
 
+## October 26 publication
+
+The user authorized publishing the completed FND-001 through FND-007 and ARC-001 revisions before continuing ARC-002 locally. See [publication scope and verification](PUBLICATION_2026-10-26.md). The original repository/site remains outside the publication scope.
+
 ## Historical publishing notes inherited from ISC_Theory_Learning
 
 The entries below describe earlier development and deployments of the original edition. Their counts and next-lesson reservations are historical, not the current revision target.

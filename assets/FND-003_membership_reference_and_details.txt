@@ -1,0 +1,18 @@
+Source: Invoice-Service
+Entitlement type: groups
+
+Collected finance account
+groups includes g-inv-read
+           |
+  membership value matches
+  designated Entitlement ID
+  in this source/type context
+           v
+Entitlement record
+id = g-inv-read
+name = FIN_INV_READ
+description = Allows invoice reading
+businessArea = Finance
+
+The arrow is a reference,
+not a grant or a write operation.

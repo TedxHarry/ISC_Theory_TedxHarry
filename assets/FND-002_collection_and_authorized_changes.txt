@@ -1,0 +1,37 @@
+READ: observe an existing account
+
+Production finance application
+finance-user already has InvoiceRead
+               |
+      connector reads in-scope data
+               v
+ISC source: Finance-Production
+collected account and permission values
+               |
+       account correlation
+               v
+Existing employee identity
+associated finance account
+
+
+WRITE: separately authorized change
+
+Valid instruction: add InvoiceExport
+Finance-Production / finance-user
+               |
+    supported, configured provisioning
+    connector submits the operation
+               v
+Production finance application
+accepts or rejects the attempted change
+               |
+       reported operation result
+               v
+ISC activity information
+
+Human verification:
+check current application evidence.
+Check later collection separately.
+
+Arrows describe work and information,
+not private services or fixed timing.

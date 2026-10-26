@@ -1,365 +1,377 @@
 # Sources, connectors, and the systems they connect to
 
-*Lesson FND-002 · Revision 1.0*
+"The finance system is connected to ISC."
 
-“The finance system is connected to ISC.”
+What would you be comfortable concluding from that statement?
 
-That sounds reassuring. But what does “connected” establish?
+Perhaps SailPoint Identity Security Cloud, or ISC, can read accounts. That does not yet tell you whether it can add a permission, remove one, disable an account, or delete it. You may not even know whether the connection concerns production, a test copy, or an exported file.
 
-Can SailPoint Identity Security Cloud, or ISC, read the system’s accounts? Can it read their permissions? Can it create an account, remove a permission, or disable an account? Is it looking at production, a test environment, or yesterday’s exported file?
+Before relying on the connection, establish which system it represents, which information it obtains, and which changes it can actually deliver.
 
-Those are different questions. A useful answer identifies the system, the information being collected, and the operations the connection actually supports.
+## The application, the source, and the connector do different jobs
 
-## The finance application still lives outside ISC
+Start with an existing account in a finance application. It already has permission to read invoices. The organization wants ISC to record that account and its access, and to deliver approved permission changes.
 
-Devi works in Finance. Her employee number is `20002`, and she already has an account named `fin-20002` in the organization’s production finance application. She uses it to read invoices.
+The finance application is the **external system**. It stores the real account and applies its own rules when that account tries to use invoices.
 
-The organization wants ISC to record that account and its invoice permission. It also wants approved permission changes to reach the finance application.
+An **account** is a record used by a person or service in a system. Here, the finance account has an identifier, information about its user, and permissions.
 
-These are fictional records and integration conditions. We’ll follow an existing account rather than assume that connecting the application creates one.
+ISC needs somewhere to represent this system's account data and integration settings. That configured representation is a **source**.
 
-The finance application is the **external system**: the software that stores Devi’s finance account and uses its own rules to decide what that account can do.
+For this hypothetical setup, call it `Finance-Production`. The name identifies the source we are discussing; the configuration must establish that it really represents the intended production system.
 
-An **account** is a record in that system. Here, it identifies Devi as a finance user and holds information about her access.
+The **connector** provides the integration used to read information and perform supported, configured changes. The source holds the settings and record context for this use of that integration.
 
-ISC needs a representation of the system it manages. That configured representation is a **source**.
+You can now separate three questions:
 
-We’ll call this source `Finance-Production`. It gives ISC a defined place for this integration’s settings and collected account data.
+Where is the actual account? In the finance application.
 
-Creating that source does not install the finance application, move its database into ISC, or create Devi’s finance account. The account already exists in the application. ISC must obtain information about it.
+Where does ISC hold its representation of that account? Under the configured finance source.
 
-The **connector** supplies the integration used to read that information and carry out supported changes. Its behavior depends on the connector type and its configuration.
+What provides the integration behavior? The connector selected and configured for the source.
 
-Keep these distinctions beside the example:
+Creating a source does not install the application, move its account database into ISC, or establish that a new application account has been created. Our account already exists. Reading it is the next piece of work.
 
-| What we’re discussing | In this example | What it tells you |
-|---|---|---|
-| External system | Production finance application | Where the actual finance account and application enforcement exist |
-| Source | `Finance-Production` in ISC | Which configured integration and collected records you’re examining |
-| Connector | The integration used by that source | How supported exchanges with the finance application are performed |
-| Account in the external system | `fin-20002` | The actual record a finance operation would affect |
-| Account represented in ISC | The collected `fin-20002` record under `Finance-Production` | What ISC has recorded about that source account |
+There are also two account states to keep distinct: the application's current record and ISC's representation of it. If they differ, ask when each was observed and what operation produced the information. "The account looks correct" is incomplete until you know which record was inspected.
 
-If someone says “the account is correct,” ask which of the last two rows they inspected. That small question can prevent a long investigation in the wrong place.
+## One connector type can be used in different configurations
 
-## A connector type is not the same thing as one configured source
+A connector type supplies integration behavior for a kind of system or interface. A source uses that behavior with particular settings.
 
-A connector type provides integration behavior for a kind of system or interface. A source applies that integration to a particular configured situation.
+For a real SailPoint example, the Web Services SaaS (software as a service) connector supports reading account data and specified account and access changes, including adding and removing represented access rights. The feature list does not, on its own, establish that any particular finance application exposes the required interface.
 
-For a concrete SailPoint example, the **Web Services SaaS connector** supports account collection and supported account or access changes through configured web-service operations.
+An **API**, or application programming interface, is a way for software to ask another system for information or request an operation. An **endpoint** is the address used for a particular API service or operation.
 
-A web-service **API**, or application programming interface, is a way for software to ask another system for information or request an operation. An **endpoint** is the address used for a particular API service or operation.
+A web-service integration needs the relevant API operations to exist and be configured correctly. Support in the connector is one condition; support in the application's interface is another.
 
-Knowing that a connector supports an operation does not establish that every system’s API offers it, that the operation has been configured correctly, or that the connection has permission to execute it.
+Now consider a test copy of the finance application.
 
-For our finance example, assume that the chosen integration supports the account read and permission-add operations we use. Its source configuration and the finance API have been prepared for those operations. This is a teaching assumption, not a statement that every finance product has the same interface.
+A `Finance-Test` source can use the same connector type as Finance-Production while connecting to a different address and using different authentication information. **Production** is the environment used for real business work. **Test** is a separate environment used for controlled checks.
 
-Now imagine a separate test copy of the finance application.
+The finance integration authenticates using a **credential**, information such as a password or API token. The application also determines which actions that authenticated connection may perform.
 
-You can configure a `Finance-Test` source using the same connector type while pointing it at the test system. Its connection address and integration credentials differ from production.
+A credential accepted for reading accounts is not automatically permitted to change them. A credential for test is not automatically a production credential either.
 
-**Credentials** are the information the integration presents to establish who is connecting, such as an API token. The external system separately controls what that credential is allowed to do.
+For the examples below, the hypothetical account identifier is `finance-user`. Both environments can contain an account with that identifier. The two records still belong to different application instances.
 
-A test connection’s credentials should not be treated as production credentials merely because the connector type matches.
+Matching account names and connector types do not turn test evidence into production evidence.
 
-Likewise, an account named `fin-20002` in test is not the production account just because the name is identical. The environment and source context are part of identifying the record.
+A source can cover many accounts and access items. You do not need a new source for every employee or permission. Instead, decide which system instance and data scope each source should represent.
 
-One source can also include many accounts and access items. You do not create a separate source for every employee or every permission.
+Deliberately separating test from production makes that boundary clear. Accidentally creating another source against the same production population creates another configuration and another set of represented records; it does not explain or repair an account-association problem.
 
-The design question is: which system instance and data scope does this source represent?
+## Make the source's boundaries explicit
 
-A deliberate separation between test and production answers that question. Accidentally configuring two integrations against the same production population does not solve an account-matching problem. It introduces another configuration and another set of represented records to investigate.
+A useful configuration answers more than "Which connector did we choose?"
 
-## What does the source configuration need to describe?
+First establish the intended destination. The address and environment must agree with the requirement. A successful connection to test is not a successful production integration merely because the source was named Finance-Production.
 
-Let’s turn “connect finance” into questions you can answer.
+Then establish the population. A connection can cover a particular organization, region, business unit, or filtered set of records where supported. A **tenant**, in a hosted service, is a particular customer or organizational instance.
 
-**Where should the integration connect?**
+If the agreed scope includes one regional company and excludes another, an excluded account's absence is not evidence of a failed collection. You need to know whether that account was supposed to be included.
 
-The system address must identify the intended environment. A working connection to a test API is still the wrong connection when the requirement concerns production.
+Next establish how the returned data is represented. An **attribute** is a named piece of information on a record, such as an account identifier, employee number, status, or permission value.
 
-**What may the integration read or change?**
+The **account schema** describes the account attributes ISC uses and how they are organized. It designates the attributes used as Account ID and Account Name and describes properties such as whether a field can contain several values.
 
-The connector’s supported features, the source’s enabled behavior, and the external system’s permissions all matter. A credential that reads accounts may lack permission to add invoice access.
+Adding a field to that schema does not grant permission to read it from the application, and it does not create the field there. Representation and external capability are separate concerns.
 
-**Which records are in scope?**
+Finally, establish when collection runs. A **direct connection** communicates with the system through configured connectivity rather than relying only on an uploaded account export. Supported account collections can be started on demand or scheduled. Saving the connection settings is not itself an account collection.
 
-The integration may cover a particular organization, tenant, business unit, or filtered population, where the connector supports that selection. A **tenant** here means a particular customer or organizational instance of a hosted service.
+These boundaries give the source name a testable meaning. Check the destination, population, representation, operations, and collection behavior against the design, rather than accepting the label as evidence.
 
-For example, an agreed finance scope might include one regional company but exclude another. A missing account outside that scope does not establish that collection malfunctioned.
+## Follow an existing account into ISC
 
-**How should the returned information be represented?**
+For the successful read path, assume Finance-Production has the correct destination, scope, schema, and account-read configuration. The finance API supports that read, and the integration's credential is permitted to perform it.
 
-An **attribute** is a named piece of information on a record. Our finance account has an account identifier, an employee number, and permission information.
+The existing finance-user account is in scope. It holds `InvoiceRead`, the application's permission for reading invoices.
 
-The **account schema** describes the account attributes ISC uses and their organization. It identifies the attributes used as the account’s ID and name and describes details such as whether an attribute can contain multiple values.
+**Aggregation** is the collection of source data into ISC. Here, account aggregation obtains the account's information, including the represented permission values.
 
-The schema concerns the representation of data. Adding an attribute to a schema does not give the integration permission to read a hidden field, and it does not create that field in the finance application.
+An **entitlement** is an access item represented from a source, such as a permission or group membership. In this example, the schema and integration represent InvoiceRead as an entitlement value on the account. We are not assuming that any field named permissions is automatically treated as access.
 
-**When should ISC obtain the data?**
+When the administrator starts the relevant aggregation, the connector performs the configured read. The application returns the included account information, and ISC records it under Finance-Production.
 
-Collection has to run. A **direct connection** uses configured connectivity to communicate with the system, rather than relying on an uploaded account export. Account data can be collected on demand or on a schedule. Saving connection settings is not the same event as collecting accounts.
+The direction matters: the application supplies information; ISC records the observation.
 
-A direct connection does not specify one universal hosting arrangement. SailPoint supports virtual-appliance-based connectors, which use a configured virtual appliance deployment, and SaaS connectors, which do not require that on-premises appliance cluster. A **virtual appliance** is software deployed as a virtual machine to provide the applicable connectivity services. The connector choice determines which arrangement applies.
+InvoiceRead was already present. Reading it did not grant it. The collected permission explains what the account was observed to hold, not how that permission was originally obtained.
 
-These questions describe the integration’s boundaries. A source name such as `Finance-Production` is helpful, but the name is not proof that the configured address, permissions, scope, and schema agree with it.
+The account information also needs a person context.
 
-## Follow one account from finance into ISC
+An employee's **identity** is ISC's person-level record, connecting information about that employee's accounts and access. For this setup, that identity already exists.
 
-**Aggregation** means collecting source data into ISC. In this walkthrough, we’re collecting account data, including the account’s represented permission values.
+A separate HR source established the employee population. An **authoritative source** supplies records used to establish that population through an **identity profile**, configuration that includes how the identities' values are obtained.
 
-Devi’s existing production account contains these fictional values:
+A **mapping** specifies the input or calculation used for a value. Here, the employee-number mapping obtains its value from HR. This gives the existing identity information that can be compared with the finance account.
 
-| Account attribute | Value |
-|---|---|
-| Account identifier | `fin-20002` |
-| Employee number | `20002` |
-| Permissions | `InvoiceRead` |
+Authoritative does not mean unrestricted write authority. It also does not require every identity attribute to come from that source; individual mappings can select other sources.
 
-An **entitlement** is an access item represented from a source, such as a permission or group membership. In this application, `InvoiceRead` is the permission that allows invoice reading. Its meaning comes from the finance application’s design.
+Finance-Production has a different purpose here. It supplies existing finance accounts to associate with that population. It has not been configured as another authoritative employee population.
 
-For this example, the schema and integration represent the account’s permissions as entitlement values. We are not assuming that every field called “permissions” is automatically recognized as access.
+**Account correlation** matches and associates a source account with an identity. In the supplied successful example, the configured comparison pairs the account's employee number with the identity's employee number. The values identify the same employee reliably and provide the intended unique match.
 
-The administrator starts an account aggregation. The selected integration reads the finance records within its configured scope, using the authority available to its credential.
+The account becomes associated with that identity.
 
-Devi’s record is included. ISC records the returned account information under `Finance-Production`.
+Notice the two pieces of work. The connector obtained the account information. Correlation used the account and identity information to establish the relationship. A successful read is not, by itself, proof of a correct person match.
 
-What has happened so far?
+If the source contains the account but the person-level view lacks the expected link, inspect the relationship and matching inputs. If the relevant account was never collected, inspect destination, scope, supplied data, and collection first.
 
-ISC has obtained a representation of an existing finance account. The read itself has not granted `InvoiceRead`. The account already held that permission when it was read.
+## An approved change needs a different operation
 
-Now we need another relationship: which person does the account belong to?
+Now the same account needs permission to export invoices.
 
-An **identity** is ISC’s person-level representation. Assume Devi’s identity already exists and its employee-number attribute contains `20002`.
+An **access request** asks for specified access for a particular recipient. Assume the organization has made the relevant access requestable, the required approval is complete, and there is a valid instruction to add `InvoiceExport` to the one intended production account, finance-user.
 
-Where did that identity come from? In this organization, a separate source, `HR-People`, supplies worker records. It is the **authoritative source** used to establish the employee population in ISC. An **identity profile** associates that population with configuration that includes mappings for its identity attributes. A mapping specifies how an identity value is obtained; our employee-number mapping supplies `20002` from Devi’s HR record.
+**Provisioning** carries out supported account or access changes. **Fulfillment** is the work of carrying the authorized change through to delivery, through an integration or a supported manual arrangement.
 
-Authoritative describes the source’s role in establishing identities. It does not mean that source has unrestricted write access, or that every identity attribute must come from it. Mappings can use other sources where appropriate.
+Our automated example uses a configured permission-add operation. The application's API supports it, the connector supports it, and the source has the required provisioning behavior enabled and configured.
 
-`Finance-Production` has a different role in this example: it supplies existing finance accounts to associate with those identities. We have not configured it as another authoritative employee population. Connecting it does not mean each finance account should create another employee identity.
+Finance is now the **target system**, the system receiving the attempted change. It supplied data in the read direction and receives a change in the write direction. We have not introduced another finance application.
 
-**Account correlation** matches and associates a source account with an identity. Our configured comparison uses the account’s employee number and the identity’s employee number. In this example, the values uniquely match Devi.
+The operation still needs the right account, the right permission, and the application's permission for the integration to perform that change.
 
-The account becomes associated with her identity.
+Consider two supplied outcomes.
 
-Notice where the responsibilities separate. The connector obtained the finance data. Correlation used account and identity information to establish the relationship. A successful account read does not, by itself, establish a correct person match.
+In the successful variation, finance accepts the addition and records InvoiceExport on the intended production account. The operation reports success, and an authorized application check confirms the permission.
 
-For the successful read, finance supplies the account information, ISC represents it under the source, and the matching configuration establishes its association with Devi. If any of those facts changes, investigate that particular boundary.
+In the rejected variation, finance refuses the addition because the integration credential lacks the required write privilege. The earlier aggregation can still have succeeded. The business approval can still be correct.
 
-If the account was collected but did not become associated with Devi, examine the matching inputs and applicable correlation behavior. Do not repair the connector merely because the person-level view is missing the account.
+Neither a read result nor an approval supplies the missing integration authority.
 
-If ISC never collected the account, first establish whether it was included in the intended environment, scope, and collection. Correlation cannot use an account record that the relevant collection has not supplied.
+To investigate, follow the relevant provisioning activity: intended recipient, source, account, operation, reported outcome, and any error or manual-task information. Then obtain current application evidence appropriate to the result you need to establish.
 
-## Reading access and changing access use different operations
+If the result is uncertain or partial, inspect what exists now before repeating a change. Use the supported recovery or resubmission process for that operation; do not assume unlimited retries or compensate by granting unrestricted administration.
 
-Suppose Devi now needs permission to export invoices.
+A later collection can update ISC's observation. That is separate from the write. Do not assume every write starts a full aggregation or immediately updates every view.
 
-An **access request** is a request for specified access for a particular recipient. Here, the desired change is adding `InvoiceExport` to Devi’s existing finance account.
+Even a confirmed permission addition does not explain every application-use problem. If export is still denied, inspect the actual account, resource, and application requirements. An additional restriction or retained sign-in context needs its own evidence.
 
-Assume the organization has made that permission requestable, the required approval is complete, and ISC has a valid instruction to deliver it. There is exactly one intended finance account in this example, `fin-20002`.
+## Keep the read and change paths separate
 
-**Provisioning** carries out account or access changes through the configured fulfillment method. For this example, it submits the supported permission-add operation to finance.
-
-Finance is now the **target system** because it is receiving the attempted change. It was the source of information in the read direction. These descriptions refer to the direction of the work; we have not introduced a second finance application.
-
-Before the write can accomplish its purpose, the integration must support the particular operation, provisioning must be enabled and configured as required, the correct account and permission must be identified, and the external system must allow the action.
-
-That last condition is easy to overlook. The credential that successfully read `fin-20002` may still be forbidden from changing its permissions.
-
-In the successful variation, finance accepts the operation and records `InvoiceExport` on the intended account.
-
-In the rejected variation, finance refuses it because the integration credential lacks the required write permission. The earlier account aggregation can still have succeeded. The approval also remains a completed business decision. Neither fact overrides the rejection.
-
-You would inspect the provisioning activity for the relevant recipient, source, account, operation, and reported result, then obtain the target evidence needed to establish what actually changed.
-
-A later collection can supply an updated observation of the account. Do not assume every write automatically starts a complete account aggregation or immediately refreshes every ISC view.
-
-And if Devi still cannot export invoices after the permission has been confirmed, the next question concerns the application’s requirements for that operation. This example establishes a permission change, not a universal guarantee about sessions, account restrictions, or every application rule.
-
-Compare the collected-account path with the separately authorized change path:
+The two paths can be summarized without treating them as one automatic sequence:
 
 ```text
-READ: collect an existing finance account
+READ: observe an existing account
 
 Production finance application
-  Account fin-20002, permission InvoiceRead
-            |
-            | Connector reads data within configured scope
-            v
+finance-user already has InvoiceRead
+               |
+      connector reads in-scope data
+               v
 ISC source: Finance-Production
-  Collected account fin-20002, employee number 20002
-            |
-            | Correlation finds the intended unique match
-            v
-ISC identity: Devi, employee number 20002
-  Finance account associated with this identity
+collected account and permission values
+               |
+       account correlation
+               v
+Existing employee identity
+associated finance account
 
 
-WRITE: attempt a separately authorized permission change
+WRITE: separately authorized change
 
-ISC has a valid instruction to add InvoiceExport
-  Selected source: Finance-Production
-  Selected existing account: fin-20002
-            |
-            | Supported, enabled, configured provisioning
-            | Connector submits the permitted operation
-            v
+Valid instruction: add InvoiceExport
+Finance-Production / finance-user
+               |
+    supported, configured provisioning
+    connector submits the operation
+               v
 Production finance application
-  Accepts or rejects the change under its own requirements
-            |
-            | Operation response / reported result
-            v
+accepts or rejects the attempted change
+               |
+       reported operation result
+               v
 ISC activity information
 
-Human follow-up:
-  Inspect the result and relevant current target evidence.
-  Check later collected data separately.
+Human verification:
+check current application evidence.
+Check later collection separately.
+
+Arrows describe work and information,
+not private services or fixed timing.
 ```
 
-The downward arrows show information or an operation progressing through the stated path. They do not show private SailPoint services, network placement, or a guaranteed execution time.
+The read records an existing account and its access, then establishes its association under the supplied matching conditions. It does not create the permission that was read.
 
-The read and write are separate operations. The identity’s position in the read diagram does not make account correlation the trigger for every write.
+The write requires a separate valid instruction and a supported delivery path. Correlation's position in the read map does not make it the trigger for every provisioning operation.
 
-## What changes when the input is a file?
+The application decides whether to apply the submitted change under its requirements. ISC's activity records help explain that attempt. Human verification and later observations remain distinct, as the labels show.
 
-Not every system is connected through a live API.
+The diagram omits physical routing and connector-specific dependencies. It is not a private service map or a timing guarantee.
 
-Consider a supplier portal. Its administrators provide an account export as a CSV file, a file containing rows and columns of data. ISC has a separate source named `Supplier-Portal-File` to represent that dataset.
+## Direct does not mean one hosting arrangement
 
-Devi also has an existing portal account, `supplier-20002`. The file includes her employee number and portal permissions.
+"Direct" does not describe one universal physical deployment.
 
-For this source, the configured **flat file connection** reads the supplied file. The file-based collection is disconnected from the portal’s running account-management interface.
+A **Virtual Appliance**, or VA, is a Linux-based virtual machine deployed on the organization's infrastructure for applicable connectivity work. VA-based connectors use a configured appliance cluster, a grouping of appliances supporting that work. SaaS connectors provide supported integration without requiring that on-premises cluster.
 
-Trace the information’s age:
+The connector determines which arrangement applies. The fact that the business application is hosted in the cloud does not, by itself, tell you which connector execution arrangement has been selected.
+
+## A file carries an observation, not a live connection to the application
+
+Consider a supplier portal that provides an account export rather than an automated account-management interface.
+
+Its administrators produce a **CSV (comma-separated values) file**, a text file containing rows and columns of data. A separate source, `Supplier-Portal-File`, represents that supplied dataset.
+
+A **flat file connection** loads the provided account data. For this example, it is a read-only input: importing it does not send permission changes back to the running portal.
+
+An employee already has a portal account, and its identifier, employee number, and permissions are included in the export.
+
+Now follow the times, all on the same hypothetical day and in the same time zone:
 
 - At 09:00, the portal administrator exports the accounts.
-- At 11:00, someone changes Devi’s portal permission in the portal.
-- At 12:00, the unchanged 09:00 file is imported into ISC.
+- At 11:00, a permission is removed from this account in the portal.
+- At 12:00, the unchanged 09:00 export is imported into ISC.
 
-All times belong to the same fictional day and time zone.
+What can the import establish?
 
-Which state can that import tell ISC about?
+It can supply the information in the file. It cannot include the 11:00 change if that change is absent from the supplied data.
 
-It supplies the exported values. Importing the file at 12:00 does not make its contents a 12:00 observation of the portal. The 11:00 change is absent unless the data supplied to ISC includes it.
+Import time and observation time answer different questions. "The import succeeded at noon" does not mean "these are the portal's account values at noon."
 
-This is why you ask when a file was produced as well as when it was imported.
+Ask when the file was produced, what records it includes, and which subsequent changes are missing. Obtain current portal evidence and a refreshed export when you need to verify the removal and update ISC's observation.
 
-Now suppose an access change is approved for that portal.
+Editing the file is not a portal permission-removal operation. It changes the data supplied to ISC and can make that observation inaccurate.
 
-Uploading a changed CSV into this read-only connection does not write the requested change into the portal. It changes the information supplied to ISC. Depending on the source’s wider configuration, imported changes can also affect downstream identity or access processing. A file import is not a harmless way to pretend a target change happened.
+That can have consequences beyond an inaccurate display. Imported values may feed configured identity or access processing. Do not treat an input edit as a harmless simulation of a change that has not actually happened.
 
-The real portal change still needs an agreed delivery method.
+## Manual delivery still needs a real application change
 
-ISC supports manual provisioning arrangements for applicable sources and actions. A manual provisioning task records work that a person must perform. For tasks involving entitlements, assignment goes to the entitlement owner, with the source owner as fallback.
+Suppose an access change is approved for that file-fed portal.
 
-An **entitlement owner** is the assigned owner of that access item. A **source owner** is the person assigned ownership of the source in ISC. Those assignments help route work; they do not automatically give someone administrative permission in the portal.
+The read-only input cannot perform the write. Establish an agreed delivery arrangement that is supported for the available services, source configuration, and operation. Do not assume every read-only connection automatically provides every request or removal process.
 
-For a supported configured manual path, the assigned person performs the change in the portal and records completion. You still distinguish the task’s completion record from evidence of the correct current portal state.
+For applicable manual provisioning, ISC creates a **manual task**, a record assigning someone work to perform. That task is an instruction; the portal changes when the assigned person actually performs the operation there.
 
-A new export and import can then bring the changed information into ISC. They are additional steps, not consequences guaranteed merely by closing the task.
+For provisioning tasks involving entitlements, assignment goes to the **entitlement owner**, the assigned owner of that access item, with the **source owner**, the person assigned ownership of the source, as fallback.
 
-The portal remains manageable as an access-governance responsibility even when automatic writes are unavailable. The operating design must account for who makes changes, how they are checked, and how ISC receives refreshed information.
+Those ownership settings help route work. They do not give the recipient administrative permission in the supplier portal. The operational design must establish who can perform the actual change.
 
-## Does “read-only” mean the connection is broken?
+Under a supported configured path, the operator makes the change and records completion. A completed task tells you about the recorded work status. Verify the correct account and permission outcome using the application's evidence as required.
 
-No. It can describe the intended capability.
+A new export and import can then refresh ISC's information. Closing a task does not guarantee that those additional steps happened.
 
-A source configured to collect accounts and access data can support visibility and applicable reviews without directly executing target changes. Whether a particular review or request process is available still depends on the organization’s features and configuration.
+The same access still needs an accountable decision, authorized execution, completion expectations, and verification, whether delivery is automated or manual.
 
-The question is whether the connection meets the agreed requirement.
+## Decide whether the connection meets the required operation
 
-If the requirement is “show the portal’s exported accounts for review,” the file source may satisfy the collection portion.
+A read-only source is not necessarily broken. It may be doing exactly what the organization chose: collecting account and access information for visibility and applicable reviews.
 
-If the requirement is “remove a portal permission automatically,” that same read-only file import does not supply the needed write mechanism.
+Availability of particular request or review capabilities still depends on services and configuration.
 
-Be precise about operations too. A connector supporting account updates does not mean that it supports deletion, every attribute update, or every type of membership change.
+Evaluate the actual requirement.
 
-Disabling an account and deleting an account are different operations. A design that requires one cannot be accepted merely because the connector supports the other.
+If the requirement is to collect exported accounts for review, the file source may meet the collection portion. If it is to remove a portal permission automatically, that same read-only input does not provide the missing operation.
 
-Before promising an integration, compare the required operations with the selected connector’s documented features, prerequisites, and restrictions. Then check the actual source configuration and the external system’s API and permissions.
+Be precise about operations too. Supporting an account update does not establish support for deleting an account, changing every attribute, or removing every kind of membership.
 
-A product name on a connector list is the beginning of that evaluation.
+**Disabling** generally makes an account unavailable for use while retaining its record, according to that system's behavior. **Deleting** removes the account record through the applicable operation. They are not interchangeable outcomes.
 
-## What are you seeing on the ISC screen?
+If the project requires deletion, evidence of disable support is insufficient.
 
-Suppose you open `Finance-Production` and see the account `fin-20002`.
+Check the connector's documented features, prerequisites, and restrictions, then the actual source settings, external API, and integration privileges. A broad connector label such as account management is not a substitute for operation-specific evidence.
 
-The interface is displaying the ISC account representation associated with that source. It is not necessarily opening the finance application and querying the account at that moment.
+## Understand the screen by following the work behind it
 
-Open Devi’s identity instead, and you see the person-level context and the accounts associated with it.
+Open Finance-Production and inspect finance-user. The screen shows ISC's representation under that source. It is not necessarily querying production finance at the instant you open the page.
 
-Open provisioning activity, and you examine information about attempted changes and their reported results.
+Open the employee's identity and you see person-level context and represented access. Open provisioning activity and you inspect attempted changes and reported outcomes.
 
-These views answer different questions:
+The **front end** is the interface you use to view or initiate work. The **back end** is the processing behind it: collection, matching, and change handling, together with the external system's handling of the operations it receives.
 
-| What you need to establish | Evidence to examine | What that evidence does not establish alone |
+These are related views of different work, not interchangeable proof that the entire integration succeeded.
+
+| Question | Useful evidence | What it does not establish alone |
 |---|---|---|
-| Which environment and scope the integration is intended to use | Source configuration, connection address, and relevant scope settings | That every expected record was successfully collected |
-| Whether the relevant collection supplied Devi’s account | Account record and relevant aggregation history | That the account is associated with the correct identity |
-| Whether the account is associated with Devi | The source account’s association and Devi’s identity context | That a new permission was delivered |
-| What happened to a permission-add attempt | Relevant provisioning activity and any error or task details | That the current application permits every intended operation |
-| Whether the permission is now on the correct production account | Relevant current evidence from production finance | That ISC’s collected representation has already caught up |
+| Is this the intended environment and population? | Source settings, connection address, and scope | Every expected account was collected |
+| Did collection supply this account? | The source account and relevant aggregation history | The person association is correct |
+| Is the account associated with the intended identity? | The account relationship and identity context | A new permission was delivered |
+| What happened to the permission-add attempt? | Applicable activity, error, or manual-task details | Every application operation now works |
+| Is the permission present on the intended production account? | Current production application evidence | ISC's older observation has refreshed |
 
-A successful **connection test** checks the connector’s configured test behavior. Treat it as that test’s result, not proof that every account, entitlement, and provisioning operation works.
+A **connection test** checks the connector's configured test behavior. A passing result establishes that test's outcome, not successful execution of every account, entitlement, grant, and removal operation.
 
-The back-end work here consists of the configured collection, matching, and change processing, together with the external system’s handling of the operations it receives. The front end lets you inspect representations and activity from that work.
+A useful investigation connects a question with the record, time, and operation that can answer it. That is how you move from "connected" to an explanation another engineer can check.
 
-The screen is useful because it exposes evidence. Understanding what produced that evidence is what lets you interpret it.
+## Work through the changed conditions
 
-## Work through these situations
+### The test account has the permission
 
-**1. A test account looks correct.**
+Finance-Test shows finance-user with InvoiceExport. A production user still cannot export invoices. Both sources use the same connector type.
 
-The `Finance-Test` source shows `fin-20002` with `InvoiceExport`. A production user still cannot export invoices. Both sources use the same connector type.
+What does the test observation establish, and which evidence is still missing?
 
-What has the test observation established? What production evidence is still missing?
+**Worked reasoning**
 
-**2. The account was collected, but the person’s view is incomplete.**
+It describes the account represented for test. The shared identifier and connector type do not establish production access.
 
-The `Finance-Production` source contains Devi’s account. It is not associated with her identity. Its employee-number field is empty.
+Identify the actual production account and destination, the relevant change result, and its current production permissions. Follow the application-use problem in the environment the person is actually using. Different investigation starting points are acceptable if they retain that context.
 
-Should you conclude that the connection failed? Does the empty field establish that no applicable matching behavior can find an identity?
+### The account was collected, but the person-level link is missing
 
-**3. The latest import contains old information.**
+Finance-Production contains the expected account, but the expected association to the employee identity is absent. The account's employee-number field is empty.
 
-An account export was produced at 09:00. A portal permission was removed at 11:00. The unchanged export was successfully imported at 12:00.
+Does that establish connector failure or failure of every possible matching path?
 
-A colleague proposes editing that file so ISC will “remove the permission in the portal.” Explain what is wrong with that proposal and how to obtain useful evidence.
+**Worked reasoning**
 
-**4. Reading succeeds and writing fails.**
+Collection is established. The unresolved part is the relationship.
 
-The finance account aggregation succeeds. The approved permission-add operation reaches finance, but finance rejects it because the integration credential lacks write permission.
+An empty value prevents the particular employee-number comparison from finding the intended match. It does not describe every applicable configured comparison or default matching behavior.
 
-Would another aggregation or another business approval resolve the supplied cause? What should the teams investigate?
+Inspect the current association, the complete applicable matching behavior, and the relevant identity values. Resolve verified input or configuration defects through the appropriate owners. Do not infer a failed read merely from an incomplete person-level view.
 
-**5. “Account management is supported.”**
+### A successful import contains an old observation
 
-A project requires account deletion. The selected connector’s documentation supports disabling accounts but does not support deleting them.
+The export was produced at 09:00. The portal permission was removed at 11:00. The unchanged export was imported at 12:00.
 
-Can the project accept automatic deletion as covered? What decision is needed before the integration can meet the requirement?
+A colleague suggests editing it so ISC will remove the permission in the portal. What is wrong with that explanation?
 
-## Compare your reasoning
+**Worked reasoning**
 
-**For the test account:** You have information about the test environment’s represented account. Matching names and connector types do not turn that into production evidence. Identify the production source and connection address, the actual production account, the relevant permission-change result, and current production permission information. Investigate application behavior only in the environment the user is actually using.
+The supplied facts already say the portal removal occurred. The stale export does not contain it, and import success does not make the export current.
 
-**For the missing association:** Collection of the account is established. The expected relationship is unresolved. The empty employee number prevents that particular employee-number comparison from establishing a match, but it does not describe every configured or default matching behavior. Inspect the account’s current association, all applicable matching logic, and the corresponding identity values. Repair verified data or configuration problems through the appropriate owners rather than assuming the connector cannot read accounts.
+Editing a read-only input would not perform that portal operation. It could misrepresent the account's observed state and affect other configured processing.
 
-**For the old file:** Successful import establishes that the supplied data was loaded; it does not make the export current. Editing a read-only input does not issue a permission-removal operation to the portal and can misrepresent the observed state. Here, the supplied facts say the portal change happened at 11:00. Obtain relevant current portal evidence and a refreshed export that includes it, then check the subsequent import. If the removal had not actually happened, it would need a real supported change path, not a fabricated observation.
+Obtain current portal evidence, a refreshed export that includes the removal, and the subsequent import result. If the actual removal were still outstanding, it would need a real supported delivery path rather than an invented observation.
 
-**For the rejected write:** Neither another read nor another approval supplies the missing write authority. The application and integration teams should check the exact attempted operation, the credential’s allowed actions, the source’s required configuration, and the external system’s requirements. Any permission correction should be authorized and limited to the needed operation, not an automatic grant of unrestricted administration. After correction, use the appropriate controlled retry or resubmission process and verify the actual outcome. Do not assume retries occur forever or that the previous approval caused a successful change.
+### Reading works, but the application rejects the change
 
-**For the deletion requirement:** Disabling does not meet a deletion requirement simply because both concern an account. The teams need an agreed supported deletion method or an explicitly approved change to the business requirement. They must assess what evidence will confirm the chosen outcome. A connector’s broad label cannot fill the documented capability gap.
+Account aggregation succeeds. The approved permission-add operation reaches finance and is rejected because the integration credential lacks write privilege.
 
-## Take an unfamiliar system and draw its boundaries
+Would another aggregation or business approval repair that cause?
 
-Choose a system you know, such as a learning platform or a support application.
+**Worked reasoning**
 
-Describe where its real accounts live and what one source in ISC would represent. Identify the integration method, the population being collected, and the specific operations the organization needs.
+Neither supplies the missing integration authority. Check the exact operation, source configuration, allowed credential actions, and application requirements.
 
-Then explain two paths in your own words:
+Any privilege correction must be authorized and limited to what is needed. Inspect current state and pending work, use an appropriate controlled recovery, and verify the result. A correct approval does not turn a rejected write into a successful one.
 
-How would an existing account become visible under the source and associated with a person?
+### Account management is supported, but deletion is not
 
-How would an approved access change reach the external system, and what would you inspect to establish its result?
+A different project requires account deletion. Its selected connector's documented capability supports disabling but not deleting accounts.
 
-If information is missing, name it. “We still need to verify whether this connector can remove that membership” is a useful engineering conclusion. “It’s connected, so everything should work” leaves the actual requirement unanswered.
+Is automatic deletion covered?
+
+**Worked reasoning**
+
+No. The supplied capability does not meet the required outcome.
+
+Agree a different supported deletion method or obtain an explicitly approved change to the requirement. Establish how the chosen result will be verified. Calling both operations account management does not close the gap.
+
+## Map an unfamiliar integration
+
+A proposed training-platform integration can collect an account export. Staff also need approved additions to training groups and removal of those memberships when the need ends. No automated membership-write capability has been verified.
+
+Explain what the source would represent, what is already known, and what remains unresolved before someone promises a complete access service.
+
+**One defensible explanation**
+
+The source would represent the supplied account dataset, not replace the running training platform. File collection can provide information about accounts and memberships within the export's scope and age.
+
+It does not establish automated addition or removal. Determine whether a suitable connector and application interface support each required write, with the needed configuration and privileges. Otherwise assess a supported manual arrangement with an authorized operator, timing expectations, and evidence.
+
+Also establish how collected accounts are associated with the intended identities. A successful import does not establish that relationship or the account's current application state.
+
+Finally, choose a system you know and explain two separate paths: how an existing account becomes visible and associated with a person, and how an authorized change reaches that account. Identify the evidence for each result.
+
+If an operation remains unverified, name the gap. That is more useful than treating the word connected as a promise that everything works.

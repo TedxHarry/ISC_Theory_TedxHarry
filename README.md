@@ -12,7 +12,9 @@ The course is for beginners and freshers with some IAM knowledge. Its purpose is
 
 The repository contains the complete working files. GitHub Pages presents the ninety-one available lessons; planning documents and author references remain outside the reading site. Deployment does not change learner-validation or publication-review status.
 
-This separate concept-led edition was created at the user's request on October 25, 2026. All six Module 1 lessons are revised; the other eighty-five lessons retain their existing versions until individually revised. Continue new-version authoring in this ISC_Theory_TedxHarry folder. The original ISC_Theory_Learning repository and reading site remain independent and unchanged.
+This separate concept-led edition was created at the user's request on October 25, 2026. Its initial publication includes the six revised Module 1 lessons and the other eighty-five lessons in their existing versions. All 91 lessons remain available while revision continues one file at a time. The course register tracks current local revisions separately from the published snapshot. Continue new-version authoring in this ISC_Theory_TedxHarry folder. The original ISC_Theory_Learning repository and reading site remain independent and unchanged.
+
+The October 26 publication batch adds FND-001 through FND-007 and ARC-001 revision 2.0, bringing the individually revised published snapshot to fourteen lessons. See the [publication record](author/PUBLICATION_2026-10-26.md) for deployment verification. Later revisions are tracked separately in the course register.
 
 Use **Hide lessons** / **Show lessons** to collapse or expand the navigation panel. Each module heading independently opens or closes its lesson list. The current lesson's module starts open; on the home page, the first module starts open.
 

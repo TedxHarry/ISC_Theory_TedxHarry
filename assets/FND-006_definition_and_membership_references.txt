@@ -1,0 +1,22 @@
+R-1: role Invoice checking
+ |
+ +-> P-1: profile Read invoices
+     |
+     +-> S-PROD: finance production
+     |
+     +-> E-PROD: entitlement record
+         source: S-PROD
+         type: group
+         source value: g-41
+         display: Invoice reader
+
+Separate collected account observation:
+A-1 belongs to S-PROD
+group contains g-41
+ |
+ +-> E-PROD when source/type/schema
+     and designated ID values match
+
+Top arrows describe configuration.
+Bottom arrow links membership details.
+Neither shows a completed grant.

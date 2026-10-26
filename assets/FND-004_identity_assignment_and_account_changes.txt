@@ -1,0 +1,29 @@
+Employee's ISC identity
+department = Finance
+jobCode = AP_READER
+             |
+  identity processing evaluates
+  Finance AND AP_READER criteria
+             v
+Assignment: Accounts payable reader
+             |
+  configured, supported provisioning
+             |
+ +-----------+-------------------+
+ |                               |
+ v                               v
+Invoice-System        Corporate-Directory
+finance account       directory account
++ InvoiceRead         + FinanceWorkspace
++ SupplierRead
+
+Each system reports operation results.
+Success here is a supplied outcome.
+
+Separate human verification:
+inspect activity and current accounts.
+Check later collection separately.
+
+Arrows show work, not private services.
+No source order or shared transaction
+is promised.

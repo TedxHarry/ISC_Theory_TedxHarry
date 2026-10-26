@@ -1,0 +1,34 @@
+READ
+
+HR worker record
+orgCode = FIN
+           |
+  account aggregation collects FIN
+           v
+ISC: collected HR account
+orgCode = FIN
+           |
+  identity-profile mapping
+  selects orgCode
+  transform: FIN becomes Finance
+           v
+ISC: employee identity
+department = Finance
+
+SEPARATE, CONFIGURED WRITE
+
+Identity department = Finance
+           |
+  applicable attribute sync
+  provisions department update
+           v
+Finance application: existing account
+department = Finance
+(supplied successful outcome)
+
+Human checks:
+inspect activity and current target.
+Inspect later collection separately.
+
+Arrows show information and work,
+not private services or fixed timing.

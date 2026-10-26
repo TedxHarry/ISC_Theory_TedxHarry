@@ -1,0 +1,18 @@
+Within ISC
+
+One employee identity
+employee number: 10482
+department: Finance
+         |
+         +-- HR source account
+         |   worker record
+         |
+         +-- Directory source account
+         |   username: staff-a
+         |
+         +-- Finance source account
+             username: finance-b
+
+Lines show account associations,
+not automatic changes in applications.
+External records remain separate.

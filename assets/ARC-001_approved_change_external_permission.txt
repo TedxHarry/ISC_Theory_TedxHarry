@@ -1,0 +1,17 @@
+Approved View suppliers request
+  |
+  v
+ISC initiates supported change
+  |
+  v
+Integration reaches supplier system
+  |
+  +-- Integration can make this update?
+        |
+        +-- Yes: apply supplier.view
+        |
+        +-- No: reject this update
+              No permission delivered
+              in the rejected case
+
+Separate account read can still succeed.

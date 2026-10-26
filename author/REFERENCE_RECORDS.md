@@ -67,7 +67,17 @@ The full questions and worked answers are in the learner lesson. These author fi
 
 ## FND-001
 
-- Current lesson: [FND-001](../lessons/FND-001_Identity_and_Account.md), revision 1.3.
+- Current learner source: [FND-001](../lessons/FND-001_Identity_and_Account.md), revision 2.0, October 25, 2026, under teaching specification 3.1, saved locally only.
+- Current coverage comparison, thirteen primary sources, assessment/explanation review and executed checks: [FND-001 concept-led revision record](revisions/FND-001_Concept_Led_Revision_Record.md).
+- Current diagram: [identity and associated accounts](../assets/FND-001_identity_and_associated_accounts.txt), embedded verbatim in the learner source.
+- Person-level identity, external account, collected representation and configured operations remain distinct. Neutral values demonstrate matching; they are not real account data or mandatory field names.
+- No tenant execution, beginner teach-back, graphical publication validation or formal approval has occurred. The site still contains revision 1.3 until another publication is requested.
+
+### Historical reference record: revisions 1.x
+
+The following preserves prior review dates and narrative assumptions, not the current learner revision or a blanket renewal of those checks.
+
+- Historical lesson: FND-001 revision 1.3, recoverable at commit 895c6b5b295c926d5397239db521abc1c8b639d1.
 - Source-bearing revision before relocation: 1.2.
 - Documentation check recorded by the preceding authoring work: October 19, 2026.
 - Revision history: citations moved outside the lesson; teaching body unchanged apart from citation removal and revision metadata.
@@ -97,7 +107,7 @@ For a closer check, compare the person-level description in [Identities Overview
 
 Documentation checked: October 19, 2026.
 
-### Assessment intent for the current FND-001 checkpoints
+### Historical assessment intent for FND-001 revision 1.3
 
 | Exercise | Understanding tested | Expected reasoning and acceptable alternatives | Misconception exposed |
 |---|---|---|---|
@@ -465,7 +475,17 @@ The feedback's proposed restoration of learner citations conflicts with the curr
 
 ## FND-002
 
-- Lesson: [FND-002](../lessons/FND-002_Sources_Connectors_and_Connected_Systems.md), revision 1.0.
+- Current learner source: [FND-002](../lessons/FND-002_Sources_Connectors_and_Connected_Systems.md), revision 2.0, October 25, 2026, under teaching specification 3.1, saved locally only.
+- Current coverage comparison, thirteen primary references, assessment/explanation review and executed checks: [FND-002 concept-led revision record](revisions/FND-002_Concept_Led_Revision_Record.md).
+- Current diagram: [collection and authorized changes](../assets/FND-002_collection_and_authorized_changes.txt), embedded verbatim. The historical read/write map is retained unchanged.
+- Neutral account/source names and supplied read/write/file conditions replace the employee biography. They are not observed tenant results.
+- No tenant execution, beginner teach-back, graphical publication validation or formal approval occurred. Published FND-002 remains revision 1.0 until another publication is requested.
+
+### Historical reference record: revision 1.0
+
+The following preserves prior documentation checks and narrative assumptions. It is not the current learner revision or a renewal of historical checks.
+
+- Historical lesson: FND-002 revision 1.0, recoverable at commit 895c6b5b295c926d5397239db521abc1c8b639d1.
 - Course placement: Module 2.2.
 - Documentation checked: October 20, 2026.
 - Author review: completed against teaching specification v2.6 for the stated scope; no unresolved author content issue identified.
@@ -521,6 +541,14 @@ Local validation checks source equality, IDs, headings, links, and complete work
 Worked answers and supplied facts remain in the learner lesson. The metadata above stays outside the reading site.
 
 ## FND-003
+
+- Current learner revision: 2.0, saved locally October 25, 2026 under teaching specification v3.1.
+- Current coverage, thirteen primary sources, assumptions, assessments and checks: [FND-003 revision 2.0 record](revisions/FND-003_Concept_Led_Revision_Record.md).
+- Current diagrams: [read/calculation/sync](../assets/FND-003_read_calculate_and_sync.txt) and [membership reference/details](../assets/FND-003_membership_reference_and_details.txt).
+- Previous lessons are preserved. Learner validation, graphical publication review and formal approval remain pending.
+- No tenant operations or new publication. Published FND-003 remains revision 1.0. The following documentation applies to the historical lesson, not the current neutral example.
+
+### Historical revision 1.0 reference record
 
 - Lesson: [FND-003](../lessons/FND-003_Account_Identity_and_Entitlement_Attributes.md), revision 1.0.
 - Course placement: Module 2.3.
@@ -583,6 +611,14 @@ Worked answers and supplied facts remain in the learner lesson. The metadata abo
 Questions and worked answers remain in the learner lesson. Assessment metadata and official links remain outside the reading site.
 
 ## FND-004
+
+- Current learner revision: 2.0, saved locally October 25, 2026 under teaching specification v3.1.
+- Current coverage, thirteen primary references, assumptions, assessments and verification: [FND-004 revision 2.0 record](revisions/FND-004_Concept_Led_Revision_Record.md).
+- Current diagrams: [object map](../assets/FND-004_role_profile_entitlement_map.txt) and [assignment/account changes](../assets/FND-004_identity_assignment_and_account_changes.txt).
+- Earlier lessons are preserved. Beginner validation, graphical publication review and formal approval remain pending.
+- No tenant operation or new publication. Published FND-004 remains revision 1.0. The following references describe the historical example, not the current neutral records.
+
+### Historical revision 1.0 reference record
 
 - Lesson: [FND-004](../lessons/FND-004_Entitlements_Access_Profiles_and_Roles.md), revision 1.0.
 - Course placement: Module 2.4.
@@ -652,6 +688,14 @@ Learner facts and worked answers stay in the lesson. Assessment intent, limitati
 
 ## FND-005
 
+- Current learner revision: 2.0, saved locally October 25, 2026 under teaching specification v3.1.
+- Current coverage, fourteen primary references, conditions, assessments and verification: [FND-005 revision 2.0 record](revisions/FND-005_Concept_Led_Revision_Record.md).
+- Current diagrams: [business grouping/source](../assets/FND-005_business_grouping_and_directory_source.txt) and [request/change/sign-in](../assets/FND-005_request_change_and_separate_sign_in.txt).
+- Earlier lessons are preserved. Beginner validation, graphical publication review and formal approval remain pending.
+- No tenant action or new publication. Published FND-005 remains revision 1.0. The following references describe the historical employee/application example, not the current neutral records.
+
+### Historical revision 1.0 reference record
+
 - Lesson: [FND-005](../lessons/FND-005_Sources_Access_Applications_Catalogs_and_Sign_In.md), revision 1.0.
 - Course placement: Module 2.5.
 - Documentation checked: October 20, 2026.
@@ -717,6 +761,14 @@ Questions and worked answers stay in the learner lesson. Source references, limi
 
 ## FND-006
 
+- Current learner revision: 2.0, saved locally October 26, 2026 under teaching specification v3.1.
+- Current coverage, fifteen primary references, assumptions, assessments and checks: [FND-006 revision 2.0 record](revisions/FND-006_Concept_Led_Revision_Record.md).
+- Current diagrams: [account/source/identity](../assets/FND-006_account_record_source_and_identity.txt) and [definition/membership references](../assets/FND-006_definition_and_membership_references.txt).
+- Previous lessons are preserved. Beginner validation, graphical publication review and formal approval remain pending.
+- No tenant action or new publication. Published FND-006 remains revision 1.0. The following references describe the historical named example, not the current neutral values.
+
+### Historical revision 1.0 reference record
+
 - Lesson: [FND-006](../lessons/FND-006_Object_IDs_Account_Identifiers_and_References.md), revision 1.0.
 - Course placement: Module 2.6.
 - Documentation checked: October 20, 2026.
@@ -779,6 +831,18 @@ Questions and worked reasoning remain in the learner file. Reference evidence, t
 
 ## FND-007
 
+- Current learner revision: **2.0**, revised October 26, 2026 under teaching specification v3.1.
+- Current [coverage, fifteen primary references, assumptions, assessments and verification record](revisions/FND-007_Concept_Led_Revision_Record.md).
+- Person/account association is established before a complete supported request; automatic assignment, already-held profiles and value lookup are then distinguished.
+- Neutral account/source labels and supplied comparison value 10482 replace the earlier biography, Stockroom brand and unnecessary object-ID stand-ins. Six diagnostic cases and the payroll transfer remain.
+- Current editable [person/account map](../assets/FND-007_person_sources_and_separate_accounts.txt) and [selection-context map](../assets/FND-007_automatic_and_requested_account_choice.txt).
+- Documentation-based author review is separate from beginner validation, graphical publication review and formal approval, which remain pending. No tenant operation was performed.
+- Revision 2.0 is local only; published FND-007 remains revision 1.0. The baseline is recoverable at 895c6b5b295c926d5397239db521abc1c8b639d1.
+
+### Historical verification record: revision 1.0
+
+The following preserved record describes the earlier version and its original examples. Current checks are in the revision-2.0 record above.
+
 - Lesson: [FND-007](../lessons/FND-007_One_Identity_with_Multiple_Accounts.md), revision 1.0.
 - Course placement: Module 2.7.
 - Documentation checked: October 20, 2026.
@@ -787,7 +851,7 @@ Questions and worked reasoning remain in the learner file. Reference evidence, t
 - Learner validation and formal publication approval: pending. Working-edition deployment is a separate check.
 - Authoring milestone: all seven Module 2 lessons exist as complete authored files; this does not establish beginner comprehension or completion of the whole course.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -803,7 +867,7 @@ Questions and worked reasoning remain in the learner file. Reference evidence, t
 | [Monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html) | Associated account/source, attempted changes and results, and manual task details. A successful operation on the selected wrong account can fail the business requirement; actual target and later collected observations remain distinct evidence. |
 | [Viewing identities](https://documentation.sailpoint.com/saas/help/identities/control_panel.html) | Person-level access/activity presentation and related account context. The example explains represented data rather than promising specific UI columns, a complete live target query, or licensed graph functionality. |
 
-### Conditions and limits
+#### Conditions and limits
 
 - One identity I-71 is associated with four fictional account representations across three sources. Stockroom source S-73 supplies two accounts with deliberately separate approved daily/admin purposes.
 - Technical IDs are non-runnable teaching stand-ins. Account logins and employee number remain consistent within this independent lesson; no continuing biography from other lessons is assumed.
@@ -819,14 +883,14 @@ Questions and worked reasoning remain in the learner file. Reference evidence, t
 - Full schema, transform, role, lifecycle, account-selection configuration, and connector rename mechanics remain in their primary course lessons. The current lesson supplies the supporting meanings and practical boundaries needed for independent reasoning.
 - Current official docs use Identity Services / Human Fabric naming. ISC remains the requested course title; navigation breadth is not treated as a core-course licensing guarantee.
 
-### Diagrams and review checks
+#### Diagrams and review checks
 
 - [Identity/account map](../assets/FND-007_identity_account_map.txt): one person, three source contexts, four separate account representations.
 - [Account-selection contexts](../assets/FND-007_account_selection_contexts.txt): automatic role/lifecycle profile criteria versus Request Center account selection, with failure/manual-selection qualification.
 - Both editable files match the inline lesson blocks and use lines no longer than 50 characters for narrow-screen readability. Branches describe relationships or selection contexts, not private platform topology or a universal backend pipeline.
 - Local and live publishing checks separately verify complete text, headings, tables, diagrams, and navigation. Neither check replaces a beginner read-through.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Exercise | Understanding tested | Expected reasoning / acceptable alternatives | Misconception exposed | Source anchor |
 |---|---|---|---|---|
@@ -842,6 +906,18 @@ Questions and worked reasoning stay in the learner file. Source references, asse
 
 ## ARC-001
 
+- Current learner revision: **2.0**, revised October 26, 2026 under teaching specification v3.1.
+- Current [coverage, twenty first-party references, conditions, assessment and verification record](revisions/ARC-001_Concept_Led_Revision_Record.md).
+- Establishes tenant/service/external-account boundaries and the three actors, then completes a normal request before comparing denied-write, maintenance, administration, sandbox, promotion and health evidence.
+- Neutral supplier-reader, svc-supplier and supplier.view retain the necessary actor/permission distinction. Biography, 31001 and Supplier Register brand are removed. All six original cases and the SaaS document-service transfer remain.
+- Current editable [tenant/connection/target map](../assets/ARC-001_hosted_tenant_connection_and_target.txt) and [authorization-condition map](../assets/ARC-001_approved_change_external_permission.txt).
+- Author review is documentation-based; beginner validation, graphical publication review and formal approval remain pending. No tenant or support action was performed.
+- Revision 2.0 is local only; published ARC-001 remains revision 1.0. Baseline recoverable at 895c6b5b295c926d5397239db521abc1c8b639d1.
+
+### Historical verification record: revision 1.0
+
+The preserved record below describes the earlier version and examples. Current verification is in the revision-2.0 record above.
+
 - Lesson: [ARC-001](../lessons/ARC-001_ISC_Tenant_and_Customer_Responsibilities.md), revision 1.0.
 - Course placement: Module 3.1.
 - Documentation checked: October 20, 2026.
@@ -850,7 +926,7 @@ Questions and worked reasoning stay in the learner file. Source references, asse
 - Learner validation and formal publication approval: pending. Working-edition deployment is separate.
 - Scope: operational responsibility and environment boundaries, not a contractual interpretation, universal service-level commitment, private database topology, tenant-provisioning procedure, or feature-license inventory.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -869,7 +945,7 @@ Questions and worked reasoning stay in the learner file. Source references, asse
 | [System notifications](https://documentation.sailpoint.com/saas/help/common/getting_notified_org_health.html) | Customer-configured notifications for source/VA conditions and selected recipients. Notification, monitoring response, and incident resolution are separate. No one health signal establishes end-to-end service correctness. |
 | [Monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html) | Source/account operation, reported results, manual work and operational evidence. The example distinguishes target authorization denial, customer prerequisite correction, supported recovery of affected work, and current target confirmation. No universal retry or automatic post-change aggregation is asserted. |
 
-### Conditions and limits
+#### Conditions and limits
 
 - Tenant isolation and customer operating responsibilities are different subjects. Logical separation among ISC tenants does not prevent a customer-authorized sandbox integration from reaching a live external system.
 - The responsibility table is a practical operating model. Actual subscription capabilities, documented component behavior, and applicable support arrangements govern implementation. No SLA, legal allocation, data-residency guarantee, or universal tenant count is invented.
@@ -885,14 +961,14 @@ Questions and worked reasoning stay in the learner file. Source references, asse
 - Detailed tenant authentication, VA/clusters, SaaS execution, IQService, network operations, API authorization, release/promotion and lifecycle design remain in their planned primary lessons.
 - Current official docs use Human Fabric / Identity Services naming. ISC remains the user's requested course name. Expanded documentation navigation is not treated as evidence of core subscription entitlement.
 
-### Diagrams and review checks
+#### Diagrams and review checks
 
 - [Tenant/system responsibility map](../assets/ARC-001_tenant_and_system_boundaries.txt): hosted tenant, customer-deployed VA/network context, and external application, with integration actor and recipient distinguished.
 - [Request/target permission](../assets/ARC-001_request_and_target_permission.txt): supported change reaches the target authorization boundary; allowed/rejected branches and an independent successful-read observation.
 - Both text assets match the inline blocks. Maximum line widths are 55 and 57 characters. The map is conceptual, not packet routing, a private worker/queue topology, or a universal synchronous pipeline.
 - Local and live checks verify complete teaching text, headings, diagrams, tables, module placement, and navigation separately from beginner validation.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Exercise | Understanding tested | Expected reasoning / acceptable alternatives | Misconception exposed | Source anchor |
 |---|---|---|---|---|

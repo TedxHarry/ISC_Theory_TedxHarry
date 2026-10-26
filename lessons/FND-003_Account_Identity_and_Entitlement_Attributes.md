@@ -1,222 +1,191 @@
 # Account, identity, and entitlement attributes: which value are you looking at?
 
-*Lesson FND-003 · Revision 1.0*
+"The department is wrong."
 
-“Devi’s department is wrong.”
+Before changing it, ask where the value appears. The department on an employee's finance account and the department on their SailPoint Identity Security Cloud (ISC) identity are two separate pieces of information. Even when both fields are named `department`, changing one does not, by that name alone, change the other.
 
-Before changing anything, ask to see the record.
+An **attribute** is a named piece of information on a record. Its **value** is what that piece of information contains. In `department = Finance`, the attribute is `department`; its value is `Finance`.
 
-Is the value on her HR record, her finance account, or her identity in SailPoint Identity Security Cloud, or ISC? Is someone reading a property of the finance access item instead?
+The record matters because it tells you what the statement describes. Does Finance describe the person, one application account, or an access item intended for Finance work? Those are different statements, and ISC uses different configuration to connect them.
 
-The word “department” is not enough to identify the information. You need to know which object holds it, where its value came from, and what is supposed to happen to it.
+## Put the value beside the record that holds it
 
-## Put the value beside its record
+An **account** is a record in a particular system, such as a finance user account or an employee's worker record in the human resources system, or HR. An **identity** is ISC's person-level representation, connecting the employee's information with their accounts and represented access.
 
-Devi has moved from Operations to Finance. Her employee number is `23003`. She already has an HR worker record, a directory account named `dir-23003`, and a finance account named `fin-23003`.
+For this example, an employee already has an ISC identity, an HR worker record, and a finance account. ISC has collected the relevant account data and associated the accounts with the correct identity. We are investigating the values, not an unresolved account association.
 
-ISC has collected those records and associated them with her identity. The relevant account associations are correct for this example.
+These are hypothetical observations, after the HR information has been collected and the identity department calculated:
 
-An **identity** is ISC’s person-level representation. An **account** is a record in a particular system, such as Devi’s finance user record or the worker record collected from HR.
-
-A **source** is ISC’s configured representation of a system or account dataset. A **connector** supplies the integration used to obtain its data and perform supported changes.
-
-Reading source data into ISC is **aggregation**. The account information you inspect in ISC is a collected representation, not necessarily a live query of the external system.
-
-An **attribute** is a named piece of information on a record. The attribute’s **value** is the information it currently contains.
-
-The following observations are fictional. They describe the selected records after ISC has collected the HR information and calculated the person-level values, before any finance-account department update has been established.
-
-| Record being inspected | Attribute | Value |
+| Record being inspected | Attribute | Observed value |
 |---|---|---|
-| Devi’s collected worker account under the `HR-Workers` source | `orgCode` | `FIN` |
-| Devi’s ISC identity | `department` | `Finance` |
-| Her collected account `fin-23003` under the `Invoice-Service` source | `department` | `Operations` |
+| Collected HR worker account | `orgCode` | `FIN` |
+| Employee's ISC identity | `department` | `Finance` |
+| Collected finance account | `department` | `Operations` |
 
-In the first row, the attribute is `orgCode` and its value is `FIN`. In the second, the attribute is `department` and its value is `Finance`.
+Read the first row as "the HR account contains the organization code FIN." Read the second as "ISC records Finance as the person's department." The third describes a value collected from one finance account.
 
-These values belong to different records. They do not become one shared field merely because they concern the same employee.
+We have not yet established that any of these values is wrong. HR can deliberately store a code while ISC calculates its readable name. The finance department might require an update, or we might be looking at an older observation. We need the intended relationships and the relevant evidence before deciding.
 
-Now the original report becomes more useful:
+A more useful report is: "The identity department is Finance, but the collected finance account department is Operations." Now we know which records to compare.
 
-“ISC’s identity department is Finance, but the collected finance account department still says Operations.”
+## An account attribute belongs to one account
 
-We can investigate that statement. It identifies the objects and the difference without yet declaring which process failed.
+ISC represents a connected system or account dataset through a **source**. A **connector** provides the integration used to read that data and perform supported, configured changes. Collecting account information into ISC is **account aggregation**.
 
-## What makes an attribute an account attribute?
+The value you see on a collected account is therefore information ISC obtained about that account. It is not necessarily a live reading of the application at the moment you open the screen.
 
-An **account attribute** describes one particular account record on a source.
-
-On the finance account, `department` describes what the finance record contains. On the HR worker record, `orgCode` describes what HR supplied. Neither is automatically the final person-level value ISC should use.
-
-Here is a compact representation of Devi’s collected finance account:
+In this example, the finance source is named `Invoice-Service`. One account under that source contains:
 
 ```json
 {
-  "accountId": "fin-23003",
-  "employeeNumber": "23003",
+  "accountId": "finance-user",
   "department": "Operations",
   "enabled": true,
   "groups": ["g-inv-read", "g-report-export"]
 }
 ```
 
-This is a teaching representation, not a promised connector response or a command to run.
+This is a teaching representation, not an exact connector response or something to run. It uses JSON, JavaScript Object Notation, a format for writing named values. The curly braces enclose one record. A name before a colon identifies an attribute; its value follows the colon.
 
-The curly braces enclose one record. Each name before a colon identifies an attribute. The value comes after it. Quotation marks enclose text; square brackets hold a list. The list here contains two values.
+Here, `accountId` identifies the particular finance account. `department` describes the department stored on that account. `enabled` contains the Boolean value `true`: a Boolean is a logical value that can be true or false. In this hypothetical application, true means that the account is enabled.
 
-The `groups` attribute tells us which group identifiers this account holds in our example. A **group** is a collection of accounts that the finance application uses to give its members access. Here, membership in `g-inv-read` permits invoice reading, and membership in `g-report-export` permits report export.
+The square brackets around the group values mean this attribute holds a list. It contains two separate values, not one long group name.
 
-That is the fictional application’s access design. The operational meaning of a real group must be established from that system.
+All of these are **account attributes** because they belong to this account record. Associating the account with an identity does not turn its fields into identity attributes.
 
-Notice the question each field answers.
+That association is called **account correlation**: matching and assigning a source account to the appropriate ISC identity. A matching field, such as an employee number, is information that correlation configuration can compare; simply collecting that field does not itself define a matching instruction.
 
-`employeeNumber` helps identify the employee associated with the account. `department` supplies a department value recorded on that account. `groups` supplies membership values.
+Our example assumes the correct association is already established. If the employee also has an administrative finance account, that second account has its own attributes. You would need to identify which account contains Operations. "The employee's finance department" could otherwise refer to two different records.
 
-Having an attribute does not tell you how ISC will use it. An employee number is not automatically a matching instruction, and an account’s department is not automatically an instruction to grant every Finance permission.
+## The schema tells ISC how the account information is organized
 
-**Account correlation** is the separate matching process that associates a source account with an ISC identity. Our account associations have already been verified. They allow us to inspect Devi’s finance account in her person-level context; they do not make all its attributes identity attributes.
+The source's **account schema** describes the account attributes and their representation. It tells ISC which fields describe an account, including which field provides its Account ID and which provides its Account Name.
 
-If Devi also had an administrative account on this source, that account would carry its own attributes. “Devi’s finance department” would still need an account identifier when the distinction matters.
+For the finance example, `accountId` supplies the Account ID. The Account Name setting determines the account value used as its name. These are configured roles for account fields, not a rule that every account identifier must equal an employee number.
 
-## The schema describes the information ISC expects
+The schema also describes the value's type and whether it is **multi-valued**, meaning it can contain more than one value. Our `groups` field needs that list representation because an account can have both invoice-reading and report-export memberships.
 
-A **schema** describes a record’s attributes and their organization. The finance source’s **account schema** describes the attributes used for its account representation.
+A schema does not manufacture the source data. Adding `department` to it does not create a department field in the application or give the integration permission to read that field. The application must supply it, the connector must obtain it, and the configured representation must fit what is returned.
 
-A **Boolean** has two logical values, true and false. **Multi-valued** means an attribute can contain more than one value.
+This is why you check the external field, connector configuration, and source schema together. An application screen can show "Worker Department" while the integration supplies `orgCode`. The readable label and the attribute used by a mapping need not be the same text.
 
-For this example, it includes:
+Do not change Account ID or Account Name selections to repair a department problem. Changing these settings after aggregation can break references or introduce duplicate accounts and identities. Identify the actual faulty field or mapping instead of disturbing how ISC identifies the account.
 
-- A text account identifier, `accountId`.
-- A text employee number and department.
-- A Boolean `enabled` value.
-- A multi-valued `groups` attribute configured to represent access memberships.
+## How does FIN become Finance on the identity?
 
-In our finance application’s design, `enabled: true` means the account is enabled. The group list contains two separate identifiers, not one identifier made by joining the two names.
+An account value answers "What was recorded on this account?" An **identity attribute** answers a person-level question, such as "Which department should ISC use for this employee?"
 
-The account schema identifies which attribute provides the Account ID and which provides the Account Name. Those roles help ISC identify and present the source account. They are not instructions to make the account identifier equal to the employee number.
+ISC needs configuration telling it where that person-level value should come from. It cannot choose reliably just because several accounts have a field called department.
 
-Treat those account-identification settings carefully once data exists. Changing the schema’s Account ID or Account Name selection after aggregation can break references or create duplicate records. Do not use that kind of change as an experiment to repair an unrelated department value.
+An **identity profile** provides configuration for an identity population, including its attribute mappings. Its **authoritative source** supplies the population from which those identities are established.
 
-Adding `department` to a schema also does not create a department field in the finance application. The integration must actually obtain the value, and its representation must agree with the data being returned.
+In this example, the Employees profile uses the `HR-Workers` source as authoritative. HR establishes the employee population. A **mapping** then specifies how each identity attribute obtains its value.
 
-You therefore check the external field, connector configuration, and source schema together. A field visible in an application screen is not proof that the integration can read it.
+For department, the agreed mapping selects the HR account's `orgCode`. It uses a **transform**, configured logic that takes input and calculates an output, to translate the code:
 
-Display labels require the same care. An HR screen might label a field “Worker Department,” while the collected attribute is `orgCode`. The visible label helps a person understand the field; mappings must refer to the appropriate configured attribute.
-
-## How did FIN become Finance on the identity?
-
-An **identity attribute** describes the person-level identity in ISC. Its value can come from a source account attribute or from a configured calculation.
-
-An **identity profile** provides configuration for a population of identities, including the mappings that populate their identity attributes. Its **authoritative source** supplies the population from which those identities are established.
-
-Here, the Employees identity profile uses `HR-Workers` as its authoritative source.
-
-A **mapping** specifies how an identity attribute obtains its value. It is more precise than saying “the identity comes from HR,” because individual identity attributes can use different sources.
-
-ISC includes default identity attributes, and administrators can add custom ones. A custom identity attribute becomes available across identity profiles, but each profile does not have to map and use it. Adding the attribute does not invent a value for it.
-
-That shared definition also matters when removing a custom attribute: deletion affects all profiles, and other configurations may depend on the field. A wrong value is not a reason to delete the attribute before investigating its mapping and consumers.
-
-Our example has these mappings:
-
-| Identity attribute being populated | Input selected by the mapping | Treatment |
-|---|---|---|
-| `employeeNumber` | HR worker account’s `employeeNumber` | Use the supplied text value |
-| `department` | HR worker account’s `orgCode` | Convert the agreed code into its department name |
-| `email` | Associated directory account’s `mail` | Use the directory’s work-email value |
-
-The directory account is already associated with Devi and contains the required mail value in this example. HR establishes the employee population; it does not have to supply every attribute.
-
-The department mapping uses a **transform**: configured logic that calculates an output value from its input.
-
-Our teaching example uses this agreed conversion:
-
-| HR input code | Identity output |
+| HR input | Identity output |
 |---|---|
 | `FIN` | `Finance` |
 | `OPS` | `Operations` |
 
-This is the intended logic, not a complete transform definition. A real configuration also needs defined behavior for missing or unexpected input.
+This describes the intended conversion, not a complete transform configuration. Missing and unexpected codes still need defined treatment.
 
-Let’s follow the successful case.
+Let's follow the supplied successful calculation. HR contains `FIN`. Account aggregation collects that value into the HR account representation in ISC. That makes the input available; it has not changed the code into a readable department name yet.
 
-HR supplies `orgCode = FIN`. Aggregation makes that value available on the collected HR account. During the applicable **identity processing**, ISC evaluates identity information against its configuration, including the profile’s attribute mappings.
+During applicable **identity processing**, ISC evaluates identity information against its configuration. The department mapping selects the collected HR value. Its transform receives `FIN` and returns `Finance`. ISC records Finance on the identity.
 
-The mapping selects the HR account’s `orgCode`. The transform converts `FIN` to `Finance`. The identity’s `department` becomes `Finance`.
+The HR account still contains `FIN`. The calculation produced a value for a different record; it did not rewrite its input. This explains why FIN and Finance can both be correct.
 
-The collected HR account still says `FIN`. The transform calculated an identity value; it did not rewrite the HR input.
+Aggregation can lead to identity processing when relevant data changes. Administrators also apply mapping changes through the applicable processing mechanism. Saving a mapping, previewing its output, and applying it to identities are distinct actions. Do not assume opening a screen or saving configuration has recalculated every affected identity.
 
-So those two different text values can both be correct.
+The authoritative source also does not have to supply every identity attribute. Suppose the employee's already-associated directory account has the approved work email in `mail`. The identity's `email` mapping can select that directory field while department uses HR.
 
-This is why an engineer checks the mapping before trying to make every visible value identical. The relationship may deliberately preserve a source code in one place and use a readable name in another.
+The email and department therefore have different origins even though they appear together on one identity. Check the particular attribute's mapping, not only which source established the person. Where multiple accounts could provide an input, you also need to establish which account the applicable mapping logic selects.
 
-## Does the identity value update the finance account?
+## What would make the finance account change?
 
-Not merely because both attributes are named `department`.
+Return to the opening observations. HR says FIN, ISC's identity says Finance, and the collected finance account says Operations.
 
-The identity mapping answers, “How does ISC calculate its identity department?” Writing a department into the finance application answers a different question: “Which operation should change the external account?”
+The HR-to-identity calculation agrees with the stated mapping. Whether the finance account should also say Finance is a separate requirement.
 
-**Provisioning** carries out supported account or access changes through the configured delivery method.
+**Provisioning** carries out supported account or access changes through a configured delivery method. **Attribute synchronization**, or attribute sync, is the configured mechanism that provisions selected account-attribute values from corresponding identity attributes.
 
-**Attribute synchronization** is a configured mechanism that provisions selected account-attribute values from corresponding identity attributes. It applies to existing, correlated accounts; it does not create a missing account.
+The direction matters. The identity value is the value to enforce on the account. Matching field names do not establish that relationship.
 
-The **Create Account definition** describes the values used when creating source accounts. Its configuration also supplies mappings used by attribute sync. For an attribute to be eligible for synchronization, that definition must include it and map it directly from the relevant identity attribute.
+For our finance department update, the required mapping in the source's **Create Account definition** must include the account department and map it directly from the identity department. That definition describes values used for account creation and also supplies the mappings used to determine attribute-sync eligibility.
 
-The presence of a Create Account mapping does not mean every existing account attribute is automatically synchronized. The intended attribute must be selected in the applicable sync configuration, and the required identity mapping must exist.
+Including a field there does not automatically synchronize it. The department field must also be selected for sync, and the identity's profile must map the corresponding identity attribute. The account must exist and be correlated. Attribute sync does not create a missing account.
 
-Return to our opening snapshot. An identity department of Finance and a collected finance-account department of Operations does not, alone, establish a failure.
-
-We still need to know whether that finance field is meant to follow the identity department, whether the required configuration applies, whether a change was attempted, and what the finance application currently records.
-
-For a successful continuation, assume the organization requires that alignment. The source supports the department update, the existing account is correctly correlated, and the required mappings and synchronization are configured. The update runs and succeeds.
-
-Now the target finance account’s department becomes Finance.
-
-The read, calculation, and write connect like this:
+For the successful continuation, assume those conditions are met, the source supports the department update, and the configured integration is permitted to perform it. A relevant identity-department change is processed, attribute sync provisions the update, and the finance application accepts it. Its existing account now contains Finance.
 
 ```text
-HR worker record: employee 23003
-  orgCode = FIN
-          |
-          | Account aggregation collects the value
-          v
-ISC HR account under HR-Workers
-  orgCode = FIN
-          |
-          | Identity-profile mapping selects orgCode
-          | Transform converts FIN to Finance
-          v
-ISC identity: Devi, employee number 23003
-  department = Finance
-          |
-          | Only for the configured supported sync path
-          | Attribute sync provisions the department value
-          v
-Finance application: existing account fin-23003
-  department = Finance after the successful update
+READ
 
-Separate human checks:
-  Examine activity and the current finance record.
-  Examine later collected account data for what ISC records.
+HR worker record
+orgCode = FIN
+           |
+  account aggregation collects FIN
+           v
+ISC: collected HR account
+orgCode = FIN
+           |
+  identity-profile mapping
+  selects orgCode
+  transform: FIN becomes Finance
+           v
+ISC: employee identity
+department = Finance
+
+SEPARATE, CONFIGURED WRITE
+
+Identity department = Finance
+           |
+  applicable attribute sync
+  provisions department update
+           v
+Finance application: existing account
+department = Finance
+(supplied successful outcome)
+
+Human checks:
+inspect activity and current target.
+Inspect later collection separately.
+
+Arrows show information and work,
+not private services or fixed timing.
 ```
 
-The arrows trace the value through the selected successful conditions. They are not a private-service diagram or a claim that all sources run in this order.
+The read arrow carries FIN from HR into ISC. The calculation uses that collected input to produce Finance on the identity. The separate write carries the configured department update to the finance application. The final target value is a supplied successful outcome, not something the opening observations proved.
 
-The HR value remains `FIN`. The identity value is `Finance`. In this continuation, the finance value changes through the described supported update path.
+Automatic sync responds to applicable detected changes under its configuration; merely selecting more attributes is not proof that every existing account has been reconciled. Applying a new sync configuration and checking existing values requires the applicable synchronization operation.
 
-A later collection can provide a refreshed finance-account observation. Do not assume the diagram guarantees a full aggregation immediately after the write or that every screen refreshes at once.
+If an identity has multiple correlated accounts on a source, attribute sync updates all of them under the configured mechanism. Do not assume it updates only the account you happen to be viewing.
 
-There is another boundary to preserve: changing an account’s department field is not, by itself, the same operation as adding or removing one of its groups. Whether department influences permissions depends on the application and the organization’s configured access logic.
+For verification, inspect the relevant activity and current finance account. A later collection can provide a refreshed observation in ISC. The diagram does not promise an immediate full aggregation after every write or that all screens update together.
 
-## A membership value and an entitlement’s attributes answer different questions
+Also keep department and access separate. Changing the account's department is not the same operation as adding an invoice-reading group or removing report-export access. Whether a department value influences permissions depends on the application's behavior and the configured access decisions.
 
-An **entitlement** is an access item represented from a source, such as a group membership or permission.
+## A definition creates a place for a value, not the value itself
 
-On Devi’s finance account, the `groups` attribute lists `g-inv-read` and `g-report-export`. Those values identify the access items held by this account in our example.
+ISC includes default identity attributes and lets administrators add custom ones. A custom identity attribute added under one profile becomes available across profiles, but each profile does not have to map and use it.
 
-But what does `g-inv-read` mean?
+Suppose you add a custom attribute for an approved employment category. You have created a place to hold the information. You have not supplied a category for every employee. Each relevant profile still needs its input and mapping.
 
-The finance system also supplies a group record:
+Removing a custom attribute is broader than fixing one bad value: deleting it removes it across identity profiles. Other configuration can depend on it. Check those dependencies and the mapping before considering an authorized deletion. Default attributes are not candidates for casual deletion either.
+
+This is the same distinction you saw with a source schema. Defining a field, populating it, and using it in a process are different pieces of work.
+
+## The account's group list and the group's own attributes are different
+
+Look again at the finance account's `groups` list:
+
+`["g-inv-read", "g-report-export"]`
+
+In our hypothetical finance application, a **group** collects accounts and gives its members specified access. Membership in `g-inv-read` allows invoice reading; membership in `g-report-export` allows report export.
+
+ISC represents source access items, such as these group memberships or permissions, as **entitlements**. The account list tells us which represented memberships that account holds. It does not tell us everything about what each group means.
+
+The finance integration also supplies this group record:
 
 | Attribute on the group record | Value |
 |---|---|
@@ -225,179 +194,179 @@ The finance system also supplies a group record:
 | `description` | `Allows invoice reading` |
 | `businessArea` | `Finance` |
 
-Those are **entitlement attributes**: information describing the access item itself.
+These are **entitlement attributes** because they describe the access item itself.
 
-The group’s description tells us about the group. The account’s membership value tells us that the account holds that group. The identity’s department tells us about Devi as represented in ISC.
+The description answers "What does this group allow?" The account membership answers "Does this account hold that group?" The identity department answers "What department does ISC record for the person?"
 
-If the group’s `businessArea` is Finance, that does not set Devi’s identity department to Finance. It describes the access item. If a separate mapping or decision is supposed to use that information, it needs its own defined logic.
+Those distinctions prevent a subtle mistake: `businessArea = Finance` on the group does not set the identity department to Finance. It describes the access item. Any separate calculation that uses it needs explicitly defined logic.
 
-An **entitlement type** distinguishes a kind of access item within a source, and its schema describes that item’s attributes.
+The group's meaning also needs confirmation from the real application. A friendly name or a promising description is information about the access, not independent proof of every operation the application permits.
 
-For our `Invoice-Service` source, the configured entitlement type is named `groups`. Its schema uses `id` as the Entitlement ID and `name` as the Entitlement Name. The extra fields are included because this fictional integration supports returning them.
+## How does the membership find the right entitlement?
 
-An **entitlement aggregation** collects information about those access items. Account aggregation supplies account information, including represented memberships. Entitlement aggregation can supply richer information about the items referenced by those memberships.
+An **entitlement type** identifies a kind of access item within a source. Its schema describes the item's attributes, including the fields designated as Entitlement ID and Entitlement Name.
 
-The account data and entitlement data must connect correctly.
+In `Invoice-Service`, our configured type is `groups`. Its schema uses `id` as Entitlement ID and `name` as Entitlement Name. The additional description and business-area fields exist because this hypothetical integration supports returning them.
 
-You will also see an **Entitlement** setting on an account schema field. That setting marks the account attribute as carrying access values. The field still belongs to the account. It is different from a description or business-area attribute on the entitlement record itself.
+**Entitlement aggregation** collects details about the access items. Account aggregation collects account information, including its represented membership values. These contribute different parts of the picture: which access an account holds, and what that access item is.
 
-In this example, the account schema’s `groups` attribute has the Entitlement setting selected, its name agrees with the configured `groups` entitlement type, and its type is linked to that entitlement type. Each collected membership value matches the corresponding Entitlement ID.
+To connect them, the account schema marks `groups` as an Entitlement field. The field remains an account attribute: its values are references to access items. The setting does not turn it into the group's description.
+
+In the configured relationship here, the account field's name agrees with the `groups` entitlement type, its Type is linked to that entitlement type, and each membership value matches the designated Entitlement ID within that source.
 
 ```text
-Source context: Invoice-Service
-Configured entitlement type: groups
+Source: Invoice-Service
+Entitlement type: groups
 
-Account fin-23003
-  groups includes g-inv-read
-                |
-                | Matching membership value and Entitlement ID
-                | Within the configured source/type relationship
-                v
+Collected finance account
+groups includes g-inv-read
+           |
+  membership value matches
+  designated Entitlement ID
+  in this source/type context
+           v
 Entitlement record
-  id = g-inv-read
-  name = FIN_INV_READ
-  description = Allows invoice reading
-  businessArea = Finance
+id = g-inv-read
+name = FIN_INV_READ
+description = Allows invoice reading
+businessArea = Finance
+
+The arrow is a reference,
+not a grant or a write operation.
 ```
 
-The arrow means that the membership reference links to the described access item. It is not an instruction to grant access.
+Follow the reference from the account value `g-inv-read` to the entitlement's `id = g-inv-read`. That explains how the membership can be associated with the details saying it allows invoice reading.
 
-Here, the reference is `g-inv-read`, not `FIN_INV_READ` and not a readable display label such as “Invoice reading.”
+The arrow is not a grant. The account already holds the membership in the supplied example; the relationship helps ISC represent and explain it.
 
-If the account supplies a display name while the entitlement’s designated ID contains a different value, that mismatch needs investigation. Renaming a label just to make a screen look consistent does not repair the reference design.
+Now suppose the account returns `FIN_INV_READ` instead. That text matches the entitlement's name, but its designated ID is `g-inv-read`. Under our agreed design, a matching visible name does not repair the ID mismatch.
 
-A real connector determines which attributes and entitlement types it supports. You should not expect every source to expose the fields used in this example, or assume every source supports a separate entitlement aggregation.
+Inspect the returned membership values, connector mapping, and account/entitlement schemas. Do not rename the display label or change an established identifier merely to hide the difference. Changing entitlement ID/Name designations after aggregation can also produce duplicate entitlements.
 
-## What changes if you edit an entitlement description?
+A real connector determines the supported fields and entitlement types. Not every source offers separate entitlement aggregation, and a collected account membership does not guarantee that every descriptive property has been obtained.
 
-ISC lets administrators maintain an entitlement’s display name and description to make the access understandable.
+## Does improving the description change the access?
 
-For example, the collected name `FIN_INV_READ` can be presented with a more useful display name and an accurate description of the business access.
+An administrator can maintain an entitlement's ISC display name and description to make its meaning clearer. A display name is a readable label; it does not replace the designated reference ID.
 
-Editing that display name or description in ISC does not send those edits to the external source. It also does not add the group to Devi’s account.
+For example, the invoice-reading entitlement can have the description "Read invoices; does not permit invoice export." That helps someone understand what they are considering. It does not remove the separate report-export membership from an account.
 
-The purpose is different: you are improving the information used to understand the access item, not carrying out an account-membership change.
+Those display-name and description edits in ISC are not sent to the external source. They are different from editing a group in the finance application or provisioning a membership change.
 
-Manually maintained names and descriptions also need consideration when comparing later collected data. Entitlement aggregation does not simply overwrite values that have been manually updated in ISC.
+Later entitlement aggregation also does not simply overwrite these manually maintained values; the documented update behavior protects existing display names and descriptions. If the ISC description differs from the application's, establish where each came from before diagnosing a collection failure.
 
-If the description differs from the application’s description, investigate where each came from and whether the ISC value was deliberately maintained. Do not decide the account’s access is wrong from that text difference alone.
+The wording still needs to be accurate. Improving a description helps a person make a decision; it does not restrict what an incorrectly described permission actually allows.
 
-Descriptions still matter. A reviewer who reads “Invoice reading” needs to understand the actual access behind it. Better wording cannot make an inaccurate access description safe.
+## The kind of value changes what you can conclude
 
-## The shape of the value affects the reasoning
+An attribute's name tells you which information to inspect. Its type and shape tell you how that information is represented.
 
-Two fields can look similar on a screen while supplying different kinds of data.
+A **string** is text. The string `"0042"` can be an identifier whose leading zeros matter. The numeric value `42` does not preserve those zeros as part of the value. Converting a code into a number merely because it contains digits can change what later matching or delivery uses.
 
-A **string** is text. `"0042"` can be a cost-center code that must retain its leading zeros. A numeric value `42` does not preserve those zeros as part of the value.
+Likewise, `false` is a Boolean, but `"false"` is text. A screen can display both as the word false. You need the supplied representation and any conversion to know what a comparison receives.
 
-If the business identifier is `0042`, converting it to a number because it contains digits can change the identifier you later compare or send elsewhere.
+Missing and empty information also needs careful reading:
 
-A Boolean `false` and the text `"false"` are also different representations. Do not assume a connector, mapping, or comparison has converted one into the other.
-
-An empty value needs attention too:
-
-| Representation | What it expresses in this example |
+| Supplied representation | What it says about this input |
 |---|---|
-| Attribute absent from the supplied record | No field was supplied in that record |
+| The `department` field is absent | This record supplies no such field |
 | `"department": null` | The field is present without a value |
-| `"department": ""` | The field contains empty text |
-| `"groups": []` | The field contains an empty list |
-| `"enabled": false` | The field contains the Boolean value false |
+| `"department": ""` | The value is empty text |
+| `"groups": []` | The value is an empty list |
+| `"enabled": false` | A Boolean false was supplied |
 
-These distinctions help you inspect the input. They do not promise that every connector preserves every representation unchanged or that ISC handles them identically in every feature.
+False is a value, not a blank. An empty list contains no elements, but an absent list does not by itself establish which memberships currently exist in the application.
 
-Check the actual collected value and the applicable logic before predicting the result.
+These are distinctions in the supplied input. Connectors and features can normalize or interpret representations differently. Check the collected value, the schema, and the consuming logic before predicting behavior. Support for a list on an account field does not establish that an identity mapping or decision feature accepts that list unchanged.
 
-In particular, “missing department” must not silently become “Finance” because Finance seems a convenient default. The approved mapping needs a defined response to missing data.
+If HR supplies no organization code, our two-row conversion table does not tell you what the running transform returns. The actual configuration needs missing-input handling. An undocumented gap in a description is also not proof of a particular runtime error.
 
-A null output can matter downstream too. When an identity-profile mapping sets a configured synchronized identity attribute to null, attribute sync propagates that null value to the account attribute. The external system’s requirements and the operation result still matter. Do not assume clearing an identity value leaves the account’s old value untouched, or that every target accepts an empty value.
+Any fallback value should have an approved meaning. Choosing Finance merely to avoid a blank can misrepresent the person and affect decisions that use department.
 
-Likewise, an empty membership list and a missing membership field are not interchangeable evidence about the current application. Check what the connector returned, what population and fields were read, and how the relevant collection handles them.
+A null identity output has a further consequence under attribute sync: when the profile mapping sets a configured synchronized identity attribute to null, sync propagates null to the account attribute. It is not safe to assume the old account value will be left untouched. Check the target's required-value restrictions and the operation result; the target can reject a value that ISC attempts to send.
 
-Dates need the same discipline. Text such as `2026-10-20` needs an agreed format and meaning when a calculation uses it. If a value includes a time, establish the time zone as well. A date displayed on a screen is not proof that every process interprets it as the same instant.
+Dates need meaning as well as text. `2026-10-20` needs an agreed format and interpretation in a calculation. A date with a time also needs a time zone before you can compare instants. A readable date on a screen does not establish that every process interprets it identically.
 
-Use the data types and multi-value settings supported by the actual schema and feature. The fact that one account attribute supports a list does not mean every identity attribute or decision feature accepts one.
+## Find the first point where the value differs from the design
 
-## Trace the value before choosing a repair
+Suppose the identity unexpectedly shows Operations. The agreed mapping is still HR `orgCode`, with FIN converted to Finance.
 
-Suppose the identity department unexpectedly shows Operations even though the HR team says Devi moved to Finance.
+Start at the producing record and move toward the result:
 
-Start by identifying the expected mapping. In our agreed design, the input is `HR-Workers.orgCode`, and the conversion is `FIN` to `Finance`.
-
-Then locate the first disagreement:
-
-| Evidence | Question it helps answer |
+| Evidence | What it helps establish |
 |---|---|
-| Relevant current HR record | Does HR actually supply `FIN` for the intended employee? |
-| Collected HR account and relevant aggregation history | Did ISC receive the expected account value? |
-| Identity profile, selected source attribute, and transform configuration | Is the identity department using that input and the intended conversion? |
-| Mapping preview and current identity value | What does the mapping calculate, and what is currently recorded on the identity? |
-| Applicable processing history or errors | Has the relevant change been processed, and what problem is reported? |
+| Intended employee's current HR record | Whether HR actually contains FIN now |
+| Collected HR account and relevant aggregation history | What ISC received and which collection to investigate |
+| Governing profile, selected input and transform | Which value the identity calculation uses |
+| Mapping preview and current identity attribute | What the mapping calculates versus what the identity currently records |
+| Applicable processing and error information | Whether the relevant work was applied or a problem was reported |
 
-A preview is useful for evaluating a mapping. It does not establish that the configuration has been applied to the population or that a target-account update succeeded.
+A preview evaluates the mapping with selected data. It does not establish that all affected identities have been processed, and it cannot prove an external account update succeeded.
 
-These checks combine records, configuration, and available activity. They do not require a single history screen to expose every attribute evaluation.
+If HR has FIN but the collected account still has OPS, first investigate why the expected input has not arrived. Rewriting a correct FIN-to-Finance conversion does not repair an old input.
 
-If HR currently contains `FIN` but the collected HR account still contains `OPS`, investigate the collection boundary before rewriting a correct conversion.
+If ISC collected FIN but the mapping actually selects a directory department containing Operations, processing again can reproduce Operations. The process is using the wrong agreed input; repetition is not a correction.
 
-If ISC collected `FIN` but the mapping selects the directory account’s department, processing the identity again can reproduce the wrong result. Repeating processing does not correct a wrong input selection.
+If the identity is Finance but the current finance application account is Operations, the investigation has crossed into the write requirement and its execution. Establish whether sync should apply, then inspect the attempted operation and result. If the actual account is already Finance but ISC's collected account still says Operations, investigate the observation and refresh instead.
 
-If the mapping calculates Finance but the finance account still says Operations, you have reached a different boundary. Investigate the expected write mechanism, its applicability, the attempted operation, and current target evidence.
+Choose the authorized correction at the boundary the evidence identifies. A shared mapping can affect an entire profile population, so assess its wider effect before changing it.
 
-Choose an authorized correction at the relevant point. A shared mapping can affect more people than Devi, so assess its wider effect before applying a change.
+This also connects the front end and back end. The **front end** is the interface you see: account details, identity attributes, entitlement details, and activity. The **back-end work** obtains the data, evaluates mappings, connects references, and carries out configured operations.
 
-The front end gives you screens for account attributes, identity attributes, entitlement details, and activity. The back-end work includes obtaining source data, calculating identity values, linking access references, and carrying out configured changes. Understanding the producing process tells you what each screen can establish.
+Each screen answers a different question because a different record or process supplies its information. Available history helps investigate that work; it is not a promise of a single screen exposing every field evaluation.
 
-## Try these changes to the evidence
+## Test what a changed observation really means
 
-**1. Different values, correct mapping.**
+**The values differ, but the calculation agrees.**
 
-The collected HR account has `orgCode = FIN`. The department mapping converts `FIN` to `Finance`, and the identity shows Finance. The finance account’s collected department is Operations.
+The collected HR account has FIN. The configured mapping converts FIN to Finance, and the identity shows Finance. The collected finance account shows Operations.
 
-Which part of the flow has the supplied evidence established? What must you check before calling the finance difference a synchronization failure?
+Has the supplied evidence established a synchronization failure?
 
-**2. An entitlement name is mistaken for its identifier.**
+The HR input and identity output agree with the stated calculation. The finance difference alone does not establish a failed write. Check the required finance-field behavior, eligible mappings and sync selection, account association, relevant activity, and current application record. The collected account could be old, or a required update could be unattempted or rejected. The supplied values do not choose between those explanations.
 
-The account’s `groups` list contains `FIN_INV_READ`. The relevant entitlement record has ID `g-inv-read` and name `FIN_INV_READ`. The intended integration design requires membership values to use the group IDs.
+**The name matches, but the ID does not.**
 
-Would a matching visible name establish a correct ID reference? What needs investigation?
+The account returns `FIN_INV_READ` in `groups`. The entitlement ID is `g-inv-read`; its name is `FIN_INV_READ`. The agreed integration requires membership references to use group IDs.
 
-**3. HR did not supply a code.**
+Would matching names establish a correct reference?
 
-Devi’s collected HR account has an empty `orgCode`. The mapping description only documents conversions for FIN and OPS; no missing-input behavior has been established.
+No. Compare the raw account membership with the designated ID in the correct source/type context. Inspect the connector mapping and both schemas to find why a name was supplied. Assess existing references before an authorized correction; changing a label or an established ID to make the screen agree conceals the design problem.
 
-Can you confidently predict Finance, Operations, or a particular processing error? What information do you need?
+**HR supplies no code.**
 
-**4. A value looks like a Boolean.**
+The collected HR account has an empty `orgCode`. The mapping description lists only FIN and OPS conversions.
 
-A connector supplies `"enabled": "false"`, while a proposed comparison expects Boolean false. You have not checked whether any conversion occurs.
+Can you predict Finance, Operations, or a particular error?
 
-Can you treat the supplied value as a verified Boolean? What would you inspect before relying on the comparison?
+Not from that description. Inspect the actual transform, its missing-input behavior, the selected input, and appropriate preview or processing evidence. Also establish why HR has no code. A documented conversion list is not a complete execution trace, and a convenient default is not an approved department.
 
-**5. The description was improved.**
+**The value looks false.**
 
-An administrator changes the entitlement’s ISC description to “Read invoices; does not permit invoice export.” No membership operation is requested.
+The connector supplies `"enabled": "false"`. A proposed comparison expects Boolean false; no conversion has been checked.
 
-Has that edit removed `g-report-export` from Devi’s account? Has it changed the source application’s group description?
+Is the comparison's result established?
 
-## Compare your reasoning
+No. The supplied value is text. Inspect the schema, connector output, collected value, conversion, and the consuming feature's supported types. The visible word alone does not prove the comparison receives a Boolean or establish how that feature evaluates it.
 
-**For the different department values:** The supplied HR value, conversion, and identity result agree with the stated mapping. That establishes the intended calculation for these observations. It does not establish what happened to the finance account. Check the required finance-field behavior, eligible mapping and attribute-sync configuration, existing account association, relevant activity, and current finance record. A stale collected account and a rejected update are different possibilities; neither is established by the values alone.
+**The description changes, but the memberships do not.**
 
-**For the mistaken reference:** No. The agreement with the entitlement name does not make it equal to the designated ID. Compare the raw membership values, connector mapping, account schema, entitlement type relationship, and the entitlement’s designated ID. Determine why names were supplied where the agreed design requires IDs. Do not change an established ID field just to conceal the mismatch; assess references and affected records before an authorized correction.
+An administrator changes the invoice-reading entitlement's ISC description to "Read invoices; does not permit invoice export." No membership operation is requested.
 
-**For the missing HR code:** You do not yet have enough information to predict a specific result. Inspect the actual transform and mapping, including missing-input handling, then use appropriate preview or processing evidence. The description’s omission does not prove the running configuration has no handling. Also investigate why HR supplied no code. Any fallback must reflect an approved business meaning, not an assumption that a blank employee belongs in Finance.
+Does that remove `g-report-export` or update the external group's description?
 
-**For the apparent Boolean:** The supplied representation is text. Inspect the source schema, connector output, collected account value, any conversion, and the consuming comparison’s supported types and behavior. The evidence does not yet establish the comparison’s result. A readable word on a screen is not enough to prove its data type.
+Neither follows. The specified edit maintains descriptive information in ISC. It is not sent to the source and is not a membership removal. If export access must be removed, investigate the correct membership and supported removal path separately.
 
-**For the edited description:** Neither outcome follows from this edit. ISC’s display-name and description edits are not sent to the source, and editing descriptive information is not an account-membership removal. Inspect the membership and a supported removal operation if the account’s export access needs to change. Keep the description accurate, but do not confuse explaining access with changing it.
+## Follow the same reasoning with a different field
 
-## Explain a value that someone else chooses
+On a training-platform source, a collected account contains `costCentre = "0042"`. Its identity contains `costCenter = "0042"`, mapped from HR, while a training entitlement has `businessArea = Learning`. The supplied design does not synchronize the training account's cost centre.
 
-Ask someone to choose one visible field from an account, identity, or entitlement. If you are working alone, choose a field other than department.
+HR changes the approved code to `"0043"`. Assume ISC collects it and successfully applies the direct identity mapping. No account-write operation occurs.
 
-Explain which object holds it, which source and record matter, what kind of value it contains, and how it became available.
+What should change, and what does the Learning value tell you?
 
-Then change one condition. The input is missing, a mapping selects another source, a group has a new description, or the target update is rejected.
+The identity's cost center becomes the text `"0043"` because its selected HR input changed and the mapping was applied. The training account remains `"0042"` under the stated no-write conditions. Learning describes the entitlement; it neither supplies the person's cost center nor requires a particular account update. Keep the codes as text so their leading zeros remain meaningful.
 
-Explain what you can now predict and what evidence is still missing. Keep the object, input, calculation, and any write operation separate. That is what turns “the value looks wrong” into a question you can investigate.
+Now choose a visible field other than department. Explain which record holds it, its source and type, how its value became available, and which configuration uses it.
+
+Change one condition: remove its input, select another source, alter a description, or reject a required write. Explain the result you can justify and the evidence you would still need. Naming the field is the beginning; tracing what produces and consumes its value is how you decide what to do with it.

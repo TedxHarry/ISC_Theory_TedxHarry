@@ -1,266 +1,299 @@
 # Identity and account: how one person is represented across systems
 
-*Lesson FND-001 · Revision 1.3*
-
 Someone asks you to show all the accounts an employee uses.
 
-You could open each application and search for the employee. But the applications may use different usernames. One might know her by employee number, another by a shortened name, and another by an email address.
+You find a worker record in human resources, or HR, a workplace directory account, and a finance-application account. The directory and finance application use different usernames. Each system holds only part of the information you need.
 
-How do you establish that those records belong to the same person?
+How do you establish that these records concern the same person without treating them as one record?
 
-That question leads us to the relationship between an identity and an account in SailPoint Identity Security Cloud, or ISC.
+SailPoint Identity Security Cloud, or ISC, brings those records into a person-level view through an identity and its associated accounts. The relationship lets you ask about the person across systems while keeping each system's account details separate.
 
-## Start with the records that already exist
+That separation matters whenever you investigate missing access, choose an account to change, or explain why two department values differ.
 
-Devi works in the Finance department. She already has a worker record in the HR system, a directory account used for workplace access, and an account in a finance application.
+## The account belongs to a particular system
 
-We want ISC to bring those records together so the organization can understand her accounts and access.
+An **account** is a record used by a person or service in a particular system. A directory account can hold its username, status, group memberships, and other information. A finance account can hold a different username and a different set of permissions.
 
-The following records are fictional. We’re showing only the fields needed for this explanation.
+The directory is a system that stores workplace accounts and information other systems can use. The finance application is separate business software. The same employee can have an account in each without either system using the other's username.
 
-| System | Record for Devi | Information used in our example |
+Not every record treated as an account is an interactive login. An HR integration can represent a worker record as an account for collection and identity management. That does not imply that the worker signs in through that record or that it has a password. Establish what the integration's account record represents.
+
+Inside ISC, a **source** represents a configured system or collection of account data. A **connector** provides the integration used to read data and, where supported and configured, perform changes.
+
+Creating a finance source does not create a replacement finance application. The actual account remains in the application; ISC holds its own representation of that source record.
+
+This gives you two places to inspect: what the application currently holds, and what ISC knows about it.
+
+They can differ. If someone changes the account in the application after ISC obtained its information, ISC may still show the earlier value. An account view is evidence about the record ISC holds, not an unconditional guarantee of the application's present state.
+
+## The identity connects the records without combining the accounts
+
+For an employee, an **identity** is ISC's person-level record. It can hold information about the employee and connect their accounts across sources.
+
+The identity is not a fourth workplace login that replaces the HR, directory, and finance records. It gives ISC a way to relate those records to the same person.
+
+The fields on any of these records are **attributes**: named pieces of information such as employee number, department, username, or account status.
+
+An account attribute belongs to that account. An identity attribute belongs to the person-level identity. Even when both are called department, they are not one shared field.
+
+The **account schema** describes the account attributes represented for a source and how they are organized. It helps ISC interpret account information; it does not turn account attributes into identity attributes.
+
+If you want to know the employee's department as recorded on their identity, inspect the identity attribute. If you want the department held on the finance account, inspect the account attribute and consider when it was observed.
+
+Why keep both? Because they describe different things. The organization might regard HR's department as the current employment fact while the finance account still contains an older local value. Combining them into one unexplained field would hide the difference you need to investigate.
+
+## Follow a small set of records
+
+Use these hypothetical values to inspect the relationship. The account records already exist in their systems, but ISC has not loaded them for this walkthrough.
+
+| External record | Account information relevant here | Employee identifier |
 |---|---|---|
-| HR system | Worker record | Name: Devi; employee number: `10482`; department: Finance |
-| Directory | Account with username `devi.r` | Employee ID: `10482` |
-| Finance application | Account with username `dv10482` | Worker number: `10482` |
+| HR worker record | Department Finance | employeeNumber: 10482 |
+| Directory account | Username staff-a | employeeId: 10482 |
+| Finance account | Username finance-b | workerNumber: 10482 |
 
-Notice that the usernames differ.
+The usernames differ. The employee identifier is the same, even though its field name differs between systems.
 
-That does not, by itself, tell us whether the accounts belong to different people. Each system can have its own naming conventions.
+The value `10482` is an organization-managed employee number in this example. It is not the system-generated ID of an ISC identity object. A business value used to match records and a technical ID identifying an ISC record serve different purposes.
 
-We need a reliable relationship between the records.
+A shared value is useful only when it has the right meaning. Before using these fields for matching, establish that they identify the same kind of subject, are populated correctly, and distinguish people reliably in the population being managed.
 
-## An account represents a record on a particular source
+For the successful path here, assume those checks have been made, the intended match is unique, the required identity information is available, and there are no conflicting records or previous wrong associations.
 
-In the directory, Devi’s account contains information relevant to that directory. The finance account contains information relevant to the finance application.
+The administrator has also prepared the sources, identity configuration, and matching settings. Reading records cannot supply missing design decisions by itself.
 
-ISC collects account information from systems it manages. Within ISC, that information is associated with a **source**.
+## First establish the person-level record
 
-A source represents a system or collection of account data configured in ISC. Its configuration describes how ISC obtains that data and, where supported, performs changes.
+Reading account information into ISC is called **aggregation**. For this walkthrough, the administrator loads HR first.
 
-The **connector** provides the integration with the system.
+HR has been made an **authoritative source** through an **identity profile**. The authoritative source supplies the population used to establish identities. The identity profile contains configuration for those identities, including how their attribute values are obtained.
 
-There is one detail to be careful with: an account record does not always mean an interactive login. For an HR integration, the collected record can represent a worker. You should understand what the connector treats as an account rather than assuming every account has a password.
+A **mapping** specifies an input or calculation used to populate an attribute. Here, the profile maps HR employeeNumber to the identity's employee number and HR department to the identity's department.
 
-The fields on a record are its **attributes**. A username, employee number, department, and account status are examples. Their organization is described by the account schema.
+With the required information present under this prepared configuration, the HR account data establishes the employee's identity. The identity has employee number 10482 and department Finance, and the HR record is associated with it.
 
-When you inspect an account in ISC, you are inspecting ISC’s representation of that source record. The actual account still exists in its system.
+The directory and finance accounts have not been created by that step. They already existed externally; their records have not yet been loaded in this walkthrough.
 
-Those two views can differ if a change has occurred and ISC has not yet received the corresponding update. Seeing an account in ISC gives you information about the account; assessing its current target state can require additional evidence.
+Also separate two meanings of authority.
 
-## The identity gives ISC a person-level view
+HR supplies the identity population here. That does not require every identity attribute to come from HR. Another approved mapping could obtain email from a directory while retaining employee number and department from HR.
 
-For an individual employee, an **identity** is the ISC record representing that person.
+The selected mapping determines an attribute's input. The word authoritative on one source does not explain every value on the identity.
 
-Devi’s identity can contain information such as her name, employee number, department, and manager. It also provides the place from which ISC relates her accounts and access across systems.
+## Then associate the other account records
 
-The identity gives us a person-level view. Each account preserves the details of one source record.
+Next, ISC collects the directory account. It needs to determine which identity that account belongs to.
 
-If you want to understand Devi’s department as calculated in ISC, inspect the identity’s department attribute.
+**Account correlation** is the matching and association of a source account with an identity. In this configured example, it compares directory employeeId with the employee number on an existing identity.
 
-If you want to understand the department recorded on her finance account, inspect that account’s department attribute.
+Both values are 10482, and the intended match is unique. The directory account becomes associated with that employee's identity.
 
-Both fields might be named “department,” but they belong to different objects. They can have different values.
+When the finance account is collected, its configured comparison uses workerNumber instead. That value also matches identity employee number 10482, so the finance account becomes associated with the same identity.
 
-An attribute’s name alone does not tell you where its value came from or which record it describes.
+The different field names do not prevent a match because the configuration selects which fields to compare. The different usernames do not prevent it either; usernames are not the selected input in these comparisons.
 
-## How does ISC build this relationship?
+After the successful association, the relationship is:
 
-The administrator has prepared the sources, mappings, and account-matching configuration. The required identity information is available. ISC has not yet loaded Devi’s records.
+```text
+Within ISC
 
-In this example, the administrator loads HR first, followed by the directory and finance application.
+One employee identity
+employee number: 10482
+department: Finance
+         |
+         +-- HR source account
+         |   worker record
+         |
+         +-- Directory source account
+         |   username: staff-a
+         |
+         +-- Finance source account
+             username: finance-b
 
-**First, ISC reads the HR record.**
+Lines show account associations,
+not automatic changes in applications.
+External records remain separate.
+```
 
-Reading account data into ISC is called **aggregation**.
+There is one employee identity associated with three source records. The lines connect records; they do not merge the accounts into one or require the applications to adopt one username.
 
-HR has been designated as an **authoritative source** through an identity profile. Here, authoritative means that this source supplies the population from which our identities are established.
+In this walkthrough, no account-renaming or other external write has been performed. The directory username remains staff-a, and the finance username remains finance-b.
 
-An **identity profile** includes mappings that specify where identity attribute values come from.
+We have established which person the records belong to. We have not established that every permission on those accounts is appropriate.
 
-Our example maps HR’s employee number and department to the corresponding identity attributes. With the required information present, the authoritative account data establishes Devi’s identity.
+The relationship makes further questions possible: which accounts belong to this employee, what access do they hold, and which exact account should an authorized change affect? Those answers depend on accurate data and associations.
 
-An authoritative source does not have to supply every identity attribute. Another configuration could obtain employee number and department from HR while obtaining email from the directory. The identity profile’s mappings determine those sources.
+This HR-first sequence explains the supplied setup. It is not a universal execution order for every source or a complete account-correlation algorithm.
 
-The value `10482` is the employee number in this example. It is not the internal ID that ISC assigns to its identity object.
+## A failed comparison is not yet a complete matching result
 
-At this point, ISC has a person-level record for Devi. Her directory and finance accounts already exist in their systems, but we have not loaded them in this walkthrough.
+Now change one fact in a separate first-time import.
 
-**Next, ISC reads the directory account.**
+The employee's identity already exists with employee number 10482. The directory account has never been associated with an employee identity, and its employeeId is empty.
 
-The directory record contains the employee ID `10482`.
+The selected employeeId comparison cannot establish the intended match. There is no account-side value to compare with 10482.
 
-The configured matching criteria compare that account attribute with the employee number on an existing identity. In our example, the value uniquely matches Devi’s identity.
+That is a conclusion about one comparison, not necessarily the entire correlation outcome. Another applicable comparison or ISC's default matching behavior may establish an association.
 
-Matching and assigning a source account to an identity is called **account correlation**.
+For this variation, assume the complete applicable matching behavior finds no authoritative employee identity. The account remains uncorrelated to that employee identity.
 
-The directory account becomes associated with Devi’s identity.
+An **uncorrelated** account has no resolved association to an identity established from the authoritative population. It does not mean the external account has disappeared or that ISC failed to collect it. An account linked to the wrong person has a different problem: an association exists, but it is incorrect.
 
-**Then ISC reads the finance account.**
+The next useful question is who supplies employeeId and why the supplied value is empty. Inspect the actual account information and the applicable matching configuration before selecting a correction.
 
-This source uses a field named worker number. Its configured criteria compare that field with the identity’s employee number.
+Do not replace a missing value with a guessed identifier just to make a comparison pass. A wrong value can associate the account with the wrong person. A visible association then exists, but it does not represent the correct relationship.
 
-Again, the value is `10482`, and the intended match is unique.
+The successful example relied on verified meaning and a unique intended match, not merely on two equal-looking strings.
 
-The finance account becomes associated with the same identity.
+## An identity is not proof that another application account exists
 
-Our example uses employee identifiers because they provide the intended unique matches in these records. A real implementation must evaluate the available attributes and applicable correlation logic.
+Suppose the employee needs a newly introduced application and has no account in it.
 
-After successful processing in this example, we have:
+The employee's existing identity still represents the person in ISC. It does not prove that an account exists in the new application.
 
-| ISC identity | Associated source records |
+**Provisioning** performs supported account or access changes. Account creation is one provisioning operation. The **target system** is the system receiving that attempted change.
+
+Creating the new account needs the required account values, appropriate configuration and authority, and a supported delivery arrangement. **Fulfillment** is the work of carrying that intended change through to delivery; it can involve an integration or assigned manual work, depending on the supported configuration.
+
+A configured **lifecycle state**, a business stage used to drive account and access actions, can be one way to initiate such work. The identity profile and related access configuration determine what actions that stage requires. An identity's mere existence is not evidence that account creation was required, attempted, or completed.
+
+Check the applicable design, operation result, and actual application account.
+
+Correlation and creation answer different questions. Correlation associates an account record that ISC has with an identity. Account creation establishes a new account in another system. Dependent automation can connect identity information to provisioning, but you must still inspect the separate work and its result.
+
+When someone says, "The person exists in ISC but cannot use the application," begin with the intended application and account. Establish whether the account exists, whether it is enabled where required, and whether it has the access needed for the specific operation.
+
+## More than one account can belong to the same person on one source
+
+An employee might have a standard directory account for daily work and a separate administrative account for approved administrative tasks.
+
+Both can be associated with the same identity on the same source. They remain distinct accounts with their own identifiers, status, and access.
+
+The identity shows their relationship to the person. It does not make the administrative permissions available through the standard account.
+
+That is why "change this person's directory account" can be incomplete. Which account? For what purpose? What should change on it, and what should stay unchanged on the other?
+
+Account selection matters when provisioning a change. Verify the intended recipient account through the supported process rather than treating a person-level access view as proof that every account holds the same rights.
+
+## A missing account link has more than one possible explanation
+
+Suppose a finance account does not appear where you expect it on the identity.
+
+Separate the external account, its collected representation, and its association.
+
+The account might not exist in the application. It might exist but fall outside the collection scope. It might not have been collected yet. Or ISC may hold the source account without the correct association to the employee.
+
+Ask these questions in order as the evidence requires:
+
+1. Does the intended account exist in the application?
+2. Does ISC contain its record under the correct source?
+3. Is that record associated with the correct identity?
+
+The source's account view helps you inspect collected accounts and their current associations. The identity view lets you inspect the person-level information and related access from the other direction.
+
+A record visible under the source establishes that ISC holds it. If the expected identity relationship is absent, focus on the current association, selected account values, corresponding identity values, and applicable correlation behavior.
+
+Check whether an association is missing or wrong. Searching only for uncorrelated accounts will not, by itself, explain an account already linked to the wrong person.
+
+Finding an existing account is also a reason to pause before creating another one. A collection or relationship problem is not repaired merely by adding a duplicate external account.
+
+## A changed identity value does not rewrite every account
+
+Now let the employee's department change from Finance to Operations.
+
+HR records the new employment department, and ISC collects the changed value. **Identity processing** evaluates identity information and applicable configured access. With department still mapped from HR and the update applied, the identity's department becomes Operations.
+
+The finance account can still show Finance. These are separate records, so that difference alone does not establish a failed identity update.
+
+First ask what the approved design expects. Should the finance account's department follow employment department, or does that application intentionally maintain a different value?
+
+If it should follow the identity, a separate write mechanism is needed.
+
+**Attribute synchronization** keeps selected attributes on existing, correlated accounts aligned with corresponding identity attributes through configured provisioning. It needs the applicable mappings and supported account-update capability; correlation alone does not turn it on.
+
+Follow the direction of information. HR collection supplies the new input. The identity mapping and processing produce Operations on the identity. Configured synchronization can then attempt to write Operations to the finance account. The application must accept the change.
+
+A later collection or other appropriate update can refresh ISC's account observation. It is not the write that changed the application.
+
+If the values differ, use evidence that distinguishes these steps:
+
+| Question | Evidence to inspect |
 |---|---|
-| Devi | HR worker record |
-| Devi | Directory account `devi.r` |
-| Devi | Finance account `dv10482` |
+| Why does the identity show Operations? | The identity profile's department mapping, its selected input, and the applied identity value |
+| What does ISC know about the finance account? | The account attributes and the relevant collection or update history |
+| Is that account attribute supposed to follow the identity? | The approved design and applicable attribute-synchronization configuration |
+| If an update was expected, what happened? | Synchronization events or provisioning activity, followed by current application-account evidence |
 
-The records remain separate. Their relationship allows ISC to show them together in the context of Devi.
+A configuration shows what should be attempted under its conditions. Activity helps explain what was attempted and reported. The application's current account tells you what exists there. None should silently replace the others.
 
-## What happens when that comparison cannot match?
+## Work through the relationships
 
-Consider a different first-time import. Devi’s identity already exists, but the directory account has never been associated with an identity.
+### One person, three associated records
 
-This time, the values are:
+An HR worker record, a directory account, and a finance account have been successfully associated with the same employee identity.
 
-| Value being compared | Value present |
-|---|---|
-| Employee number on Devi’s identity | `10482` |
-| Employee ID on the directory account | Empty |
+How many employee identities does this example establish? What would you lose by describing the result as one combined account?
 
-That comparison cannot establish the intended match. It has no account-side employee ID to match with `10482`.
+**Worked reasoning**
 
-But that observation alone does not establish the final correlation result. ISC also has default matching behavior, and another applicable comparison could establish a relationship.
+It establishes one employee identity associated with three source records.
 
-For this variation, assume that no other configured or default matching logic finds an identity. The account remains uncorrelated to the intended employee identity.
+The identity provides the person context. The account records retain their source-specific details. Calling them one combined account would hide which system holds which username, status, permission, or department value.
 
-You now have a specific data question to investigate: why is the directory employee ID empty, and who supplies that field?
+### The account is present, but its expected association is absent
 
-The distinction matters. “This comparison failed” and “the account has no matching identity” are different conclusions. The second requires considering the complete applicable matching behavior.
+The application contains the intended finance account. ISC's account list under the correct source contains its representation, but it is not associated with the expected employee identity.
 
-## What changed, and what stayed the same?
+What is known, and what would you inspect next?
 
-In the successful example, we began with records in separate systems.
+**Worked reasoning**
 
-After loading and matching them, ISC can relate those records to Devi’s identity.
+The external account exists and ISC has collected it. Those facts do not identify the association problem's cause.
 
-Her directory username is still `devi.r`. Her finance username is still `dv10482`. Associating the accounts does not require both systems to adopt the same username.
+Inspect its current association, the account values selected for matching, the identity values they are compared with, and the complete applicable correlation behavior. Verify that you are following the correct records. If the account is linked to someone else, investigate that wrong relationship rather than assuming it is simply uncorrelated.
 
-We also have not established that the accounts have appropriate access. We have established the relationship between the records and the employee.
+Creating another application account is not justified by the supplied evidence.
 
-That relationship makes later questions possible:
+### The departments differ
 
-Which accounts are associated with Devi? What access do those accounts contain? Which account should a particular change concern?
+The identity shows Operations, while ISC's finance-account representation shows Finance.
 
-The accuracy of those answers depends on the underlying data and associations.
+Does that prove identity processing failed?
 
-## Does an identity’s existence prove that an application account exists?
+**Worked reasoning**
 
-Suppose the company introduces another application and Devi has no account in it.
+No. The records can legitimately have different values, or the account observation may be older than a later change.
 
-Her existing identity does not establish that the new application account exists.
+Establish the origin and applied value of identity department. Then inspect the account observation and its time. Determine whether the design requires synchronization and whether the applicable configuration supports it.
 
-Creating or modifying an account in a target system is a **provisioning** operation. It needs the relevant configuration, required account values, and a supported fulfillment method.
+If a write was expected, inspect its activity and the application's current account value. A failure might concern the write or observation rather than identity processing. The differing values alone do not decide which explanation is correct.
 
-Configured automation can connect identity-related events to account provisioning. For example, an organization can configure lifecycle-driven access to initiate changes as employees enter a business stage.
+### An identity exists, but a new application account does not
 
-The distinction is between the identity record and the target account, with provisioning providing the relevant change mechanism. You must still establish whether that mechanism ran and what it accomplished.
+Would associating an existing directory account with that identity create the missing application account?
 
-This helps when someone reports, “Devi exists in ISC, but she cannot access the application.”
+What evidence would establish account creation instead?
 
-First establish which application and account are involved. Then investigate whether the account exists and whether it has the required access.
+**Worked reasoning**
 
-## Can Devi have two accounts on the same source?
+The association connects the directory account with the identity. It does not create a different application's account.
 
-Yes. An organization might give an employee a regular directory account and a separate administrative account.
+Creation requires the relevant supported provisioning and fulfillment work. Configured automation may initiate that work, but you need the operation result and confirmation of the intended account in the application. An assignment or submitted operation alone is not completed account creation.
 
-If both accounts are associated with Devi, her identity can show both. They remain distinct accounts and can carry different access.
+## Explain the same distinction in another setting
 
-SailPoint documents that one identity can have multiple accounts on a source.
+A contractor has an identity established from an approved contractor register. A warehouse application already has an account for that person, using a different username. Its record has been collected into ISC, but the expected person-level association is unresolved.
 
-The practical question then becomes more specific.
+Explain why creating a second warehouse account is not your first correction. Then describe what you would need to investigate the relationship and verify any authorized correction.
 
-“Change Devi’s account” is incomplete when two accounts are relevant. An engineer needs to establish which account the change should affect.
+**One defensible explanation**
 
-This is one reason account selection matters during provisioning.
+The warehouse account already exists and has been collected. The missing piece is its resolved relationship to the correct person-level identity.
 
-## What if the finance account is missing from Devi’s identity?
+Establish the contractor identifier's meaning, the actual account and identity values, and the applicable matching behavior. Inspect any existing association before selecting an authorized correction. Verify the resulting relationship without assuming it has created, renamed, or changed permissions on the external account.
 
-There are different possibilities, and they call for different checks.
+If warehouse access is still missing afterward, identify the required operation and account rights separately. Correct association makes that investigation possible; it is not proof that the account has appropriate access.
 
-The account might exist in the application but not have been loaded into ISC. It might be outside the configured collection scope. Or it might be visible under the source without the expected association to Devi.
+Now choose an application you know and explain what its account represents, what the identity represents, how the relationship is established, and how account creation and attribute updates differ. Include which record supplies each important value and what evidence would confirm a change.
 
-Separate two questions:
-
-1. Does ISC contain the expected source account record?
-2. Is that account associated with the expected identity?
-
-The first question concerns collection and the account record. The second concerns the relationship.
-
-You can inspect accounts through the source’s account view and inspect identity information through the identity view. These views let you examine the objects and relationships from different directions.
-
-Finding the account under the source gives you a more focused investigation. Examine its current association and the information used for matching before assuming another account needs to be created.
-
-## Now change one value
-
-Devi moves from Finance to Operations.
-
-HR records the new department. After the relevant collection and identity processing, ISC’s identity department is Operations.
-
-Does that prove that the department on her finance account is also Operations?
-
-Remember where the values live.
-
-The identity department and the finance account’s department belong to separate records. Updating one does not establish that the other was updated.
-
-ISC has a mechanism called **attribute synchronization** that can keep configured attributes on existing correlated accounts aligned with identity attributes. Its applicability depends on the configuration, and its execution and result need to be checked.
-
-If the values differ, establish their origins and the expected update mechanism before deciding that something failed.
-
-## Work through these before reading the explanations
-
-**1. One employee has an HR record, a directory account, and a finance account. All have been successfully associated with the same identity. How many identities are represented in this example?**
-
-Explain why the number of accounts does not determine the number of identities.
-
-**2. The finance application contains Devi’s account. ISC’s source account list also contains it, but the expected association to Devi is absent. What has already been established, and what should you inspect next?**
-
-Choose evidence that investigates the missing relationship.
-
-**3. Devi’s identity shows Operations, while her finance account shows Finance. Does this observation alone establish that identity processing failed?**
-
-Identify the evidence needed before reaching that conclusion.
-
-**4. Devi has an identity in ISC but no account in a newly introduced application. Would associating one of her existing accounts with her identity create the missing application account?**
-
-Explain which kind of operation would be needed and how you would establish its result.
-
-## Compare your reasoning
-
-**For the first question:** There is one identity associated with three source records. The identity represents the employee within ISC. The accounts preserve each source’s information. Successful association brings those records into the person-level view without combining them into one account.
-
-**For the second:** The account exists in the application and has been collected into ISC. The unresolved part is its expected association. Inspect the account’s current association, its matching attributes, the corresponding identity attributes, and the applicable correlation configuration. The supplied observations do not yet identify the cause.
-
-**For the third:** The different values alone do not establish a processing failure. Use evidence that answers the separate questions:
-
-| Question | Evidence to examine |
-|---|---|
-| Why does the identity show Operations? | The identity profile’s department mapping, the mapped source value, and the current identity value. |
-| What does ISC know about the finance account? | Its account attributes and the relevant collection or update history. |
-| Should the finance department follow the identity department? | The finance source’s attribute-sync configuration and applicable mapping. |
-| If an update was expected, what happened? | Attribute-sync events or provisioning activity, followed by the relevant current target-system information. |
-
-SailPoint provides attribute-sync events for inspecting synchronization activity. Those events help you investigate an expected update; configuration alone does not establish its outcome.
-
-**For the fourth:** Associating an existing account establishes a relationship with that account. Creating an account in another application requires the relevant provisioning operation and fulfillment. Configured automation may initiate it, but you must check the provisioning result and confirm that the intended account exists.
-
-## Explain it to someone else
-
-Using an application of your choice, explain:
-
-- What the identity represents.
-- What the application account represents.
-- How the account becomes associated with the identity.
-- Why the authoritative source does not have to supply every identity attribute.
-- How account association, account creation, and attribute updates differ.
-
-Use your own example rather than repeating Devi’s records. Keep each object and each operation clear as you explain the flow.
+Keep the person, the records, the relationships, and the operations distinct as you connect them.
