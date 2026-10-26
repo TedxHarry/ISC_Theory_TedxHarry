@@ -1,0 +1,13 @@
+Connection initiation
+  VA --outbound--> Cloud services
+  VA --target----> External system
+
+Work over the configured connections
+  VA asks for its cluster's work
+  Cloud returns requested work
+  VA performs target operation
+  Target returns data or a response
+  VA reports data/results to cloud
+
+Responses use initiated communication.
+These are roles, not packet-level steps.

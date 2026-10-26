@@ -1,0 +1,5 @@
+ISC -- supported change --> Target
+
+ISC <-- collected data ---- Target
+
+Change and observation are separate.

@@ -16,6 +16,8 @@ This separate concept-led edition was created at the user's request on October 2
 
 The October 26 publication batch adds FND-001 through FND-007 and ARC-001 revision 2.0, bringing the individually revised published snapshot to fourteen lessons. See the [publication record](author/PUBLICATION_2026-10-26.md) for deployment verification. Later revisions are tracked separately in the course register.
 
+The second October 26 batch publishes ARC-002 through ARC-008 and SRC-001 through SRC-002 revision 2.0, bringing the revised snapshot to 23 of the 91 available lessons. See the [batch 2 publication record](author/PUBLICATION_2026-10-26_BATCH_2.md). Continue SRC-003 locally after this snapshot.
+
 Use **Hide lessons** / **Show lessons** to collapse or expand the navigation panel. Each module heading independently opens or closes its lesson list. The current lesson's module starts open; on the home page, the first module starts open.
 
 Navigation regression checks use Node.js: run `npm ci`, then `npm test`. These development-only dependencies and tests are excluded from the reading site.

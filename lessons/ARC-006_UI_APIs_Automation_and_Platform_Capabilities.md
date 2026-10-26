@@ -1,338 +1,357 @@
 # A button, an API call, or automation: what is ISC actually doing?
 
-An administrator clicks a button in SailPoint Identity Security Cloud (ISC). A script sends a software request. A configured automation reacts to an event.
+A page says the update succeeded. An automated job also reports success. Yet the person still can't read the reports they need.
 
-Each can begin useful work. But the place where the work starts doesn't tell you what it does, whose authority it uses, or whether an external account has changed.
+Before treating that as a failed access grant, look at what each action asked SailPoint Identity Security Cloud (ISC) to do. Saving a description and asking for a permission are different operations. Either can succeed without establishing that the person has access.
 
-Start with the operation behind the action. Are we reading information, saving configuration, submitting a request, or carrying out a change?
+The starting tool matters, but the operation behind it tells you what should happen next.
 
-## The screen is one way into the platform
+## The page collects an instruction. ISC processes the work.
 
-The **user interface**, or UI, is the set of pages and controls a person uses to interact with ISC.
+The **user interface**, or **UI**, is the set of pages and controls a person uses. The **frontend** is the part presented to that person, such as the browser page. The **backend** is the hosted service processing the relevant requests and configuration.
 
-The **frontend** is the part presented to the user, such as a browser page. The **backend** is the hosted service processing the relevant requests, configuration, and operations. These names describe responsibilities; they don't reveal ISC's private internal architecture.
+When you open an access item, the page can obtain information and present it. When you submit a change, it communicates the relevant instruction to ISC. Seeing a value on the page and asking the service to change something are different interactions.
 
-An **API**, or application programming interface, is an interface software uses to request data or actions. An **API client** is the software making those calls. It can be a script, an integration application, or a tool used by an engineer.
+Software needs a way to make such requests too. An **application programming interface**, or **API**, provides that interface. An **API client** is the software making the call, such as a script or integration application.
 
-A browser action can communicate with ISC's hosted services. A supported public API gives an authorized client a documented way to invoke a platform capability.
+A **platform capability** is supported work ISC can perform, such as returning an identity record or submitting an access request. An authorized client can invoke a documented capability without a person filling out its web page each time.
 
-A **platform capability** is an operation ISC supports, such as retrieving an identity record, updating supported configuration, or submitting an access request.
+That explains why APIs are useful for integrations. A script can supply the required information repeatedly under an approved design. It still needs to select the right operation.
 
-These aren't two separate ISC systems. They are ways of interacting with the platform, under the applicable operation and permission rules.
+These frontend and backend responsibilities don't reveal ISC's private service layout. Also, a page can combine interactions; there isn't necessarily one identical public API behind each button.
 
-But don't assume that every button maps to an identical public API. A page can combine information and perform more than one interaction. Public APIs have their own documented inputs, permissions, versions, and results.
+## Start with the permission the person needs
 
-A **public API** is intended for supported external use. Public doesn't mean unauthenticated or available to everyone.
+Suppose a person needs to read reports in an application. Their existing account, `reports-reader`, doesn't yet have that permission.
 
-## First separate the kinds of work
+An **identity** is ISC's person-level record. An **account** is a record in an external system, with ISC keeping a representation of it. Assume ISC has correctly associated this account with the intended identity.
 
-A control labeled Save and one labeled Request don't have the same purpose.
+That association is **account correlation**. It establishes whose account is represented; it doesn't add the report permission.
 
-Suppose you're looking at an **access profile**, a bundle of entitlements from one source. An **entitlement** is an assignable access right. A **source** is ISC's configured representation of a connection and its account data. A **connector** is integration software that communicates with the managed system.
+An **entitlement** is an access item represented from a source. In this hypothetical application, `report.read` permits reading reports without editing them.
 
-An **access request** asks for particular access for a recipient. **Aggregation** collects account or entitlement information into ISC. These are different operations from reading or changing the profile's configuration.
+A **source** is ISC's configured representation of a connection and its account data. A **connector** is the integration software that communicates with the managed system. The **target** is that external system.
 
-Consider these operations:
+The source **Reports-Production** represents the production connection. The **Read reports** access profile contains only `report.read` from that source. An **access profile** bundles related entitlements from one source.
 
-| Operation | What it asks ISC to do | What it doesn't establish |
-|---|---|---|
-| Read an access profile | Return its represented configuration | That anyone received its access |
-| Change only its description | Save descriptive information on that object | That a target permission was added |
-| Enable it for requests | Make it available under applicable request configuration | That an access request was submitted or approved |
-| Submit an access request | Start the applicable request processing for a recipient | That downstream delivery has completed |
-| Start an account aggregation | Collect account data through the configured source | That an external permission was granted |
+An **access request** asks for specified access for a recipient. In this example, the person asks for Read reports for themselves.
 
-The distinction follows the selected capability, not whether the user clicked a button or a client sent an API call.
+Assume the profile is available for this request, the applicable request checks permit it, and the intended existing account is eligible. The configured review requires approval. Supported automatic delivery is configured, without creating an account or running a custom script.
 
-A successful configuration update can be complete in its own scope while no external account changes. That isn't a failed account change; no account change was requested by that description-only update.
+The desired result is precise: `report.read` on `reports-reader` in the intended production system.
 
-## Give one request a clear recipient and destination
+## Follow the request from its entry point to that result
 
-Devi works in data-quality operations, employee number `36006`. She needs to read quality reports in a fictional application called ReportHub.
+Through the UI, the person selects Read reports and submits the request for themselves. The page collects the required information and presents the interaction.
 
-She already has account `report-36006`. ISC has an **identity**, its representation of Devi, and a source account record representing that external account.
+An alternative is an authorized API client submitting the corresponding supported request. For this comparison, assume it acts in the same person's **user context**, meaning the call is associated with that person's ISC authority. It has the required API permissions and supplies the same intended recipient and access item.
 
-The account is correctly associated with her identity. This association is **account correlation**. It establishes the represented owner; it doesn't grant the account a permission.
+These are alternative submissions. You don't submit both to complete one request.
 
-ReportHub Production is the source. Read quality reports is an access profile containing only entitlement `report.read` from that source. Under the fictional application's rules, it permits reading reports, not editing them.
+Once submitted, the request follows its applicable ISC processing and configured review. Using the request API doesn't inherently remove the approval requirement.
 
-Assume that the profile is requestable for Devi, the applicable request checks allow her to submit it, and her existing account is the intended eligible account. The configured review requires approval. The source supports automatic delivery of the approved assignment without account creation or a custom script.
+After the required approval and other delivery conditions are satisfied, the supported change can proceed. **Provisioning** is the work of carrying out account or access changes.
 
-The relevant objects have different identifiers. We'll use `I-36` for Devi's ISC identity and `AP-36` for the access profile. These are fictional stand-ins, not usable API values.
-
-An **object ID** identifies a particular object inside ISC. The profile's ID isn't its display name, and Devi's identity ID isn't her ReportHub username.
-
-The intended result is `report.read` on `report-36006` in the configured production application. Identifying `I-36` and `AP-36` correctly is necessary input to this example's request; it isn't that result.
-
-## Follow the UI route, then the API route
-
-Through the UI, Devi selects Read quality reports and submits the request for herself. The page presents choices and collects the information needed by the supported request flow.
-
-In an alternative route, an authorized API client submits the corresponding supported access-request operation using the required object references and request information.
-
-For this comparison, assume the API caller is acting in Devi's user context, has the necessary token permissions, and supplies the same intended recipient and access item. These are alternatives, not instructions to submit the request twice.
-
-The conceptual relationship is:
+For this example's successful path, ISC arranges the supported assignment through the configured connector. The target permits and applies `report.read` to the existing account, and the integration returns an operation result.
 
 ```text
-[Devi using UI]       [Authorized API client]
-       |                       |
-       +-----------+-----------+
-                   |
-                   v
-[Applicable ISC request checks and processing]
-                   |
-                   v
-[Configured approval and delivery conditions]
-                   |
-                   v
-[Supported connector work, where required]
-                   |
-                   v
-[ReportHub: report-36006 receives report.read]
-```
-
-The arrows show the intended relationship for a successfully delivered request, not ISC's private implementation or a guarantee that every submission reaches the final box.
-
-The two entry routes don't promise identical forms, defaults, or internal endpoints. They invoke the relevant supported capability under their own documented requirements.
-
-Submitting an access request through its API doesn't inherently skip the configured ISC approval process. If it is still awaiting approval, changing the submitting tool doesn't make the decision disappear.
-
-## What does the API client actually send?
-
-An **endpoint** is the address of an API operation. Its contract specifies how to call it and how to interpret its result.
-
-An **API contract** is that documented agreement: supported operation, required input, permissions, response, and applicable behavior.
-
-The client supplies the intended tenant and operation, relevant object references, and required input. A **tenant** is an organization's environment within ISC's hosted service. Selecting the wrong tenant can mean selecting different objects and configuration, even when names look familiar.
-
-A **payload** is information carried in a request. ISC APIs use structured formats such as **JSON**, a text format for named values, objects, and lists.
-
-For an access request, the client must distinguish who receives access from which access item is requested. A reference to `AP-36` doesn't identify the recipient, and `I-36` doesn't identify the source account's username.
-
-The client's response is information about the API operation. It needs to be interpreted according to that contract, not reduced to “the call was green.”
-
-An **SDK**, or software development kit, can provide library functions for calling supported APIs. A **CLI**, or command-line interface, lets someone invoke supported operations through text commands. Neither changes the caller's authority or adds a capability the platform doesn't support.
-
-The tool can make a call easier to construct. It doesn't replace understanding the object, operation, and expected effect.
-
-## The API caller doesn't become an administrator by using a token
-
-**Authentication** establishes the caller's accepted identity or credential context. **Authorization** determines whether that caller can perform the operation on the relevant resource.
-
-An **access token** is a credential presented to an API for authorized access under its rules. It isn't proof that the caller may perform every API operation.
-
-For ISC, a **user level** establishes an applicable boundary around a user's platform permissions. These permissions concern using ISC itself, not the permissions an account holds in a managed business application.
-
-A token's **scopes** specify permitted API access within the applicable authority. A user's broader permissions and the token's narrower permissions both matter. A valid read-only token doesn't become write-capable because its owner can perform more work through the UI.
-
-A broad scope also doesn't turn a non-administrator into an administrator. Check the chosen operation's documented authorization requirements and the actual caller context.
-
-A **personal access token**, or PAT, is a user-associated credential mechanism in ISC. Its client credentials can be used to obtain an access token through the supported authentication flow. Don't confuse the client secret used to obtain a token with the access token presented to a resource API.
-
-A **client ID** identifies the registered client credential. A **client secret** is secret proof used in the applicable authentication flow. Other supported client arrangements have their own requirements. A credential acting outside a user context isn't interchangeable with the user context certain endpoints require. Select a supported credential and ownership arrangement for the operation, including unattended use.
-
-Keep these values out of examples, screenshots, and support messages. Fictional object labels such as `I-36` aren't secrets and cannot authenticate a client.
-
-A token that authorizes a call to ISC doesn't supply ReportHub's integration credentials. The two services enforce different authority boundaries.
-
-## A successful submission isn't a completed assignment
-
-The supported access-request API processes requests asynchronously. **Asynchronous** means the initiating interaction can finish before the requested processing finishes.
-
-For the documented submission operation used here, the successful response is 202 Accepted. That means the request has been submitted and queued for processing. It isn't approval or proof of a completed target grant.
-
-The response includes tracking information with access-request references. Preserve the relevant references and use supported status information to investigate the request rather than submitting another one because delivery isn't immediate.
-
-For our fictional request, use `AR-36` as the request-reference stand-in. It identifies the request, not Devi, the access profile, or her external account.
-
-If `AR-36` is waiting for the configured approval, the connector hasn't thereby failed. If later delivery reports an error, an earlier accepted submission doesn't establish that the target changed.
-
-A **response** belongs to a particular interaction. Its success can mean “configuration saved,” “information returned,” or “request accepted,” depending on the operation. Don't turn all successful responses into the same business claim.
-
-The endpoint's duplicate-handling behavior also matters. The access-request API doesn't promise an immediate submission error for every duplicate or overlapping request. Preserve references, inspect existing requests, and follow the documented behavior before repeating a call.
-
-## The connector path still has work to do
-
-**Provisioning** is the work of carrying out an account or access change.
-
-For the successful ReportHub assignment, assume a supported **SaaS connector**, whose connector work runs in SailPoint's hosted environment without a customer-deployed Virtual Appliance cluster for that connection.
-
-A **Virtual Appliance**, or VA, is a customer-deployed virtual machine used by VA-based integrations. Other sources can use that path; an API call to ISC doesn't convert a VA-based source to SaaS connectivity.
-
-In the ReportHub example, the external integration actor `svc-report-isc` needs the applicable authority to assign `report.read`. It isn't Devi's own account, and it isn't the ISC API caller.
-
-The platform can accept a request from an authorized ISC caller while the external system later refuses the connector's change. Changing from UI to API doesn't repair the external credential or target privilege.
-
-The frontend starts or displays supported work. The backend processes that work. The connector performs its applicable integration part. The target holds and enforces the actual permission.
-
-An API client closing after submission doesn't, by itself, cancel already submitted asynchronous work. Cancellation is a separate supported operation where available, not a consequence you should infer from closing a window or stopping a script.
-
-## Now distinguish automation from the API it calls
-
-**Automation** is work started or carried out by configured software instead of a person repeating each action manually.
-
-An external scheduled script is one example. A **schedule** determines when the script runs. The script still needs valid credentials, correct references and inputs, and a supported operation.
-
-The schedule isn't permission to request access for everyone. If the integration submits requests for other recipients, applicable on-behalf-of and caller-context rules still matter.
-
-A script can also call ReportHub directly instead of asking ISC. That would be a different path, under ReportHub's credentials and controls. It doesn't automatically create an ISC access request, run ISC's review, or give ISC an immediate record of the change.
-
-An ISC **Workflow** is another automation mechanism: a configured set of steps. Its **trigger** determines when the Workflow starts and supplies the initial input. It is managed within ISC rather than being a script that must keep running on an engineer's laptop.
-
-A Workflow isn't a synonym for every internal ISC process. Account aggregation and access-request processing have their own supported behavior; don't assume they exist because someone created a custom Workflow.
-
-Nor should you assume every Workflow action is an external public API call using the same personal token as an engineer. Inspect the selected action's supported behavior and any credentials its configured integration requires.
-
-## A trigger starts a workflow. It doesn't define the whole result
-
-An **event** reports that something happened. For example, an **identity attribute**, a named value on an identity such as department, can change. A **filter** narrows which events should start a Workflow through its trigger.
-
-An **action** performs selected work, such as obtaining identity information or sending a notification. An **operator** directs the data flow or chooses a path. A comparison operator can select different actions based on input values.
-
-An **execution** is one run of the configured Workflow. It has its own input, path, step results, and overall outcome.
-
-Consider a separate fictional Workflow that responds to a relevant identity-attribute change. Its configured purpose is only to notify the application owner when a review is needed. It doesn't submit or grant access. Assume it is enabled and the relevant event is available to its trigger.
-
-The design is:
-
-```text
-[Relevant identity-change event]
+UI submission        API submission
+      |                    |
+      +---------+----------+
                 |
                 v
-[Trigger filter matches?]
-     | no                  | yes
-     v                     v
-[No execution]       [Workflow input]
-                           |
-                           v
-                    [Review needed?]
-                     | no       | yes
-                     v          v
-                   [End]   [Send notification]
-                                |
-                                v
-                              [End]
+      ISC request processing
+                |
+                v
+      Required approval granted
+                |
+                v
+      Supported provisioning work
+                |
+                v
+      Connector changes target
+                |
+                v
+      Verify intended permission
+
+Alternative entries; successful path.
 ```
 
-The first comparison controls whether the event starts this Workflow. The second is a configured choice inside an execution.
+The arrows connect the responsibilities and intended stages of this example. They don't show private services, network routes or a guarantee that every request reaches the last line. Verification is the engineer's check of the intended result, not a promised automatic step in that diagram.
 
-An event that doesn't match this trigger filter isn't a failed execution of this Workflow. An execution taking the no-notification path hasn't secretly granted access.
+A refused review or a delivery error changes the outcome. Identify the stage and its evidence rather than describing every incomplete request as “the API didn't work.”
 
-The arrows describe this example's configured event and choice logic. They don't claim that every identity change starts every Workflow or that every automation must use these steps.
+The frontend begins or displays the interaction. ISC processes the requested work. The connector performs its integration part, and the target holds and enforces the external permission.
 
-The input is information the steps use, not an instruction to invent a recipient. Each action needs the appropriate values from its configured input or earlier step outputs.
+## Saving the profile asks for different work
 
-If a Workflow is intended to request access, it needs the applicable supported action and configuration. Naming a Workflow “Grant report access” doesn't add such an action to a notification-only definition.
+Now suppose an administrator changes only Read reports' description to explain its purpose more clearly. A supported update confirms that the new description was saved.
 
-## Saving the definition isn't running it
+No request for the recipient was submitted by that description-only update. There is no missing grant to recover from it.
 
-A Workflow definition describes its trigger, steps, conditions, and inputs. Saving the definition establishes configuration.
+The same distinction applies across these operations:
 
-Whether it runs depends on its enabled state, the applicable trigger and filter, and the relevant runtime conditions. Saving isn't proof that a real event matched or that an action completed.
+| Selected operation | Its purpose | What success alone doesn't establish |
+|---|---|---|
+| Read a profile | Return its represented configuration | A recipient received the access |
+| Update only its description | Save descriptive information | A target permission was added |
+| Make it requestable | Allow requests under applicable configuration | A request was submitted or approved |
+| Submit an access request | Begin applicable request processing | Target delivery finished |
+| Start account aggregation | Collect account data into ISC | New target access was granted |
 
-Likewise, testing with supplied sample input isn't evidence that the real event path is correctly configured. A sample run can validate particular behavior while leaving the actual trigger or input assumptions unproven.
+**Aggregation** collects account or entitlement information into ISC. Its read purpose differs from provisioning's change purpose.
 
-Workflow execution history can show the path taken and the inputs, outputs, and configuration relevant to a run. Inspect those details when an expected action didn't happen.
+Other configuration edits can affect access behaviour. The description example is deliberately limited to that field; it doesn't mean all saves are harmless or have identical consequences.
 
-A successful Workflow execution establishes success under that Workflow's definition and step behavior. If its only business action sends a notification, the execution isn't evidence of an access assignment.
+Ask what the particular operation changes. The label Save, the tool used and a successful response don't answer that by themselves.
 
-If an action submits asynchronous work, also distinguish the action's successful submission from the later outcome of that work. Follow the selected action's documented semantics.
+## What information makes an API call meaningful?
 
-Workflow permissions, available actions, and product requirements still apply. Automation isn't a way to add an unavailable service or an unsupported connector operation.
+An **endpoint** is the address called for an API operation. The documented **API contract** explains the operation, required information, caller permissions and meaning of its result.
 
-## When the UI and API seem to disagree
+For a web API, the request's method also matters. A **method** expresses the kind of interaction, such as retrieving information or submitting work. An address alone isn't a complete instruction.
 
-First confirm that you're comparing the same question.
+A **tenant** is an organization's environment within ISC's hosted service. Calling the wrong tenant can select different configuration and objects even when their names look familiar.
 
-**Pagination** divides a result set into pages. A first API page isn't automatically the complete population. A UI can also apply a filter that the client didn't send, or the client can filter out records the UI displays.
+An **object ID** identifies a particular object inside ISC. The recipient's identity reference selects a person-level record; the profile reference selects the access bundle. Neither is the external account's username.
 
-| Check | Why the comparison can differ |
-|---|---|
-| Tenant and object references | Similar names can identify different objects or environments |
-| Caller and permissions | A browser user and a token's caller/scopes can have different authority |
-| Selected operation | Saving a profile isn't submitting a request for it |
-| Filters and pagination | A page or API response can contain only part of the intended set |
-| Observation time and record type | A request record, execution result, and collected account view answer different questions |
+An API client must keep those purposes separate. Supplying the right profile with the wrong recipient is still the wrong request. Supplying a readable profile name where its object reference is required doesn't satisfy the contract.
 
-Don't diagnose a data-loss defect until the compared tenant, object, operation, caller context, filters, and timing are established.
+A **payload** is information carried in a request. **JSON** is a text format for structured named values, objects and lists, used by ISC APIs. The payload carries required values in the shape that the selected operation expects.
 
-An ISC account page displays represented account information. It isn't a continuous view inside ReportHub. A current request record and an older collected account view can therefore describe different stages without contradicting each other.
+The UI can help a person find an item and choose a recipient. An integration must provide the corresponding valid information through its supported contract. Similar business intent doesn't promise identical forms, defaults or endpoints.
 
-A **status query** asks for the state of a particular tracked object or operation. It's different from a command that submits new work.
+A **response** is the service's answer to a particular interaction. Read it according to that operation: information returned, configuration saved and request accepted are different results.
 
-Changing a page filter or refreshing an existing view isn't, by itself, a supported command to repeat target provisioning.
+An **SDK**, or software development kit, provides tools or library functions for software development. A **CLI**, or command-line interface, lets someone invoke operations using text commands. These can make supported calls easier to construct. They don't select the correct business intent for you or add permissions.
 
-## Use the documented API rather than copying a browser interaction
+## The caller's permission still matters
 
-A browser's internal calls aren't automatically a supported integration contract. Don't build a production integration around an undocumented call merely because it appeared while clicking a page.
+**Authentication** establishes the accepted caller identity or credential context. **Authorization** determines what that caller may do on the relevant resource.
 
-Choose a documented operation and its applicable version. API versions can change contracts, authorization requirements, fields, or behavior. Experimental interfaces carry different stability conditions from public production interfaces.
+A **credential** is information used to establish an accepted access context. An **access token** is a credential presented to an API under its authorization rules. Obtaining one isn't permission to invoke every operation.
 
-Check the current documentation for the selected service rather than assuming an old version name or an example copied months ago remains the recommended contract.
+In ISC, a user's **user level** sets an applicable boundary around platform permissions. Token **scopes** specify permitted API access within that authority. These concern work inside ISC, separate from report permissions in the external application.
 
-No tool choice removes the need to understand input validation, object identity, permissions, or consequences. Repeating a write automatically can repeat effects if the operation doesn't provide the assumed duplicate protection.
+Suppose an administrator can update a configuration object in the UI. Their API client uses a valid token restricted to the relevant read access. If the update requires a scope the token lacks, the owner's broader UI authority doesn't remove that restriction.
 
-For unattended work, define credential ownership and supported rotation, the intended tenant, scope, input validation, useful tracking, and the procedure for failures. Don't borrow an unrestricted administrator credential to avoid making those decisions.
+Conversely, broader scopes don't elevate a user's level. Match the operation's documented requirements to the actual caller and token.
+
+A **personal access token**, or **PAT**, is ISC's user-associated client credential mechanism. Its **client ID** identifies the client credential, while its **client secret** supplies secret proof in the supported token-acquisition flow. The resulting access token is what the client presents for resource API calls.
+
+The client secret and access token have different jobs. Keep both out of screenshots and support messages.
+
+An API key operating outside a user context isn't interchangeable with a user-associated credential for operations requiring that context. An unattended design must choose a supported credential arrangement for its actual operations, including any rules for requesting on behalf of other people.
+
+Receiving a token, having the required scope and being allowed to request the selected access are related checks with different purposes.
+
+## Acceptance tells you where the work has reached
+
+The supported access-request submission operation is **asynchronous**: the initiating interaction can finish while the requested processing continues.
+
+Its documented successful response is **202 Accepted**. This means the submission was accepted and queued for processing. It doesn't mean the configured approval has happened or the target permission has been delivered.
+
+Keep the returned tracking information and relevant request references available through supported tracking. A **request reference** identifies the tracked request, separately from the recipient, profile and target account.
+
+A **status query** asks about existing tracked work. It is different from submitting more work.
+
+If the request is awaiting its required approval, inspect that decision stage. If later delivery reports an error, investigate the delivery details. An earlier accepted submission doesn't contradict a later failure.
+
+An API client exiting after submission doesn't by itself cancel already submitted asynchronous work. Cancellation requires the applicable supported operation where available.
+
+Nor does slow delivery justify another submission automatically. Duplicate or overlapping requests need not produce an immediate submission error. Use the documented handling, existing request information and access evidence before repeating.
+
+This is why an automation that records only “request sent” leaves an engineer with too little information. It records an attempt to communicate without establishing what was accepted or what later happened.
+
+## The target has its own caller and requirements
+
+For the report example, assume the source uses a supported **SaaS connector**. Its connector software runs in SailPoint's hosted environment without customer-deployed VAs for that connection.
+
+**SaaS**, or software as a service, means provider-operated hosted software. A **Virtual Appliance**, or **VA**, is a customer-deployed virtual machine used for VA-based integration work.
+
+Other sources use that VA path. Calling ISC through an API doesn't change the source's connector type or move its work to a different runtime.
+
+The external integration actor, `svc-reports`, performs the target assignment. It is separate from the person receiving access and the client calling ISC.
+
+The ISC caller needs authority to submit the request. The integration actor needs the target's authority to assign `report.read`. A token accepted by ISC doesn't supply the target credential or missing external privilege.
+
+ISC can therefore accept an authorized request while the target later refuses a change. Switching the submission from UI to API doesn't correct that target refusal.
+
+## Automation decides when software performs the work
+
+**Automation** means configured software starts or carries out work without a person manually repeating each action.
+
+An external script can run on a **schedule**, a rule for when it runs. At each run, it still needs the correct tenant, recipient, access item, caller authority and required input.
+
+Scheduling a script doesn't give it permission to request access for everyone. The selected operation's caller-context and on-behalf-of requirements still apply.
+
+A script could instead call the reporting application directly under that application's credentials. That is a different path. The call doesn't automatically create an ISC access request, invoke ISC review or give ISC an immediate record of the change.
+
+An ISC **Workflow** provides another automation mechanism: a configured set of steps managed within ISC. Its **trigger** determines when it starts and supplies its initial input. It doesn't depend on an engineer leaving a local script running.
+
+A Workflow is not another name for every internal ISC process. Aggregation and access-request processing have their own supported behaviour. They don't require someone to recreate the platform's processing as a custom Workflow.
+
+Also, Workflow actions aren't all personal-token API calls. Inspect the particular action and the credentials its integration requires.
+
+## Watch the data move through a Workflow
+
+Consider a separate notification design. A change to a person's department should lead to a notification when the new department is Finance. No request, grant or removal is part of this design.
+
+An **identity attribute** is a named value on the person-level record, such as department. An **event** reports that something happened, such as an identity attribute changing.
+
+The Workflow uses the relevant identity-change trigger, with a **filter** that selects department-change events. A filter narrows which events start this Workflow.
+
+Assume the Workflow is enabled, the relevant event is available and its input supplies the identity and changed-department information needed by this design.
+
+An **execution** is one run of the Workflow. Its **data flow** is the information passing through its configured steps, with outputs available to subsequent work as supported.
+
+An **operator** directs that flow or makes a choice. Here, a comparison checks whether the supplied new department equals Finance.
+
+An **action** performs configured work, such as sending a notification. The matching branch uses a supported notification action with a valid configured recipient and the required information. The other branch ends successfully without sending it.
+
+```text
+Relevant identity-change event
+              |
+              v
+Department-change filter matches?
+  |
+  +-- No --> No execution
+  |
+  +-- Yes -> Start execution with input
+               |
+               v
+           New department = Finance?
+             |
+             +-- No --> Success end
+             |
+             +-- Yes -> Send notification
+                          |
+                          v
+                       Success end
+
+No branch requests or grants access.
+```
+
+The arrows show this design's event selection and choices. The trigger filter determines whether an execution starts. The department comparison selects a path inside an execution that has already started.
+
+For a supplied change from Operations to Finance, the department-change filter matches and an execution starts. The comparison reads Finance as the new value, takes the matching branch and passes the required information to the notification action. Assuming that action succeeds, the run reaches its successful end. No account permission changes.
+
+If only an unrelated attribute changes, the department-change filter doesn't select the event. No execution starts for this Workflow in that situation.
+
+If department changes to Marketing, the filter can still match because department changed. The execution then finds that Marketing isn't Finance and ends successfully without sending a notification.
+
+For the Finance branch, the action must receive the right input. Data from the trigger and earlier step outputs can supply later steps. Missing or wrongly selected values don't become correct because the Workflow has a helpful name.
+
+For example, the changed person's identity reference and the notification recipient's identity reference can have different purposes. The event saying who changed doesn't automatically select the person who should receive a message.
+
+A Workflow named “Grant report access” still won't grant access if its actual actions only notify. To request access, the design needs the applicable supported action, inputs and conditions for that work.
+
+## A saved definition and an execution prove different things
+
+The **Workflow definition** is its configured trigger, steps, conditions and inputs. Saving it stores that design. It doesn't establish that a real event matched or that an action ran.
+
+Enabled state and applicable trigger conditions matter. A disabled or nonmatching design doesn't become a successful business process merely because the definition was saved.
+
+A test with supplied input can exercise step behaviour without proving that the real event path supplies the expected information. Also distinguish an executed action from a simulated step returning mock output. Testing is not automatically an action-free preview.
+
+Execution history and playback let you inspect the recorded run: its input, selected path, step results and relevant configuration. Examine the definition used for that execution, since a later edit can describe a different design.
+
+An overall success means the execution reached success under its definition and step behaviour. For the notification design, that can mean the configured no-notification branch ended correctly.
+
+If an action submits asynchronous work, successful submission and the later result of that work still need separate interpretation. The word success doesn't enlarge the action's purpose.
+
+Available actions, product requirements and permissions remain applicable. A Workflow can't supply an unsupported connector operation merely by naming a step after it.
+
+## Why can the screen and an API list look different?
+
+First compare equivalent records and questions.
+
+**Pagination** divides results into pages. If an API returns only the first page and provides information establishing that more results exist, that page isn't the complete population.
+
+A **filter** on a list limits which records are returned or displayed. It has a different role from the Workflow trigger filter, although both select information according to conditions.
+
+Check the same tenant, object type, object references, caller authority, filters and observation time. A browser user's view and a restricted token's view need not have the same scope.
+
+Also ask what kind of record you're examining. A pending request, a Workflow execution and an account's collected permissions answer different questions.
+
+**Collected data** is information obtained through a read. An ISC account page represents collected account information; it isn't a continuous live inspection inside the target.
+
+A current request result and an older account view can describe different stages without proving data loss. Compare their timing with the intended target permission and relevant operation evidence.
+
+Refreshing a page or changing a filter isn't by itself a command to repeat provisioning.
+
+## Build on the supported contract
+
+A **public API** is a documented interface intended for external integration. Public doesn't mean anonymous or universally authorized.
+
+A call seen inside a browser isn't automatically that supported contract. Choose a documented operation and its applicable **version**, the identified form of its contract. Inputs, authorization and behaviour can differ between contracts.
+
+An **experimental API** is still under development and has different stability conditions from a public production interface. Check the selected service's current documentation before committing an unattended design to it.
+
+For unattended use, define credential ownership and supported rotation, which means replacing credentials through the supported arrangement. Apply **least privilege**, granting only the authority needed for approved work.
+
+The design also needs validated input, useful tracking and a procedure for failures. Automatic repetition can repeat effects when the operation doesn't provide the duplicate protection the script assumes.
+
+A script that stops after an uncertain response needs enough retained evidence for the next run or engineer to investigate the existing work. Using an unrestricted administrator credential doesn't solve that tracking problem.
 
 ## Work through these cases
 
-Treat each case as a separate variation.
+Treat each case as a separate situation.
 
 ### 1. The UI works, but the token can only read
 
-An administrator can update a supported configuration object through the UI. A client using that administrator's valid token is limited to the relevant read scope. The API rejects the update because the required scope is absent.
+An administrator can update a supported configuration object through the UI. Their client's valid token has only the relevant read access. The API rejects the update with explicit evidence that the required scope is absent.
 
-Does this establish that the API lacks the capability?
+Does that establish that the API lacks the capability?
 
-**Worked reasoning:** No. The supplied failure identifies a token-permission boundary. The broader UI authority doesn't remove the token's restriction. Confirm the documented operation and validate only the additional permission justified by the integration's approved purpose. Don't jump to an unrestricted token or an undocumented endpoint.
+**Worked reasoning:** No. The supplied rejection identifies token authority. Confirm the documented operation and the additional scope justified by the approved purpose. Broader UI authority doesn't remove the token restriction. Avoid inferring the cause from a generic rejection alone.
 
-### 2. The profile description changed
+### 2. Only the profile description changed
 
-A supported update changes only the description of `AP-36`. The response confirms the saved object. No access request or account-changing operation is submitted.
+A supported update changes only the Read reports profile's description and confirms the saved value. No request or account-changing operation is submitted.
 
-Should Devi's ReportHub permission change?
+Should `reports-reader` receive `report.read` because of that update?
 
-**Worked reasoning:** No. The operation saved descriptive configuration. It didn't request or provision `report.read` to `report-36006`. Read the response as success for that update, not as a failed access grant. An actual assignment requires the applicable supported access-changing flow.
+**Worked reasoning:** No. The operation completed its descriptive change. It didn't ask for the account assignment. Investigate an actual access-changing flow if delivery is required; don't diagnose this description-only success as a failed grant.
 
 ### 3. The client exits after acceptance
 
-The request API accepts the fictional `AR-36` submission. The client process exits. Later status information shows that the request is awaiting the required approval.
+An access-request submission is accepted. The client exits. Later supported status information identifies that same request as awaiting required approval.
 
-Should the integration submit again or conclude that exiting canceled it?
+Should the next run submit again or assume the first request was canceled?
 
-**Worked reasoning:** Neither conclusion follows. The supplied status establishes that submitted work remains tracked and is waiting for a configured decision. Use the request reference and supported status/approval evidence. Don't create a duplicate because the caller stopped or because delivery isn't immediate.
+**Worked reasoning:** Neither conclusion follows. The supplied status establishes tracked work awaiting a decision. Preserve the reference and inspect that request. Client exit doesn't imply cancellation, and incomplete delivery doesn't establish that a new submission is needed.
 
-### 4. The Workflow succeeded, but no notification was needed
+### 4. The Workflow succeeded without sending a notification
 
-The notification-only Workflow starts. Execution evidence shows the review-needed comparison is false and the execution reaches its configured successful end without the notification action.
+The notification-only Workflow starts for a department change. Its comparison finds that the new department isn't Finance and follows the successful end without notifying anyone.
 
-Someone reports that “the access-grant workflow completed, so Devi must have report access.”
+Someone says, “The access-grant Workflow succeeded, so report access must be present.”
 
-What does the execution establish?
+What did that execution establish?
 
-**Worked reasoning:** It establishes the supplied no-notification path under that definition. A misleading name doesn't add a request or grant action. Inspect the configured steps and execution evidence. To establish report access, examine an actual assignment/delivery record and the intended target state, not this Workflow's name or overall success alone.
+**Worked reasoning:** The configured no-notification branch completed. A misleading name doesn't add a grant action. Inspect the actual definition and execution path. To establish report access, inspect the relevant assignment, delivery and target evidence.
 
-### 5. The list contains fewer objects
+### 5. The API list is shorter
 
-A client retrieves the first page of a supported list operation. The returned pagination information shows more results exist. The UI displays a broader list under the same authorized user and tenant.
+A client retrieves the first page of a supported list operation. Supplied pagination information establishes more results. The UI shows a broader list in the same tenant under equivalent authority.
 
-Can the first response establish that the API is missing objects?
+Does the first response prove the API lost objects?
 
-**Worked reasoning:** No. The supplied pagination information establishes an incomplete client view. Follow the documented collection behavior and compare equivalent filters and object types. Successful retrieval of one page isn't proof that all matching records were retrieved or that undisplayed objects were deleted.
+**Worked reasoning:** No. It establishes a partial client view. Retrieve the intended collection through documented pagination and compare equivalent filters and object types. A successful page isn't proof that all matching objects were retrieved or that unseen objects were deleted.
 
-## Test the design on a different application
+## Review a scheduled-request design
 
-A team wants an external scheduler to automate request submission for a fictional training application.
+A team wants an external scheduler to request access to a training application.
 
-The proposal says: “A successful run means we obtained a token and sent the request. We won't store request references or check status. If the learner can't use the application immediately, the next run will submit the same access again.”
+The proposal counts a run as successful once it obtains a token and sends a request. It stores no request references and checks no later status. If the person can't use the application immediately, the next run submits the same access again.
 
-What needs to change in that design?
+What would you change?
 
-**Worked reasoning:** Token acquisition establishes authentication material, not that a request was valid or accepted. The submission result must be interpreted according to the supported endpoint, and the request needs the correct recipient, item, tenant, caller authority, and applicable request conditions.
+**Worked reasoning:** Obtaining a token gives the client a credential for later API calls. It doesn't establish that the access request had valid input, was authorized or was accepted.
 
-Preserve tracking references and distinguish submission, configured decisions, delivery, and target verification. Decide how later runs identify existing or unresolved work using documented behavior instead of blindly repeating writes.
+Define the intended tenant, recipient, access item, caller context and request conditions. Interpret the supported submission result, retain tracking information and inspect existing or unresolved work before creating more.
 
-Also define credentials and ownership appropriate for unattended use, scoped permissions, input validation, and failure handling. An automated caller still has to use supported operations and respect their authorization requirements.
+Separate acceptance, configured decisions, delivery and verification of the intended target result. Define credential ownership, scoped authority, supported rotation and recovery for unattended use.
 
-You could explain the design this way: “The UI, API client, and automation are ways to begin or inspect work. The selected ISC capability defines what is requested. Its processing and connector path determine what happens next, and the relevant evidence tells us what actually completed.”
+You should be able to follow one selected operation through the design: what starts it, which information and authority it needs, what ISC processes, whether a connector changes the target, and which evidence establishes the result.

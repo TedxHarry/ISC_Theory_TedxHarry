@@ -1,0 +1,21 @@
+Identify operation and intended result
+  |
+  v
+Locate actual path and evidence
+  |
+  v
+Enough evidence for a scoped action?
+  |
+  +-- No --> Gather missing evidence
+  |            |
+  |            +--> Return to decision
+  |
+  +-- Yes -> Validate scoped correction
+               |
+               v
+             Recover/reconcile work
+               |
+               v
+             Verify target outcome
+
+These are an engineer's decisions.

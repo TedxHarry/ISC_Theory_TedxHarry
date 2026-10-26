@@ -1,0 +1,17 @@
+VA reaches intended IQService listener
+  |
+  v
+Trusted TLS connection to intended host
+  |
+  v
+Registered client authenticates
+  |
+  v
+Required IQService capability available
+  |
+  v
+Target permits this operation
+
+Separate verification after the attempt:
+  Engineer examines operation result
+  Engineer checks target membership

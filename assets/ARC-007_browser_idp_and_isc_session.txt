@@ -1,0 +1,15 @@
+Browser opens ISC
+        |
+        v
+Configured IdP authenticates user
+        |
+        v
+SAML response returns via browser
+        |
+        v
+ISC accepts trust and user mapping
+        |
+        v
+ISC session for the intended user
+
+Successful sign-in, not password sync.

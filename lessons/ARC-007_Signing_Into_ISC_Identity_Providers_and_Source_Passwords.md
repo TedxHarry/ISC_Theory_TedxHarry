@@ -1,365 +1,386 @@
 # Signing into ISC and changing a password: which system is doing the work?
 
-Devi works in support operations, employee number `37007`. She can open SailPoint Identity Security Cloud (ISC) through her company's sign-in service, but she has forgotten the password for a separate application called CaseDesk.
+A person can open SailPoint Identity Security Cloud (ISC) through the company's sign-in service. They have forgotten the password for a separate support application.
 
-Someone suggests resetting her ISC password.
+Would resetting their ISC password restore the application login?
 
-Before you do that, ask a more useful question: which system checks the password she has forgotten?
+That depends on which system checks the forgotten credential. In this example, the support application checks its own password. The company sign-in service authenticates the person into ISC. Those are separate relationships.
 
-In this fictional setup, the company's sign-in service authenticates Devi into ISC. CaseDesk has its own account and password. Resetting the wrong credential won't restore her CaseDesk sign-in.
+Start by identifying the service the person is trying to enter and the account whose credential needs attention. A correct change to the wrong password won't solve the problem.
 
-The same distinction helps when the problem runs in the other direction: an application works, but ISC doesn't open. Follow the configured authentication path rather than treating every account associated with a person as one shared login.
+## One person can have several accounts without sharing a password
 
-## Start with the person, then separate her accounts
+An **identity** is ISC's person-level record. An **account** is a record within a particular system. ISC keeps representations of external accounts so it can relate them to the person and manage supported work.
 
-An **identity** is ISC's representation of a person, connecting their relevant information, accounts, and access. An **account** belongs to a particular system. ISC's account record represents that external account; it isn't the external system itself.
+A **source** is ISC's configured representation of a connection or collection of account data. A **connector** is the integration software used to read information and perform supported operations. The external system it communicates with is the **target**.
 
-A **source** is ISC's configured representation of a system or collection of account data. A **connector** provides the integration for reading data and performing supported operations.
+For the situation above, separate these records:
 
-Devi's accounts have different jobs:
+| Record or system | Its purpose in this example |
+|---|---|
+| HR account | Supplies employee information used to establish the ISC identity |
+| Corporate directory account | Holds a network credential that a directory sign-in arrangement could check |
+| Company sign-in service's user | Authenticates the person on the configured external sign-in route |
+| ISC identity and sign-in information | Represent the person within ISC and support the configured ISC sign-in relationship |
+| Support application account, `support-user` | Uses the support application's independent password |
 
-| System or record | Relevant value | What it does here |
-|---|---|---|
-| Workforce HR | Account `hr-37007` | Supplies employee information used to establish her ISC identity |
-| Corporate Directory | Account `corp-37007` | Holds her company directory account |
-| AccessGate, a fictional identity provider | User `devi37007` | Authenticates her on the configured company sign-in route |
-| ISC identity | Username `devi37007`; email `devi37007@corp.example` | Represents her within ISC |
-| CaseDesk | Account `cases-37007` | Uses its own password in this example |
+Assume the necessary accounts already exist and ISC associates their represented records with the correct identity.
 
-These aren't usable accounts or credentials. The labels establish which record we're discussing.
+That association is **account correlation**. It connects an account record to its represented owner. It doesn't connect the accounts' password stores.
 
-Assume the external accounts already exist and are correctly associated with Devi's ISC identity. **Account correlation** establishes that account-to-identity association. It doesn't make the accounts share a password.
+**Aggregation** collects account information and access items, called **entitlements**, into ISC. Importing an account establishes represented data within the collection's scope. It doesn't make the person's current password readable on the identity page.
 
-**Aggregation** collects account information into ISC. A collected account record can help establish the account and its association. It doesn't make the user's password visible on the identity page.
+The same username in two systems also doesn't establish that their passwords are shared. The configured authentication and password-management relationships determine that.
 
-Devi's employee number helps identify the person in this example. It isn't automatically her username in every system.
+## Authentication answers a different question from permission
 
-## Who checks the proof, and who decides what she may do?
+A **credential** is information used to establish an accepted identity or access context. A password is one kind.
 
-**Authentication** establishes an accepted identity or sign-in context using the required proof. **Authorization** determines what that authenticated user may do.
+**Authentication** checks the required proof to establish that context. **Authorization** determines what the authenticated user may do.
 
-A password is one form of proof, or **credential**. A sign-in process can also require another form of verification.
+After sign-in, a **session** lets the browser continue interacting as the signed-in user under the service's rules. The service doesn't have to repeat the complete sign-in interaction for each page.
 
-After authentication, a **session** lets a browser continue interacting with a service as the signed-in user under that service's rules. It avoids asking for the complete sign-in proof on every page interaction.
+An ISC **user level** sets an applicable boundary around the person's platform permissions. A person can authenticate successfully while lacking administration permissions.
 
-A successful ISC sign-in doesn't make Devi an ISC administrator. A **user level** sets an applicable boundary around her platform permissions. Those permissions concern using ISC itself, not every permission held by her business-application accounts.
+The support application has its own permission checks too. Entering the application doesn't establish that the account may edit every case.
 
-Likewise, signing into CaseDesk doesn't establish that she may edit every case. Authentication and the application's permission checks answer different questions.
+When someone says “access works,” ask what they actually tested: authentication, opening a permitted page, or completing the required action. Each observation has a different scope.
 
-When someone says “Devi has access,” ask what they observed. Did she authenticate, open an allowed page, receive an assigned permission, or complete a particular business action? Those observations aren't interchangeable.
+## Follow the company sign-in route into ISC
 
-## ISC has more than one sign-in arrangement
+**Single sign-on**, or **SSO**, lets participating services rely on an established authentication arrangement instead of each independently asking for a separate password.
 
-A **tenant** is an organization's environment within ISC's hosted service. Its sign-in configuration determines which supported authentication arrangement applies.
+An **identity provider**, or **IdP**, authenticates the user and supplies an authentication result to a service that trusts it. ISC is the **service provider**, or **SP**, in this relationship: it provides the service being entered.
 
-An **identity profile** is configuration associated with identities from an authoritative source. Among its responsibilities are settings for their sign-in and recovery behavior.
+**Federation** is the trust arrangement allowing one service to accept authentication performed by another.
 
-An **authoritative source** supplies the accounts from which ISC establishes identities. Here that is Workforce HR. An **authentication source** is the configured source used to check a user's credentials for directory-based sign-in. The same source can have both roles, but the roles don't have to belong to the same system.
+For ISC's documented SAML integration, **SAML**, Security Assertion Markup Language, is the standard used to exchange the result. A SAML **assertion** is a structured statement about the authenticated user and relevant authentication context. It isn't a copy of their password.
 
-Our example can therefore use HR to establish who Devi is while a different service authenticates her.
+Assume the company's IdP and ISC trust are configured correctly, the person is permitted to use the integration, and matching ISC identity information already exists. Automatic creation of a missing ISC identity isn't enabled in this example.
 
-Compare the arrangements:
+The person opens ISC's sign-in address. The configured route sends their browser to the IdP. The IdP performs its required authentication or uses an applicable existing IdP session.
 
-| Arrangement | Where the relevant sign-in proof is checked | What ISC relies on |
-|---|---|---|
-| Site username and password | ISC's supported site sign-in process | Registered site credentials and applicable verification |
-| Directory Connection, also called pass-through authentication | The configured supported authentication source through its integration | The result of checking the associated source account |
-| External single sign-on | The configured identity provider | An accepted authentication response and identity mapping |
-
-These are alternatives with their own requirements, not three steps every sign-in must perform.
-
-**Single sign-on**, or SSO, lets participating services use an established authentication arrangement rather than each independently asking the user for a separate password.
-
-An **identity provider**, or IdP, authenticates the user and supplies the authentication result to a service that trusts it. In our main setup, AccessGate is the IdP and ISC is the service being accessed.
-
-Configuring Directory Connection on an identity profile doesn't mean a normal SSO sign-in uses both paths. When configured, SSO takes precedence over Directory Connection for that normal route. A supported direct sign-in route has separate conditions.
-
-## Follow Devi's browser through the SSO route
-
-Assume the tenant's SSO trust is correctly configured, Devi is allowed to use the integration, and her existing ISC identity can be matched using the configured mapping. No automatic creation of a missing identity is enabled in this example.
-
-**Federation** is the trust arrangement that lets one service accept authentication performed by another. ISC is the **service provider**, or SP, in this sign-in relationship: it accepts the supported authentication result to provide its service.
-
-The documented ISC integration uses **SAML**, Security Assertion Markup Language, to exchange that result. A SAML **assertion** is a structured statement about the authenticated user and the applicable authentication context. It isn't the user's password.
-
-Let's follow the successful path.
-
-Devi opens the organization's ISC sign-in address. The configured route sends her browser to AccessGate. AccessGate performs the authentication required by its policy, or uses an applicable existing IdP session.
-
-The authentication response returns through the browser to ISC. ISC must accept the response under the configured trust and associate its identity information with the appropriate ISC user. Only then can this route establish the intended ISC sign-in.
-
-The relationship is:
+Its authentication response returns through the browser to ISC. ISC must accept the response under the configured trust and associate its identity information with the intended ISC user. This successful route then establishes an ISC session.
 
 ```text
-[Devi opens ISC in her browser]
-                |
-                v
-[AccessGate authenticates Devi]
-                |
-     SAML response via browser
-                |
-                v
-[ISC checks trust and identity mapping]
-                |
-       accepted for this user
-                |
-                v
-[Devi uses ISC in an ISC session]
+Browser opens ISC
+        |
+        v
+Configured IdP authenticates user
+        |
+        v
+SAML response returns via browser
+        |
+        v
+ISC accepts trust and user mapping
+        |
+        v
+ISC session for the intended user
+
+Successful sign-in, not password sync.
 ```
 
-The arrows show the successful logical exchange, not every network interaction or ISC's private validation sequence. A failure at authentication, response acceptance, or user matching prevents the successful outcome shown.
+The arrows show the successful logical exchange. They don't show every network interaction or prescribe ISC's private validation sequence.
 
-ISC doesn't need Devi's AccessGate password to accept the federated result. Signing in this way doesn't copy that password to CaseDesk.
+The **frontend** is the page and browser interaction the person sees. The **backend** is the hosted processing behind it. The IdP does its authentication work; ISC handles acceptance, user matching and its session under the configured arrangement.
 
-The **frontend** is the page and browser interaction Devi sees. ISC's **backend**, the hosted processing behind those pages, handles its part of the supported authentication flow. The IdP performs its own authentication work.
+Reaching the IdP page establishes only that the browser reached it. An IdP success record establishes that provider's authentication result. An accepted ISC session establishes a further outcome.
 
-Seeing the AccessGate page proves that the browser reached that page. It doesn't, by itself, prove that ISC accepted a response or created a session.
+ISC doesn't receive the IdP password through this SAML sign-in. The exchange also doesn't copy that password into `support-user` or configure the support application's own SSO integration.
 
-## Trust and identity matching are different checks
+## A trusted response still needs to identify the right ISC user
 
-The configuration needs to establish which IdP ISC trusts and how the authenticated user maps to an ISC identity.
+Two questions matter: does ISC accept the authentication response, and which ISC user does the response identify?
 
-An **entity ID** identifies a participant in the SAML arrangement. A login address identifies where the browser should send the relevant interaction. The service-provider information also identifies the intended receiving service.
+An **entity ID** identifies a participant in the SAML arrangement. The configured login address tells the browser where to send the relevant interaction. The IdP also needs the intended service-provider information.
 
-A **signing certificate** provides the public-key information used to verify the expected signing identity. The corresponding private signing key belongs with its authorized owner. A certificate change needs coordinated trust configuration; copying a user's password doesn't repair a signing-trust failure.
+A **signing certificate** supplies public-key information used to verify the expected signing identity. A **public key** is the shareable part of that cryptographic arrangement; the corresponding **private key** remains secret with its authorized owner.
 
-If a response is rejected for a signing-trust problem, inspect the configured IdP, certificate and reported validation error. Compare the intended tenant and service as well. Don't disable verification to make an untrusted response acceptable.
+The IdP uses its signing key for the required signed message. ISC uses the configured verification information to check the signature. Altered signed content won't pass that check. This protects a different boundary from asking the user for a password.
 
-A validly signed response also needs the correct identity information. An **identity attribute** is a named value on the identity, such as email. The **identity mapping attribute** is the ISC identity value selected for matching the authenticated user.
+If signing configuration changes, the relevant trust settings need coordinated updates. A user password reset doesn't repair a signing-trust failure.
 
-Suppose this example maps the SAML user identifier to Devi's ISC email. Her identity contains `devi37007@corp.example`. The IdP must send the corresponding value expected by that configuration.
+An **identity attribute** is a named value on the ISC identity, such as email. The **identity mapping attribute** selects the ISC value used to match the authenticated sign-in information.
 
-If it instead sends `devi37007@old.example`, a successful IdP authentication doesn't establish a successful ISC match. Check the selected mapping and actual values; don't conclude that Devi entered a bad password.
+Suppose this setup matches against ISC email. The intended identity contains `person@corp.example`. The IdP sends that same intended value, and the other acceptance conditions are satisfied. The sign-in can resolve to the correct existing user.
 
-This sign-in matching isn't account correlation. Correlation connects a source account record to an ISC identity. SSO mapping connects the authenticated sign-in information to the intended ISC user. Both involve identity relationships, but they occur for different purposes.
+Now change just the supplied value to `person@old.example`. An explicit user-matching failure after successful IdP authentication points to the mapping or data, rather than proving the password is incorrect.
 
-A missing ISC user isn't automatically created just because the IdP authenticated someone. **Just-in-time account creation**, or JIT creation, is a separately configured option for establishing an ISC account and identity through the documented arrangement at sign-in. It isn't enabled by the word SSO, and it doesn't create every business-application account.
+A **tenant** is the organization's environment within the hosted service. Check the selected attribute, actual values, intended tenant and reported error; familiar names don't establish that the response targets the correct environment.
 
-## Directory Connection checks a different path
+Sign-in mapping and account correlation have different purposes. Mapping identifies the user entering ISC. Correlation associates a collected external account with its owner.
 
-Now consider an alternative setup in which Devi signs into ISC through Directory Connection rather than the normal external SSO route.
+**Just-in-time account creation**, or **JIT creation**, is a separately configured sign-in arrangement for creating the relevant ISC account and identity when an eligible user first authenticates. It isn't implied by SSO, doesn't create every business-application account, and differs from activating temporary access.
 
-**Pass-through authentication**, or PTA, lets ISC use a supported configured source to check the user's source-account credentials. Devi supplies the password associated with `corp-37007`, not the separate CaseDesk password.
+Without that configured arrangement, a missing ISC identity isn't automatically supplied by a successful IdP login. Resolve the intended identity and configuration rather than creating a duplicate to hide a mismatch.
 
-Assume Corporate Directory is a supported authentication source, its accounts have been aggregated, the relevant account is correctly associated, and the identity profile selects it for authentication. For clarity, Devi has one account on this authentication source in this example.
+## ISC can check a directory credential through another arrangement
 
-The logical relationship is:
+SSO is one supported route. It isn't the only one.
+
+An **authoritative source** supplies the accounts used to establish ISC identities. An **identity profile** is configuration associated with identities established from that source. Its responsibilities include relevant sign-in and recovery settings.
+
+An **authentication source** is a configured supported source used to check credentials for directory-based ISC sign-in.
+
+HR can supply who the person is while the corporate directory checks their network password. Those roles don't have to belong to the same source.
+
+These arrangements have different credential checks:
+
+| Arrangement | Relevant authentication |
+|---|---|
+| Site username and password | ISC's supported site sign-in using registered site credentials and applicable verification |
+| Directory Connection | The configured supported source checks the relevant source-account credentials through its integration |
+| External SSO | The IdP authenticates; ISC accepts the resulting response and user mapping |
+
+They are alternatives, not three consecutive checks every user must complete. With SSO configured, normal SSO sign-in takes precedence over Directory Connection. A supported direct sign-in route has its own eligibility and authentication conditions.
+
+**Directory Connection** is also called **pass-through authentication**, or **PTA**. It lets the user enter ISC using the configured source-account credential.
+
+Consider a separate PTA setup. The directory source supports authentication, its accounts have already been aggregated, and the relevant account is correctly associated with the identity. The identity profile selects that source for authentication.
+
+Assume the person has one account on that source, `directory-user`. They supply its password, rather than the independent support-application password.
 
 ```text
-[Devi supplies directory credentials to ISC]
-                    |
-                    v
-[Configured source integration checks them]
-                    |
-                    v
-[Corporate Directory returns a result]
-                    |
-        accepted plus other required checks
-                    |
-                    v
-[Devi uses ISC in an ISC session]
+User supplies directory credentials
+        |
+        v
+Configured integration checks them
+        |
+        v
+Authentication source returns result
+        |
+        v
+Accepted plus required ISC checks
+        |
+        v
+ISC session for the intended user
+
+An alternative to the normal SSO path.
 ```
 
-The arrows represent a configured credential check and its outcome, not raw password inspection or a universal connector protocol. The actual integration dependencies depend on the supported source and its connection configuration.
+The arrows represent the configured credential check and the successful result, including the other required ISC checks. They don't describe a universal connector protocol or claim every sign-in follows this path.
 
-A **Virtual Appliance**, or VA, is a customer-deployed virtual machine used for applicable integrations. A VA-based authentication path needs that integration path to work. Don't insert a VA into every sign-in diagram: the external SSO exchange above and every supported source don't all share one runtime.
+A **Virtual Appliance**, or **VA**, is a customer-deployed virtual machine used for applicable integrations. A **virtual machine** is a software-defined computer using its host's resources. A VA-based authentication source needs its actual integration path to work. The external SAML exchange doesn't thereby require the same VA path.
 
-If the configured source cannot be reached, the attempt can fail even though Devi knows the correct password. That's a service or integration dependency, not proof of an incorrect credential.
+If the source can't be reached, ISC can't complete that source check. Knowing the correct password doesn't repair the unavailable connection. Conversely, a reachable source doesn't establish that a supplied password or account state will be accepted.
 
-Conversely, a healthy connection doesn't prove the user's supplied password is correct or the account is permitted to authenticate. Inspect the reported result and account state rather than diagnosing every failure as connectivity.
+**Provisioning** carries out account or access changes. Its selected account isn't automatically the account used for authentication.
 
-**Provisioning** carries out account or access changes. Multiple accounts add account-selection behavior: the account selected for an account change isn't automatically the account used for PTA. The selected authentication mechanism's documented behavior governs that choice.
+Multiple accounts need care. The documented PTA behaviour uses the first account ISC encountered for authentication. Don't infer that selection from display order, a preferred account label or the account chosen for a change.
 
-Changing a production authentication source can disrupt sign-in. Treat it as an approved, tested authentication change with support guidance, not a quick way to investigate an unrelated application-password ticket.
+Changing a production authentication source can disrupt sign-in. Follow the supported, tested change process and consult support as required, rather than switching it to investigate an unrelated password problem.
 
-## A second factor belongs to a particular verification process
+## Identify which verification the person cannot complete
 
-**Multifactor authentication**, or MFA, requires proof from more than one factor category, such as knowledge of a password plus possession of a registered authenticator.
+**Multifactor authentication**, or **MFA**, uses proof from more than one factor category, such as a password and possession of a registered authenticator.
 
-The IdP's authentication policy and ISC's own supported sign-in verification settings are separate configurations. A successful IdP challenge doesn't mean every ISC verification or recovery setting has been configured correctly.
+The IdP's authentication policy, ISC sign-in verification and verification for password recovery are separate configurations. Completing one doesn't establish the others.
 
-A **TOTP**, time-based one-time password, is a short-lived code generated by an authenticator using registered secret material and time. Registering a device establishes the material needed for that verification; it doesn't change a managed application's password.
+A **time-based one-time password**, or **TOTP**, is a short-lived code generated from registered secret material and time. Registering the authenticator establishes what's needed for that check. It doesn't change an application's password.
 
-ISC has documented requirements for authenticator registration and direct sign-in for elevated users. Don't assume an IdP sign-in always prompts for the same additional ISC code, or that using SSO removes every ISC authenticator-registration responsibility.
+An **elevated user** has a user level with access to the Admin menu. ISC supports authenticator requirements through identity-profile settings and requirements for elevated users. For elevated users signing in through an IdP, the documented flow requires authenticator registration if not already completed. After registration, normal IdP sign-ins don't require that additional ISC TOTP challenge; the direct route uses it under the documented conditions.
 
-Password reset verification is another context. A **password policy** defines applicable password requirements and verification conditions. The identity profile can offer recovery methods, while the applicable policy settings determine when additional authentication is required for password changes.
+SSO therefore doesn't remove every registration responsibility. Nor should you diagnose every IdP challenge as an ISC authenticator problem.
 
-An IdP MFA reset, an ISC MFA reset, and a CaseDesk password reset target different things. Use the supported operation at the system that owns the affected verification.
+If a device is lost, first locate the challenge that cannot be completed. An IdP MFA recovery and an ISC MFA reset affect different registrations. Resetting or deregistering an ISC identity doesn't clear its MFA settings; the supported MFA reset is a separate operation.
 
-If a user loses an authenticator, determine which challenge they cannot complete. Repeated password changes won't restore access to a missing registered device. Nor should you disable MFA as a substitute for the approved recovery procedure.
+Use the relevant supported recovery operation. Repeated password changes won't replace a lost authenticator, and removing verification isn't a repair for its missing registration.
 
-## Return to the CaseDesk password Devi actually forgot
+## Return to the application password that was forgotten
 
-**Password Management** lets users change passwords for supported, configured sources through ISC. **Password Manager** is the user-facing view of the applications or password groups available under that configuration.
+**Password Management** lets ISC carry out password changes for supported, configured sources. **Password Manager** is the user-facing view of the available applications and password groups.
 
-It doesn't reveal users' existing password values. It also isn't evidence that every application account associated with Devi is password-manageable.
+An **access application** is ISC configuration grouping relevant source access and exposing supported user functions. It isn't the external application itself or an SSO trust.
 
-A **flat-file source** receives imported account records rather than providing a live connection for password changes. Flat-file sources aren't compatible with Password Management. Successfully importing CaseDesk accounts wouldn't, by itself, provide the operation needed to reset their passwords.
+Suppose the **Support-Production** source has a supported **direct connection**, a configured integration capable of the required password operation. The Support application is configured and visible to the intended user in Password Manager.
 
-An **access application** is ISC configuration that groups relevant source access and can expose supported password-management functions. It isn't the external application or a new authentication trust.
+Assume `support-user` is the eligible existing target account. This application checks its own password, isn't using the company IdP for that sign-in, and isn't part of a shared-password or sync-group arrangement.
 
-For CaseDesk, assume:
+A **password policy** defines applicable password requirements. ISC's policy also controls when configured additional verification is required for password updates. Recovery methods are configured on the identity profile and need usable registered information.
 
-- Its supported **direct connection**, a configured integration rather than just an imported account file, can perform the required password operation.
-- Password Management, an appropriate password policy, and the relevant access application are configured and available to Devi.
-- `cases-37007` is the intended eligible existing account.
-- CaseDesk uses its own password, isn't configured to share or synchronize it with other sources, and isn't authenticating Devi through AccessGate.
-- The configured recovery verification can be completed.
+The person must be able to complete the required verification. An offered method with an unusable email address, phone number or registration doesn't establish a workable recovery path.
 
-The configured policy applies to the selected password operation. CaseDesk can also enforce its own restrictions. A value accepted by one set of checks isn't permission to ignore the other system's requirements.
+The target has its own password restrictions as well. ISC's applicable policy needs to be compatible with those requirements; passing one set of checks doesn't override the other.
 
-Devi chooses the CaseDesk password operation and completes its required verification. ISC processes the supported operation for the intended source account. The connector uses its configured integration path and authority to request the external password change.
+Now follow the successful change. The person selects the intended application's password operation, supplies the required information and completes its verification. ISC processes the supported change for the intended source account.
 
-In this example, `svc-case-isc` is the external integration actor. It needs authority for the requested operation. It isn't the recipient `cases-37007`, Devi's IdP account, or an ISC administrator.
+The relevant provisioning work requests a password change through the connector's configured path and authority.
 
-The target must accept and apply the change. A reachable application or successful account read doesn't prove that the connector can change passwords.
+The external integration actor `svc-support` performs the applicable target operation. It is separate from `support-user`, the IdP user and the ISC administrator.
+
+The target accepts the required authority and password information, applies the change and returns the operation result.
 
 ```text
-[Devi selects CaseDesk password change]
-                  |
-                  v
-[Required verification and policy checks]
-                  |
-                  v
-[Supported connector password operation]
-                  |
-                  v
-[CaseDesk validates and applies the change]
-                  |
-                  v
-[Inspect result for cases-37007]
+Select intended source/account
+        |
+        v
+Complete required verification
+        |
+        v
+Applicable password-policy checks
+        |
+        v
+Supported connector password operation
+        |
+        v
+Target checks and applies change
+        |
+        v
+Verify intended account result
+
+Successful example; verify each result.
 ```
 
-The arrows trace this successful example. They don't prescribe every internal validation order or guarantee delivery. Target-side checks still apply, and a failed stage requires examining its own evidence. The final box is your inspection of the result, not a promise that ISC automatically performs a fresh CaseDesk login.
+The arrows trace the successful example's responsibilities and required conditions. They don't specify every internal validation order or guarantee delivery. The final line is the engineer's verification, not an automatic fresh target login promised by ISC.
 
-The result concerns `cases-37007`. Under the supplied setup, it doesn't change Devi's AccessGate password, her directory password, her ISC user level, or any CaseDesk permission.
+A completed recovery challenge establishes the verification stage. It doesn't grant `svc-support` the target authority to change passwords.
 
-A password change restores a usable credential when the relevant operation succeeds. It isn't an access request, which asks for particular access for a recipient. It doesn't create a missing account or assign a missing entitlement, an assignable access right.
+Likewise, a successful connection test or account read doesn't prove that the connector supports or is permitted to perform this password operation.
 
-## Which passwords are actually connected?
+The confirmed change concerns the selected account. Under this standalone setup, it doesn't change the IdP password, directory password, ISC user level or support-application permissions.
 
-There are different reasons applications can appear together in Password Manager.
+An **access request** asks for particular access for a recipient. Resetting a password doesn't create a missing account or supply a missing entitlement.
 
-Two access applications can refer to one account source and therefore operate on the same underlying source password. Two tiles don't necessarily represent two independent password stores.
+## An imported account isn't a working password connection
 
-A **password sync group** is different: it groups supported direct-connect sources so a configured password change can be propagated across them. That connects password operations across sources; it isn't SSO.
+A **flat-file source** receives imported account records. That import isn't a live password-change interface.
 
-Creating a sync group doesn't establish SAML trust. Configuring SSO doesn't create a sync group. Matching usernames don't establish either relationship.
+Flat-file sources aren't compatible with ISC Password Management. Aggregating support accounts from a file wouldn't supply the missing connector operation.
 
-A sync group's policy needs to be compatible with the participating targets. Source support, account context, verification and delivery dependencies remain relevant.
+Even a direct connection needs applicable operation support, configuration, policy, account scope and external authority. Being able to display the account doesn't settle those conditions.
 
-Also distinguish where the change begins. A change submitted through the configured ISC password-management path isn't evidence that a password changed directly on an external website will automatically propagate back through ISC. Any separate synchronization mechanism needs its own supported design.
+Password Manager isn't a readable inventory of current passwords. Use supported result and authentication evidence rather than looking for the new secret on an identity page.
 
-In a PTA arrangement, changing the authentication-source password through supported Password Management affects the credential used for directory-based ISC sign-in. It doesn't mean a separate ISC password and a separate directory password were necessarily updated as two independent stores.
+## Two application tiles can lead to the same password
 
-For a sync group using the documented PTA path, failure to change the authentication-source password prevents attempts on the other sources. Without PTA, the documented behavior can include partial outcomes: one source changes while another fails. Don't generalize one path's ordering to all password groups.
+Passwords are managed per source. Two access applications can refer to the same account source and operate on the same underlying source password.
 
-Password-history checking can also depend on an authentication source that supports it. Don't infer that aggregation gives ISC a readable history of everyone's passwords.
+That is one explanation for applications appearing together in Password Manager. Two tiles don't necessarily mean two separate password stores.
 
-## A reset request, a completed change, and a fresh login prove different things
+A **password sync group** creates a different relationship: it groups supported direct-connect sources so configured password changes can propagate across them.
 
-An administrator sending a password-reset email starts a recovery interaction. It doesn't establish that the user followed the instructions, passed verification, or completed the intended password change.
+For example, a group can involve two distinct sources, each with its own account and password operation. A submitted group update needs the applicable source operations to succeed; it isn't simply another name for one shared source.
 
-The supported reset behavior can interact with PTA and sync groups. Establish the configured scope before telling a user which credential will change.
+Neither grouping establishes SAML trust. Conversely, configuring SSO or matching usernames doesn't create password synchronization.
 
-Likewise, a user successfully completing recovery verification establishes that verification stage, not every downstream source result.
+The group's policy must fit its participating targets. In the documented PTA password-change path, failure of the applicable source password change prevents attempts on the other sources in the group. A non-PTA group can have mixed outcomes, with one source changed and another failed.
 
-For an unexpected password outcome, preserve the operation's time, intended source/account, reported result and useful error detail. Relevant audit events can identify failed source updates. Don't put passwords, recovery codes, private keys, or complete sensitive authentication messages in support notes.
+Those conditions matter when recovering work. Don't report group-wide success from one successful source or assume every failed group update rolled back completed changes.
 
-A collected account page shows represented information from the integration. It doesn't display the current password or independently prove that a later password operation succeeded.
+Password-history checking can use a configured authentication source that supports it. That source can validate a proposed password against its history; aggregation doesn't provide a readable history of everyone's passwords.
 
-A controlled fresh authentication test can help establish whether the intended system accepts the new credential, using the organization's approved procedure. An already-open application page is weaker evidence because it can be using an existing session.
+Also identify where the change began. A supported ISC-initiated group update isn't evidence that a password changed directly on an external website will propagate back through ISC. A separate synchronization mechanism needs its own supported design.
 
-Don't repeatedly guess passwords to test a theory. A **lockout** restricts further authentication after applicable failure conditions. ISC and an external authentication system can have their own lockout rules; repeated attempts can make the incident harder to resolve.
+For PTA, a supported change to the authentication-source password affects the credential used for directory-based ISC sign-in. This doesn't establish that two independent stores, a separate ISC password and a directory password, were both updated.
 
-Password reset, unlock, reenable and MFA reset are separate operations. An account **disabled** by administration is not merely locked by failed attempts. The documented reset feature isn't available for disabled accounts; don't treat a reset as a route around that restriction. Any reenablement needs its own approved reason and procedure.
+## Follow the result beyond the reset message
 
-## Ending one session doesn't necessarily end the others
+An administrator can initiate password recovery by sending reset instructions. That establishes that the recovery interaction was started, not that the person followed it or a target password changed.
 
-The IdP, ISC, and CaseDesk can each have their own sessions. A browser returning to ISC may still have a valid ISC session or may be authenticated again through a valid IdP session.
+The configured reset can interact with PTA and password groups. Establish its actual scope before promising which credentials will change.
 
-Neither observation proves that the user entered a password again.
+For investigation, retain the operation time, intended source/account, reported result and useful error detail. Source-specific audit evidence can identify failed updates. Keep passwords, recovery codes, private keys and sensitive authentication responses out of support notes.
 
-ISC session settings govern its supported maximum and idle-session behavior. Browser handling can also affect whether a session is retained. Don't treat closing a window as reliable proof that every authentication context was terminated.
+A collected account page shows represented data from a read. It doesn't display the current password or independently confirm a later password update.
 
-ISC doesn't support **SAML Single Logout**, the SAML mechanism for coordinating sign-out across participating services. A configured logout redirect isn't a guarantee that signing out of ISC terminates every session at the IdP and every business application.
+An approved fresh authentication check can help establish whether the intended system accepts the new credential. An already-open application page can be using a session established before the change.
 
-Similarly, don't assume a password change immediately revokes every existing session, credential or integration token. Verify the affected system's supported session and revocation behavior.
+Avoid repeated guesses. A **lockout** restricts authentication after applicable failure conditions. ISC and the external authentication system have their own relevant rules; PTA can connect the effects on the primary account.
 
-This matters during suspected compromise. Password recovery alone isn't evidence that the security incident is contained. The responsible security team needs the relevant session, credential and access controls, not an assumption that all accounts share one logout.
+An account **disabled** by administration has a different state from an account locked by failed attempts. ISC's documented password-reset feature isn't available for disabled accounts.
 
-An approved **emergency-access** arrangement provides a controlled route for authorized elevated users when normal IdP access is unavailable. ISC documents a direct sign-in option for such users, subject to its authentication requirements. It isn't a universal bypass for every employee or a replacement for keeping the normal trust healthy.
+Reset, unlock, reenable and MFA reset perform different work, even where a supported recovery flow connects them. Reenabling an account needs its own approved reason and process.
+
+## A password result doesn't answer every session question
+
+The IdP, ISC and support application can each maintain sessions. Returning to ISC can reuse an ISC session or cause authentication through an existing IdP session. Neither observation proves that the person entered a password again.
+
+ISC has maximum and idle-session settings. Maximum duration limits how long a session can remain active; idle duration concerns inactivity. Browser retention can also affect whether a session resumes.
+
+Closing a window isn't reliable evidence that every session ended. Changing session configuration also doesn't establish that it was immediately applied to existing sessions.
+
+**SAML Single Logout**, or **SLO**, is the protocol mechanism for coordinating logout across participating services. ISC doesn't support SAML SLO. A logout redirect doesn't prove that every IdP or business-application session was terminated.
+
+Similarly, a confirmed password update doesn't establish revocation of every existing session or integration token. A **token** is a credential used under a service's access rules; its validity and revocation need their own evidence.
+
+This matters during suspected compromise. Password recovery alone doesn't establish containment. The responsible team must verify the affected sessions, credentials and access under the relevant systems' supported controls.
+
+An approved **emergency-access** arrangement provides a controlled route for authorized elevated users when the normal IdP route is unavailable. ISC documents direct sign-in for eligible elevated users, with its required authentication.
+
+That route isn't a universal employee bypass. Its credentials and verification must be prepared under the approved arrangement before an outage makes them necessary.
 
 ## Work through the evidence
 
-Treat these as separate variations. All recorded outcomes below are fictional.
+Each case supplies a separate situation.
 
-### 1. The IdP accepts Devi, but ISC cannot match her
+### 1. The IdP accepts the user, but ISC cannot match them
 
-AccessGate records successful authentication. The configured mapping uses ISC email, which is `devi37007@corp.example`. The response supplies `devi37007@old.example`, and ISC reports a user-matching failure. JIT creation is off.
+The IdP records successful authentication. ISC's configured mapping uses email, whose intended value is `person@corp.example`. The response contains `person@old.example`, and ISC explicitly reports a matching failure. JIT creation is off.
 
-Should the team reset Devi's password first?
+Would a password reset correct the demonstrated problem?
 
-**Worked reasoning:** The supplied evidence identifies mismatched mapping values after successful IdP authentication. Inspect the intended identity and the approved IdP/ISC mapping, then correct the responsible data or configuration. Don't create a duplicate identity or reset a credential to conceal the mismatch. IdP authentication alone didn't establish an ISC session.
+**Worked reasoning:** The supplied evidence identifies a mismatch after IdP authentication. Check the intended identity and approved mapping, then correct the responsible data or configuration. Resetting a credential doesn't align those values. Creating another identity would obscure the intended relationship.
 
-### 2. A directory sign-in fails during a connection outage
+### 2. Directory sign-in fails during a connection outage
 
-In the alternative PTA setup, the integration reports that Corporate Directory cannot be reached. There is no result establishing whether the supplied user password was accepted or rejected.
+In the separate PTA setup, the configured source can't be reached. There is no result establishing whether the supplied password for `directory-user` was accepted or rejected.
 
-Does this prove that `corp-37007` has the wrong password?
+Does this establish an incorrect password?
 
-**Worked reasoning:** No. The available evidence establishes a connection dependency, not a completed credential decision. Investigate the configured authentication path and source availability. Don't reset the password or switch the production authentication source simply because the check couldn't complete.
+**Worked reasoning:** No. Investigate the configured authentication integration and source availability. The credential check didn't produce the required decision. Resetting the password or switching the production authentication source doesn't repair the demonstrated connection dependency.
 
-### 3. ISC opens, but the Admin menu is unavailable
+### 3. ISC opens, but administration is unavailable
 
-Devi authenticates successfully and opens her ISC account. Her assigned user level doesn't allow administration. Someone proposes repairing the SAML signing certificate.
+A person authenticates successfully and enters ISC. Their assigned user level doesn't permit administration. Someone proposes replacing the SAML signing certificate.
 
-Which boundary should you examine?
+Which condition needs attention?
 
-**Worked reasoning:** The supplied facts establish a signed-in user with limited platform authority. Check the intended user level and authorization, not the certificate as the cause of the missing administration capability. Granting a broader level still needs approved justification; a successful login isn't a reason to make someone an administrator.
+**Worked reasoning:** The supplied facts establish a signed-in user with limited authority. Check the intended user level and approved authorization. Repairing trust isn't justified as the cause of this missing permission, and successful sign-in doesn't justify granting administration.
 
-### 4. The CaseDesk password changes, but an unrelated password doesn't
+### 4. The standalone application changes, but another password doesn't
 
-The supported operation reports a successful change for `cases-37007`, confirmed by an approved fresh CaseDesk sign-in. CaseDesk is standalone in Password Manager, outside every sync group, and uses its own authentication.
+The supported operation reports a successful change for `support-user`, confirmed by an approved fresh sign-in. The application uses its own authentication and is outside every shared-password and sync-group relationship.
 
-Should Devi expect her AccessGate password to change?
+Should the company IdP password also have changed?
 
-**Worked reasoning:** No. The configured scope and target evidence concern CaseDesk. No supplied sync relationship or shared password store connects it to AccessGate. Correct account correlation doesn't create that relationship.
+**Worked reasoning:** No. The configuration and target evidence concern the standalone account. Correlation and similar user labels don't create a password-sharing relationship.
 
 ### 5. A password group has mixed results
 
-A separate non-PTA sync group contains two supported sources. Audit evidence shows the first accepted its password update while the second rejected it because of a target policy restriction.
+A separate non-PTA sync group contains two supported sources. Audit evidence establishes that one accepted its update and the other rejected it because of a target policy restriction.
 
-Can the team say that nothing changed, or that both now share the new password?
+Did nothing change, or do both now have the new password?
 
-**Worked reasoning:** Neither. The supplied per-source results establish a partial outcome. Reconcile which account changed, inspect the policy mismatch, and use supported recovery. Don't assume rollback, repeatedly submit blind changes, or report group-wide success from the first result.
+**Worked reasoning:** Neither statement fits. Reconcile the per-account outcomes, investigate the incompatible requirement and use supported recovery. Don't infer rollback or repeat changes blindly. The first success isn't proof of group-wide success.
 
-### 6. Recovery verification succeeds, but the source change is denied
+### 6. Recovery verification succeeds, but the target operation is denied
 
-Devi completes the required recovery verification. The external integration actor then receives a permission-denied result for the CaseDesk password operation. No target change is confirmed.
+The user completes required verification. The external integration actor then receives an explicit permission denial for the support-account password change. No target change is confirmed.
 
-Should the team reset her authenticator registration?
+Would resetting the user's authenticator supply the missing authority?
 
-**Worked reasoning:** The supplied verification stage succeeded. The failure concerns the integration actor's target authority. Inspect that actor and the required supported password-operation privilege, then recover and verify the intended change. Resetting the user's authenticator doesn't grant the connector target authority.
+**Worked reasoning:** No. The supplied verification stage succeeded. Investigate the integration actor's justified password-operation privilege, then recover and verify the intended account change. User verification and connector authority are different conditions.
 
-### 7. An application stays open after a password reset
+### 7. An existing application tab still works
 
-A password change is confirmed, but a browser tab that was already signed into the application still works. No fresh authentication has been attempted, and no session-revocation result is supplied.
+A password update is confirmed. A tab already signed into the application remains usable. No fresh authentication or session-revocation result is supplied.
 
-Does the open tab prove that the password change failed?
+Does the old tab prove the password update failed?
 
-**Worked reasoning:** No. The tab can be using an existing session. Separate the confirmed password result from the unanswered session question. Use approved fresh-authentication and session-management checks; don't infer either failed reset or complete incident containment from the old tab.
+**Worked reasoning:** No. It can be using an existing session. Check fresh authentication and supported session handling through the approved procedure. The tab alone establishes neither a failed reset nor complete incident containment.
 
-## Explain a new setup before approving it
+## Review a purchasing-application proposal
 
-A team proposes a new purchasing application: “People already sign into ISC through the company IdP. Once we aggregate purchasing accounts, ISC should know their passwords, let everyone reset them, and sign them straight into purchasing.”
+A team says, “People already enter ISC through the company IdP. Once we aggregate purchasing accounts, ISC should know their passwords, let everyone reset them and sign them straight into purchasing.”
 
-What would you ask the team to establish?
+What relationships must the team establish?
 
-**Worked reasoning:** Aggregation supplies represented account data, not readable user passwords. ISC federation establishes the sign-in relationship between the configured IdP and ISC, not a trust for every new application.
+**Worked reasoning:** Aggregation supplies represented account data. It doesn't reveal current passwords or create an authentication trust.
 
-Identify the purchasing application's actual authentication arrangement and account owner relationship. Establish whether supported Password Management is in scope, which source and account would be changed, the required verification and compatible policies, and the connector's operation capability and authority.
+Identify how purchasing authenticates users and which accounts belong to them. If ISC will manage passwords, establish a supported source operation, intended account scope, visible access-application configuration, usable verification, compatible policies and target authority.
 
-If purchasing should use SSO, its own supported IdP integration and permitted-user configuration need to be established. Its business permissions still need the appropriate access design. If shared password changes are intended instead, identify an actual shared account source or supported sync-group arrangement rather than inferring one from matching usernames.
+If purchasing should use SSO, establish its own supported IdP trust and permitted-user arrangement. Its business permissions still need an appropriate access design.
 
-You can explain the distinction simply: “First identify the service we're entering and the system checking our proof. Then identify the account a password operation would change. Authentication, account data, password delivery and permission are connected only through the relationships we've actually configured.”
+If coordinated password changes are intended, identify a real shared account source or supported sync group. Matching usernames and existing ISC SSO aren't evidence of either.
+
+Explain the flow in terms of the actual work: which service the user enters, who checks the proof, how ISC identifies the person, which account a password operation changes, and what evidence confirms the intended result.

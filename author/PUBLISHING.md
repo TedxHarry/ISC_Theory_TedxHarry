@@ -30,6 +30,8 @@ See the [new-repository publication record](NEW_REPOSITORY_PUBLICATION_2026-10-2
 
 The user authorized publishing the completed FND-001 through FND-007 and ARC-001 revisions before continuing ARC-002 locally. See [publication scope and verification](PUBLICATION_2026-10-26.md). The original repository/site remains outside the publication scope.
 
+The later “Push and continue” instruction authorizes batch 2: nine completed revisions, ARC-002 through ARC-008 and SRC-001 through SRC-002, with diagrams and author records. See [batch 2 scope and verification](PUBLICATION_2026-10-26_BATCH_2.md). Continue SRC-003 locally afterward; the original repository/site remains unchanged.
+
 ## Historical publishing notes inherited from ISC_Theory_Learning
 
 The entries below describe earlier development and deployments of the original edition. Their counts and next-lesson reservations are historical, not the current revision target.

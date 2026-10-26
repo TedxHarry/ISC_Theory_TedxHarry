@@ -1,332 +1,325 @@
 # Where does IQService fit?
 
-An access change is approved in SailPoint Identity Security Cloud (ISC). The integration appliance appears healthy. Yet the change fails before it reaches Active Directory, the directory holding the employee's account and group membership.
+An access change approved in SailPoint Identity Security Cloud (ISC) still has to be carried out in the system that holds the account. For some integrations, that includes work performed on Windows.
 
-A message mentions IQService. What is this extra service doing in the path, and why didn't a healthy appliance prevent the failure?
+The component is **IQService**, also called the **Integration Service**. It is a Windows service used by supported connectors for operations needing its Windows-side capabilities.
 
-**IQService**, also called the Integration Service, is a Windows service used by supported connectors for operations that need its Windows-side capabilities. A Windows service is a program managed by Windows that can run without someone keeping an interactive desktop session open.
+A **Windows service** is a program managed by Windows that can run without someone keeping an interactive desktop session open. IQService provides access to supported Windows APIs. An **application programming interface**, or **API**, lets software request information or actions from another component.
 
-IQService gives the integration access to supported Windows APIs and related operations. An **API**, or application programming interface, is an interface software uses to request information or actions from another component.
+Installing IQService adds a component to particular connection paths. It doesn't install the hosted ISC application on a Windows server.
 
-Installing IQService doesn't move ISC onto a Windows server. It adds a component to particular integration paths.
+## Establish whether this operation needs IQService
 
-## Start with the job, not the server name
+A **connector** is integration software that communicates with a managed system. A **source** is ISC's configured representation of that connection and its account data.
 
-A **connector** is the integration software that communicates with a managed system. A **source** is the configured representation of that connection and its account data inside ISC.
+**Provisioning** carries out supported account or access changes. **Aggregation** collects account or access information into ISC. Those labels describe the work, but the selected connector's requirements determine which components perform it.
 
-Whether IQService is needed depends on the connector and the operation.
+For the ISC Active Directory connector, IQService is required for all provisioning. It also participates in reading certain information, including Terminal Services attributes, which concern Windows remote-session use.
 
-For the ISC Active Directory connector, IQService is required for provisioning. **Provisioning** means carrying out account or access changes, such as creating an account or changing a supported group assignment. The connector also uses IQService when reading particular information, such as Terminal Services attributes related to Windows remote-session use.
+That doesn't mean you must use those special attributes before ordinary group provisioning needs IQService. The provisioning requirement already applies.
 
-**Aggregation** means collecting account or entitlement information into ISC. It reads information rather than instructing the target to grant access. But “this is a read” doesn't, by itself, establish that IQService is outside the path. The fields and connector features involved matter.
+Conversely, calling an operation a read doesn't establish that it bypasses IQService. Required fields, enabled features and the supported account arrangement can affect its path.
 
-Those attributes are feature-specific reads with an IQService dependency. You don't need that feature in your environment for ordinary group provisioning to need IQService.
+Other connectors have their own requirements. A supported SaaS connector can execute in SailPoint's hosted environment without this Windows service. **Software as a service**, or **SaaS**, means provider-operated hosted software.
 
-Don't turn these Active Directory requirements into a rule for every ISC connector. A supported SaaS connector can run its integration work in SailPoint's hosted environment without this Windows service. Another connector can have its own operation-specific requirements.
+Begin with the configured source, required operation and relevant fields. “Does this operation use IQService?” is more useful than assuming either every read or every write follows one universal path.
 
-The question to ask is: “For this configured source, which component performs the operation we're investigating?”
+## Give each component a distinct job
 
-## Give the components different jobs
+An ISC **tenant** is an organizational environment in the hosted service. It contains the applicable configuration, represented identity information, access decisions and tracked activity.
 
-ISC's hosted service holds the relevant configuration, represented identity information, access decisions, and operation tracking.
+A **Virtual Appliance**, or **VA**, is a customer-deployed Linux-based virtual machine used for VA-based integration work. A **virtual machine** is a software-defined computer using resources supplied by its host. A **VA cluster** groups appliances associated with sources.
 
-A **Virtual Appliance**, or VA, is a customer-deployed virtual machine used for VA-based integration work. A **VA cluster** groups appliances associated with sources. The VA environment performs connector work and communicates with the required systems.
+The VA environment performs the applicable connector work. IQService performs its supported Windows-side work on a supported Windows server with the required target connectivity.
 
-IQService runs as a service on a supported Windows server with connectivity to the targets it manages. It performs the supported Windows-side work requested through the integration.
+The **target system** holds the account or permission being managed. In this example it is **Active Directory**, Microsoft's directory service for accounts, groups and related information.
 
-The **target system** holds the account or permission being managed. For Active Directory, a **domain controller** is a server that provides the directory service for a domain, including its account and group information.
+A **domain** groups directory accounts and other objects under a shared name and administration. A **domain controller** provides directory services for its domain, including account and group information. A Windows server running IQService still needs appropriate communication with the relevant target; it isn't automatically the domain controller.
 
-These roles aren't interchangeable.
+IQService isn't a Windows version of the VA. Adding it doesn't remove the VA from a VA-based source. Neither component decides, merely by being present, which business access a person should receive.
 
-IQService isn't a VA installed on Windows. Adding it doesn't remove the VA dependency from a VA-based source. It also isn't the domain controller itself: a Windows server hosting IQService needs appropriate connectivity to the relevant target.
+## Define the group change before following the connection
 
-Nor does IQService decide whether an employee should receive access. It participates in executing supported work after the applicable ISC decisions and preparation.
+Suppose an existing directory account, `docs-reader`, needs access to read engineering documents.
 
-## Follow one group assignment
+A **group** is a directory object that collects members. Under this example's document-system permissions, membership in `ENG-Docs-Readers` provides the required reading access, subject to the document system's own checks. The group name alone doesn't establish those permissions.
 
-Devi is an engineering coordinator, employee number `34004`. She already has Active Directory account `eng-34004`. She needs access to read engineering documents.
+An **entitlement** is an access item represented from a source. Here, ISC represents the relevant group membership as an entitlement.
 
-In this fictional environment, membership in the directory security group `ENG-Docs-Readers` provides the relevant document-reading permission, subject to the document system's own access checks.
+An **identity** is ISC's person-level record. An **account** is a record in an external system, with ISC keeping a representation of it. The recipient's existing account is correctly associated with the intended identity.
 
-A **group** is a directory object that collects members. ISC can represent the relevant group membership as an **entitlement**, an access right assignable to an account. The group, the member account, and Devi's person record are different objects.
+That relationship is **account correlation**: matching and assigning a source account to an identity through configured comparisons. It identifies whose account it is; it doesn't add the group membership.
 
-ISC has an **identity** representing Devi and a source account record representing `eng-34004`. The account is correctly associated with her identity. That relationship is **account correlation**. It identifies the represented owner; it doesn't grant group membership.
+The source **Engineering Directory** uses the ISC Active Directory connector and cluster `eng-prod`, containing `va-01` and `va-02`. Its IQService configuration points to `iqservice.corp.example` and the service's configured secure listening port.
 
-The source is Engineering Directory. It uses the ISC Active Directory connector and VA cluster `C-Eng-Prod`. That cluster has two appliances, `va-eng-01` and `va-eng-02`.
+A **port** identifies a network service endpoint on a host. A **listener** accepts incoming connections at the configured endpoint. The source must call the host and port where the intended IQService instance actually listens. The example hostname is fictional.
 
-The source's IQService settings point to Windows host `iq-win-01.corp.example` and its configured secure listening port. This hostname is fictional. A **port** identifies a network service endpoint on a host; the source configuration must select the port on which the intended service actually listens. The **listener** is the endpoint accepting those network connections.
+An **access request** asks for specified access for a recipient. An **access profile** bundles related entitlements from one source. Here, **Read engineering documents** contains only the relevant group entitlement from Engineering Directory.
 
-An **access request** asks for particular access for a recipient. Here, Devi requests Read engineering documents, an **access profile** containing only the relevant group entitlement from Engineering Directory. An access profile bundles related entitlements from one source.
+Assume the permitted request passes its configured review, the intended existing account is selected, and automatic provisioning is configured for the supported operation. No account creation, custom script or extra access dependency is needed.
 
-Assume the request passes its configured review, the intended account is selected, automatic provisioning is enabled for this supported operation, and no account creation or custom script is needed.
+The target change is precise: add `docs-reader` to `ENG-Docs-Readers` in the intended production directory.
 
-The required external change is precise: add `eng-34004` to `ENG-Docs-Readers` in the intended production directory.
+## Which account supplies which authority?
 
-## Here's the path for that operation
+A **service account** is an account software uses for an operational purpose rather than a person's everyday login. A **credential**, such as a password, is used to establish the caller's accepted identity or access context.
 
-```text
-[ISC: approved, supported access change]
-                |
-                | work and returned results
-                v
-[VA: Active Directory connector work]
-                |
-                | request to configured IQService
-                v
-[Windows host: IQService]
-                |
-                | supported directory operation
-                v
-[Active Directory: account + group]
-```
+**Authentication** establishes that context. **Authorization** determines whether the actor may perform a particular operation. Being accepted by IQService isn't the same as being authorized to change a directory group.
 
-This is the conceptual path for the stated group-provisioning operation, not a map of every read or every packet. Results and errors return through the integration path.
+Keep these roles separate in the example:
 
-The VA initiates its required communication with ISC's hosted service. A request originating in ISC doesn't imply a new unsolicited inbound connection from the internet to the Windows server.
-
-For the Windows-side interaction, the VA needs to reach the configured IQService endpoint. IQService then needs the connectivity and authority required for its target operation. Those are separate network boundaries.
-
-Conceptually, ISC prepares the supported change for the identified source and account. Connector work in the VA environment sends the applicable request to IQService. IQService accepts only requests meeting its configured security requirements, then performs the supported target work under the applicable credentials.
-
-Active Directory evaluates the target operation. With valid input, sufficient authority, and the required dependencies available, the membership change is applied. The integration returns a result for ISC's activity tracking.
-
-Approval, delivery to IQService, and an applied directory change are different events. A failure between any two of them can leave the business decision intact while the requested membership remains absent.
-
-## Which account is doing which part?
-
-A **service account** is an account used by software for a particular operational purpose, rather than a person's everyday login.
-
-**Authentication** establishes the caller's accepted identity or credential context. **Authorization** determines whether that caller can perform the particular action. Authenticating to IQService isn't proof of authorization to change the target group.
-
-The example has four account roles:
-
-| Role | Fictional account | What it contributes |
+| Role | Example account | Contribution |
 |---|---|---|
-| Recipient | `eng-34004` | Receives the group membership |
-| Source's target-management account | `CORP\svc-ad-isc` | Provides the configured authority for the Active Directory operation |
+| Recipient | `docs-reader` | Receives the group membership |
+| Source's target-management account | `CORP\svc-ad` | Supplies the configured authority for the directory operation |
 | IQService client-authentication user | `CORP\svc-iq-client` | Authenticates incoming integration requests to IQService |
-| IQService Windows service logon account | `CORP\svc-iq-run` | Runs the IQService process under Windows |
+| IQService Windows service logon account | `CORP\svc-iq-run` | Runs the service process and provides its Windows execution context |
 
-`CORP` is the fictional Windows domain label in these account names. The names aren't credentials or commands.
+`CORP` is a hypothetical Windows domain label. These names illustrate roles, not actual credentials or commands.
 
-The IQService client user must be registered with IQService and able to authenticate through Windows under the documented configuration. Registration identifies which Windows user identities IQService is configured to accept as clients. It doesn't create the Windows account or grant target privileges. That admission check is different from Active Directory permitting a group-membership change.
+The client user must exist in Windows, be registered with IQService and authenticate under the documented arrangement. **Registration** configures which Windows user identities IQService accepts as clients. It doesn't create that Windows account or grant directory permissions.
 
-The Windows service logon account needs the applicable local operating permissions, including access to the files and resources required by the service. A service process that starts isn't automatically authorized to administer every directory object.
+The Windows service logon account needs the local permissions required to operate the service and use its resources. Starting the process doesn't automatically authorize it to administer every directory object.
 
-For the supported target operations described in IQService's requirements, the service account configured on the source supplies the target-management context. Don't assume that changing the IQService client user grants the source's target account more privileges.
+For the supported target operations described in IQService's requirements, the source's configured service account supplies the target-management context. Changing the admitted client user doesn't supply more directory privileges to that account.
 
-Scripts can introduce another execution-context dependency. **PowerShell** is a Windows automation environment used by supported integration scripts and operations. Applicable scripts can run under the IQService service logon context when they don't use the source account.
+These are four roles, not a universal requirement for four different usernames. Documentation permits some roles to share an account. One username then performs multiple jobs, but the admission, local execution and target-authorization checks still have different purposes.
 
-These are roles, not a rule demanding four different usernames in every deployment. Documentation permits certain roles to share an account. If they do, the permission boundaries still exist; one username is being used for more than one purpose.
+## Follow a successful assignment
 
-## Protect the channel before trusting the request
+ISC prepares the supported work for the identified source, recipient account and group. Connector work in the VA environment sends the applicable request to the configured IQService endpoint.
 
-**Transport Layer Security**, or TLS, protects communication in transit and supports checking the server's identity. For the VA-to-IQService connection, the VA must trust the certificate presented by the intended IQService endpoint.
+The VA must reach that listener through the required protected connection. IQService checks the incoming client under its configured security requirements before processing the request.
 
-A **certificate** binds an identity, such as a hostname, to a public key under a trust model. The corresponding **private key** is secret material used by the server. A certificate copied onto a server without the required associated private key and access permissions isn't a complete server configuration.
-
-The IQService service logon account must have the required access to that private key. The certificate can be installed correctly while the service's execution account still can't use it.
-
-A **certificate authority**, or CA, issues certificates. A trust chain connects the endpoint certificate to an authority the client trusts. The configured endpoint name must also meet the certificate's identity requirements.
-
-For the example, the source calls `iq-win-01.corp.example`. A certificate for a different host doesn't become correct merely because that host is also owned by the organization.
-
-TLS and client authentication answer different questions. TLS protects the channel and validates the intended server under its trust requirements. **Client authentication** checks the identity presenting the incoming integration request.
-
-In the documented IQService mechanism, a request carries the configured registered user's credentials. IQService checks registration and authenticates those credentials with Windows before processing the request.
-
-The resulting reasoning checkpoints are:
+For the authorized operation in this example, IQService performs the supported Windows-side work using the applicable target-management credentials. Active Directory evaluates the request and applies the membership change. Results return through the integration for ISC's activity tracking.
 
 ```text
-[VA reaches intended IQService endpoint]
-                     |
-                     v
-[TLS: trusted server + protected channel]
-                     |
-                     v
-[Registered client authenticates in Windows]
-                     |
-                     v
-[Required IQService capability available]
-                     |
-                     v
-[Target permits the requested operation]
-                     |
-                     v
-[Target change and reported result examined]
+ISC: approved supported change
+  |
+  | Work and returned results
+  v
+VA: Active Directory connector work
+  |
+  | Request to configured IQService
+  v
+Windows host: IQService
+  |
+  | Supported directory operation
+  v
+Active Directory: account and group
+
+This map covers the stated group update.
 ```
 
-The arrows express prerequisites for this secured operation and the evidence to examine afterward. This isn't a complete TLS handshake, private processing algorithm, or guarantee that every request reaches the final box.
+The lines show the stated group-provisioning path and returning work/results, not every read or a packet-by-packet sequence.
 
-The final box includes an engineer's verification. It doesn't promise an automatic target read after every write.
+The VA initiates its required cloud communication. Work originating in ISC doesn't imply a new unsolicited inbound internet connection to the Windows server.
 
-Use the supported TLS and client-authentication configuration. Current Active Directory connector requirements make TLS mandatory for IQService. A connection problem isn't a reason to disable certificate validation, remove client authentication, or expose an unprotected listener.
+There are also two different downstream connections: VA to IQService, and IQService to the target. A working first connection doesn't establish the second one's reachability or authority.
 
-The VA-to-IQService channel and IQService-to-target communication are also different legs. Securing the first doesn't automatically configure the second. Check the target interface and its documented security requirements separately.
+Approval, admission to IQService and applied directory membership are separate events. A failure between them can leave the business approval intact while the account still lacks the group.
 
-## Now let one dependency fail
+## What makes the connection trusted?
 
-In a separate fictional incident, the source still points to `iq-win-01.corp.example`, but that endpoint's certificate has expired.
+**Transport Layer Security**, or **TLS**, protects communication in transit and supports checking the server's identity. For the VA-to-IQService connection, the VA must establish trust in the intended IQService endpoint.
 
-The supplied evidence establishes that:
+A **certificate** binds an identity, such as a hostname, to a **public key**. That shareable key is used to verify cryptographic proofs made with its matching **private key**, which the server keeps secret.
+
+IQService needs the matching private key and the required account access to use it. Copying the certificate onto the host doesn't establish that the service logon account can use the associated key.
+
+A **certificate authority**, or **CA**, issues certificates. A **trust chain** links the endpoint certificate to an authority the client trusts. Certificate validity and the configured hostname must also meet the applicable requirements. The private key stays with the server; the VA needs the appropriate trust configuration for the certificate chain.
+
+For example, a certificate for a different host doesn't identify `iqservice.corp.example` merely because both hosts belong to the same organization. An expired certificate is another distinct validity problem.
+
+TLS and **client authentication** answer different questions. TLS protects the channel and validates the intended server under its trust requirements. Client authentication checks the identity presenting the integration request.
+
+In the documented IQService mechanism, the request carries the configured client's credentials. IQService checks that the user is registered, then authenticates those credentials with Windows before processing the request.
+
+A trusted server therefore doesn't establish an admitted client. An admitted client doesn't establish target-group authority.
+
+```text
+VA reaches intended IQService listener
+  |
+  v
+Trusted TLS connection to intended host
+  |
+  v
+Registered client authenticates
+  |
+  v
+Required IQService capability available
+  |
+  v
+Target permits this operation
+
+Separate verification after the attempt:
+  Engineer examines operation result
+  Engineer checks target membership
+```
+
+The arrows connect prerequisites for this secured operation. They show what must be satisfied, not a packet-by-packet sequence or a promise that every attempt reaches the target.
+
+The verification lines describe an engineer checking evidence. They do not promise an automatic target read after every write.
+
+The Active Directory connector requires TLS for IQService, with client authentication required in the stated secured arrangement. Follow the supported configuration when correcting a connection problem; disabling the checks would remove the protection the connection requires.
+
+The IQService-to-target connection has its own documented security requirements. Configuring trust on the VA-to-IQService leg doesn't automatically configure that other leg.
+
+## Now change one condition: the certificate expires
+
+Consider a separate hypothetical run with these observations:
 
 - Both VAs can communicate with ISC.
-- A basic directory-account read using the configured read path succeeds.
-- The provisioning attempt reaches the IQService endpoint, but the VA rejects its expired certificate during TLS setup.
+- A basic directory-account read succeeds through its configured path.
+- The provisioning attempt reaches the configured IQService endpoint, but the VA rejects its expired certificate during TLS setup.
 - The request isn't admitted for target execution through that connection.
-- The intended group membership remains absent in Active Directory.
+- Current directory evidence confirms that the intended group membership is absent.
 
-What has failed?
+The evidence places the failure at the VA-to-IQService trust boundary. The business approval and recipient password don't correct certificate expiry.
 
-The VA-to-IQService trust boundary for the provisioning path. Neither Devi's business approval nor her own password explains the supplied certificate rejection.
+The basic read doesn't contradict that failure. In this example, it uses fields and a configured read path that don't require the rejected IQService interaction. The VA connector reads the directory and returns that data to ISC without taking this additional leg.
 
-The successful basic read doesn't contradict this. That read used a path and fields that didn't require the failed IQService interaction. It isn't evidence that every directory attribute read can bypass IQService.
+That is not a rule that every directory read bypasses IQService. Different fields, features or account arrangements can introduce an IQService dependency.
 
-For that supplied read, the VA connector communicates with the directory without using IQService, and the returned account data becomes available to ISC through the VA integration path. The provisioning operation takes the additional IQService leg. Changing the requested fields or source features can change a read's dependencies.
+The authorized certificate correction must address the actual endpoint: valid identity and dates, trusted chain, associated private key, service-account access and compatible source settings. Replacing one certificate file isn't proof that all those conditions hold.
 
-Replacing the endpoint certificate through the approved process addresses this dependency only if the new certificate, endpoint identity, trust chain, private-key access, and source connection settings are correct.
+Then reconcile or recover the failed operation through the supported process and verify the intended directory membership and recorded result. Restored trust doesn't retroactively complete the failed assignment.
 
-After that correction, the earlier operation still needs to be reconciled and recovered through the supported process. Verify the intended target membership and the recorded operation result. Restored trust doesn't retroactively complete a failed change.
+These facts establish a before-execution rejection in this case. A different timeout or connection error needs its own evidence before you infer that no target change occurred.
 
-These facts are supplied for the example. Without the certificate error and operation context, a healthy VA alone wouldn't identify this failure.
+## Read each status at its actual scope
 
-## What does the screen actually establish?
+A source configuration page records selected hosts, ports, security settings and credentials. Saved settings establish configuration, not successful execution.
 
-An ISC source configuration page shows the host, port, security settings, and credentials selected for the integration. Saved values establish configuration, not successful execution.
+A VA's **Connected** state concerns that appliance's operating condition. It doesn't certify the IQService listener, client authentication, enabled operation capability or directory privilege.
 
-The **Connected** state of a VA concerns that appliance's operating state. It doesn't certify the IQService listener, its Windows authentication, its target permissions, or every operation using it.
+Windows reporting a service as **Running** establishes that the process is running. The listener can still be unreachable from a VA, a different endpoint can be configured, or the required capability can be unavailable.
 
-A Windows service shown as Running establishes that Windows reports the process as running. The listener can still be unreachable from a VA, the wrong endpoint can be selected, or the requested capability can be unavailable.
+A **connection test** runs the checks implemented by the connector. Its success doesn't establish that every group, account type, script or password operation will work.
 
-A **connection test** executes the checks implemented by the connector. Read its result in that scope. Don't turn a green test into proof that every group, account type, script, and password operation will succeed.
-
-For an incident, match evidence to the boundary:
+Match the evidence to the unresolved boundary:
 
 | Evidence | What it helps establish | What it doesn't establish alone |
 |---|---|---|
 | Actual VA and source association | Which connector environment handles the work | Successful IQService or target interaction |
-| Endpoint, port, and TLS error | Which connection failed and at what reported boundary | That the recipient's credentials are wrong |
-| IQService registration or Windows authentication error | Whether the incoming client was admitted | Correct target-management privileges |
-| IQService operation detail and target audit evidence | Which target action was attempted under which context | That every other step or script succeeded |
-| ISC provisioning activity | The tracked source, recipient, action, progress, result, and available errors | A continuously current view of target membership |
-| Directory membership checked on the intended target | Whether the assignment exists when observed | That ISC's collected account view is already refreshed |
+| Endpoint, port and TLS error | Reported connection and trust failure | Wrong recipient credentials |
+| Client-registration or Windows-authentication error | Whether the incoming client was admitted | Correct target-management privilege |
+| IQService detail and target audit | Target action and credential context involved | Success of every other step or script |
+| ISC provisioning activity | Tracked source, recipient, action, progress, result and errors | Continuously current target membership |
+| Intended directory membership checked | Assignment exists at the observed target/time | ISC's collected account view is already refreshed |
 
-Keep the operation's timestamp and target context with the evidence. A successful check from before a certificate change doesn't establish current behavior. A check from an administrator's laptop isn't a test from the VA.
+Preserve timestamps and target context. A check before a certificate change doesn't establish the current connection. A laptop check isn't a test from the actual VA.
 
-Logs can contain account information or sensitive operational data. Collect the relevant error and context without exposing passwords, private keys, or unrestricted trace files.
+Collect relevant logs without exposing passwords, private keys or unrestricted trace files. Even a log without a password can contain sensitive account or operational information.
 
-## When a script is part of the design
+## A script adds another execution dependency
 
-A **native before/after script** is connector-side customization executed through the supported IQService mechanism around applicable provisioning work. A before script can prepare or adjust work; an after script can perform defined follow-up actions.
+A **native before/after script** is connector-side customization run through supported IQService mechanisms around applicable provisioning work. The connector sends the configured script to IQService for that execution. A before script can prepare or adjust work; an after script can perform defined follow-up actions.
 
-A script can also change applicable request or result information. Its configured behavior is therefore part of the operation you need to understand, not a harmless label attached to it.
+Under the supported scripting interface, a script can also modify applicable request or result information. Here, the connector request means the account-operation instructions, not the person's original access-request review.
 
-Neither is automatically needed for an ordinary account or group operation. The example's group assignment uses no custom script.
+A **handler** is the IQService capability supporting a category of requests. A running service doesn't establish that every handler is enabled.
 
-If a deployment does use one, it has additional dependencies: the required IQService capability must be enabled, the approved script and supporting files must be available, and its execution account must have the required authority.
+The current IQService configuration disables `ScriptExecutor`, the native before/after provisioning script capability, by default. Related functionality requires TLS and explicit enablement. Enable the capability justified by the design rather than every available handler.
 
-A **handler** is the part of IQService that supports a particular category of requests. IQService can be running while an operation-specific handler is disabled.
+The main group assignment needs no custom script. If another design uses one, check its enabled capability, approved script and supporting files, execution context and required authority.
 
-Current IQService documentation disables `ScriptExecutor`, the handler for native before/after provisioning scripts, by default. Related script functionality requires TLS and explicit enablement of that capability. Enabling every handler isn't an appropriate response to a failed request.
+**PowerShell** is a Windows automation environment used by applicable scripts and operations. Depending on the supported arrangement, scripts can use the IQService service logon context when the source account isn't used. Check the actual script context rather than assuming all IQService work runs as one account.
 
-Also, “after” doesn't mean “only after success.” IQService's documented after-provisioning rule behavior can execute regardless of the provisioning result. A message produced by an after script therefore doesn't prove the primary target change succeeded.
+Also, “after” doesn't mean “only after success.” A configured after script can execute even when the primary provisioning operation fails. A follow-up message is evidence about the script, not proof that the directory membership was applied.
 
-Examine the primary operation result and the script's result separately. If a workflow has multiple effects, don't assume a failure rolls back everything already done.
+Inspect primary operation results, script results and actual target effects separately. Multiple effects don't create a universal guarantee that failure rolls everything back.
 
-## Who keeps this component healthy?
+## Who maintains IQService?
 
-Your organization hosts the Windows server and maintains the required operating environment, accounts, connectivity, certificates, and operational controls.
+Your organization hosts the Windows server and maintains the operating environment, accounts, connectivity, certificates and operational controls.
 
-SailPoint supplies IQService software and its supported update mechanism. IQService has an automatic-update capability, but the required **UpdateService**, a companion service used for software updates, must be configured for the supported arrangement.
+SailPoint supplies IQService software and its supported update mechanism. **UpdateService** is the companion service used for supported IQService software updates. Automatic updating requires the supported arrangement to be configured; it isn't universal for every deployment.
 
-For the documented VA-based update path, the VA obtains the update package and the IQService/UpdateService arrangement applies it. IQService doesn't require a separate internet path merely to download that package in this arrangement.
+In the documented VA-based update path, the VA downloads the update package and passes it through IQService to UpdateService for application. A separate direct internet download path from the Windows host isn't required for that arrangement.
 
-Don't translate that into “Windows services update themselves without preparation.” Applicable deployment support, update configuration, credentials, certificate access, backups, and change validation still need attention. Supported versions and platform requirements must be checked against current documentation, not remembered from an old installation.
+Configuration, supported deployment/version, credentials, certificate/key access, backups and change validation still need attention. Use current requirements rather than an old installation's remembered settings.
 
-A **shared dependency** is a component on which multiple operations or sources rely. One IQService instance can serve more than one source, but that also creates a common failure and maintenance boundary.
+A **shared dependency** is a component on which more than one source or operation relies. One IQService instance can serve multiple sources, creating a common maintenance and failure boundary.
 
-Two VAs don't remove a single shared IQService dependency. In this example, both members ultimately call the same Windows endpoint. If it stops, another healthy VA doesn't supply an alternative IQService instance by itself.
+Both example VAs call the same `iqservice.corp.example` endpoint. If that service stops, another healthy VA doesn't provide an alternative IQService instance.
 
-Redundancy for the Windows-side service needs its own supported design, including consistent configuration and security. It isn't created simply by adding a second appliance to the VA cluster.
+Windows-side continuity needs its own supported availability design and consistent configuration/security. Adding another VA alone doesn't create it.
 
-## Narrow the fault before changing anything
+## Let the error guide the correction
 
-If the error says IQService couldn't be reached, establish the actual hostname, port, listener, and relevant network path.
+An unreachable-service error calls for the actual host, port, listener and relevant network path. Certificate rejection calls for identity, validity, trust and required key access at that endpoint.
 
-If it identifies certificate rejection, investigate server identity, validity, trust, and required private-key access at the relevant endpoint.
+A registration or Windows-authentication error calls for the client identity and the account condition described by the evidence. A target denial after admission calls for the actual target-management context and authority over the intended object.
 
-If it says the client isn't registered or Windows authentication failed, inspect the IQService client identity and the registration or account condition identified by the error.
+These are different evidence-based investigations, not a prescribed sequence of random tests.
 
-If the target rejects the group change after the request is admitted, examine the actual target-management account and authority over the intended object.
+**Least privilege** means giving each role the authority needed for its approved work. It doesn't justify omitting required local service permissions, and it doesn't mean granting broad directory administration to repair a certificate mismatch.
 
-These aren't guaranteed error stages or a required sequence of random tests. They're different explanations supported by different evidence.
+Likewise, the recipient password doesn't repair an unrelated integration-client lockout.
 
-An engineer shouldn't grant broad directory administration to repair a certificate mismatch. Nor should they reset Devi's password because an unrelated integration client is locked.
+Restarting can interrupt other work; reinstalling can alter configuration or lose useful evidence. Establish the failed dependency, affected scope and authorized correction before selecting an operational action.
 
-Use the documented permissions for the connector, operation, and service arrangement. **Least privilege** means giving each role the authority needed for its approved work. It doesn't mean inventing a permission model that omits required local service or connector privileges.
+## Work through the separate cases
 
-Restarting the service can interrupt other work. Reinstalling it can change configuration or remove useful evidence. Neither is a substitute for identifying the failed dependency and the scope of the intended correction.
+### 1. The basic read succeeds
 
-## Work through these separate cases
+Engineering Directory collects basic fields, but a change requiring IQService cannot connect to its endpoint. Someone concludes IQService is unnecessary because the accounts are visible.
 
-### 1. The account read succeeded
+Does that conclusion follow?
 
-Engineering Directory collects basic account fields successfully. An access change requiring IQService fails to connect to its configured endpoint. A colleague concludes IQService isn't necessary because accounts are visible in ISC.
+**Worked reasoning:** The read establishes its own path and fields. Active Directory provisioning and certain reads require IQService. Inspect the failed operation and endpoint evidence rather than treating a narrower successful read or stored account view as complete connector health.
 
-Does the read establish that conclusion?
+### 2. The endpoint certificate has expired
 
-**Worked reasoning:** No. The supplied read covers its own path and fields. The Active Directory connector uses IQService for provisioning and particular reads. Inspect the actual failed operation and endpoint evidence; don't infer complete connector health from a visible account record or a narrower successful read.
+Both VAs can communicate with ISC. The supplied provisioning error identifies rejection of the IQService endpoint's expired certificate, before admission for execution. The intended membership remains absent.
 
-### 2. The endpoint presents an expired certificate
+Which boundary failed, and what needs verification after correction?
 
-The VA records the expired-certificate rejection from the main incident. No request is admitted for target execution through that connection, and the target membership is absent. Someone proposes disabling TLS until the access change completes.
+**Worked reasoning:** Correct the intended endpoint's certificate/trust arrangement through the approved process, retaining required TLS and client authentication. Recipient password changes or broader directory authority don't repair the reported failure. Recover the affected work and verify its result and target membership. This supplied rejection is before execution; don't generalize that conclusion to every timeout.
 
-What should change instead?
+### 3. Windows knows the user, but IQService doesn't
 
-**Worked reasoning:** Correct the certificate and supported trust configuration through the approved process while retaining TLS and client authentication. The error identifies trust failure, not insufficient directory administration. After validating the repaired connection, recover the affected operation and verify the intended target result. The supplied failure occurred before execution through this connection; that isn't a universal conclusion for every timeout or TLS-related incident.
+TLS succeeds. The error explicitly identifies `CORP\svc-iq-client` as unregistered with IQService. The Windows account exists and is enabled; no target work is admitted.
 
-### 3. Windows knows the account, but IQService doesn't
+Would extra rights for `CORP\svc-ad` solve this?
 
-In a different attempt, TLS succeeds. The error explicitly says `CORP\svc-iq-client` isn't registered with IQService. The account exists in Windows and is enabled. No target operation is admitted.
+**Worked reasoning:** Windows account existence doesn't complete IQService registration. Check the approved client registration and source credentials. Directory authority might matter after admission, but expanding it doesn't address this stated failure.
 
-Would adding directory privileges to `CORP\svc-ad-isc` fix the stated problem?
+### 4. Admission succeeds, but the group update is denied
 
-**Worked reasoning:** No. Windows account existence doesn't complete IQService registration. Correct the approved client-registration and source-credential configuration, preserving the distinction between the client user and the target-management account. Target privileges may matter later, but the supplied failure is at request admission.
+TLS and client authentication succeed. The target audit identifies `CORP\svc-ad` and denies its membership update on `ENG-Docs-Readers`. IQService runs under `CORP\svc-iq-run`.
 
-### 4. The request is admitted, but the group change is denied
+Which account's directory authority does the audit identify?
 
-In a separate attempt, TLS and client authentication succeed. The target audit identifies `CORP\svc-ad-isc` and denies the requested membership change on `ENG-Docs-Readers`. The IQService process runs under `CORP\svc-iq-run`.
+**Worked reasoning:** The supplied audit identifies the source's target-management account. Investigate its authority over the intended group and the source credential context. Changing the client user or process logon doesn't automatically correct that denial. Validate the scoped correction with the directory owner, then recover and verify the change.
 
-Which account's target authority does the evidence identify?
+### 5. The after script reports follow-up completion
 
-**Worked reasoning:** The supplied target audit identifies `CORP\svc-ad-isc`. Investigate its required authority over the intended group and the source's target credential context. Changing the Windows process account or IQService client user doesn't automatically repair that denial. Validate the scoped correction with the directory owner, then recover and verify the change.
+A configured after script writes “follow-up completed.” The primary provisioning result reports failure, and the directory confirms the membership is absent.
 
-### 5. The after script wrote a success-looking message
+Does the message establish successful provisioning?
 
-A separate configured after script writes “follow-up completed.” The primary provisioning result reports failure, and the directory confirms the intended membership is absent.
+**Worked reasoning:** After-provisioning execution is not restricted to primary success. Compare the primary result, script effects and directory state. The message doesn't establish the group assignment, cancel the failed result or prove rollback of other effects.
 
-Did the script message establish successful provisioning?
+### 6. Two healthy VAs share one stopped service
 
-**Worked reasoning:** No. The documented after-provisioning behavior doesn't restrict execution to successful provisioning. The message is evidence about that script's activity, not the directory assignment. Inspect the primary result, actual script effects, and target state separately. Don't assume that one result cancels or rolls back other effects.
+Both VAs are Connected. Their configured IQService endpoint is stopped for Windows maintenance. Two source owners report failed operations using it.
 
-### 6. Both VAs are healthy during Windows maintenance
+Why doesn't the second VA keep those operations working?
 
-Both VAs are Connected. The source still points to the one IQService endpoint, which has been stopped for planned maintenance. Two source owners report failures in operations using that service.
+**Worked reasoning:** Both appliances still depend on the same unavailable service. Identify affected sources and work, follow the supported maintenance/recovery plan and verify outcomes after restoration. Required continuity needs a Windows-side availability design; VA redundancy alone doesn't provide it.
 
-Why didn't the second VA prevent the interruption?
+## Apply the reasoning to a read operation
 
-**Worked reasoning:** The appliances share the same unavailable downstream component. VA redundancy doesn't supply IQService redundancy. Identify affected sources and operations, follow the maintenance and supported recovery plan, and verify outcomes when service is restored. If continuity is required, it needs a separately validated Windows-side availability design.
+A different connector's documentation requires IQService for a particular account-data read. A reviewer dismisses the requirement because “IQService is only for writes.”
 
-## Try the reasoning with a different connector
+After installation, Windows reports the service as Running, but the required handler is disabled. No completed read is supplied.
 
-A new source's connector documentation says it uses IQService for a particular account-data read. A design reviewer rejects that requirement because “IQService is only for writes.”
+Explain both mistakes and the evidence needed.
 
-The team installs IQService anyway. Windows reports it as Running, but the required handler is disabled. No completed read is supplied.
+**Worked reasoning:** Follow the connector's operation, field and feature requirements. A read can require supported Windows-side work; its label doesn't exclude IQService.
 
-Explain both mistakes and what evidence you would ask for.
+A running process also doesn't establish an enabled, usable capability. Check the required handler and security prerequisites, selected endpoint, admitted request and actual read outcome. Enable only the capabilities justified by the approved design.
 
-**Worked reasoning:** First, the operation-specific connector requirement decides whether IQService participates. The label “read” doesn't exclude it. Establish which fields and features are required and which supported path supplies them.
-
-Second, a Running process isn't proof that the requested capability is enabled or usable. Check the required handler and its security prerequisites, the configured endpoint, the admitted request, and the actual read outcome. Enable only the capabilities justified by the approved design.
-
-You could describe IQService's role this way: “For this operation, the connector needs supported Windows-side work. The VA carries the integration work to IQService; IQService performs its part against the target. Each connection, credential, and target permission still has to be correct.”
+Explain the connection to another engineer: the VA performs its connector work, IQService performs the required Windows-side part, and the target still applies its own authority checks. The connections, credentials and actual outcome each need evidence.

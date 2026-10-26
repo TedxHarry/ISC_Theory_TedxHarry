@@ -2,6 +2,8 @@
 
 These records support author review and source maintenance. They are not learner lesson content and must stay outside learner-facing exports.
 
+Publication update, October 26 batch 2: revised publication now includes ARC-002 through ARC-008 and SRC-001/002, in addition to the earlier fourteen revised lessons. See [current publication verification](PUBLICATION_2026-10-26_BATCH_2.md). Earlier local-only and prior published-version statements describe their authoring/review stage.
+
 ## Record maintenance
 
 Keep official sources mapped to lesson sections or claims, together with the revision reviewed, documentation-check date, limitations, and review status. A saved citation is not evidence of fresh verification. Update these records when technical content is checked or changed.
@@ -66,6 +68,8 @@ Diagram source for revision 1.3: [editable inline request flow](../assets/SYS-00
 The full questions and worked answers are in the learner lesson. These author fields are assessment metadata, not required inline labels.
 
 ## FND-001
+
+Publication update, October 26: revision 2.0 is included in the verified [published snapshot](PUBLICATION_2026-10-26.md). Local-only and prior published-version statements below describe the earlier author-review stage.
 
 - Current learner source: [FND-001](../lessons/FND-001_Identity_and_Account.md), revision 2.0, October 25, 2026, under teaching specification 3.1, saved locally only.
 - Current coverage comparison, thirteen primary sources, assessment/explanation review and executed checks: [FND-001 concept-led revision record](revisions/FND-001_Concept_Led_Revision_Record.md).
@@ -475,6 +479,8 @@ The feedback's proposed restoration of learner citations conflicts with the curr
 
 ## FND-002
 
+Publication update, October 26: revision 2.0 is included in the verified [published snapshot](PUBLICATION_2026-10-26.md). Local-only and prior published-version statements below describe the earlier author-review stage.
+
 - Current learner source: [FND-002](../lessons/FND-002_Sources_Connectors_and_Connected_Systems.md), revision 2.0, October 25, 2026, under teaching specification 3.1, saved locally only.
 - Current coverage comparison, thirteen primary references, assessment/explanation review and executed checks: [FND-002 concept-led revision record](revisions/FND-002_Concept_Led_Revision_Record.md).
 - Current diagram: [collection and authorized changes](../assets/FND-002_collection_and_authorized_changes.txt), embedded verbatim. The historical read/write map is retained unchanged.
@@ -541,6 +547,8 @@ Local validation checks source equality, IDs, headings, links, and complete work
 Worked answers and supplied facts remain in the learner lesson. The metadata above stays outside the reading site.
 
 ## FND-003
+
+Publication update, October 26: revision 2.0 is included in the verified [published snapshot](PUBLICATION_2026-10-26.md). Local-only and prior published-version statements below describe the earlier author-review stage.
 
 - Current learner revision: 2.0, saved locally October 25, 2026 under teaching specification v3.1.
 - Current coverage, thirteen primary sources, assumptions, assessments and checks: [FND-003 revision 2.0 record](revisions/FND-003_Concept_Led_Revision_Record.md).
@@ -611,6 +619,8 @@ Worked answers and supplied facts remain in the learner lesson. The metadata abo
 Questions and worked answers remain in the learner lesson. Assessment metadata and official links remain outside the reading site.
 
 ## FND-004
+
+Publication update, October 26: revision 2.0 is included in the verified [published snapshot](PUBLICATION_2026-10-26.md). Local-only and prior published-version statements below describe the earlier author-review stage.
 
 - Current learner revision: 2.0, saved locally October 25, 2026 under teaching specification v3.1.
 - Current coverage, thirteen primary references, assumptions, assessments and verification: [FND-004 revision 2.0 record](revisions/FND-004_Concept_Led_Revision_Record.md).
@@ -688,6 +698,8 @@ Learner facts and worked answers stay in the lesson. Assessment intent, limitati
 
 ## FND-005
 
+Publication update, October 26: revision 2.0 is included in the verified [published snapshot](PUBLICATION_2026-10-26.md). Local-only and prior published-version statements below describe the earlier author-review stage.
+
 - Current learner revision: 2.0, saved locally October 25, 2026 under teaching specification v3.1.
 - Current coverage, fourteen primary references, conditions, assessments and verification: [FND-005 revision 2.0 record](revisions/FND-005_Concept_Led_Revision_Record.md).
 - Current diagrams: [business grouping/source](../assets/FND-005_business_grouping_and_directory_source.txt) and [request/change/sign-in](../assets/FND-005_request_change_and_separate_sign_in.txt).
@@ -761,6 +773,8 @@ Questions and worked answers stay in the learner lesson. Source references, limi
 
 ## FND-006
 
+Publication update, October 26: revision 2.0 is included in the verified [published snapshot](PUBLICATION_2026-10-26.md). Local-only and prior published-version statements below describe the earlier author-review stage.
+
 - Current learner revision: 2.0, saved locally October 26, 2026 under teaching specification v3.1.
 - Current coverage, fifteen primary references, assumptions, assessments and checks: [FND-006 revision 2.0 record](revisions/FND-006_Concept_Led_Revision_Record.md).
 - Current diagrams: [account/source/identity](../assets/FND-006_account_record_source_and_identity.txt) and [definition/membership references](../assets/FND-006_definition_and_membership_references.txt).
@@ -830,6 +844,8 @@ Questions and worked answers stay in the learner lesson. Source references, limi
 Questions and worked reasoning remain in the learner file. Reference evidence, test intent, and review limitations remain outside it.
 
 ## FND-007
+
+Publication update, October 26: revision 2.0 is included in the verified [published snapshot](PUBLICATION_2026-10-26.md). Local-only and prior published-version statements below describe the earlier author-review stage.
 
 - Current learner revision: **2.0**, revised October 26, 2026 under teaching specification v3.1.
 - Current [coverage, fifteen primary references, assumptions, assessments and verification record](revisions/FND-007_Concept_Led_Revision_Record.md).
@@ -905,6 +921,8 @@ The following preserved record describes the earlier version and its original ex
 Questions and worked reasoning stay in the learner file. Source references, assessment intent, and review limitations stay outside it.
 
 ## ARC-001
+
+Publication update, October 26: revision 2.0 is included in the verified [published snapshot](PUBLICATION_2026-10-26.md). Local-only and prior published-version statements below describe the earlier author-review stage.
 
 - Current learner revision: **2.0**, revised October 26, 2026 under teaching specification v3.1.
 - Current [coverage, twenty first-party references, conditions, assessment and verification record](revisions/ARC-001_Concept_Led_Revision_Record.md).
@@ -985,6 +1003,18 @@ Questions and worked reasoning remain in the learner file. Reference evidence, a
 
 ## ARC-006: UI, APIs, automation, and platform capabilities
 
+- Current [lesson](../lessons/ARC-006_UI_APIs_Automation_and_Platform_Capabilities.md): revision 2.0, Module 3.6; teaching specification 3.1.
+- Documentation checked: October 26, 2026. The [revision record](revisions/ARC-006_Concept_Led_Revision_Record.md) maps 95 coverage purposes and 23 primary references, with scope, assumptions, assessment reasoning and verification.
+- Author review: complete conditional request/review/delivery before deeper input/authority/tracking; description-only configuration scope; API contracts and token/user authority; actual connector responsibility; Workflow event filter, data input, executed choice, action and scoped success. No private architecture or tool-based bypass inferred.
+- Preserved: five original cases with worked reasoning, training-application scheduler transfer and separate API/target caller contexts. Added concrete Operations-to-Finance normal notification path with unrelated-attribute and Marketing alternatives.
+- Neutral values: reports-reader, report.read, Reports-Production, Read reports and svc-reports. No employee biography, company brand, runnable object IDs or credentials. All operation/event/target evidence is hypothetical.
+- Current diagrams: [request entry, processing and delivery](../assets/ARC-006_request_entry_processing_and_delivery.txt) and [event filter, execution and choice](../assets/ARC-006_event_filter_execution_and_choice.txt); widths 37 and 41. Historical assets are retained.
+- Tenant execution: none. Actual beginner validation, full graphical publication review and formal approval remain pending; author checks do not establish comprehension.
+- Publication update: revision 2.0 is included in the authorized October 26 batch 2. See [current deployment verification](PUBLICATION_2026-10-26_BATCH_2.md). Earlier publication/local-only statements below describe the review stage.
+- Revision 1.0 remains recoverable at that commit. Historical verification below is preserved context, not current review status.
+
+### Historical verification record: revision 1.0
+
 - Revision: 1.0. Course placement: Module 3.6.
 - Documentation checked: October 20, 2026. Current access-request submission contract, API authentication/authorization/version strategy, access-profile update behavior, Workflow concepts/triggers/actions/operators/history, and request/provisioning evidence reviewed.
 - Author review: completed against teaching specification v2.6 for the stated scope; no unresolved author content issue identified.
@@ -992,7 +1022,7 @@ Questions and worked reasoning remain in the learner file. Reference evidence, a
 - Learner validation and formal publication approval: pending. Working-edition deployment is separate.
 - Scope: conceptual UI/API/automation entry points, operation-specific meaning, authority, asynchronous evidence, connector continuity and Workflow logic. No executable integration recipe, real credential, private backend topology, or universal action/approval behavior is supplied.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -1010,7 +1040,7 @@ Questions and worked reasoning remain in the learner file. Reference evidence, a
 | [Monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html) | Request/operation evidence versus target-state confirmation. Accepted submission, approval, tracked delivery and actual external permission remain separate observations. No instant refresh, guaranteed retry, rollback or timeout-equals-no-effect promise. |
 | [Account correlation](https://documentation.sailpoint.com/saas/help/accounts/correlation.html), [account loading](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html), [sources](https://documentation.sailpoint.com/saas/help/sources/index.html) and [SaaS connectivity](https://developer.sailpoint.com/docs/connectivity/saas-connectivity/) | Supporting definitions/path boundaries retain same-day checks recorded in earlier lessons: account/person association, collected information, source/connector roles, hosted SaaS connector execution versus VA-based work. No claim that all connectors support automatic delivery. |
 
-### Conditions and limits
+#### Conditions and limits
 
 - Devi's identity I-36, profile AP-36 and request AR-36 are different non-runnable stand-ins. Employee 36006 and external username report-36006 are not interchangeable with those references. No credential value is supplied.
 - ReportHub Production has one intended, existing, correctly correlated eligible account. Read quality reports contains only report.read, which grants reading under the fictional target model. Requestability, applicable checks, configured approval and supported automatic delivery without account creation/custom scripts are explicit assumptions.
@@ -1026,14 +1056,14 @@ Questions and worked reasoning remain in the learner file. Reference evidence, a
 - Credential ownership, rotation, least privilege and failure handling are design requirements, not an executable authentication/runbook recipe. No exact token lifetime, rate limit, API page size, retention period or duplicate-protection guarantee is asserted.
 - Current service documentation and supported versions govern real integrations; public does not mean anonymous. Product branding/packaging can change without making the course a license guarantee.
 
-### Diagrams and review checks
+#### Diagrams and review checks
 
 - [Entry points and delivery](../assets/ARC-006_entry_points_and_delivery.txt): alternative UI/API request entry, applicable checks, configured approval/delivery, connector work and successful target effect.
 - [Workflow trigger and choice](../assets/ARC-006_workflow_trigger_and_choice.txt): trigger filter before execution versus internal notification decision after execution begins.
 - Both assets match the inline blocks exactly; maximum line widths are 46 and 46 characters. Nearby text explains conditions, arrow scope, omitted implementation detail and lack of guaranteed success.
 - Local/live checks separately verify complete content, diagram text, tables, placement and navigation; visual checks assess rendered readability, not learner comprehension or actual tenant outcomes.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Exercise | Understanding tested | Expected reasoning / acceptable alternatives | Misconception exposed | Source anchor |
 |---|---|---|---|---|
@@ -1049,6 +1079,19 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## ARC-007: ISC sign-in, identity providers, and source passwords
 
+- Current [lesson](../lessons/ARC-007_Signing_Into_ISC_Identity_Providers_and_Source_Passwords.md): revision 2.0, Module 3.7; teaching specification 3.1.
+- Documentation checked: October 26, 2026. The [revision record](revisions/ARC-007_Concept_Led_Revision_Record.md) reconciles 103 coverage purposes and 23 primary references, conditions, assessments and verification.
+- Author review: normal SAML sign-in before trust/mapping variation, separate supported directory check, then complete standalone source-password operation. Account correlation, authoritative/authentication sources, MFA/recovery ownership, shared-source/group effects and session evidence retain distinct purposes.
+- Preserved: seven original investigations with worked reasoning and purchasing-application transfer. Necessary source/account support, policy, verification and target-actor assumptions remain explicit.
+- Neutral values: support-user, directory-user, Support-Production, svc-support and reserved person@corp.example/person@old.example mapping comparison. No employee/company biography, runnable credentials or actual authentication/password outcomes.
+- Current diagrams: [browser, IdP and ISC session](../assets/ARC-007_browser_idp_and_isc_session.txt), [directory credential check and session](../assets/ARC-007_directory_credential_check_and_session.txt) and [password operation and target result](../assets/ARC-007_password_operation_and_target_result.txt); widths 38, 38 and 39. Historical assets remain preserved.
+- Specific current checks include normal SSO precedence, PTA first-encountered account, elevated registration/direct TOTP distinction, identity reset not clearing MFA, flat-file incompatibility, PTA group-failure gate versus non-PTA partial outcomes, disabled-account reset restriction, browser retention and lack of ISC SAML SLO.
+- No tenant/sign-in/password/MFA/token/policy/session/connector/target operation was performed. Actual beginner validation, full graphical publication review and formal approval remain pending.
+- Publication update: revision 2.0 is included in the authorized October 26 batch 2. See [current deployment verification](PUBLICATION_2026-10-26_BATCH_2.md). Earlier publication/local-only statements below describe the review stage.
+- Baseline revision 1.0 remains recoverable at that commit. Historical verification below is preserved context, not current review status.
+
+### Historical verification record: revision 1.0
+
 - Revision: 1.0. Course placement: Module 3.7.
 - Documentation checked: October 20, 2026. Current official identity-profile sign-in settings, PTA, SAML SP/JIT, MFA, password policy/reset/application/sync behavior and session/lockout boundaries reviewed.
 - Author review: completed against teaching specification v2.6 for the stated scope; no unresolved author content issue identified.
@@ -1056,7 +1099,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 - Learner validation and formal publication approval: pending. Working-edition deployment is separate.
 - Scope: authentication and credential-change execution boundaries, not a SAML implementation/security runbook, advanced password-management deployment, IdP product tutorial, authenticator-reset procedure or authority to change real credentials.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -1075,7 +1118,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 | [Lockout settings](https://documentation.sailpoint.com/saas/help/setup/lockout.html) | Supporting sign-in failure/lockout distinctions and interaction with authentication/recovery settings. No lockout threshold or advice to repeat guesses is supplied. |
 | [Sources](https://documentation.sailpoint.com/saas/help/sources/index.html), [account correlation](https://documentation.sailpoint.com/saas/help/accounts/correlation.html), [loading accounts](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html), [user levels](https://documentation.sailpoint.com/saas/help/common/users/user_levels.html) and [provisioning evidence](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html) | Supporting concepts retain same-day verification in earlier lessons. Correlation is ownership association, not sign-in mapping or shared credentials; collection is not live password proof; sign-in does not grant administration; integration result must be scoped to the intended account/operation. |
 
-### Conditions and limits
+#### Conditions and limits
 
 - Devi is independently established as a support-operations employee, number 37007. Workforce HR account hr-37007, directory account corp-37007, AccessGate user devi37007, ISC username devi37007 and CaseDesk account cases-37007 are distinct records even where labels coincide.
 - Main setup supplies existing correctly associated accounts, configured trusted SAML sign-in through AccessGate and a matching ISC user. JIT creation is disabled. CaseDesk uses its own password and is outside shared-password/sync relationships.
@@ -1094,7 +1137,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 - ISC's lack of SAML SLO is not a claim about every IdP or application's logout implementation. Session settings and browser retention remain service-specific. Emergency access is approved, controlled elevated-user access, not a universal employee bypass.
 - Official documentation currently uses Identity Services / Human Fabric branding. ISC is retained as the requested course name; feature availability and packaging must still be verified for a real tenant.
 
-### Diagrams and review checks
+#### Diagrams and review checks
 
 - [Federated sign-in](../assets/ARC-007_federated_sign_in.txt): browser/IdP response, ISC trust/mapping acceptance and resulting ISC session; not target-password delivery.
 - [Directory sign-in](../assets/ARC-007_directory_sign_in.txt): supplied source credentials checked through the configured integration, source result and remaining applicable checks; not SAML federation.
@@ -1102,7 +1145,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 - Assets match inline blocks exactly; maximum line widths are 39, 44 and 43 characters. Captions explain successful-example conditions, omitted processing detail and failure scope.
 - Local and live publication checks separately verify full text, headings, tables, diagrams, placement and navigation. Rendered readability is not observed learner comprehension or tenant execution.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Exercise | Understanding tested | Expected reasoning / acceptable alternatives | Misconception exposed | Source anchor |
 |---|---|---|---|---|
@@ -1120,6 +1163,19 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## ARC-008: Requesting, executing, and observing work
 
+- Current [lesson](../lessons/ARC-008_Requesting_Executing_and_Observing_Work.md): revision 2.0, Module 3.8; teaching specification 3.1.
+- Documentation checked: October 26, 2026. The [revision record](revisions/ARC-008_Concept_Led_Revision_Record.md) reconciles 104 purposes and 17 primary references with conditions, assessments and verification.
+- Author review: intended account/access and complete normal mechanism precede the partial UTC trace. Acceptance, review, account work, effect, collected state and business use retain distinct evidence; recovery uses current authorization and preserves completed effects/history.
+- Preserved: all six original diagnostic cases, all meaningful baseline/partial/recovery timestamps, manual/ticket alternatives, query/indexing/single-account limitations and payroll-design transfer.
+- Neutral values: stock-user, svc-stock, Stock-Production, stock.read/stock.export and Read and export stock. Employee/company narrative and opaque profile/request/activity stand-ins removed without losing their separate reference purposes. All operation evidence is hypothetical.
+- Current diagrams: [request, decision, delivery and verification](../assets/ARC-008_request_decision_delivery_and_verification.txt), [required effects and partial result](../assets/ARC-008_required_effects_and_partial_result.txt) and [target change and account observation](../assets/ARC-008_target_change_and_account_observation.txt); widths 39, 41 and 36. Historical assets remain preserved.
+- Specific source checks include current asynchronous submission/duplicates/ignored status entries, request and account evidence, account-page single-account action scope, Search timing, recognized retry errors and generic ticket-status completion mapping. No fixed timing or universal recovery rule is invented.
+- No tenant/API/request/approval/account/collection/privilege/ticket/target operation occurred. Beginner validation, full graphical publication review and formal approval remain pending.
+- Publication update: revision 2.0 is included in the authorized October 26 batch 2. See [current deployment verification](PUBLICATION_2026-10-26_BATCH_2.md). Earlier publication/local-only statements below describe the review stage.
+- Baseline revision 1.0 remains recoverable at that commit. Historical verification below is preserved context, not current review status.
+
+### Historical verification record: revision 1.0
+
 - Revision: 1.0. Course placement: Module 3.8.
 - Documentation checked: October 20, 2026. Current request submission/status/tracking, provisioning/account-activity/manual fulfillment, collection scope/indexing and service-desk mapping reviewed; idempotency terminology checked against RFC 9110.
 - Author review: completed against teaching specification v2.6 for the stated scope; no unresolved author content issue identified.
@@ -1127,7 +1183,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 - Learner validation and formal publication approval: pending. Working-edition deployment is separate.
 - Scope: architectural and evidential completion boundaries, not a full access-request configuration, provisioning engine implementation, private queue model, retry runbook, incident remediation authority or universal status-enum mapping.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -1143,7 +1199,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 | [RFC 9110, section 9.2.2](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2) | Supporting idempotency definition: repeated equivalent intended effect rather than identical responses/no logging or universal safe retry. Applied as a reasoning distinction, not a claim that every ISC POST/connector action is idempotent. |
 | [Sources](https://documentation.sailpoint.com/saas/help/sources/index.html), [SaaS runtime](https://developer.sailpoint.com/docs/connectivity/saas-connectivity/), [VAs](https://documentation.sailpoint.com/saas/help/va/index.html), [access profiles](https://documentation.sailpoint.com/saas/help/access/access-profiles.html) and [correlation](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) | Supporting definitions retain same-day checks recorded in preceding lessons. Hypothetical hosted StockRoom connector, one-source bundle, account association and target authority are supplied conditions. IQService is conditional supported Windows-side work, as verified in ARC-004, not an assumed part of this SaaS path. |
 
-### Conditions and limits
+#### Conditions and limits
 
 - Devi is independently established as a warehouse stock planner, employee 38008. Her existing stock-38008 account is correctly associated and eligible for the main request. No account creation, future date, custom script or manual fulfillment dependency is assumed in that case.
 - StockRoom Production is the ISC source label; the intended external production destination and account must also match. svc-stock-isc is the external integration actor, not the recipient, reviewer or API caller.
@@ -1161,7 +1217,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 - Authorized target inspection and business testing are fictional supplied evidence, not actions performed by the author. No real request, access change, source repair, aggregation, ticket creation, client execution or credential handling occurred.
 - Current official documentation uses Identity Services / Human Fabric naming. ISC remains the requested course title. Licensing, feature visibility, connector capability and supported versions must still be checked for a real project.
 
-### Diagrams and review checks
+#### Diagrams and review checks
 
 - [Request to verification](../assets/ARC-008_request_to_verification.txt): request/check/review/delivery/target relationship ending in explicitly human outcome inspection.
 - [Partial target outcome](../assets/ARC-008_partial_target_outcome.txt): two required permission effects and supplied partial result, not simultaneous calls or separate approvals.
@@ -1169,7 +1225,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 - All three assets match inline blocks exactly. Maximum line widths are 38, 43 and 41 characters. Captions identify assumptions, actor/direction, omitted internals and non-guaranteed success.
 - Local and live checks separately verify complete text, headings, tables, diagrams, placement and navigation. Rendered readability is not beginner comprehension or observed tenant execution.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Exercise | Understanding tested | Expected reasoning / acceptable alternatives | Misconception exposed | Source anchor |
 |---|---|---|---|---|
@@ -1186,6 +1242,19 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## SRC-001: Source purpose and represented population
 
+- Current [lesson](../lessons/SRC-001_The_Purpose_of_a_Source_and_Its_Population.md): revision 2.0, Module 4.1; teaching specification 3.1.
+- Documentation checked: October 26, 2026. The [revision record](revisions/SRC-001_Concept_Led_Revision_Record.md) reconciles 107 purposes and 14 primary references with conditions, assessment intent and verification.
+- Author review: external context and intended set precede a complete conditional read/representation/ownership/UI flow; supplied East-only failure then separates intended/readable/selected/acquired sets. Account/person counts, row/access-data coverage, source role and read/write authority retain their purposes.
+- Preserved: 120 total/110 included/100 people/70 East/40 West inventory, both West account records, separately accountable service accounts, approved inclusive correction, six original cases and payroll-export design transfer.
+- Neutral values: Warehouse-Prod/Warehouse-Test, Warehouse Production, warehouse-user/warehouse-admin, svc-warehouse and shared workerRef W-17. Employee/company biography and source-ID stand-ins removed without losing context or record identity distinctions.
+- Current diagrams: [external environments and source records](../assets/SRC-001_external_environments_and_source_records.txt) and [agreed accounts and selected read](../assets/SRC-001_agreed_accounts_and_selected_read.txt); widths 37 and 40. Historical assets remain preserved.
+- Specific checks include connector-dependent filters, source account/association display, identifier-reference risks, source/profile role, conditional missing-record safeguards and runtime-specific support. A read condition alone isn't proof of a write enforcement boundary; actual supported operation/authority needs verification.
+- No source/tenant/API/credential/schema/filter/correlation/aggregation/provisioning/target/deletion operation occurred. Beginner validation, full graphical publication review and formal approval remain pending.
+- Publication update: revision 2.0 is included in the authorized October 26 batch 2. See [current deployment verification](PUBLICATION_2026-10-26_BATCH_2.md). Earlier publication/local-only statements below describe the review stage.
+- Baseline revision 1.0 remains recoverable at that commit. Historical verification below is preserved context, not current review status.
+
+### Historical verification record: revision 1.0
+
 - Revision: 1.0. Course placement: Module 4.1.
 - Documentation checked: October 20, 2026. Current source definition/configuration/connection/UI/ownership, account-schema, identity-profile and connector-specific filtering references reviewed. Supporting collection/correlation/provisioning checks retain the same-day verification in earlier lessons.
 - Author review: completed against teaching specification v2.6 for the stated scope; no unresolved author content issue identified.
@@ -1193,7 +1262,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 - Learner validation and formal publication approval: pending. Working-edition deployment is separate.
 - Scope: source purpose, external context, coverage agreement, evidence and operational boundaries. Detailed authoritative/profile-priority mechanics, capability matrices, schemas, filter syntax, aggregation modes and deletion rules remain their own planned primary lessons.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -1207,7 +1276,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 | [Provisioning](https://documentation.sailpoint.com/saas/help/provisioning/index.html) and [SaaS connectivity](https://developer.sailpoint.com/docs/connectivity/saas-connectivity/) | Supported external changes differ from collecting data; hypothetical hosted connector and target authority do not imply every read filter constrains every write. Current enabled capabilities and actual destination/operation privileges must be checked separately. |
 | [Access profiles](https://documentation.sailpoint.com/saas/help/access/access-profiles.html) and [request configuration](https://documentation.sailpoint.com/saas/help/requests/config_ap_roles.html) | Supporting one-source entitlement bundle and separately configured requestability/review/delivery. A collected account or permission and an application/source label are not a complete access-control configuration. |
 
-### Conditions and limits
+#### Conditions and limits
 
 - Devi is independently established as a West warehouse coordinator, employee 41001, with existing external standard depot-41001 and approved admin depot-admin-41001 accounts. Both are intended to be represented and linked to her existing ISC identity; neither is initially read by the East-only production collection.
 - Dispatch-Prod and Dispatch-Test are separate external organizations. S-41P and S-41T are non-runnable source-ID stand-ins. The diagram illustrates this project's choice of separate configurations, not a universal one-source-per-application/environment/partition rule.
@@ -1228,14 +1297,14 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 - Source owner, integration operator, external administrator and account owner remain distinct responsibilities. A source assignment does not itself grant target privileges or settle all data-accountability questions.
 - Current documentation uses Identity Services / Human Fabric branding. ISC remains the course name. Actual connector features, licensing, permissions and supported configuration must be checked for a real project.
 
-### Diagrams and review checks
+#### Diagrams and review checks
 
 - [Production and sandbox](../assets/SRC-001_production_and_sandbox.txt): external organization to its chosen source context and represented records.
 - [Intended and collected population](../assets/SRC-001_intended_and_collected_population.txt): required 110-account human set split into selected 70 East and wrongly excluded 40 West accounts.
 - Assets match inline blocks exactly. Maximum line widths are 40 and 46 characters. Captions state direction, assumed boundary and omitted implementation/operation detail.
 - Local/live publication checks separately verify full text, headings, tables, diagrams, new Module 4 placement and navigation. Rendered readability is not observed beginner understanding or tenant execution.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Exercise | Understanding tested | Expected reasoning / acceptable alternatives | Misconception exposed | Source anchor |
 |---|---|---|---|---|
@@ -1251,6 +1320,19 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## SRC-002: Authoritative and non-authoritative source responsibilities
 
+- Current [lesson](../lessons/SRC-002_Authoritative_and_Non_Authoritative_Sources.md): revision 2.0, Module 4.2; teaching specification 3.1.
+- Documentation checked: October 26, 2026. The [revision record](revisions/SRC-002_Concept_Led_Revision_Record.md) reconciles 101 purposes and 14 primary references with assumptions, assessment reasoning and verification.
+- Author review: normal authoritative/profile establishment precedes same-identity employee/contractor overlap; applicable priority selects configuration, mappings provide values, approved processing produces the supplied corrected outcome. Attribute fallback, required values, authentication and target work remain separate.
+- Preserved: both authoritative accounts on one identity, initial/corrected priorities 10/20, Vendor Services/Finance, directory-sourced email, shadow/required-value/removal/preview boundaries, all seven original cases and acquisition transfer.
+- Neutral values: employee-record, contractor-record, directory-user, expense-user, workerRef W-24, Employees/Contractors and person@corp.example. Employee biography, numbered native accounts and opaque I-42 stand-in removed; all configuration and outcome evidence is hypothetical.
+- Current diagrams: [profile-backed identity and account matching](../assets/SRC-002_profile_backed_identity_and_account_matching.txt) and [selected profile and mapped inputs](../assets/SRC-002_selected_profile_and_mapped_inputs.txt); widths 41 and 38. Historical assets remain preserved.
+- Specific checks include one applicable profile, relevant associated authoritative accounts, lower-number precedence/creation defaults, required uid/email/lastname, no email-format validation in that required-value check, shadow representation, PTA and supported account-removal/profile-deletion consequences. No atomic migration or universal fallback is invented.
+- No identity/source/account/profile/priority/mapping/processing/authentication/credential/target operation occurred. Beginner validation, full graphical publication review and formal approval remain pending.
+- Publication update: revision 2.0 is included in the authorized October 26 batch 2. See [current deployment verification](PUBLICATION_2026-10-26_BATCH_2.md). Earlier publication/local-only statements below describe the review stage.
+- Baseline revision 1.0 remains recoverable at that commit. Historical verification below is preserved context, not current review status.
+
+### Historical verification record: revision 1.0
+
 - Revision: 1.0. Course placement: Module 4.2.
 - Documentation checked: October 20, 2026. Identity-profile selection, creation-order defaults, mapped inputs, required attributes and exceptions, profile deletion, correlation, identity processing, PTA and authoritative-account removal were freshly checked against official ISC documentation.
 - Author review: completed against teaching specification v2.6 for the stated scope; no unresolved author content issue identified.
@@ -1258,7 +1340,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 - Learner validation and formal publication approval: pending. Working-edition deployment is a separate check.
 - Scope: source responsibility and the causal distinction between identity origin, account ownership, applicable profile, attribute inputs, authentication and external changes. Detailed profile implementation, manager correlation, transforms, aggregation/deletion settings, lifecycle design and provisioning remain their own primary lessons.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -1274,13 +1356,13 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 | [Provisioning](https://documentation.sailpoint.com/saas/help/provisioning/index.html) and [tracking provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html) | Supporting definitions and evidence boundaries: authoritative designation is not connector operation support or target authorization; identity-side calculated values and initiated work do not prove external delivery. |
 | [Access profiles](https://documentation.sailpoint.com/saas/help/access/access-profiles.html) | Supporting access-profile meaning: a bundle of entitlements from one source, distinct from the identity profile controlling identity attributes/settings. Detailed assignment mechanics are not introduced as part of source authority. |
 
-### Diagram and example checks
+#### Diagram and example checks
 
 The two inline text diagrams match their editable assets exactly after trailing-whitespace normalization. Maximum line widths are 43 and 45 characters. The first represents identity origin versus account association, not execution order; the second follows two configured attribute inputs, not a cross-source priority algorithm.
 
 Employee number 42002 is a shared person reference, while emp-42002, ctr-42002, corp-42002 and expense-42002 are source-specific account identifiers. I-42 is a fictional non-runnable identity-ID stand-in. Both authoritative accounts already belong to I-42. Initial Contractors 10 / Employees 20 selects Contractors; approved Employees 10 / Contractors 20 selects Employees after appropriate processing in the supplied result. Department moves from Vendor Services to Finance; the correct directory-sourced email remains devi42002@corp.example. This is not a universal population-migration guarantee or tenant test.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Case | Misconception tested | Accepted reasoning and evidence boundary |
 |---|---|---|
@@ -4859,6 +4941,18 @@ No actual tenant/API/source/account/role/profile/list/request/review/aggregation
 
 ## ARC-005
 
+- Current [lesson](../lessons/ARC-005_Connection_Dependencies_and_Operation_Support.md): revision 2.0, Module 3.5; teaching specification 3.1.
+- Documentation checked: October 26, 2026. The [revision record](revisions/ARC-005_Concept_Led_Revision_Record.md) maps 108 coverage purposes and 18 primary references, their claim scope, applicability and verification dates.
+- Author review: explains the required change, actual runtime and successful mechanism before developing destination, DNS, reachability, trust, credentials, operation authority, connector support, valid input and outcome evidence. These conditions are not a fixed internal execution order.
+- Preserved: evidence-backed export denial, five original investigations with reasoned answers, interrupted-operation reconciliation and the read-only SaaS disable-design transfer. Repairing communication, recovering work and confirming target state remain distinct.
+- Neutral examples: existing recipient orders-reader, integration caller svc-orders, entitlement orders.export, ISC source Orders-Production, external workspace Orders-Prod and cluster orders-prod with va-01/va-02. The main attempt's va-02 and direct target path are supplied evidence. No tenant execution or production observation is claimed.
+- Current diagrams: [runtime operation paths](../assets/ARC-005_runtime_operation_paths.txt) and [evidence, scoped action and recovery](../assets/ARC-005_evidence_scoped_action_and_recovery.txt). Historical diagrams remain preserved.
+- Learner validation, full graphical review and formal publication approval: pending. Author review and local checks do not establish beginner comprehension.
+- Publication update: revision 2.0 is included in the authorized October 26 batch 2. See [current deployment verification](PUBLICATION_2026-10-26_BATCH_2.md). Earlier publication/local-only statements below describe the review stage.
+- Baseline revision 1.0 is recoverable at that commit. The record below preserves its historical verification context and is not the current review status.
+
+### Historical verification record: revision 1.0
+
 - Lesson: [ARC-005](../lessons/ARC-005_Connection_Dependencies_and_Operation_Support.md), revision 1.0.
 - Course placement: Module 3.5.
 - Documentation checked: October 20, 2026; current official VA network/proxy requirements, source/SaaS definitions, connector capability/authorization examples, account schema, provisioning evidence and primary HTTP semantics references reviewed. Supporting IQService, identity/account/access-profile and source-correlation meanings retain earlier checks on the same date.
@@ -4867,7 +4961,7 @@ No actual tenant/API/source/account/role/profile/list/request/review/aggregation
 - Learner validation and formal publication approval: pending. Working-edition deployment is separate.
 - Scope: operational dependency reasoning and evidence across actual runtime paths, not a full network/protocol course, connector setup runbook, universal API error dictionary, or private platform execution algorithm.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -4885,7 +4979,7 @@ No actual tenant/API/source/account/role/profile/list/request/review/aggregation
 | [Additional HTTP codes, RFC 6585](https://www.rfc-editor.org/rfc/rfc6585.html), section 4 | Supporting 429 rate-limit meaning only. No universal retry delay, counter, immediate-repeat guarantee or claim that every target uses this code. |
 | [Account correlation](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) and [access profiles](https://documentation.sailpoint.com/saas/help/access/access-profiles.html) | Supporting ownership association and single-source access bundle retain earlier documentation checks. Main correlation, approval, account choice and automatic provisioning eligibility are explicit example assumptions, not an account-selection or lifecycle algorithm. |
 
-### Conditions and limits
+#### Conditions and limits
 
 - Devi, employee 35005, already has correctly correlated orders-35005. She can view summaries but requires the distinct orders.export entitlement. Export order summaries contains only that entitlement on OrderDesk Production in Orders-Prod.
 - The main hypothetical connector supports automatic assignment to the existing account. No real OrderDesk connector is claimed. No account creation, custom script or IQService leg is required in this example.
@@ -4902,14 +4996,14 @@ No actual tenant/API/source/account/role/profile/list/request/review/aggregation
 - Ownership and handoffs depend on the actual organization. Relevant error context is shared without secrets or unrestricted sensitive trace files. No real incident response, network change or API invocation occurred.
 - Current official naming includes Identity Services / Human Fabric. ISC remains the requested course name. Feature visibility/downloads aren't license promises.
 
-### Diagrams and review checks
+#### Diagrams and review checks
 
 - [Runtime paths](../assets/ARC-005_runtime_paths.txt): selected VA API, hosted SaaS connector and applicable IQService work relationships; not all possible protocols or packet routes.
 - [Evidence and recovery](../assets/ARC-005_evidence_and_recovery.txt): human investigation decisions; insufficient evidence returns to assessment, while a justified scoped action leads to recovery/reconciliation and target verification.
 - Assets match inline text exactly. Maximum line widths are 44 and 50 characters. Captions explain returning results, outbound VA initiation, omitted implementation detail and the distinction between investigation and platform execution.
 - Local/live checks separately verify complete prose, tables, diagrams, headings, placement and navigation. These aren't beginner comprehension or tenant-execution tests.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Exercise | Understanding tested | Expected reasoning / acceptable alternatives | Misconception exposed | Source anchor |
 |---|---|---|---|---|
@@ -4925,6 +5019,19 @@ Questions and worked reasoning remain in the learner file. Reference evidence, a
 
 ## ARC-004
 
+- Current learner revision: **2.0**, revised October 26, 2026 under teaching specification v3.1.
+- Current [coverage, twenty-two primary references, conditions, assessments and verification](revisions/ARC-004_Concept_Led_Revision_Record.md).
+- Establishes operation-specific Windows work, component/account roles and a complete group assignment before protected connection, failure, evidence, scripting and maintenance details.
+- Neutral docs-reader and short component/account labels replace biography and employee number 34004. Group purpose and the four credential roles remain explicit. All six cases and the read-operation transfer remain.
+- Current editable [operation map](../assets/ARC-004_isc_va_iqservice_and_directory.txt) and [prerequisite/verification map](../assets/ARC-004_connection_admission_and_target_checks.txt).
+- Documentation-based author review is separate from beginner validation, graphical publication review and formal approval, which remain pending. No tenant/infrastructure or security operation performed.
+- Revision 2.0 remains local; published ARC-004 remains revision 1.0. Baseline recoverable at da1e1da7c94421e03e8437e94eb49e3fe56fd3ec. Revised publication remains through ARC-001.
+- Publication update: revision 2.0 is included in October 26 batch 2. See [current deployment verification](PUBLICATION_2026-10-26_BATCH_2.md); earlier local-only statements describe the authoring/review stage.
+
+### Historical verification record: revision 1.0
+
+The preserved record below describes the earlier version and examples. Current verification is in the revision-2.0 record above.
+
 - Lesson: [ARC-004](../lessons/ARC-004_Where_IQService_Fits.md), revision 1.0.
 - Course placement: Module 3.4.
 - Documentation checked: October 20, 2026; official IQService and ISC Active Directory references below reviewed for this lesson. Supporting identity/account/access-profile/provisioning and VA meanings retain documented checks in earlier lessons on the same date.
@@ -4933,7 +5040,7 @@ Questions and worked reasoning remain in the learner file. Reference evidence, a
 - Learner validation and formal publication approval: pending. Working-edition deployment is separate.
 - Scope: IQService's operation-specific Windows role and its relationship to ISC/VA/target work, credentials, protected communication, evidence, native customization and supported maintenance. No installation commands, actual credential changes, private backend implementation, full Windows/AD administration course, native script implementation or guaranteed failover/retry procedure is delivered.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -4953,7 +5060,7 @@ Questions and worked reasoning remain in the learner file. Reference evidence, a
 | [VA overview](https://documentation.sailpoint.com/saas/help/va/index.html), [VA deployment](https://documentation.sailpoint.com/saas/help/va/deploy_va.html), and [VA management](https://documentation.sailpoint.com/saas/help/va/manage_va.html) | Supporting VA/cluster, source association, outbound cloud initiation and Connected-state scope verified in ARC-002. Two VAs don't create an alternative IQService endpoint. No exact worker choice, zero-interruption guarantee or unsupported Windows-service topology is inferred. |
 | [Monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html), [correlation](https://documentation.sailpoint.com/saas/help/accounts/correlation.html), and [access profiles](https://documentation.sailpoint.com/saas/help/access/access-profiles.html) | Supporting tracked operation versus target observation, correct person/account association, and one-source bundle. Approval and account selection are supplied assumptions; target membership and represented collected state remain distinct. |
 
-### Conditions and limits
+#### Conditions and limits
 
 - Devi, employee 34004, is an engineering coordinator with an existing correctly correlated eng-34004 account. No new account creation, multi-account selection algorithm, custom native script or additional access dependency is assumed in the main path.
 - Read engineering documents bundles only ENG-Docs-Readers from Engineering Directory. Document-reading behavior is fictional and remains subject to the document system's own checks; membership isn't claimed to terminate/create sessions or prove every business action.
@@ -4969,14 +5076,14 @@ Questions and worked reasoning remain in the learner file. Reference evidence, a
 - The lesson doesn't prescribe restarting/reinstalling as a first diagnostic action, implement a load balancer, guarantee failover, teach a complete gMSA or Windows-privilege model, or claim an IQService runtime test.
 - Current official branding varies between ISC and Identity Services / Human Fabric. The requested course uses ISC consistently and doesn't treat download availability as a license grant.
 
-### Diagrams and review checks
+#### Diagrams and review checks
 
 - [Operation path](../assets/ARC-004_operation_path.txt): ISC decision/prepared work, VA connector work, IQService Windows-side work and target operation, scoped to the supplied group assignment.
 - [Security boundaries](../assets/ARC-004_security_boundaries.txt): reachability, server trust/protected channel, admitted client, required capability, target authority and subsequent outcome inspection.
 - Assets match the inline blocks exactly. Maximum line widths are 49 and 44 characters. Prose explains returned results, VA outbound initiation, conditional success, omitted internals and the human verification in the final security-diagram box.
 - Local and live checks separately verify full teaching text, headings, tables, diagrams, placement and navigation. These aren't beginner comprehension or tenant-execution tests.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Exercise | Understanding tested | Expected reasoning / acceptable alternatives | Misconception exposed | Source anchor |
 |---|---|---|---|---|
@@ -4992,6 +5099,19 @@ Questions and worked reasoning remain in the learner file. Reference evidence, a
 
 ## ARC-003
 
+- Current learner revision: **2.0**, revised October 26, 2026 under teaching specification v3.1.
+- Current [coverage, eighteen primary references, conditions, assessments and verification](revisions/ARC-003_Concept_Led_Revision_Record.md).
+- Separates application hosting from connector runtime, establishes destination/caller/settings, completes read and supported change, then develops evidence, authentication variants, external dependencies and eligible migration.
+- Neutral Projects-Production, project-reader and existing technical workspace/client/permission values replace biography, 33003 and ProjectBoard. Six original cases and the private-Payroll proposal remain.
+- Current editable [runtime/API comparison](../assets/ARC-003_runtime_and_external_api_paths.txt) and [collection/change map](../assets/ARC-003_collected_data_and_supported_change.txt).
+- Documentation-based author review is separate from beginner validation, graphical publication review and formal approval, which remain pending. No tenant/API operation or migration performed.
+- Revision 2.0 remains local; published ARC-003 remains revision 1.0. Baseline recoverable at da1e1da7c94421e03e8437e94eb49e3fe56fd3ec. Latest revised published snapshot remains through ARC-001.
+- Publication update: revision 2.0 is included in October 26 batch 2. See [current deployment verification](PUBLICATION_2026-10-26_BATCH_2.md); earlier local-only statements describe the authoring/review stage.
+
+### Historical verification record: revision 1.0
+
+The preserved record below describes the earlier version and examples. Current verification is in the revision-2.0 record above.
+
 - Lesson: [ARC-003](../lessons/ARC-003_SaaS_Connectors_and_Their_Connection_Path.md), revision 1.0.
 - Course placement: Module 3.3.
 - Documentation checked: October 20, 2026; source definitions, SaaS runtime overview, migration, example connector authentication/capabilities, account loading/schema, provisioning/monitoring, and supporting OAuth definitions reviewed. Access-profile and correlation meanings also retain the documented checks recorded in earlier lessons on the same date.
@@ -5000,7 +5120,7 @@ Questions and worked reasoning remain in the learner file. Reference evidence, a
 - Learner validation and formal publication approval: pending. Working-edition deployment is separate.
 - Scope: conceptual and operational SaaS connector path, external API authority, read/change distinctions, evidence and supported migration boundaries. No custom connector coding, OAuth implementation recipe, private backend topology, full migration procedure, product entitlement promise, or universal retry/refresh behavior is taught.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -5018,7 +5138,7 @@ Questions and worked reasoning remain in the learner file. Reference evidence, a
 | [Provisioning](https://documentation.sailpoint.com/saas/help/provisioning/index.html) and [monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html) | Changing access versus reading it; account/source/recipient/action/result/error evidence; tracked operation versus target state. Applicable automatic provisioning is assumed explicitly. No guaranteed immediate refresh, universal retry, rollback, session termination or timeout-equals-no-effect claim. |
 | [OAuth 2.0 framework, RFC 6749](https://www.rfc-editor.org/rfc/rfc6749.html), sections 1.4, 1.5, 2.2, 2.3 and 3.3 | Supporting access-token, refresh-token, client identifier/authentication and scope meanings only. This foundational definitions source isn't a recommendation to implement every historical OAuth flow. Current supported connector authentication requirements govern actual configuration. |
 
-### Conditions and limits
+#### Conditions and limits
 
 - ProjectBoard Production is the ISC source label. Delivery-Prod is the intended external workspace; Delivery-Test is a separate external workspace. A duplicate account string in test doesn't establish production identity or correct destination.
 - Devi's existing project-33003 account is already correctly associated with her ISC identity. Employee number 33003 isn't silently treated as a source account key.
@@ -5034,14 +5154,14 @@ Questions and worked reasoning remain in the learner file. Reference evidence, a
 - VA-to-SaaS migration is not universal or reversible after apply. Configuration/schema/authentication/time-zone review and other sources' cluster associations remain relevant. The lesson isn't a runbook or authority to change live infrastructure.
 - Current official pages use Identity Services / Human Fabric branding. ISC is retained as the requested course name. Feature visibility, activation and commercial packaging aren't promised by this theory lesson.
 
-### Diagrams and review checks
+#### Diagrams and review checks
 
 - [SaaS and VA paths](../assets/ARC-003_saas_and_va_paths.txt): hosted runtime versus customer VA-based work, each interacting with the external API in an API-based example.
 - [Read and change](../assets/ARC-003_read_and_change.txt): external data into ISC versus a supported approved change delivered to the external account.
 - Assets match the inline blocks exactly. Maximum line widths are 39 and 51 characters. Nearby text explains responses, VA outbound initiation, conditional success, external enforcement, and omitted implementation detail.
 - Local and live publication checks separately verify complete text, headings, tables, diagrams, placement and navigation. They aren't learner validation or observed tenant execution.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Exercise | Understanding tested | Expected reasoning / acceptable alternatives | Misconception exposed | Source anchor |
 |---|---|---|---|---|
@@ -5057,6 +5177,19 @@ Questions and worked reasoning remain in the learner file. Documentation, assess
 
 ## ARC-002
 
+- Current learner revision: **2.0**, revised October 26, 2026 under teaching specification v3.1.
+- Current [coverage, fourteen primary references, conditions, assessments and verification](revisions/ARC-002_Concept_Led_Revision_Record.md).
+- Establishes the actual component, source/cluster/member relationship and outbound exchange, completes a supported normal operation, then develops dependency/health/HA/DR and failure/recovery reasoning.
+- Neutral source/member/account labels replace biography, 32002 and AssetDesk. All six cases, the five-condition DNS failure and Payroll transfer remain.
+- Current editable [cluster/member map](../assets/ARC-002_sources_cluster_and_running_members.txt) and [connection/work map](../assets/ARC-002_connection_initiation_and_work.txt).
+- Documentation-based author review is separate from beginner validation, graphical publication review and formal approval, which remain pending. No actual infrastructure/tenant operation was performed.
+- ARC-002 revision 2.0 remains local after the authorized publication through ARC-001. Published ARC-002 remains revision 1.0; baseline recoverable at da1e1da7c94421e03e8437e94eb49e3fe56fd3ec.
+- Publication update: revision 2.0 is included in October 26 batch 2. See [current deployment verification](PUBLICATION_2026-10-26_BATCH_2.md); earlier local-only statements describe the authoring/review stage.
+
+### Historical verification record: revision 1.0
+
+The preserved record below describes the earlier version and its examples. Current verification is in the revision-2.0 record above.
+
 - Lesson: [ARC-002](../lessons/ARC-002_Virtual_Appliances_and_Clusters.md), revision 1.0.
 - Course placement: Module 3.2.
 - Documentation checked: October 20, 2026; core VA sources read for this lesson. Supporting object and provisioning definitions retain the documented checks recorded earlier on the same date.
@@ -5065,7 +5198,7 @@ Questions and worked reasoning remain in the learner file. Documentation, assess
 - Learner validation and formal publication approval: pending. Working-edition deployment is separate.
 - Scope: core ISC VA-based source connectivity. No IdentityIQ-specific single-VA exception, complete installation recipe, real diagnostic run, private worker topology, guaranteed retry/deduplication semantics, or general-purpose hypervisor migration procedure is taught.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -5079,7 +5212,7 @@ Questions and worked reasoning remain in the learner file. Documentation, assess
 | [Monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html) | Operation/source/account evidence and reported result versus actual target confirmation. Core supporting behavior retains prior course verification; no actual VA log, task execution or connector transaction was performed. |
 | [Access profiles](https://documentation.sailpoint.com/saas/help/access/access-profiles.html), [request configuration](https://documentation.sailpoint.com/saas/help/requests/config_ap_roles.html), and [correlation](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) | Supporting one-source entitlement bundle, specified recipient/request review, and account/person association. Read assets is a fictional single-entitlement profile for one existing correctly associated account; no account-creation or multi-account algorithm is generalized. |
 
-### Conditions and limits
+#### Conditions and limits
 
 - One production cluster C-Asset-Prod contains va-asset-01 and va-asset-02. AssetDesk and Operations Directory are separately configured sources associated with that cluster. Names are teaching labels, not live identifiers, host credentials, or commands.
 - Source association, cluster work queue, member execution, cloud communication and target interaction are separate relationships. Polling is documented, but packet order, scheduling fairness, acknowledgement, queue retention, retries and deduplication are not invented.
@@ -5098,14 +5231,14 @@ Questions and worked reasoning remain in the learner file. Documentation, assess
 - Previously collected data can remain visible during a connectivity issue; it is not current target proof, and failed reads alone do not establish employee departure or account deletion.
 - Current official documentation uses Identity Services / Human Fabric naming. ISC remains the requested course title; package and component visibility are not license guarantees.
 
-### Diagrams and review checks
+#### Diagrams and review checks
 
 - [Source/cluster/member map](../assets/ARC-002_sources_cluster_members.txt): two sources associated with one cluster containing two appliance members; not packet routes or duplicated execution.
 - [Outbound communication and work exchange](../assets/ARC-002_outbound_and_work_exchange.txt): VA-initiated cloud/target communication and conceptual request/response work roles.
 - Both assets match the inline blocks. Maximum line widths are 45 and 51 characters. Captions/prose explain arrow meaning, different endpoints, response traffic, and omitted private processing details.
 - Local and live checks separately verify full text, headings, tables, diagrams, placement, and navigation. These are not observed beginner comprehension or tenant-execution tests.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Exercise | Understanding tested | Expected reasoning / acceptable alternatives | Misconception exposed | Source anchor |
 |---|---|---|---|---|

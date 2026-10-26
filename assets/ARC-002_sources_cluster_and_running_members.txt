@@ -1,0 +1,15 @@
+ISC production tenant
+  |
+  +-- Assets-Production ------+
+  |                          |
+  +-- Operations-Directory ---+
+                             |
+                             v
+                       assets-prod
+                       VA cluster
+                         |
+                         +-- va-01
+                         +-- va-02
+
+Lines show configured relationships.
+They do not send every job to both VAs.

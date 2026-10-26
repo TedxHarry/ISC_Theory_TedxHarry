@@ -1,0 +1,10 @@
+VA-based API work
+  ISC <-> VA connector <-> Target API
+
+SaaS connector work
+  ISC hosted connector <-> Target API
+
+Applicable Windows-side work
+  ISC <-> VA <-> IQService <-> Target
+
+Arrows show work and returned results.

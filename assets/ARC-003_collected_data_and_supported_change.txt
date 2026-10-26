@@ -1,0 +1,19 @@
+READ: obtain account information
+  External account: project-reader
+    |
+    | Data through SaaS connector
+    v
+  ISC collected account representation
+
+CHANGE: add approved access
+  ISC supported provisioning work
+    |
+    | SaaS connector calls production API
+    v
+  External account: project-reader
+    |
+    | Target permits and applies update
+    v
+  Account holds project.view
+
+Read and change are separate operations.

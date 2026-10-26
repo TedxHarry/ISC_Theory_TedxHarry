@@ -1,380 +1,373 @@
 # The connection works. Why does the change still fail?
 
-An administrator opens an application successfully. SailPoint Identity Security Cloud (ISC) reports a successful connection test. An account read completes.
+An administrator opens an application. SailPoint Identity Security Cloud (ISC) reports a successful connection test. An account read completes, but an access change fails.
 
-Then an access change fails.
+Those observations can all be accurate. They concern different operations, possibly from different machines and under different authority.
 
-These observations can all be true. They tested different things, from different places, using different authority.
+The useful next question is what the failed operation actually needed. A password change won't help if the operation lacks a required field, uses the wrong destination or isn't implemented by the selected connector.
 
-Before changing a password, ask a more precise question: what operation failed, which component attempted it, and what does the available evidence actually establish?
+## Define the work before investigating the connection
 
-## Give “the connection” an exact meaning
+A **connector** is integration software that communicates with a managed system. A **source** is ISC's configured representation of that connection and its account data. The **target system** is the external system the connector reads or changes.
 
-A **connector** is the integration software that communicates with a managed system. A **source** is the configured representation of that connection and its account data in ISC.
+A **connection test** runs the checks implemented by the selected connector. A successful result establishes that those checks passed under that configuration at that time. It doesn't establish that every later operation has everything it needs.
 
-A source can contain correct credentials but point to the wrong environment. It can read accounts without permission to change them. Its connector can support one operation and not another.
+A **dependency** is a condition or component on which work relies. Different reads and writes can have different dependencies, even within the same source.
 
-There is no single condition called “everything is connected” that settles all of those questions.
+Suppose an existing account, `orders-reader`, can view order summaries and now needs to export them. Viewing and exporting are separate permissions in this example.
 
-A **connection test** executes the checks implemented by the selected connector. Its success means those checks succeeded under that configuration at that time. Read the result in that scope.
+An **entitlement** is an access item represented from a source. Here, `orders.export` provides the additional export permission.
 
-A subsequent operation has its own destination, inputs, privileges, and **dependencies**, the conditions and components it relies on. It can fail even though the test was accurate.
+An **identity** is ISC's person-level record. An **account** is a record in another system, with ISC keeping a representation. The existing account is correctly associated with its intended identity.
 
-## Let's make the required change specific
+That association is **account correlation**: matching and assigning a source account to an identity through configured comparisons. It identifies whose account it is, rather than granting export access.
 
-Devi coordinates operations reporting, employee number `35005`. She already has account `orders-35005` in a fictional application called OrderDesk.
+The source **Orders-Production** points to external workspace `Orders-Prod`. A **workspace** is a separately identified area of this example application.
 
-She can view order summaries. She now needs permission to export them.
+An **access request** asks for specified access for a recipient. An **access profile** bundles related entitlements from one source. The profile **Export order summaries** contains only `orders.export` from Orders-Production.
 
-OrderDesk represents that extra permission as `orders.export`. It is an **entitlement**, an access right that can be assigned to an account. Under this example's rules, viewing and exporting are separate permissions.
+Assume the permitted request passes its configured review, the intended existing account is selected, and automatic provisioning is configured for this supported change. No account creation or custom script is needed.
 
-ISC has an **identity** representing Devi and a source account record representing `orders-35005`. The account is correctly associated with her identity. This association is **account correlation**; it identifies the represented owner, not a permission grant.
+**Provisioning** carries out supported account or access changes. The intended result is precise: `orders.export` on `orders-reader` in `Orders-Prod`.
 
-The source is OrderDesk Production. Its configuration selects the external workspace `Orders-Prod`. A workspace is a separately identified area of this fictional application.
+That's a testable requirement. “The orders application isn't working” leaves the operation, account and intended effect unresolved.
 
-An **access request** asks for particular access for a recipient. Devi's request is for Export order summaries, an **access profile** containing only `orders.export` from this source. An access profile bundles entitlements from one source.
+## Find the component making the call
 
-Assume the configured review approves the request, the intended existing account is selected, and the source is configured for automatic delivery of this supported change. No account creation or custom script is required.
+The **runtime** is the environment where the connector software executes. Your browser isn't automatically that environment.
 
-**Provisioning** is the work of carrying out an account or access change. Here, the required result is `orders.export` assigned to `orders-35005` in `Orders-Prod`.
+A **Virtual Appliance**, or **VA**, is a customer-deployed virtual machine used for VA-based integration work. A **virtual machine** is a software-defined computer using its host's resources. A **VA cluster** groups appliances associated with sources.
 
-That's the operation we're investigating. “OrderDesk isn't working” would be much less useful.
+A **SaaS connector** executes in SailPoint's hosted environment without customer-deployed VAs for that connection. **Software as a service**, or **SaaS**, means provider-operated hosted software. The application's hosting location doesn't select the connector path.
 
-## Locate the software making the call
+**IQService** is a Windows service used by supported connectors for particular Windows-side work. A Windows service is a program Windows can run without an interactive desktop session. An applicable path needs the VA-to-IQService connection and IQService's required target connection.
 
-The **runtime** is the environment where connector software executes. Your browser isn't automatically that environment.
-
-For a VA-based source, a **Virtual Appliance**, or VA, is a customer-deployed virtual machine used for integration work. A **VA cluster** groups appliances associated with sources. An operation can involve a particular running cluster member, so a check from another machine doesn't establish that member's connectivity.
-
-A **SaaS connector** runs its connector work in SailPoint's hosted environment without a customer-deployed VA cluster for that connection. SaaS means software as a service. The business application's hosting location alone doesn't decide which connector path is configured.
-
-**IQService** is a Windows service used by supported connectors for particular Windows-side operations. In an applicable VA-based path, the VA must reach IQService, and IQService needs its own required connection to the target.
-
-An **API**, or application programming interface, lets software request data or actions. In an API-based integration, it can be different from the website a human uses.
-
-Compare these conceptual paths:
+An **application programming interface**, or **API**, lets software request information or operations. It can differ from the website a person uses.
 
 ```text
-VA-based API operation
-[ISC] -> [VA connector work] -> [Target API]
+VA-based API work
+  ISC <-> VA connector <-> Target API
 
-SaaS connector operation
-[ISC: hosted connector work] -> [Target API]
+SaaS connector work
+  ISC hosted connector <-> Target API
 
-Applicable IQService operation
-[ISC] -> [VA] -> [IQService] -> [Target]
+Applicable Windows-side work
+  ISC <-> VA <-> IQService <-> Target
+
+Arrows show work and returned results.
 ```
 
-The arrows represent work interactions and returning results, not complete packet routes. The VA initiates its required communication with the hosted service. The picture doesn't introduce unsolicited inbound internet connections to customer servers.
+The arrows represent work interactions and returning results, not complete network routes. The VA initiates its required cloud communication. Cloud-originated work doesn't introduce unsolicited inbound internet connections to customer servers.
 
-Intermediaries can also be part of the configured path. A **proxy** forwards traffic on another component's behalf. A **gateway** can receive and control requests before they reach the underlying application.
+The API paths are examples; connectors can use other supported interfaces.
 
-With a configured web proxy route, applicable source web traffic can pass through that proxy. Supported exceptions and the actual deployment configuration matter. Don't assume that a successful direct test reproduces the integration's route.
+An **ISC tenant** is an organizational environment within the hosted service. Identify which source and path in that environment performs the work rather than adding every component you recognize to the investigation.
 
-For OrderDesk Production, assume a supported fictional VA-based connector calls the management API. Cluster `C-Order-Prod` has `va-order-01` and `va-order-02`. Operation evidence identifies `va-order-02` as the member handling this attempt, using the configured direct target path.
+For Orders-Production, assume a supported VA-based connector uses the application's management API. Cluster `orders-prod` contains `va-01` and `va-02`. The example operation evidence identifies `va-02` as handling the attempt through its configured direct target path.
 
-IQService isn't part of this OrderDesk example. Add components to an investigation because the actual operation uses them, not because their names appear elsewhere in the tenant.
+IQService is not part of that operation. Other cases below use different paths explicitly.
 
-## Does the address identify the right destination?
+## Follow one successful update
 
-An **endpoint** is the address an integration calls. The destination can also depend on a workspace identifier, region, API path, or another resource setting.
+The **integration actor** is the account or software identity performing the external operation. Here it is `svc-orders`, using a configured **API token**, a credential the external service accepts for software access.
 
-OrderDesk Production is an ISC source label. `Orders-Prod` identifies the external workspace. The label doesn't force the endpoint or credential to select that workspace.
+A **credential** establishes the accepted caller identity or access context. **Authentication** establishes that context; **authorization** determines whether the caller may perform a particular action on a resource.
 
-An **account identifier** distinguishes an account in the relevant source context. The same account string in a test workspace wouldn't prove that a production account was changed.
+The integration actor is different from the recipient `orders-reader` and from the administrator configuring ISC.
 
-**DNS**, the Domain Name System, helps resolve a hostname to the network address needed to contact it. **Name resolution** is that lookup process. Different machines or network environments can use different resolvers or have different access to them.
+Under successful conditions, ISC prepares the supported change for the source, account and entitlement. Connector work from the applicable VA reaches the intended production API through its configured protected connection and presents the integration credential.
 
-If `va-order-02` cannot resolve the configured hostname, supplying a new OrderDesk password doesn't repair the missing lookup.
+The target accepts the caller, permits this assignment and receives valid information for it. It applies `orders.export` to `orders-reader` in `Orders-Prod`, and the integration returns a result for ISC's tracking.
 
-Successful resolution is only one dependency. It doesn't establish that the returned destination is intended, that the service is reachable, or that later security checks will succeed.
+Business approval permitted the recipient to receive export access. It didn't supply the caller's external write privilege.
 
-Check the source's actual destination and the resolution evidence from the relevant execution environment. Don't substitute a laptop result.
+To establish delivery, compare the reported operation result with the intended target assignment. A connection test, an accepted token or an approved request alone doesn't establish that complete outcome.
 
-## Can that environment reach the required service?
+The remaining questions explain why one part can succeed while another fails. They are dependencies to investigate, not a mandatory sequence of internal ISC checks.
 
-**Network reachability** means the calling environment can communicate with the required destination service over the intended path.
+## Does the configured address select the intended system?
 
-A **port** identifies a network service endpoint on a host. The **listener** is the service accepting connections there.
+An **endpoint** is the address an integration calls. The actual destination can also depend on a workspace, region, API path or resource setting.
 
-A **route** determines how traffic travels toward the destination. A **firewall** controls which traffic is permitted. An **allowlist** admits specified destinations, callers, or network origins under its rules.
+Orders-Production is a label inside ISC. `Orders-Prod` identifies the external workspace. Renaming the source doesn't force its endpoint or credential to select production.
 
-These controls can differ between `va-order-01` and `va-order-02`, or between a VA and an administrator's laptop.
+An **account identifier** distinguishes an account within its relevant source context. An identical account string in a test workspace wouldn't establish that the production account changed.
 
-For the example's protected web API, the intended service port could be 443. That doesn't make 443 the only port every connector needs. Directory, database, IQService, and other interfaces have their own requirements.
+**DNS**, the **Domain Name System**, resolves a hostname into an address. **Name resolution** is that lookup. Machines can use different resolvers or have different access to them.
 
-Nor does allowing the VA's outbound cloud communication prove target reachability. Those are different destinations.
+If `va-02` cannot resolve the configured name, a new target password doesn't provide the missing address.
 
-A **timeout** means an expected response wasn't received within an allowed wait. During connection setup, it doesn't identify one unique cause. An unavailable listener, blocked traffic, routing trouble, or an unresponsive dependency can require different corrections. A “connection refused” result isn't the same observation as a name-resolution failure.
+Successful resolution still doesn't establish the intended destination, reachable service or accepted caller. Check the actual settings and resolution evidence from the relevant runtime; a laptop result isn't a substitute.
 
-Even a successful network connection establishes only that interaction. It doesn't prove that the right service was selected or that application authentication succeeded.
+## Can that runtime reach the service?
 
-Don't open every port or remove network restrictions to replace a specific reachability investigation.
+**Network reachability** means that the calling environment can communicate with the required destination service over the intended path.
 
-## Can the caller trust the service it reached?
+A **port** identifies a network service endpoint on a host. A **listener** accepts connections there. A **route** determines the path toward a destination, while a **firewall** controls permitted traffic.
 
-**Transport Layer Security**, or TLS, protects communication in transit and supports checking the server's identity.
+An **allowlist** admits specified callers, destinations or network origins according to its rules. Those rules can differ between two VAs or between a VA and an administrator's laptop.
 
-**HTTP**, the Hypertext Transfer Protocol, is a request-and-response protocol used by web interfaces and many APIs. **HTTPS** is HTTP over TLS. A secure channel doesn't supply the application's operation privileges.
+A **proxy** forwards traffic for another component. A **gateway** can receive and control requests before they reach the application.
 
-A **certificate** binds an identity, such as a hostname, to a public key under a trust model. A **certificate authority**, or CA, issues certificates. A trust chain connects the service certificate to an authority the client trusts.
+The configured proxy route can carry applicable source web traffic. Inspect the supported mode, configuration and any bypass exceptions. A successful direct test doesn't reproduce a call that must use a proxy.
 
-For an applicable certificate check, consider the endpoint identity, validity period, trusted chain, and the relevant machine's trust configuration. Time-related validation errors also require checking the relevant clock context.
+For the example's protected web API, assume the required service uses port 443. That is not every connector's port requirement. Directory, database and IQService interfaces have their own requirements.
 
-The browser can trust a certificate that the VA doesn't trust. That is a difference between execution environments, not evidence that the recipient entered the wrong password.
+Likewise, the VA reaching SailPoint's cloud services doesn't establish that it can reach the target. Those are different destinations.
 
-An approved inspection proxy can also affect which certificate a client sees. Follow the supported trust design for that route rather than assuming every connection presents the same certificate chain.
+A **timeout** means an expected response wasn't received within the allowed wait. During connection setup, an unavailable listener, blocked route or unresponsive dependency can require different corrections. The timeout alone doesn't identify which one occurred.
 
-A TLS failure should lead you to the reported trust or channel problem. Disabling validation hides that protection instead of establishing a correct integration.
+A connection-refused result and a name-resolution failure are also different observations. Don't turn either into a generic password diagnosis.
 
-For an IQService operation, distinguish VA-to-IQService protection from IQService-to-target communication. One secured leg doesn't configure or prove the other.
+Even an established network connection doesn't prove the correct service was selected or application authentication succeeded. Identify the actual requirement rather than opening every port or removing all restrictions.
 
-## Who is presenting the credential?
+## Does the caller trust the service it reached?
 
-A **credential** is proof used to establish an accepted identity or access context, such as an applicable password, token, or certificate-based credential.
+**Transport Layer Security**, or **TLS**, protects communication in transit and supports checking the server's identity.
 
-**Authentication** establishes that accepted caller context. **Authorization** determines whether the caller can perform the particular action on the particular resource.
+**Hypertext Transfer Protocol**, or **HTTP**, exchanges web requests and responses. **HTTPS** is HTTP protected by TLS. A protected channel doesn't supply application privileges.
 
-OrderDesk's integration actor is `svc-order-isc`. It uses a configured **API token**, a credential for software access to OrderDesk. Devi's `orders-35005` account is the recipient of the change, not the caller performing it.
+A **certificate** binds an identity, such as a hostname, to a **public key**. That key can be shared to verify cryptographic proof made with the corresponding secret **private key**.
 
-An ISC administrator's own authority is another context. Being allowed to administer a source in ISC doesn't grant the external integration account permission to administer OrderDesk.
+A **certificate authority**, or **CA**, issues certificates. A **trust chain** connects the service certificate to an authority the client trusts.
 
-Tokens also have a service context. A token used to call ISC's API isn't automatically a token for OrderDesk.
+For the applicable connection, check the endpoint identity, certificate validity, trusted chain and the actual machine's trust configuration. A time-related validation error also calls for the relevant clock context.
 
-Other connectors can use **OAuth 2.0**, an authorization framework under which an integration obtains or uses access tokens. A token's **scopes** describe authorized API access boundaries, but external roles, consent, account context, and resource restrictions can also matter. Here, external roles are the application's permission groupings, not ISC's role objects.
+A browser can trust a certificate that a VA doesn't trust. That doesn't establish that the recipient's password is wrong.
 
-Don't infer the complete permission model from a scope name containing “write.”
+A configured inspection proxy can also affect the certificate chain the caller sees. Use the supported trust design for that route. Removing certificate validation would remove a required protection rather than establish the correct integration.
 
-Credential rejection can involve an expired or revoked token, a locked integration account, an incorrect secret, or a credential intended for another destination. Which explanation applies needs evidence.
+For IQService work, distinguish VA-to-IQService protection from IQService-to-target communication. One secured leg doesn't configure or prove the other.
 
-Replacing a secret in the target doesn't automatically update a source still using the old value. Follow the supported update procedure and protect the secret while validating the result.
+## Accepted credentials still have a particular caller context
 
-For IQService, the registered user admitting incoming requests, the Windows service logon account, and the source's target-management account have different roles. A successful client-authentication check at IQService doesn't settle target authorization.
+A caller can be rejected because its token expired or was revoked, its secret is incorrect, its integration account is locked, or the credential belongs to another destination. The available evidence must distinguish these explanations.
 
-## Allowed to read isn't allowed to change
+Replacing a secret externally doesn't automatically update a source still using the old value. Follow the supported update procedure and validate the affected work without exposing the secret.
 
-**Aggregation** collects account or entitlement information into ISC. A successful read establishes the result of that collection, within its scope. It isn't a test of every possible write.
+A token used to call ISC's own API isn't automatically valid for the external application. Similarly, an ISC administrator's authority doesn't give `svc-orders` target administration privileges.
 
-OrderDesk can permit `svc-order-isc` to read account information but refuse permission-assignment changes. It can also restrict changes to particular workspaces or resource types.
+Other connectors can use **OAuth 2.0**, an authorization framework under which an integration obtains or uses an **access token**, a credential for authorized API access. A token's **scopes** limit the authorized API access it represents.
 
-The question isn't only “Is this account privileged?” Ask whether the actual caller has the required authority for this operation on this object in this environment.
+Effective authority can also depend on external roles, consent, account context and resource restrictions. Here, an external role is the target application's permission grouping. **Consent** is approval for the integration to use specified access under that arrangement.
 
-Business approval is separate. ISC approving Devi's export access doesn't change the integration actor's external privileges.
+A write-related scope name therefore doesn't establish permission for every object or workspace.
 
-**Least privilege** means assigning only the authority needed for approved work. Adding unrestricted target administration isn't a suitable first response to an unidentified connection failure.
+For IQService, the registered client user supplies incoming-request authentication, the Windows service logon account runs the process, and the source's target-management account supplies the applicable target context. Client registration configures which Windows identities IQService accepts; those clients still need valid Windows authentication. This admission check doesn't settle the target account's authority.
 
-A connector must also support the requested operation. Permissions can't make an unimplemented operation appear.
+## Reading is a different action from changing access
 
-SailPoint offers read-only connector configurations as well as configurations supporting access changes. A target API offering account disable doesn't prove that the configured ISC connector supports it.
+**Aggregation** collects account or entitlement information into ISC. A successful aggregation concerns its read operation and the account/field coverage involved. It doesn't test every possible write.
 
-Support can depend on account type and feature configuration. For example, the Salesforce SaaS connector's enable/disable capability excludes portal and partner users. A general “supports account management” description doesn't replace that distinction.
+The target can permit `svc-orders` to read accounts while refusing permission-assignment changes. It can also permit changes in one workspace or resource category but not another.
 
-Check applicable source configuration, connector features, and activation or licensing conditions before treating every failed operation as a privilege defect.
+Ask whether the actual caller may perform this operation on this object in this environment. “The account is privileged” is too broad to settle that question.
+
+**Least privilege** means granting only the authority needed for approved work. Unrestricted target administration isn't a suitable first response to an unidentified defect.
+
+Also check connector capability. Target permissions cannot add an operation the connector doesn't implement.
+
+Read-only connector configurations exist alongside options that support access changes. An external API offering account disable doesn't establish that the currently configured connector implements it.
+
+Operation support can depend on account type or feature configuration. For example, the Salesforce SaaS connector's enable/disable support excludes portal and partner users.
+
+Check applicable source settings, supported operations and required feature activation or service licensing. A failed write isn't automatically a missing-privilege problem.
 
 ## Does the operation contain valid information?
 
-A supported operation with sufficient authority can still contain invalid data.
+A supported, authorized operation can still carry invalid data.
 
-A **payload** is the information carried in a request. Its required fields and values depend on the target operation and the connector's mapping.
+A **payload** is the information carried by a request. Required fields and values depend on the operation and its target.
 
-A **mapping** connects information in one representation to the field needed in another. For example, an ISC account value can supply the target's required account key.
+A **mapping** specifies how one value supplies a field in another representation. For example, an ISC account value can supply the account key the target expects.
 
-The source's **account schema** describes its represented account fields and their relevant meanings, including which field identifies an account. A human-readable display label isn't automatically the key an API expects.
+An **account schema** describes represented account fields and their relevant meanings, including which field identifies the account. A readable display label isn't automatically that key.
 
-Check the source, account, entitlement reference, and required values for the actual operation. Don't repair a wrong account key by expanding privileges.
+Inspect the source, account, entitlement reference and required values for the actual operation. Extra privilege doesn't provide a missing workspace value or correct a wrong account key.
 
-Target rules also matter. An account can be in a state that prevents a particular change; an application can require another resource first or reject an unavailable license assignment.
+Target conditions also matter. An account's state can prevent a particular action. A required resource or licence may be unavailable. External service availability is another dependency.
 
-Connector support, valid input, target state, and external service availability are dependencies alongside network access and credentials.
+More than one condition can be wrong. If a corrected credential lets the target evaluate a request and then report missing data, the new refusal doesn't establish that the credential correction was wrong.
 
-They aren't mutually exclusive failure categories. One attempt can expose a missing field after an earlier credential problem is corrected. That doesn't mean the first correction was wrong.
+## Put the required conditions together
 
-## Passing one check doesn't cancel the others
+For the export assignment, these conditions need to fit:
 
-For the approved OrderDesk change, these conditions must fit together:
-
-| Required condition | Evidence to examine |
+| Required condition | Relevant evidence |
 |---|---|
-| The intended source, workspace, account, and access item are selected | Source destination settings and precise object references |
-| The configured connector supports and is enabled for the change | Operation and account-type support, applicable source features and configuration |
-| The required integration path is usable and protected | Relevant runtime's resolution, service connectivity, and trust results |
-| The actual integration caller is accepted | Credential context and authentication evidence at the relevant service |
-| That caller may perform this action on this resource | Target privileges, resource scope, and operation-specific audit detail |
-| Required input and target conditions are satisfied | Mapped values, target validation, resource availability, and operation result |
+| Intended source, workspace, account and access item | Destination settings and precise object references |
+| Supported and enabled connector operation | Operation/account-type support and applicable source configuration |
+| Usable, protected integration path | Actual runtime's resolution, service connectivity and trust results |
+| Accepted integration caller | Credential context and authentication evidence |
+| Authority for this action and resource | Target privileges, allowed resource boundary and operation audit |
+| Valid inputs and target conditions | Mapped values, validation detail, resource availability and result |
 
-This is a dependency map, not a fixed order of backend execution. A connector can reject unsupported work or invalid configuration before making a target call. A target can perform its own validation after receiving a request.
+This is a dependency comparison, not a fixed backend execution order. A connector can reject unsupported work or invalid configuration before contacting the target. A target can validate input after receiving a request.
 
-Passing authentication doesn't remove an input requirement. Correcting a mapping doesn't grant a missing external privilege. You need the conditions relevant to the selected operation, not one successful check standing in for all of them.
+Passing one condition doesn't cancel the others. Correcting a mapping doesn't grant authority; accepted authentication doesn't supply a required input.
 
-## Find out who produced the error
+## Find the component that produced the response
 
-An **HTTP status code** classifies a response. Its accompanying detail and the component producing it matter.
+An **HTTP status code** classifies a response. Interpret it with the responder, operation and accompanying detail.
 
-Here are a few useful distinctions, not a complete error catalog:
-
-| Response | Meaning to start from | What not to infer |
+| Response | Starting meaning | What it doesn't establish |
 |---|---|---|
-| 400 Bad Request | The responder identifies a client-request problem | Every 400 is a password problem |
-| 401 Unauthorized | Valid authentication credentials for the resource are lacking | Devi's personal password must be wrong |
-| 403 Forbidden | The responder refuses the understood request | A particular target role is definitely missing |
-| 407 Proxy Authentication Required | Authentication is required to use the proxy | The target application rejected its own credential |
-| 429 Too Many Requests | The responder is limiting request rate | Repeating immediately will fix the operation |
+| 400 Bad Request | Responder reports a client-request problem | Every 400 is a password error |
+| 401 Unauthorized | Valid authentication credentials for that resource are lacking | The recipient's personal password is wrong |
+| 403 Forbidden | Responder understands but refuses the request | A particular target role must be missing |
+| 407 Proxy Authentication Required | Authentication is needed to use the proxy | The target rejected its own credential |
+| 429 Too Many Requests | Responder is limiting request rate | Immediate repetition will fix the operation |
 
-A 403 can involve a gateway or another policy boundary. Locate the responder and examine the supplied reason instead of prescribing permissions from the number alone.
+A gateway can produce a refusal before an application processes the intended work. Locate the responder and reason before prescribing a privilege change from a number alone.
 
-A **rate limit** restricts permitted API usage. **Throttling** is the service limiting work under those rules. Follow the selected connector's documented handling and the target's current constraints; don't invent one universal delay or retry count.
+A **rate limit** restricts permitted API use. **Throttling** is the service limiting work under those rules. Use the selected connector's handling and target's current constraints; there is no universal retry delay or count.
 
-Other interfaces, including IQService and directory protocols, have their own messages. Don't force them into an HTTP-code explanation.
+IQService and directory interfaces also have their own messages. Don't force them into an HTTP-code interpretation.
 
-Keep enough context to correlate evidence: source, recipient account, operation, intended environment, actual execution component, timestamp with time zone, and available request reference. A **request reference** is an identifier used to relate records for the same request where the involved systems provide it.
+Keep source, account, operation, environment, actual execution component and timestamp with time zone together. A **request reference** is an identifier used to relate records for the same work where the involved systems provide it.
 
-A missing log entry alone isn't proof that no call occurred. Logging scope, retention, and which component you inspected can affect what is visible.
+A missing log entry alone doesn't prove no call occurred. Logging scope, retention and the inspected component affect what you can see.
 
-## Return to Devi's failed export grant
+## Use the actual attempt to choose the correction
 
-Now add these fictional incident facts:
+Consider a separate failed export attempt with these hypothetical facts:
 
-- Operation evidence identifies `va-order-02` and the production API destination.
-- That attempt resolves the hostname and establishes the required protected connection.
-- The OrderDesk audit identifies caller `svc-order-isc`, workspace `Orders-Prod`, and account `orders-35005`.
-- It explicitly denies the `orders.export` assignment because this integration actor lacks the required permission-assignment privilege.
-- The target confirms the entitlement remains absent.
+- Operation evidence identifies `va-02` and the production API destination.
+- The attempt resolves the hostname and establishes the required protected connection.
+- Target audit identifies `svc-orders`, `Orders-Prod` and `orders-reader`.
+- It explicitly denies the `orders.export` assignment because the caller lacks the required permission-assignment privilege.
+- Current target evidence confirms that export permission remains absent.
 
-What correction does that evidence support?
+This evidence supports investigating the integration actor's operation-specific authority with the application owner. The recipient password, DNS and unsupported-operation explanations don't fit the supplied facts.
 
-Investigate the integration actor's operation-specific target authority with the application owner. The denied write isn't explained by Devi's password, a failed DNS lookup, or an unsupported connector operation in this supplied case.
+The successful read tested another action. It didn't establish the missing write privilege.
 
-The successful read didn't prove this privilege. It exercised a different action.
+The successful portions of this failed attempt also don't certify every other member or future call. They establish what happened for this attempt.
 
-The failed attempt's successful path doesn't certify every future operation or every cluster member. It establishes what happened for this attempt. Another attempt could fail earlier after a configuration change.
+After the authorized, scoped privilege correction, address the failed work through the supported recovery process and verify the intended target result.
 
-After the approved scoped privilege correction, recover the affected change through the supported process and verify its intended target outcome.
+Without these audit and operation facts, a green connection test and successful read would not be enough to select that correction.
 
-If those incident facts weren't supplied, the initial green connection test and successful read wouldn't be enough to select the same correction.
+## Keep established facts when a new failure appears
 
-## Choose the next check from the evidence
+**Reconciliation** means establishing what actually happened and aligning the tracked work with the observed outcome through the supported process.
 
-An investigation shouldn't restart from zero every time an error changes.
-
-Use the last established facts to narrow what remains unresolved:
+An engineer's investigation can follow this decision pattern:
 
 ```text
-[Exact operation + intended result identified]
-                      |
-                      v
-[Actual path and relevant evidence located]
-                      |
-                      v
-[Enough evidence for a scoped next action?]
-       | no                      | yes
-       v                         v
-[Get missing evidence]    [Validate scoped action]
-       |                         |
-       v                         v
-[Reassess evidence]       [Recover or reconcile]
-                                 |
-                                 v
-                         [Verify target outcome]
+Identify operation and intended result
+  |
+  v
+Locate actual path and evidence
+  |
+  v
+Enough evidence for a scoped action?
+  |
+  +-- No --> Gather missing evidence
+  |            |
+  |            +--> Return to decision
+  |
+  +-- Yes -> Validate scoped correction
+               |
+               v
+             Recover/reconcile work
+               |
+               v
+             Verify target outcome
+
+These are an engineer's decisions.
 ```
 
-These are investigation decisions made by an engineer. They aren't ISC's private processing sequence. The “no” branch gathers missing evidence and returns to assessment. It doesn't authorize a change or mean that all prerequisites passed.
+The branches are human investigation decisions. They aren't an internal ISC processing sequence. The no branch gathers the missing evidence and returns to assessment; it doesn't authorize a change.
 
-A scoped correction addresses the established defect without changing unrelated security or business decisions.
+A scoped correction addresses the demonstrated defect without changing unrelated security or business decisions.
 
-Suppose a corrected network route lets a previously blocked request reach the target, which then rejects its token. The new observation identifies another unresolved prerequisite. Investigate that credential context; don't undo the valid route correction merely because the whole task isn't complete yet.
+Suppose a repaired network route lets an attempt reach the target, which now rejects its token. That new observation identifies another prerequisite. Investigate the credential context rather than undoing the working route or restarting every check from zero.
 
-## A timeout doesn't settle the outcome
+## A timeout leaves a question about the effect
 
-An operation timing out doesn't always tell you whether the target performed the requested action.
+A response can be lost after the target applies a change. A broader operation can also have one completed effect and another failed one.
 
-The target can apply a change and lose the response before the integration receives it. A broader operation can also have one successful part and another failed part.
+In a different operation, creating an account successfully and then failing its access assignment isn't the same as nothing happening. A failed overall result doesn't establish automatic rollback of that account.
 
-An account-creation step succeeding while an access assignment fails isn't the same as nothing happening. Nor does the failed overall result establish automatic rollback of the created account.
+Inspect target state and operation details before repeating effects.
 
-Before repeating work, reconcile the actual target state and the recorded operation details.
+An operation is **idempotent** when repeated equivalent requests have the same intended target effect as one request. That is a property of the particular operation, not every connector action.
 
-**Idempotent** describes an operation whose repeated equivalent requests have the same intended target effect as one request. That property is operation-specific. Don't assume every connector action has it, or that repeated calls produce identical responses and no additional records.
+Suppose a hypothetical API defines a request to leave a named account disabled, regardless of its initial state. After a successful request, the account is disabled; repeating the equivalent request leaves that same state. An operation that creates a new record each time has a different repeat effect.
 
-Use the documented recovery path. A retry can be appropriate, but it isn't a substitute for understanding what already changed.
+Idempotence doesn't promise identical responses, no additional log records or no other side effects. Check the operation's supported recovery behaviour instead of treating every timeout as an instruction to retry.
 
-Once a dependency is repaired, distinguish these outcomes:
+After repair, distinguish restored communication, recovered or reconciled work, and verified target state. One doesn't establish the next.
 
-- The integration can communicate again.
-- The failed work has been recovered or otherwise reconciled.
-- The intended target state has been verified.
+**Collected state** is information represented from a read. An ISC page showing earlier collected data isn't a continuous live target inspection. Compare its timing with the operation result and a current target check.
 
-An ISC page can still display earlier collected data. **Collected state** is information represented from a read; it isn't a continuous live target inspection. Compare its timing with the provisioning result and a relevant target check.
+## Make the handoff useful
 
-## Make the handoff useful to the next person
+A useful handoff identifies the source operation, actual runtime, destination/service, time and relevant error. It states which facts are established and what remains unknown.
 
-“Please check the firewall” asks another team to guess.
+If audit evidence shows a target authorization denial, involve the application owner with the identified caller, resource and action. If the runtime cannot resolve a name, provide its hostname and resolver context to the responsible team.
 
-A useful handoff says which source operation failed, from which runtime, toward which endpoint and service, at what time, and with which relevant error. It states what was established and what remains unknown.
+Ownership follows the organization's operating model. A generic error label doesn't assign blame.
 
-If a target audit confirms an authorization denial, involve the application owner with the identified caller, resource, and operation. If the runtime cannot resolve a hostname, provide that context to the team responsible for name resolution.
+Share the necessary credential identity and settings context without sharing passwords, complete tokens, private keys or unrestricted sensitive traces.
 
-Ownership depends on your organization's operating model. Don't assign blame from a generic error label.
+## Work through the investigations
 
-Exclude passwords, complete tokens, private keys, and unrestricted sensitive trace files. Explain credential identity and configuration context without disclosing the secret itself.
+These cases are separate situations.
 
-## Work through these investigations
+### 1. The name works from another machine
 
-Treat each case as a separate situation.
+A laptop and `va-01` resolve the target name. The actual operation uses `va-02`, whose lookup returns a name-resolution failure before any target session starts.
 
-### 1. The same hostname works from one place
+Which evidence is relevant, and would rotating the target password address the problem?
 
-The source uses a two-member VA cluster. The laptop and `va-order-01` resolve the target hostname successfully. Operation evidence identifies `va-order-02`, whose resolver returns a name-resolution failure before any target session starts.
+**Worked reasoning:** Investigate the intended hostname and configured resolution path from `va-02`, including resolver reachability. The other machines' success doesn't establish its path. Correct the demonstrated dependency through the supported process, then recover and check the affected operation. A password doesn't repair the lookup failure.
 
-Which check is relevant, and would target-password rotation address the supplied defect?
+### 2. Corrected trust reveals an unregistered client
 
-**Worked reasoning:** Investigate the configured resolution path from `va-order-02`, including its resolver reachability and the intended hostname. Other machines' success doesn't establish that member's result. Target-password rotation doesn't repair a failure before target contact. Verify the supported resolution correction, then recover and check the affected operation.
+For a different IQService operation, an approved correction resolves certificate trust. The next attempt establishes TLS, but IQService explicitly refuses an unregistered client. No target request is admitted.
 
-### 2. Correcting trust reveals another refusal
+Did the first correction fail, and would more target authority help?
 
-For a separate IQService operation, a certificate-trust problem is corrected through the approved process. The next attempt establishes TLS, but IQService explicitly rejects an unregistered client user. No target request is admitted.
+**Worked reasoning:** TLS passed for the new interaction. Its supplied failure is now client registration. Check the approved registered-user and source-credential configuration rather than unrelated target privilege. More than one prerequisite can fail; passing one doesn't prove the others were already satisfied.
 
-Did the certificate correction fail, and should you add target administration rights?
+### 3. The request is missing its workspace value
 
-**Worked reasoning:** The new attempt establishes that the reported TLS hurdle was passed for that interaction. The supplied failure is now client registration at IQService. Correct the approved registered-user and source-credential configuration, not unrelated target privileges. A repaired prerequisite doesn't guarantee all remaining prerequisites were already satisfied.
+A supported change reaches the intended target service under an actor permitted to make it. The target returns 400 with an explicit validation message: the workspace identifier is missing. No change is applied.
 
-### 3. The target rejects missing information
+**Worked reasoning:** Examine the operation configuration, input and mapping that should supply that identifier. The detail identifies missing data, not rejected credentials. Correct and validate the required value through the supported process. The status number alone wouldn't identify this precise cause.
 
-A supported fictional change reaches the correct target under a permitted integration actor. The target returns 400 with an explicit validation message: the required workspace identifier is missing. No change is applied.
+### 4. The proxy returns 407
 
-Should you replace credentials or examine how the operation gets its required value?
+In another deployment, the VA uses the supported web-proxy path. Evidence identifies a 407 from that proxy, requiring its configured authentication. It forwards no target request in this attempt.
 
-**Worked reasoning:** Examine the source's operation configuration, input values, and mapping that should supply the workspace identifier. The supplied detail identifies invalid input, not credential rejection. Correct and validate that value through the supported process. The status code alone wouldn't have established this exact cause; the accompanying validation detail does.
+Which boundary needs investigation?
 
-### 4. The response came from the proxy
+**Worked reasoning:** Check the approved proxy configuration and supported authentication. Proxy admission differs from target authentication; replacing the target token doesn't provide proxy credentials. The no-forwarding conclusion comes from the supplied path evidence, not from treating any code as a complete account of target effects.
 
-In another deployment, the VA uses the supported HTTP proxy path. Evidence shows a 407 response generated by the proxy, requiring its configured authentication. No request is forwarded to OrderDesk in this supplied attempt.
+### 5. The target changed before the response was lost
 
-Which credentials and path should the investigation distinguish?
+A recorded attempt times out. Audit and a current target check confirm that it assigned `orders.export` to `orders-reader` in `Orders-Prod`. ISC's account page shows an older collection.
 
-**Worked reasoning:** Investigate the approved proxy connection configuration and its supported authentication requirements. Proxy admission and OrderDesk authentication are different boundaries. Replacing the target token doesn't supply proxy authentication. The no-forwarding conclusion comes from the supplied path evidence, not from assuming every error number proves what the target did.
+Should the grant be repeated solely because of that timeout or view?
 
-### 5. The change happened, but the response was lost
+**Worked reasoning:** No. The supplied target evidence establishes the assignment. Reconcile tracked work and the collected view through supported handling. Neither timeout nor older data proves absence. Don't create another request or repeat effects without understanding recovery and duplicate handling.
 
-The recorded attempt times out. The target audit and a current target check confirm `orders.export` was assigned to `orders-35005` in `Orders-Prod` during that attempt. ISC's account page still shows an older collection.
+## Review a proposed disable design
 
-Should you repeat the grant solely because of the timeout or the older account view?
+A team needs ISC to disable departed contractors in a hosted research application. Its source uses a read-only SaaS connector configuration and successfully collects accounts.
 
-**Worked reasoning:** No. The supplied target evidence establishes the assignment. Reconcile the tracked operation and collected view using the supported process. Neither the timeout nor older represented data proves absence. Don't create another business request or repeat effects without understanding their recovery and duplicate-handling behavior.
+The external API offers disable, but the team hasn't established a supported write-capable connector path or the external authority required for that operation.
 
-## Review a new project's design
+The proposal assumes administrator credentials, a green connection test and successful reads prove that the current source can disable accounts.
 
-A team wants ISC to disable departed contractors in a fictional hosted application called ResearchArchive.
+What is established, what is missing, and what evidence is needed before approving the design?
 
-Its existing source uses a read-only SaaS connector configuration. Account aggregation works. The application's API offers a disable operation, but the team hasn't established a supported write-capable connector path or the required external privileges for that operation.
+**Worked reasoning:** The current configuration can perform the reported reads through its SaaS path. Those observations don't implement a write in a read-only connector.
 
-The proposal says: “We will put administrator credentials into the current source. The green connection test and successful reads prove that this will support disable.”
+Establish a supported design for the exact disable operation and relevant account types. Then validate destination, required path, source settings, caller authority, valid inputs and target outcome. Confirm applicable activation or licensing conditions.
 
-What would you accept as established, what is missing, and what evidence would you request before approving the design?
+Administrator credentials don't implement missing connector behaviour and can add unnecessary exposure. Require operation-specific evidence.
 
-**Worked reasoning:** The current configuration can perform the reported reads. Its SaaS runtime is part of that established path. Those observations don't add write capability to a read-only connector.
-
-First establish a supported integration design for the exact disable operation and relevant account types. Then validate the actual destination, required connectivity, source configuration, external caller authority, valid operation inputs, and target outcome under that design. Applicable activation or licensing requirements also need confirmation.
-
-Administrator credentials alone don't implement the missing operation and can introduce unnecessary exposure. A sound design needs operation-specific evidence rather than a broad promise that “the connection works.”
-
-Explain the distinction to the team this way: “Reachability gets the integration to a service. Authentication establishes its caller context. Authorization permits an action on a resource. The connector still needs to support that action, and the request still needs valid information. We verify the intended result separately.”
+Explain the connection to the team: reachability gets the caller to a service; authentication establishes its context; authorization permits an action on a resource. Supported connector behaviour and valid information are still required, and the intended result is verified separately.

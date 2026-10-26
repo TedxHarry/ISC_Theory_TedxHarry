@@ -1,0 +1,20 @@
+Relevant identity-change event
+              |
+              v
+Department-change filter matches?
+  |
+  +-- No --> No execution
+  |
+  +-- Yes -> Start execution with input
+               |
+               v
+           New department = Finance?
+             |
+             +-- No --> Success end
+             |
+             +-- Yes -> Send notification
+                          |
+                          v
+                       Success end
+
+No branch requests or grants access.

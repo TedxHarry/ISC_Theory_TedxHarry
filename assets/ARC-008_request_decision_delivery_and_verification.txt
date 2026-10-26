@@ -1,0 +1,15 @@
+Submit intended access request
+        |
+        v
+Applicable checks and required approval
+        |
+        v
+Supported account-change work
+        |
+        v
+Target applies required permissions
+        |
+        v
+Engineer verifies intended result
+
+Successful path; each result has scope.

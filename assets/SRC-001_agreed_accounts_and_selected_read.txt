@@ -1,0 +1,8 @@
+Agreed human-account set: 110
+  |
+  +-- East: 70 --> Selected --> Read: 70
+  |
+  +-- West: 40 --> Excluded --> Not read
+
+Required coverage: East and West.
+Supplied read condition: East only.

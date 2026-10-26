@@ -1,0 +1,19 @@
+SaaS connector
+  ISC hosted connector runtime
+    |
+    | API requests and responses
+    v
+  External application's API
+
+VA-based connector: API example
+  ISC hosted service
+    |
+    | Work and results
+    v
+  Customer VA cluster: connector work
+    |
+    | API requests and responses
+    v
+  External application's API
+
+Lines show interactions, not packet flow.

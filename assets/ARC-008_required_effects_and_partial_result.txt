@@ -1,0 +1,10 @@
+Required profile access
+        |
+        +-- stock.read --> Added
+        |
+        +-- stock.export --> Refused
+                               |
+                               v
+                     Export still missing
+
+Target result: read only, not nothing.

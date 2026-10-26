@@ -1,0 +1,15 @@
+ISC: approved supported change
+  |
+  | Work and returned results
+  v
+VA: Active Directory connector work
+  |
+  | Request to configured IQService
+  v
+Windows host: IQService
+  |
+  | Supported directory operation
+  v
+Active Directory: account and group
+
+This map covers the stated group update.

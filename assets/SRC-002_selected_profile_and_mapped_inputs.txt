@@ -1,0 +1,13 @@
+Employees profile selects inputs
+  |
+  +-- HR department: Finance
+  |       |
+  |       v
+  |   Identity department: Finance
+  |
+  +-- Directory account mail
+          |
+          v
+      Identity email
+
+Two mappings, not two active profiles.
