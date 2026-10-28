@@ -25,6 +25,17 @@ The report will distinguish actual supplied learner feedback from this assistant
 
 ## Deployment verification
 
-Pending exact-commit Pages verification.
+Content commit [f5b287c6822c21e156fd7490a3adbc1d6d0274b7](https://github.com/TedxHarry/ISC_Theory_TedxHarry/commit/f5b287c6822c21e156fd7490a3adbc1d6d0274b7) pushed to main; GitHub Pages reported built for that exact commit without error.
+
+- Four existing navigation/disclosure tests passed, exit 0; staged whitespace clear.
+- All 91 live lesson routes returned HTTP 200 and retained 91 ordered navigation links, 12 modules, correct current lesson and open module.
+- All five changed articles retained 873 checked normalized content units; every code block matched source exactly. Ten source-matched diagrams and nine tables retain accessible formatting/scroll wrappers.
+- All 354 current/historical text assets returned HTTP 200 and matched local content after line-ending normalization.
+- ROL-005 navigation label was aligned to the neutral current title; permanent routes/order and shared UI behavior unchanged.
+- Publication scope: 27 changed/added files, including five learners, ten diagrams, five revision records, course/reference/example records, one manifest title, publication record/instructions and verification utility.
+- Original ISC_Theory_Learning remote checked again after deployment and remained 90b9f298860b0bc26d26259f084e129ac59331e0. No writes targeted it.
+- A follow-up author-only commit records these results. Beginner teaching evaluation starts from this published snapshot; learner bodies are unchanged during the evaluation.
+
+These checks verify source/render/deployment consistency. They do not establish beginner comprehension.
 
 [Verification utility](verify-publication.mjs) compares complete normalized content units and exact code/diagram blocks for the five changed articles, all 91 routes/navigation and every text asset. Automated consistency checks do not validate learning.
