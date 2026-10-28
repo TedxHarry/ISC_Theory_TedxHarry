@@ -40,6 +40,10 @@ The user requested publishing the 63 completed revisions since SRC-002, through 
 
 The user requested pushing the final five completed local rewrites, ROL-002–006, then reevaluating teaching/explanation after beginner feedback. All 91 existing rewrites are in this snapshot. See [scope and verification](PUBLICATION_2026-10-28.md). ROL-005 navigation title matches its neutral revised article title; routes and shared UI behavior remain. The next task is review and recommendations, not ROL-007 authoring yet.
 
+## October 28 beginner-explanation publication
+
+The user requested “Push and continue.” Publish SYS-001 through SYS-003 revision 3.0, teaching specification 3.2, diagrams and author records/review material. See [batch scope and deployment checks](PUBLICATION_2026-10-28_BEGINNER_BATCH_1.md). The remaining 88 learners keep their earlier wording and all 91 routes remain available. Continue SYS-004 locally afterward, one complete lesson at a time.
+
 ## Historical publishing notes inherited from ISC_Theory_Learning
 
 The entries below describe earlier development and deployments of the original edition. Their counts and next-lesson reservations are historical, not the current revision target.

@@ -1,436 +1,495 @@
 # Who owns what when access needs to change?
 
-You submit an access request in SailPoint Identity Security Cloud, or **ISC**, asking for the access needed to read invoices. An **access request** asks for specified access to be assigned to someone.
+You request invoice-reading access in SailPoint Identity Security Cloud, or **ISC**, a cloud service for managing accounts and access across systems.
 
-The request goes to your former manager.
+An **access request** asks for specified access to be provided to someone. In this case, you are asking for yourself. A **reviewer** receives the work of deciding whether that request should proceed.
 
-Your current manager says the reporting change is already effective. The Human Resources team says the employee record is correct. The ISC screen still shows the former manager.
+Your request is waiting with your former manager.
 
-Who should fix it?
+The reporting change is already effective. Your current manager confirms it, and Human Resources says the employment record has been updated. Yet the request page still names the former manager.
 
-You can see the problem in ISC, but that doesn't yet tell you where it began. ISC may have received an old record. It may have the new information but be using it incorrectly. Or the current manager relationship may be correct while this particular request is still assigned to the previous reviewer.
+Who should act next?
 
-Each explanation points to different work. Before choosing who should act, follow what information was supposed to move, what actually moved, and where the results first disagree.
+The request page shows where you noticed the problem. It does not yet explain where the wrong information entered the process.
 
-## What does it mean to own the problem?
+ISC might have collected an old HR record. It might have the correct record but an incorrect manager relationship. Or today's manager relationship might be right while this existing request still has its earlier assignment.
 
-Suppose you ask an ISC engineer to change the manager.
+Those findings need different corrections. The useful starting point is to identify the record or decision that is wrong, then find the person authorized to correct that part.
 
-The engineer can investigate how ISC obtained the value and established the relationship. But the engineer shouldn't decide who you report to simply because they can change configuration.
+## Owning the decision and doing the work are different responsibilities
 
-That reporting fact needs confirmation through the organization's employment process. Once it is confirmed, the engineer can check whether ISC represents it correctly.
+An ISC engineer can investigate how the manager was selected. That does not make the engineer the authority on whom you should report to.
 
-This separates two kinds of authority: deciding what is correct and carrying out the change that makes a system reflect it.
+The real reporting relationship comes from the organization's employment process. Once that fact is confirmed, the technical team can check whether the systems represent it correctly.
 
-The distinction also applies to permissions. A **permission** allows an action or access to a resource. A business owner can decide that invoice reading is appropriate for a job without having technical permission to edit application accounts. An administrator may be able to edit those accounts without being authorized to decide who should release payments.
+The same distinction applies to access. A **permission** allows an action on a resource. Reading an invoice and releasing a payment are different actions.
 
-When someone says “I own it,” ask which part they mean.
+A manager may confirm that invoice reading belongs to your work without having permission to edit application accounts. An administrator may be able to edit those accounts without being the person authorized to approve payment-release access.
 
-**Accountability** means being answerable for the outcome. **Execution responsibility** means doing the work needed to reach it. For a case crossing several teams, a coordinator keeps track of the unresolved outcome while the relevant specialists perform their parts.
+**Accountability** means being answerable for an outcome. **Execution responsibility** means doing the work that produces it.
 
-The coordinator doesn't have to become an HR administrator, application owner, and ISC engineer. They need to know who has accepted the next action, what result is expected, and what remains unresolved.
+A coordinator can keep the overall case moving while HR, the ISC team and application specialists perform different parts. The coordinator needs to know who accepted the next action, what result they will return and what remains unresolved.
 
-The responsibilities below are a practical operating model to agree with an organization, not an organization chart imposed by SailPoint. One person may perform several functions; a larger organization may assign each to a separate team.
+They do not need every team's administrative permissions. They need a complete, accepted handoff.
 
-## Who confirms the need, and who explains the permission?
+A **handoff** passes a defined action or useful evidence to the next responsible person. Moving a ticket to another queue is useful only if someone accepts the work and understands what result is required.
 
-Your manager understands the work you're expected to perform. They can confirm, for example, that checking invoices is part of your assignment.
+These responsibilities are an operating model to agree with the organization. They are not job titles imposed by ISC. One person may perform several functions, or separate teams may share them.
 
-But “needs invoice access” is incomplete. Does that mean reading, editing, approving, or paying invoices? Does it apply to all invoices or only those for one business unit?
+## Start with the reporting fact and its effective date
 
-The **application owner** is accountable for the application's business access requirements in this operating model. They work with application specialists to connect the work requirement to the right permissions and restrictions.
+Human Resources, or **HR**, maintains employment facts through the organization's agreed process.
 
-An **application administrator** operates and configures the application. The owner and administrator can be the same person, but the responsibilities are different. One establishes what the access should mean; the other helps make the application enforce that meaning.
+For our manager example, HR is responsible for recording the employee's manager, department and when a reporting change takes effect.
 
-For a small hypothetical requirement, the person needs **Read invoices** but must not receive **Release payments**. These labels describe different capabilities, not built-in SailPoint permissions.
+That date can explain an apparent disagreement. Entering next month's manager today does not necessarily mean that person should review today's request.
 
-The manager confirms the person's work. The application owner or designated specialist explains which access provides that capability without adding payment release.
+First confirm which relationship should apply at the time being investigated. Then follow that fact into ISC.
 
-That is why a successful technical grant is not enough to prove the access is appropriately designed. You could deliver exactly the requested item and still deliver too much if the item grants more than its description suggests.
+ISC keeps a person-level record called an **identity**. It can connect the employee's information with accounts in different systems.
 
-The organization must also decide who reviews a request. It can configure manager review, owner review, or other supported review arrangements. A manager's knowledge explains why they might be chosen; it doesn't make manager approval mandatory for every ISC request.
+An **account** is a separate record in a particular system. An HR worker record can be collected as an account even when nobody signs in through it. Here it supplies employment information.
 
-For the request we're investigating, assume manager review is the configured route. We now need to understand how ISC identifies that manager.
+The original HR record, the collected HR account in ISC and the ISC identity are different records. Updating the first does not directly replace every value in the others.
 
-## How does a manager change reach ISC?
+## Did the new information actually reach ISC?
 
-**Human Resources**, or **HR**, maintains employment facts through the organization's processes. In this example, HR is responsible for recording the employee's manager, department, and the date a change takes effect.
+ISC represents the HR account data through a configured **source**. A **connector** supplies the supported way of reading that information and, where available, performing changes.
 
-The date matters. A new manager entered today might be a change for next month. First establish which relationship should apply at the time of the request.
+Suppose this HR connection consumes an export, a set of worker records produced from HR.
 
-Next, distinguish the HR record from ISC's record of the person.
+HR's screen can show the new manager while the export still contains an older value. The ISC team needs the input the connection actually used, not only a screenshot of HR's current record.
 
-An **account** is a record in a particular system representing a person or another actor. An HR employee record can be collected as an account even if nobody uses that record to sign in. An ISC **identity** is the person-level record that brings together identity information and associated accounts and access.
+Reading source account data into ISC is **account aggregation**. The intended worker record must be included in that collection.
 
-Editing the HR record doesn't directly edit the ISC identity. The information needs a route between them.
+If the wrong export was consumed or the employee was outside the collection's scope, a completed aggregation does not establish that their new manager information arrived.
 
-An administrator configures a **source**, ISC's representation of a system or account-data collection. A **connector** provides the integration used to read that data and perform supported changes.
+This gives the participants concrete jobs. HR confirms the employment fact. The export operator checks which information was published. The ISC engineer checks which input was consumed and what appeared on the collected account.
 
-In one arrangement, the integration reads an HR export, a set of records made available from HR. If that export is old, a correct value on the HR screen can coexist with old information arriving at ISC.
+If the export is old, the next correction concerns export delivery. Reprocessing the same old input cannot discover a manager value it never received.
 
-**Account aggregation** is the collection of source account data into ISC. The relevant record must be included in the information read. A completed collection of the wrong file or wrong record doesn't establish that today's manager change reached ISC.
+## Correct data still needs the right instructions
 
-Once the data arrives, ISC still needs to use the right values in the right places.
+A named field on a record is an **attribute**. Department and manager number are examples.
 
-An **attribute** is a named piece of information on a record, such as department or an employee number. A **mapping** specifies where a value comes from or how it is calculated. An **identity profile** contains configuration for a population of identities, including mappings for their identity attributes.
+A **mapping** tells ISC where a value comes from or how to calculate it. An **identity profile** holds shared configuration for a population of identities, including how their attributes obtain values.
 
-For example, a collected HR account can contain the correct department while the identity's department still comes from another source containing an old value. In that situation, the HR fact and the collected HR record are correct; the chosen mapping needs investigation.
+Suppose HR and the collected HR account both say department Finance, while the identity still says Customer Support. Inspection finds that the identity mapping reads another account whose department remains Customer Support.
 
-You may also hear HR described as authoritative. There are two related meanings to keep separate.
+The correct HR input is available, but the mapping is selecting something else.
 
-HR can be the organization's agreed authority for employment facts. In ISC, an **authoritative source** supplies the account population from which identities are established through an identity profile. That product relationship doesn't mean every identity attribute must obtain its value from that source. The mappings still determine the selected inputs.
+If the approved design says HR supplies department for these employees, the ISC engineer should correct and apply that mapping. Asking HR to replace its correct Finance value would make a true employment fact compensate for a wrong technical instruction.
 
-For this example, HR has both responsibilities: it supplies these employee identities and is the agreed authority for their employment facts. Neither fact removes the need to verify what ISC actually collected and used.
+Before changing a shared mapping, check which identities use it. After the authorized change, verify the resulting identity values and any access decisions that depend on them. A saved setting is not the final applied result.
 
-## How does a manager number become a manager relationship?
+### What does “authoritative” mean here?
 
-A manager number on an employee record identifies another person. To route work to that person in ISC, the system needs more than a piece of text saying who the manager is.
+HR can be the organization's authority for employment facts: the people and processes responsible for deciding what those facts should be.
 
-**Manager correlation** establishes the relationship between the employee's ISC identity and the identity representing their manager. It uses configured matching information to find the manager identity.
+In ISC, an **authoritative source** has a more specific job. Its account population establishes identities through an identity profile.
 
-Consider a simple hypothetical match. The employee's HR account contains an attribute we'll call **managerNumber**. Manager identities have an identifying attribute we'll call **workerNumber**.
+These meanings are related but not identical. A source can establish the employee identities while individual identity attributes use approved inputs from other sources.
 
-An **identifier** is a value used to distinguish a record. Here, the manager's number lets us compare the intended manager across records without relying only on names that different people might share.
+For this example, HR both establishes the employee population and supplies the agreed employment facts. The mappings still determine which values ISC uses. Calling HR authoritative is not a substitute for inspecting those instructions.
 
-Suppose managerNumber contains **M-NEW**, and the intended manager identity has workerNumber **M-NEW**. With the relevant configuration in place and that manager identity as the unique valid match, ISC can establish the employee-to-manager relationship.
+## How does a manager number identify the manager in ISC?
 
-The comparison is between the manager identifier on the employee's account and an identifier on the manager's identity. It isn't a comparison between two manager display names or a decision about the employee's job.
+The employee's record can contain a manager number. A request needs to reach the person that number identifies.
 
-The illustrative field names and values aren't prescribed ISC defaults. A real source can use different supported attributes. The manager identity must exist with a value the configured comparison can match. The relevant identity-profile manager mapping and source manager-correlation configuration must also be in place.
+The employee's collected HR account is already associated with the correct employee identity. Establishing that account-to-identity association is **account correlation**.
 
-**Identity processing** evaluates identity data against applicable configuration. It can update identity attributes and manager relationships and initiate configured access changes. Manager correlation can be recalculated as relevant identity data changes through aggregation or identity processing.
+**Manager correlation** establishes a different relationship: it links the employee's identity to the identity representing their manager. Its configured comparison connects the manager reference with the matching person record.
 
-Completing that evaluation doesn't prove a downstream account change succeeded. Establishing the manager relationship, routing a request, and delivering application access remain different results.
+Use these hypothetical fields:
 
-There is also an important failure behavior. If an account's manager value changes to a new nonempty value that cannot be matched to a manager, the existing manager relationship can remain. Seeing the new number in a collected record therefore doesn't prove the relationship now points to the new manager.
-
-The manager confirms the real reporting relationship. HR maintains the employment record. The ISC engineer checks whether the data and configuration establish that relationship in ISC. Each contributes something the others cannot infer from a job title alone.
-
-## Find where the information first stops agreeing
-
-Use **M-OLD** for the former manager and M-NEW for the current manager. The change is effective now, and the following comparisons concern the same employee and request.
-
-These rows are alternative findings, not five problems assumed to exist at once.
-
-| What you find | What it tells you to investigate next |
+| Record | Field and value used here |
 |---|---|
-| The confirmed current manager is M-NEW, but HR still records M-OLD for the applicable date | HR's data owner must validate the employment record with the responsible business participants. |
-| HR records M-NEW, but the export consumed by ISC contains M-OLD | The HR system or export operator checks delivery of the current record. The ISC engineer identifies the actual input consumed. |
-| The consumed record contains M-NEW, but ISC's collected account still shows M-OLD | The ISC engineer and source operator check the record, collection scope, result, and observation times. |
-| The correct manager value is collected, but the identity still links to the former manager | The ISC engineer checks manager identities, matching values, applicable configuration, and processing results. |
-| The identity links to the current manager, but the existing request is assigned to the former manager | An authorized request administrator checks that request's assignment and the supported correction path. |
+| Employee's collected HR account | managerNumber = M-NEW |
+| Intended manager's ISC identity | workerNumber = M-NEW |
 
-The table locates the next useful investigation. It doesn't prove a team caused the problem. An old collected view, for example, needs its observation time before you can compare it with a newer export.
+The employee's managerNumber identifies someone else: the manager. It is not the employee's own worker number.
 
-For the unmatched-manager finding, inspect the intended manager identity as well as the employee record. A correct M-NEW input can't establish the intended link if the manager's identity is missing or lacks the matching value.
+An **identifier** is a value used to distinguish a record or subject. Here, the agreed manager number lets us identify the intended person without relying only on names that different people might share.
 
-Suppose the export is the problem. The export operator corrects delivery, then the ISC engineer checks that the relevant record was collected and that processing established the intended relationship.
+The comparison uses managerNumber on the employee account and workerNumber on a manager identity. Both contain M-NEW.
 
-There is still one more question: what happened to the request that was already waiting?
+For this successful trace, the manager identity already exists, its identifying value is correct and it is the unique intended match. The selected fields are available for supported matching.
 
-Don't assume changing the current manager relationship automatically reassigns every in-progress approval. Inspect this request separately. Its existing assignment has its own history and supported administration.
+Two configurations connect the work. The identity profile's **Manager Name mapping** supplies the relevant manager information from the HR source. The source's **manager-correlation configuration** defines the account-to-manager-identity comparison shown above. Both are prepared for this example.
 
-The correction is complete only when the relevant data, resulting relationship, and outstanding work have been checked. Fixing the first bad input is necessary, but it doesn't verify every later result.
+ISC can then link the employee's identity to that manager identity. The result is a person-to-person relationship, not merely text saying M-NEW on a screen.
 
-## Now follow the access change to the system that receives it
+The field names and values illustrate this configuration; they are not default field names every ISC source must use.
 
-Once the right reviewer can make the decision, the approved access still needs to reach the account that will use it.
+**Identity processing** evaluates identity information and the configuration that uses it. It can update attributes and manager relationships and initiate configured access changes. Manager relationships can be recalculated as relevant data changes through aggregation or identity processing.
 
-Suppose the application uses membership in a directory group to provide Read invoices. A **directory** stores identity-related records such as accounts and groups. A **group** brings accounts together so a system can apply shared access rules to its members.
+That explains why HR correctness, collection and the resulting relationship need separate checks. Finishing an identity evaluation also does not establish that any resulting application change succeeded.
 
-For this hypothetical design, the group is called **invoice-readers**. The application maps membership in that group to Read invoices. It doesn't provide Release payments.
+### Why might the former manager remain after the new number arrives?
 
-The name isn't what enforces this boundary. The application's configured mapping gives membership its effect. A different mapping could give the same group a different capability.
+Suppose a previously linked manager exists, but the employee's manager value changes to a new, nonempty value that cannot be matched to a new manager identity.
 
-ISC represents the requested source right as an **entitlement**, such as this directory group membership. The request asks for the entitlement representing invoice-readers, and the intended change is to add the person's directory account to that group.
+In that condition, the existing manager relationship can remain. The newly collected number is not proof that the link changed.
 
-This means the **target system**, the system receiving the operation, is the directory. ISC isn't directly writing an invoice permission into the application in this design.
+Check the intended manager's identity, its identifying value, the selected input and the correlation configuration. A correct M-NEW number cannot establish the relationship if the corresponding manager identity is missing or cannot match.
 
-### Who makes the membership change?
+A null input is a different condition. **Null** means no value; a changed manager account attribute becoming null can clear the manager relationship. Do not treat a failed match to a new value as the same case as removing the value.
 
-**Provisioning** carries out account or access changes. ISC initiates the supported membership operation through the connector; the directory must accept and apply it.
+The business participants confirm who the manager is. HR maintains the record. The ISC engineer checks whether the available information and configuration produce that relationship.
 
-The directory team operates the relevant accounts, groups, and system permissions under the agreed responsibilities. The ISC engineer configures the supported integration and uses operation evidence to investigate its behavior.
+## Find the first place the records disagree
 
-With a connector that uses an **integration account**, that account acts in the directory to perform the update. It is different from the **recipient account**, the person's account receiving group membership.
+Let M-OLD identify the former manager and M-NEW identify the current one. The change is effective now.
 
-A connection might have permission to read accounts while lacking permission to update this group. If the update is rejected, the engineer examines the operation and returned error; the directory administrator checks the target-side restriction.
+Each row below describes an alternative finding for the same kind of problem. It does not assume five faults occurred together.
 
-The next action follows from that evidence. Correct the required authority through the approved process rather than giving the integration broad administrator rights merely to make the error disappear. Some integrations use another supported authentication mechanism instead of a dedicated user account; the operation still needs the required authority.
+| Finding | Next useful investigation |
+|---|---|
+| Confirmed current manager is M-NEW, but HR still has M-OLD for the applicable date | HR's data owner validates and corrects the employment record with the responsible business participants. |
+| HR has M-NEW, but the export consumed by ISC has M-OLD | The export operator checks publication and delivery; the ISC engineer identifies the actual input consumed. |
+| Consumed input has M-NEW, but ISC's collected employee account still has M-OLD | The source operator and ISC engineer check the intended record, collection scope, result and observation times. |
+| Collected manager information is correct, but the identity links to the former manager | The ISC engineer checks the manager identities, matching values, selected configuration and processing result. |
+| The current identity links to M-NEW, but the existing request still names the former reviewer | An authorized request administrator checks that request's assignment and supported correction path. |
 
-After a successful update, directory evidence can confirm membership on the intended account. The application team checks that its mapping recognizes that membership and permits invoice reading under the agreed rule.
+This identifies the next action, not which team deserves blame. Compare the same records and their observation times before declaring a mismatch.
 
-Those findings answer different questions: was the membership applied, and did the application use it as intended?
+Suppose the old export caused the problem. The export operator corrects it, and the ISC engineer confirms that M-NEW was collected and the correct manager relationship was established.
 
-If another application stores permissions locally, its own administrator may operate the target change. Follow the actual destination of the operation rather than sending every access problem to a directory team.
+One piece of work still remains: the request that was already waiting.
 
-### What if the connection cannot make the change?
+Do not assume that correcting the current relationship automatically reassigns every existing approval. Check this request's actual assignment and history separately.
 
-The work of getting the access change carried out is **fulfillment**. A supported design may use assigned manual work instead of an automated write.
+Likewise, changing the manager relationship does not submit a new access request. It supplies information that a configured review route can use.
 
-For example, an authorized operator can change the target account and return evidence of the result. Someone must receive the task, arrange the action, and verify completion.
+The correction is complete when the relevant input, resulting relationship and outstanding work have been checked, not merely when the first bad record was replaced.
 
-A read-only connection doesn't remove these responsibilities. It also isn't proof that a complete manual process has been configured. The project must establish and test the supported fulfillment path, its assignee, and its evidence.
+## Who confirms what the requested access should allow?
 
-## How do the human responsibilities become ISC assignments?
+When a request reaches the correct reviewer, that person still needs to understand what they are approving.
 
-An agreement that “the application owner will review it” needs to be reflected in the configuration that actually sends the work.
+Your manager knows the work you are expected to perform. “Invoice access” leaves important questions unanswered: reading, editing, approving or paying? All invoices or a particular business unit?
 
-A **source owner** is the designated owner of a source in ISC. That designation can be used to route provisioning tasks and reviews of existing access. For example, file-based source account work can be assigned to the source owner.
+In this operating model, the **application owner** is accountable for the application's business access requirements. They work with specialists to explain which permissions implement the required work and its limits.
 
-An **entitlement owner** is designated for a particular access item. The owner can be configured as a reviewer for requests. The actual approval settings determine who receives the work; merely recording an owner doesn't make every request use that person.
+The **application administrator** operates and configures the application. One person can be both owner and administrator, but the responsibilities are different.
 
-For manual entitlement provisioning, SailPoint documents assignment to the entitlement owner with the source owner as fallback. Other operation paths can have different task behavior. Inspect the task's actual assignee instead of assuming every open task belongs to whichever team is called “source support.”
+For our hypothetical requirement, you need **Read invoices** within the agreed work scope and must not receive **Release payments**. These are illustrative application capabilities, not SailPoint permission names.
 
-A **governance group** is a group of ISC identities configured to participate in governance work, such as reviewing access. It can provide a maintained set of reviewers rather than relying on one named person.
+The manager confirms your need. The application owner or specialist confirms which access provides reading without payment release.
 
-That is different from invoice-readers. The governance group organizes responsibility in ISC. The directory group provides access through the application's mapping. Similar names wouldn't make their memberships or purposes interchangeable.
+The request route is a separate configuration decision. Manager, owner and other supported review arrangements can be appropriate. Our example uses manager review; that does not make every ISC request manager-approved.
 
-### Does being an owner give someone administrative access?
+The organization can establish these permission meanings before routine requests arrive. This does not require a new meeting among every participant for every grant.
 
-Start with the work the person needs to do. Reviewing an access request, completing an assigned task, reading a report, and changing a connection are different activities.
+## Which system receives the actual change?
 
-An ISC **user level** is a set of platform permissions. For example, Source Admin includes source-management capabilities. Ownership designations and platform administrative permissions are separate things to inspect; an owner label isn't evidence of unrestricted administrative authority.
+Suppose the application grants Read invoices through membership in a directory group called **invoice-readers**.
 
-If a business specialist only needs to judge whether access is appropriate, don't grant broad configuration permissions to solve an unrelated support issue. If they genuinely need an administrative operation, establish the appropriate permissions and scope through the organization's access process.
+A **directory** stores identity-related records such as accounts and groups. A **group** collects members, such as accounts; an application can use membership when applying access rules.
 
-The reverse is equally important. An engineer's ability to edit configuration doesn't make them the business approver for payment access.
+Here the application's configured mapping turns invoice-readers membership into Read invoices. It does not supply Release payments.
 
-## Put the decisions, changes, and checks together
+The name invoice-readers does not enforce that boundary. The real mapping determines what the group allows.
 
-For this successful path, assume the employee and manager records are correct, the intended manager identity matches, and the configured request route uses manager review.
+ISC represents this access right in the source as an **entitlement**. The requested entitlement is the directory membership. The required change is to add your directory account to invoice-readers.
 
-The person requests invoice-readers for themselves. The item is enabled for requests and visible to them. The relevant directory account is already identified, and the application account is usable. The connector supports the membership update, provisioning is enabled, and the connection has the required connectivity and authority.
+The **target system** is the system receiving that operation. In this design, the target is the directory. ISC is not directly editing an invoice permission inside the application.
 
-There is no separate activation wait in this illustration. Group membership is the only application-specific permission condition for invoice reading, and the application recognizes it when the result is checked.
+The directory team operates its accounts and groups. The application team operates the mapping that interprets membership. The ISC engineer connects the requested access to the supported membership operation.
 
-A **handoff** passes defined work or evidence to whoever performs the next part. The map separates the data needed for routing from the requested access change.
+If another application stores permissions locally, its own system may be the target instead. Follow the actual operation rather than assigning every access update to the directory team.
+
+## Who performs the membership addition?
+
+**Provisioning** carries out account or access changes. ISC initiates the supported update through the connector, and the directory must accept it.
+
+For the successful example, the intended directory account already exists and is correctly associated with the employee's identity. The associated application account is usable. The entitlement is **requestable**, meaning it is available to request, and is visible to this person. They request it for themselves, and the configured manager approves it.
+
+The connector supports the membership addition, provisioning is enabled and the connection works.
+
+If the connector uses an **integration account**, that account performs the directory update. The person's **recipient account** receives the group membership.
+
+The integration needs authority to make this change. Its ability to read account data does not establish permission to update this group.
+
+If the directory rejects the operation, the ISC engineer checks the account, attempted change and error. The directory administrator checks the target-side restriction. They arrange an approved correction to the required authority instead of granting unrelated administrator privileges to hide the error.
+
+Some connectors use another supported authentication mechanism rather than a dedicated user account. The requirement for operation-specific authority still applies.
+
+After the successful update, directory evidence confirms that the intended account is a member. The application team then confirms that its mapping recognizes that membership and allows invoice reading within the agreed scope, while payment release remains denied.
+
+For this successful path, the application has already recognized the new membership when checked. The person does not need to wait for another activation step. Their usable application account and this membership satisfy the application's invoice-reading rule.
+
+Those observations establish different parts of the result: the directory stored the membership, and the application used it as intended.
+
+## Make the handoffs connect to a result
+
+The successful paths now look like this:
 
 ```text
-ESTABLISH THE MANAGER
-HR confirms the effective relationship
-     |
-     v
-Current record made available to ISC
-     |
-     v
-ISC collects data and processes identity
-     |
-     v
-Engineer verifies manager relationship
-     |
-     v
-Relationship available for request routing
+MANAGER DATA
+HR confirms effective manager: M-NEW
+      |
+Current employee record reaches ISC
+      |
+Configured match finds manager identity
+      |
+Employee identity links to that manager
 
-DECIDE AND DELIVER ACCESS
-Manager confirms the work need
-Application owner defines the access
-     |
-     v
-Configured reviewer decides
-  rejected -> no grant from this request
-  approved
-     |
-     v
-ISC sends supported directory update
-  rejected -> investigate the operation
-  applied
-     |
-     v
-Intended account joins invoice-readers
-     |
-     v
-Application recognizes the membership
-     |
-     v
-Read invoices allowed; no payment release
+NEW REQUEST USING THAT RELATIONSHIP
+Person requests invoice-readers
+      |
+Configured manager review
+ denied -> no grant from this request
+ approved
+      |
+ISC initiates directory membership add
+ rejected -> investigate operation
+ applied
+      |
+Recipient account joins invoice-readers
+      |
+Application recognizes that membership
+      |
+Read invoices allowed; payment denied
 
-HUMAN VERIFICATION AND CLOSURE
-Teams supply evidence for their part
-Coordinator checks unresolved work
-Outcome confirmed before case closure
+SEPARATE CASE CHECKS
+Existing approval assignment inspected
+Teams return evidence for their actions
+Coordinator tracks unresolved outcomes
 ```
 
-The arrows show dependencies within the selected paths, not a universal list of private ISC services. HR confirmation, engineering checks, application verification, and case closure are human responsibilities here.
+The manager-data path establishes the relationship. The request path uses it under the configured review arrangement. The directory and application checks confirm delivery and usable access.
 
-The first path supplies a manager relationship used by the configured request route. It doesn't say changing a manager automatically submits a request. Existing requests still need their separate assignment check.
+The arrows describe these selected dependencies and responsibilities. They do not require a private service sequence, fixed processing time or a human meeting before every request.
 
-The organization can establish the access design and maintain the employee facts before a routine request is submitted. The diagram doesn't require HR, the manager, and the application owner to meet for every grant.
+Existing-request assignment and case coordination are separate checks. Sending a ticket onward does not confirm that either problem has been resolved.
 
-The final verification connects the pieces. The coordinator needs evidence that the right decision was made, the intended change happened, and the agreed operation works without adding unrelated rights. Transferring the ticket isn't that outcome.
+## What if the connection only reads data?
 
-## What does the ISC engineer own?
+**Fulfillment** is the work of getting the authorized access change carried out.
 
-The engineer translates agreed requirements into supported configuration and investigates the result.
+A supported fulfillment design can use manual work when the connection cannot perform the change automatically. An assigned person arranges or performs the change in the target and returns the required evidence.
 
-That includes checking the relevant source, collection, identity mappings, manager relationship, requested entitlement, reviewer configuration, target account, and operation evidence. The engineer connects these technical findings with the people who can confirm their business meaning.
+Reading a file of account information does not make that external change. A read-only connection also does not, by itself, configure a complete manual process.
 
-Consider a tempting shortcut: replace the manager configuration with one fixed manager for everyone in Finance.
+The project must establish who receives the work, who can operate the target, how delays are tracked and what confirms completion.
 
-That might send one employee's request to the expected person today. It can also send another employee's request to the wrong person. A change that hides one symptom can break the requirement for a wider population.
+A recorded task completion reports what the operator did. Check the actual account and intended action before treating the required outcome as verified.
 
-The engineer therefore checks the intended design, affected population, and proposed change before applying it through the approved process. Saving the setting is followed by checking the resulting identities and any affected access work.
+## How are the agreed responsibilities recorded in ISC?
 
-If a platform or connector issue needs SailPoint support, the engineer provides a focused technical case. Vendor support can investigate supported product behavior; it doesn't decide the organization's reporting relationships or business access policy.
+An agreement that “the owner will handle it” must become the right settings and assignments.
 
-Some access is assigned automatically under configured rules rather than approved one request at a time. Automation changes who executes a routine action, not who must approve the rule's meaning, maintain its inputs, or investigate its failures.
+A **source owner** is the designated owner of a source in ISC. This designation can be used for account-provisioning tasks and reviews of access on that source. For example, file-based source account work can be assigned to the source owner.
 
-## What are you seeing on the screen?
+An **entitlement owner** is designated for an individual access item. That person can be selected as a request reviewer. The actual approval configuration determines the route; the owner field alone does not send every request there.
 
-The **front end** is the page or interface you see and use. The **back end** is the processing that reads records, evaluates configuration, assigns work, and carries out operations.
+For general manual provisioning involving entitlements, the task goes to the entitlement owner, with the source owner as fallback. Other processes can assign work differently, so inspect the actual task and its current assignee.
 
-A request page can display the assigned reviewer. Behind that result are identity information, approval configuration, and the history of that particular request. An unexpected reviewer isn't automatically a display defect.
+A **governance group** is a maintained group of ISC identities configured to perform governance work, such as reviewing access. It can provide several people able to perform the group's assigned review instead of depending on one individual.
 
-Provisioning activity describes an attempted operation and its reported outcome. It doesn't establish why the business wanted the access or every action the application ultimately allows.
+That is different from invoice-readers. The governance group organizes decision work in ISC. The directory group supplies access through the application mapping. A similar group name would not make them interchangeable.
 
-Directory membership shows that a particular account belongs to a group. The application team still needs to establish what the mapping does with that membership. A successful application test confirms the operation under the conditions tested.
+### Does ownership provide every administrative permission?
 
-These observations fit together, but none replaces all the others.
+Reviewing a request, completing a task and editing a source connection are different activities.
 
-“The group exists” doesn't establish that the intended account is a member. “The account is a member” doesn't establish that the group provides only invoice reading. Ask which question the visible evidence actually answers.
+An ISC **user level** provides platform permissions. For example, Source Admin includes source-management capabilities.
 
-## Where do security, support, and audit fit?
+An owner designation tells you about a recorded responsibility. Check the person's actual user levels and scope before deciding which administrative actions they can take. Do not infer unrestricted configuration authority from the word owner.
 
-The security or access-governance function helps establish **controls**, requirements intended to limit inappropriate access or detect it.
+If the specialist's job is to decide whether access is appropriate, solve an unrelated connection problem through the authorized technical operator. Grant additional administrative access only when that work is genuinely required and approved.
 
-For example, the organization might require independent review before granting payment release. The application owner explains the permission's impact. Security helps establish the restriction and who may approve an exception. The ISC engineer implements the agreed behavior where supported.
+The reverse also matters: an engineer who can edit configuration does not thereby become the business approver for payment access.
 
-Choosing a setting cannot settle an unresolved disagreement about policy. Someone with authority must establish the requirement first.
+## What should the ISC engineer investigate and change?
 
-The service desk can gather the initial problem, confirm the affected person, account and application, and coordinate investigation. Any technical action still depends on that team's assigned permissions and procedures. A support job title doesn't provide unrestricted ISC access.
+The engineer translates agreed requirements into supported configuration.
 
-An auditor examines whether the control operated and whether the evidence supports the reported outcome. They can compare a decision record with evidence of the resulting target change. They shouldn't have to perform the removal they are independently assessing, and missing evidence must not be invented afterward.
+In the manager case, that means checking the selected source input, collection, profile mappings, manager identities, relationship and request assignment. In the access case, it includes the entitlement, reviewer settings, target account, supported operation and result.
 
-Agree these contributions explicitly. An access-related case doesn't automatically require security to approve every routine action, nor does an auditor become the operator for an incomplete task.
+The engineer brings these findings to the people who can confirm their business meaning.
 
-## Make the next person's investigation possible
+Suppose someone proposes hard-coding one manager for everyone in Finance to fix the current request.
 
-Compare “SailPoint has the wrong manager” with a more useful handoff:
+It might make this employee's display look right while sending other employees' work to the wrong reviewer. A shared configuration affects a population, not only the record currently on screen.
 
-“The reporting change is effective today. The current HR record identifies M-NEW, but the export consumed at 09:10 still contains M-OLD. ISC collected that old value at 09:15. Please check why the export is outdated. After correction, the ISC team will verify collection and the manager relationship. The pending request also needs an assignment check.”
+Check the intended design and affected identities before an approved change. After applying it, inspect resulting identity information and any affected access work.
 
-Those observations identify where the data first disagrees, what the next team should inspect, and what remains to verify afterward. The times are hypothetical and show event order, not a promised five-minute collection interval.
+If the fault requires SailPoint support, provide a focused product or connector case. Vendor support can investigate supported behavior; it does not decide the organization's reporting lines or payment-access policy.
 
-In an actual handoff, include the affected identity and account identifiers, case or request reference, expected and observed values, relevant configuration or operation, observation times, and the requested check. Identify who is coordinating the overall outcome.
+Automation retains the same need for ownership. If access is assigned through configured rules rather than individual approvals, someone must approve the rule's meaning, maintain its input data and investigate failures.
 
-Share the necessary evidence through approved channels. A small, appropriately redacted record is usually more useful than an entire employee export. Don't attach passwords or integration secrets.
+## What does the screen show, and what happened behind it?
 
-The receiving team should acknowledge the action and return its result, including unresolved questions. A ticket moved to another queue without acceptance doesn't establish that someone is working on it.
+The **front end** is the page or interface you use. The **back end** is the processing that reads information, evaluates configuration, assigns work and initiates operations.
 
-## Does ownership end once the grant works?
+The request page's reviewer comes from the relevant information, approval configuration and history of that request. An old reviewer on a page is not automatically a display defect.
 
-The manager must report when the work changes. The application owner must maintain permission meanings. The directory team must maintain the groups and target operations. The ISC team must maintain the integration and governance configuration.
+Provisioning activity describes a particular operation and its reported result. It does not explain every business decision or every application capability.
 
-Suppose the application mapping is changed so invoice-readers also permits payment release. Existing members can gain a capability even though ISC sent no new membership grant.
+A group record proves the group exists. Membership evidence identifies which account joined it. The application mapping explains the capability, and a current action check confirms its effect under the tested conditions.
 
-The access meaning changed in the application. Agree how such changes are communicated, assessed for existing holders, and reviewed before they take effect.
+These are useful pieces of the same investigation. Ask which question each observation answers rather than treating any one success status as the whole outcome.
 
-Existing access also needs decisions about whether it should continue. A **certification campaign** organizes access reviews. A **certification** is a review assigned within that campaign, where the designated reviewer decides about the listed access.
+## Where do security, the service desk and audit contribute?
 
-A decision to **revoke** asks for access to be withdrawn. **Remediation** is the work of carrying out the correction; its outcome must then be verified. A reviewer can select a decision without having finished the required review steps, and a completed review still needs its resulting removal work. Neither observation alone proves the target permission disappeared.
+The security or access-governance function helps establish **controls**: requirements intended to limit inappropriate access or detect it.
 
-The reviewer owns the assigned decision. An administrator coordinates the campaign process. The configured automated or manual path carries out removal, and responsible operators investigate incomplete work.
+For example, payment release might require independent review. The application owner explains the permission's business impact, security helps establish the restriction and exception authority, and the ISC engineer configures the supported behavior.
 
-For certification manual remediation, SailPoint describes a task assigned to the source owner when the change cannot be written directly. That is a different process context from the general manual entitlement-provisioning assignment described earlier.
+A configuration setting cannot settle a disagreement about who should receive payment authority. That policy decision needs its accountable owner.
 
-Inspect the actual removal task and provisioning evidence. Its process and current assignee determine who needs to act; a general ownership label doesn't answer that question by itself.
+The service desk can identify the affected person, account and application, gather the symptom and coordinate the case. Its technical actions depend on assigned permissions and procedures; a support title is not unrestricted ISC authority.
 
-Ownership records also need maintenance when people move or leave. Check source and entitlement owners, governance-group membership, pending tasks, reviewer settings, and relevant administrative permissions. Updating a contact list doesn't necessarily update the ISC records that route work.
+Audit examines whether the control operated and whether the evidence supports the reported result. An auditor can compare the decision with the actual change without becoming the operator responsible for making that change.
 
-### What changes when the case is urgent?
+If evidence is missing, record that gap. Do not invent a past approval or reconstruct a log as if it had been recorded at the time.
+
+These contributions should be agreed. A routine access change does not automatically require every security team to approve it, and audit is not the default operator for unfinished removal work.
+
+## What makes a handoff useful?
+
+“SailPoint has the wrong manager” leaves the next team to repeat the investigation.
+
+A more useful message says:
+
+“The manager change is effective today. HR has M-NEW, but the export consumed at 09:10 still has M-OLD. ISC collected that value at 09:15. Please check why the export is outdated. After correction, the ISC team will verify the collected record and manager relationship. The pending request also needs an assignment check.”
+
+The values and times are hypothetical. They show which input was consumed and when it was collected, not a promised five-minute processing interval.
+
+The message identifies a specific difference, the next requested action and the checks that remain afterward.
+
+In real work, identify the relevant identity and account, case or request reference, expected and observed values, relevant operation or configuration, observation times and coordinating owner.
+
+Share the necessary evidence through approved channels. A small, appropriately redacted record can be more useful than a whole employee export. Keep passwords and integration secrets out of the handoff.
+
+The receiving team should acknowledge the action and return its result, including unresolved findings. A moved ticket without accepted work is not evidence that anyone is correcting the problem.
+
+## Who maintains the arrangement after access works?
+
+The manager reports changes in work. HR maintains the employment facts. The application owner maintains access meaning. The directory team maintains its groups and operations. The ISC team maintains the integration, mappings and governance configuration.
+
+Suppose the application mapping changes so invoice-readers now permits payment release as well.
+
+Existing members can gain that capability without ISC sending a new membership grant. The changed permission meaning is in the application.
+
+The application owner and specialists need to assess existing holders and coordinate the change with the other teams. Renaming the ISC entitlement “read only” would not remove the application's payment capability.
+
+Existing access also needs review of whether it should continue.
+
+A **certification campaign** organizes access-review work. A **certification** is a review assigned within that exercise. The reviewer makes the supported decisions for the presented items.
+
+To **revoke** access is to withdraw it. **Remediation** carries out the required correction after the review decision.
+
+Selecting a revoke decision is not the same as completing the required review steps. Completing the review is not proof that the target permission has disappeared. Follow the applicable sign-off, completion and delivery process, then verify the actual result.
+
+For certification manual remediation, the task is assigned to the source owner when the change cannot be written directly. This is a different process from general manual entitlement provisioning, whose owner/fallback route was described earlier.
+
+Inspect the removal task and its current assignee. The assignee must arrange the authorized target operation, while the coordinator keeps track of the unresolved outcome. The reviewer is not automatically the person who edits the target.
+
+When owners move or leave, maintain the ISC records as well as the contact list: source and entitlement owners, governance-group members, pending tasks, reviewer settings and administrative permissions. Work can otherwise keep going to someone who no longer performs that function.
+
+## What if the case is urgent?
 
 Use the organization's authorized escalation or exception process.
 
-An **exception** is a documented departure from the normal control, approved by whoever has authority to accept it. Record its scope, reason, approver, duration, follow-up, and the access actually changed.
+An **exception** is an approved, documented departure from the normal control. Identify its scope, reason, approving authority, duration, follow-up and the access actually changed.
 
-Urgency doesn't turn the engineer into the employee's manager or application business owner. A temporary intervention also doesn't repair the underlying bad data. Track the immediate outcome and the work needed to restore and verify the normal process.
+Urgency does not give the engineer authority to invent the employee's manager or approve payment access. A temporary intervention also does not repair an outdated export.
 
-## Agree the responsibilities before connecting a new application
+Track both the immediate outcome and the correction needed to restore the normal process. Verify each through the records and actions it actually affects.
 
-“The application team owns it” isn't enough for a project.
+## Agree the operating responsibilities before a new connection
 
-You still need to know who defines each permission, decides who should have it, operates the target, receives failed-work alerts, and verifies the result. Ask for the particular responsibility and a named contact or maintained group.
+“The application team owns it” is not enough to build or operate the service.
 
-For a new connection, agree:
+Agree who:
 
-- Which records supply the relevant people and attributes, who corrects them, and how effective changes reach ISC.
-- Who explains access items, approves their use, and keeps their meanings current.
-- Which system receives each account or permission change and which authorized team operates it.
-- Who maintains integration credentials, connectivity, and the privileges needed for supported operations.
-- Which owner fields, reviewer settings, governance groups, and user levels implement the agreed responsibilities.
-- Who accepts failed or delayed work, provides backup coverage, and coordinates cases across teams.
-- What evidence establishes a correct grant, rejection, removal, or failed operation.
+- Supplies the relevant people and attributes, corrects them and publishes effective changes.
+- Explains permissions, approves their use and maintains their meaning.
+- Operates the system receiving each account or access change.
+- Maintains connectivity, integration credentials and required operation privileges.
+- Maintains the source/entitlement owners, reviewer settings, governance groups and user levels that route the work.
+- Accepts failures or delays, supplies backup coverage and coordinates cases across teams.
+- Returns evidence of successful grants, denials, removals and unresolved operations.
 
-These are operating agreements. ISC cannot infer them from department names.
+These agreements give the configuration something meaningful to implement.
 
-Include a failure handoff in acceptance testing. If a manual removal remains incomplete, can the team identify its actual assignee, get the authorized operator to accept it, and obtain evidence of removal? A successful automated grant alone doesn't test that responsibility.
+Include a failed handoff in acceptance testing. If manual removal remains open, can the team identify the assignee, get the authorized operator to accept it and obtain evidence that access ended?
 
-## Try choosing the next action
+A successful automated grant does not test that removal responsibility.
 
-The following observations are hypothetical. Establish what each proves before deciding who should act.
+## Choose the next action
 
-### Correct source data, incorrect identity value
+### HR is correct, but the identity is wrong
 
-HR and ISC's collected HR account both show department Finance. The ISC identity still shows Customer Support. Inspection finds that the identity's department mapping reads another source account containing the old value. The approved design says department should come from HR for this population.
+HR and ISC's collected HR account show department Finance. The identity shows Customer Support.
 
-Who should act? Should HR change its correct value to make the two systems agree?
+The mapping reads another source account with that older value. The approved design says HR should supply department for these employees.
 
-### Membership delivered, excessive permission
+Who should act? Should HR alter its correct value?
 
-The requirement is invoice reading only. ISC requested invoice-readers for the correct directory account, and the directory confirms membership. An application test finds that this group also permits payment release.
+### The membership arrived, but it provides too much
 
-Who must resolve the permission meaning? Does successful delivery establish that the access design is correct?
+The requirement is invoice reading only. ISC requested invoice-readers for the correct directory account, and membership is confirmed.
 
-### An owner cannot change the connection
+An application test shows that this group also permits payment release.
 
-A business specialist designated as the source owner reviews access but cannot change connection settings. A separate technical support team already operates the integration.
+Who must resolve the permission meaning? Does successful delivery establish a correct design?
 
-Should the specialist receive broad administrative permissions merely because they are the source owner?
+### The owner cannot edit the connection
 
-### A review decision without completed removal
+A business specialist designated as source owner reviews access but cannot edit connection settings. A separate technical team already operates the integration.
 
-A reviewer completed the required review with a revoke decision for an entitlement. A resulting manual removal task is open and assigned to the source owner. The target administrator confirms that the account still holds the access.
+Should the specialist receive broad administrative permissions simply because they are the source owner?
 
-Must the reviewer personally edit the target account? What evidence would establish resolution?
+### The review ended, but removal did not
 
-## Compare your reasoning
+The reviewer completed the required review with a revoke decision. The resulting manual removal task is open and assigned to the source owner.
 
-For the department mismatch, the correct input has reached ISC. The demonstrated problem is the selected mapping, so the ISC engineer should investigate and correct it through the approved change process.
+The target administrator confirms that the account still holds the access.
 
-HR shouldn't change a correct employment fact to compensate. Check the affected population before applying the correction, then verify the resulting identity value and any configured downstream effects. A saved mapping isn't the final result.
+Must the reviewer personally remove it? What would establish resolution?
 
-For excessive permission, the application owner and specialists must resolve the business requirement and its enforcement. Membership delivery can be technically correct while the permission meaning is wrong.
+## Compare the reasoning
 
-Inspect the application mapping and who else holds the group. Coordinate a controlled correction with the directory and ISC teams. Renaming the entitlement “read only” wouldn't change native application permissions. If the right correction changes which group is requested, review the request configuration and affected assignments as well.
+For the department mismatch, the correct input has reached ISC. The demonstrated defect is the mapping's selected input.
 
-For the source owner, first establish what work the specialist is responsible for. If connection configuration belongs to the technical team, that team should perform the authorized change.
+The ISC engineer should correct it through the approved change process, checking affected identities and then the resulting values and access effects. HR should not falsify a correct employment fact to compensate.
 
-If the specialist genuinely needs an administrative function, assess the appropriate user level and scope. Ownership, review responsibility, and technical capability aren't a reason to grant unrelated privileges.
+For excessive access, the application owner and specialists must resolve the requirement and the application's enforcement. Membership delivery can be technically right while its meaning is inappropriate.
 
-For the incomplete removal, the reviewer made the decision. The actual task assignee must arrange the work with an authorized target operator under the agreed model. The coordinator tracks the unresolved outcome and any escalation.
+Inspect who else holds the group and coordinate a controlled correction with the directory and ISC teams. If the corrected design uses another group, review request configuration and affected assignments too. Renaming the entitlement cannot change native permissions.
 
-Confirm who accepted the action, inspect task and operation evidence, and verify the target after removal. Don't close the work merely because a revoke decision exists. The source owner is the actual assignee in this case; inspect the real task rather than substituting the entitlement owner or reviewer by assumption.
+For the owner, identify the actual work the specialist needs. The authorized technical team should perform the connection change if that is its responsibility.
 
-## Apply it to a vendor-managed portal
+If the specialist genuinely needs an administrative action, assess appropriate user-level permissions and scope. Ownership is not a justification for unrelated privileges.
 
-A vendor operates a supplier portal. Internal procurement sponsors confirm which contractors need purchasing access. A contractor register supplies their identities to ISC. The integration reads portal accounts but cannot remove permissions automatically.
+For incomplete removal, the reviewer made the decision. The task's actual assignee must arrange the work with the authorized target operator. The coordinator tracks acceptance, remaining work and escalation.
 
-The required outcome is that an authorized sponsor's withdrawal of purchasing access leads to the appropriate removal and a verified result.
+Check task and operation evidence, then verify the target after removal. In this supplied case the source owner is the assignee; do not substitute the reviewer or entitlement owner by assumption.
 
-Who must own each part? What still needs to be agreed before relying on the arrangement?
+## Apply the reasoning to a vendor-managed portal
 
-One workable design separates the contributions.
+A vendor operates a supplier portal. Procurement sponsors confirm which contractors need purchasing access, and a contractor register supplies their identities to ISC.
 
-The sponsor supplies the authorized business decision. The contractor-register owner maintains the contractor facts. The portal owner identifies the purchasing entitlement and agrees the removal obligation with the vendor.
+The integration can read portal accounts but cannot remove permissions automatically.
 
-The ISC team establishes a supported revocation and manual-fulfillment route with the correct assignments. The assigned internal owner coordinates with the vendor's authorized operator, who changes the target account.
+The required result is that an authorized sponsor's withdrawal of purchasing access leads to the correct removal and a verified outcome.
 
-The coordinator obtains evidence of the intended removal and checks that ISC's collected view is updated through the agreed collection process. Where an ongoing assignment or rule would restore the access, the supported withdrawal must address that requirement as well as the target edit.
+Who supplies the decision, who performs the change, who coordinates it and who confirms it?
 
-The project must agree how the vendor accepts work, expected response times, escalation, backup coverage, and the evidence returned. A read-only integration doesn't, by itself, establish any of those agreements.
+One workable arrangement separates those jobs.
 
-If the vendor cannot perform the removal or supply adequate verification, the required outcome remains unresolved. A status inside ISC cannot supply the missing target action.
+The sponsor supplies the business decision. The contractor-register owner maintains the contractor facts. The portal owner explains the purchasing entitlement and agrees the vendor's removal obligation.
 
-Other arrangements can work if they clearly assign decision authority, execution, coordination, and verification. Explain your choice through the outcome and the evidence each participant supplies.
+The ISC team configures a supported revocation/manual-fulfillment route with the right assignments. The assigned internal owner obtains acceptance from the vendor's authorized operator, who changes the target account.
 
-When access needs to change, ask what needs to be decided or corrected next, who has authority to do that work, and what result will show it is complete.
+The coordinator obtains removal evidence and checks that ISC's collected view is refreshed through the agreed process. If an ongoing assignment or rule would restore access, the supported withdrawal must address that requirement as well as the target edit.
+
+Before relying on this design, agree how the vendor accepts work, expected response times, escalation, backup coverage and the evidence returned.
+
+If the vendor cannot remove access or supply adequate verification, the result remains unresolved. A completed status in ISC cannot perform the missing target action.
+
+Other operating arrangements can work when decision authority, execution, coordination and verification are explicit. Follow the required result and the evidence each participant supplies.

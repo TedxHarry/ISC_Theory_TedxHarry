@@ -1,308 +1,362 @@
 # Why does an organization need ISC?
 
-Creating an account answers only part of an access requirement.
+An employee can sign in to an invoice application, but cannot open the invoices they need for their work.
 
-An organization also needs to know whose account it is, what the account allows, whether that access is justified, and what should happen when the person's work changes. If a required change fails, someone must be able to find where it stopped and arrange the right correction.
+The account exists. The password works. Something needed for the actual task is still missing.
 
-SailPoint Identity Security Cloud, or **ISC**, is a cloud service that helps an organization manage accounts and access across connected systems. It connects the relevant information, access decisions, and work needed to carry them out.
+An **account** is a record used by a person or service in a particular system. A **permission** allows an action on something in that system, such as reading an invoice or releasing a payment.
 
-The reason to implement it isn't simply “we have many users.” The deeper problem is keeping access appropriate as people, responsibilities, accounts, and applications change.
+Signing in and having permission to perform a task answer different questions. A working sign-in does not tell us which invoices the account may read.
 
-## A working account can still have the wrong access
+Suppose the application team checks the intended account and confirms that it lacks the required reading permission. We now have a specific finding to act on. An access-denied message alone would not have established that cause.
 
-Think about someone who can sign in to an application but cannot perform a required task. A working password doesn't establish that the account has the permission needed for that task.
+Creating another account would leave the original account's missing permission unresolved. Resetting its working password would not add that permission. Copying an administrator's access could allow far more than invoice reading.
 
-Now consider the opposite: someone changes responsibilities but can still perform an action their new work no longer requires. The application may be enforcing its permissions correctly, yet the retained access may be inappropriate.
+The organization needs a way to provide the right access to the right account, for an agreed reason, and to remove it when that reason ends.
 
-These are different problems. The first concerns missing legitimate access. The second concerns access that may no longer be justified.
+SailPoint Identity Security Cloud, or **ISC**, is a cloud service that helps connect that work across the systems an organization manages. It brings together information about people and accounts, decisions about access, changes to accounts, and reviews of whether access should continue.
 
-Before changing either account, you need a specific finding. An access-denied message is a symptom to investigate, not proof of a missing permission by itself. Confirm the account, required action, and actual application rules.
+## Start with the action the person needs
 
-If the confirmed problem is a missing permission on an existing account, creating another account doesn't address that finding. Resetting a working password doesn't add the permission. Copying all of a colleague's permissions may introduce access the person doesn't need.
+“Give this employee Finance access” is too vague to tell someone what to change.
 
-The useful question is more precise: what access does the work require, who can authorize it, and how will the correct change reach the intended account?
+Does the employee need to read invoices, edit supplier details, approve invoices or release payments? Those actions may require different permissions.
 
-## Why does that question involve so many people?
+For our example, the application owner confirms these hypothetical permissions:
 
-The information needed for an access decision is distributed.
+| Application permission | What it allows in this example |
+|---|---|
+| Read invoices | Read the invoices the account is authorized to handle |
+| Release payments | Release payments; not needed for invoice reading |
 
-HR may hold employment details and an employee identifier. A manager may know the person's current responsibilities. The application team holds the account and its permissions. The application owner explains what those permissions actually allow. A service ticket or email may hold an approval, while a separate application record shows whether the change happened.
+The account initially has neither permission. Sign-in works, but invoice reading and payment release are denied.
 
-Each piece contributes something different.
+The requirement is to add Read invoices to this existing account while leaving payment release unavailable.
 
-An employment record identifies a worker but doesn't establish that an application account exists. An application account shows a technical record but doesn't explain whether its access fits the person's current work. An approval records a decision but doesn't establish that someone carried it out.
+Now we can describe success. The employee should be able to read the intended invoices, and the change should not introduce payment-release access. “The user can log in” would not demonstrate this result, because that already worked.
 
-The application team can add an authorized permission when it has the means to do so. The difficulty is providing that team with a reliable, complete requirement, rather than asking it to infer business need from a permission name.
+We also need someone with authority to confirm that invoice reading is appropriate for this employee's work. Knowing how to add a permission does not establish who should receive it.
 
-Manual coordination can work. But the same connections have to hold whenever someone joins, changes responsibilities, needs additional access, or leaves. They also have to survive staff changes, incomplete records, rejected operations, and delayed work.
+These permissions and the outcomes below are teaching examples, not standard SailPoint permission names or observations from a real tenant.
 
-If a legitimate request waits because nobody knows who should decide, the employee cannot do the required work. If an administrator avoids that delay by copying broad access, the employee may receive capabilities nobody justified. If an old grant is never reconsidered, unnecessary access can remain without producing an application error.
+## Why does that simple change involve several people?
 
-Those are process and information gaps. Installing a product doesn't decide the missing requirements, but a configured identity-management service can make the responsibilities and their connections repeatable.
+The information is usually held in different places.
 
-## What does ISC bring together?
+Human Resources, or **HR**, may hold the employment record and employee number. The manager knows the person's current work. The application owner explains what each permission actually permits. The application team can inspect the account and carry out supported changes.
 
-ISC provides a person-centered view of accounts and access, supported ways to request or assign access, mechanisms to carry out changes, and review processes for deciding whether access should continue.
+A request may arrive by email. Approval may be recorded in a ticket. The actual permission is held in the application.
 
-The applicable capabilities must be available and configured. Connecting an application doesn't automatically establish a sound access policy or a complete operating process.
+Each participant knows part of the answer. The application team should not have to guess the business need from a permission name, and the manager may not know which technical permission implements the work.
 
-The decisions and reviews used to keep access appropriate are part of **identity governance**. **Identity administration** includes the operational work of managing accounts and their access. Together, they are called **identity governance and administration**, or **IGA**.
+Think about what happens when the handoff is incomplete. A request can wait because nobody knows who should approve it. An administrator can copy broad access to get the person working quickly. The employee can later change duties while the copied access remains.
 
-Governance asks whether access is justified. Administration carries out and maintains the required account and access arrangements. They need each other: a sound decision that never reaches the application leaves work unfinished; a successful technical change can still deliver inappropriate access.
+None of these situations requires the application to malfunction. It may be enforcing exactly the permissions it was given.
 
-The organization supplies the requirements. Business decision owners establish who needs access. Application owners explain the native permissions, meaning the permissions in the application itself. Engineers connect those requirements to data, configuration, supported delivery, and evidence.
+Manual coordination can work, but the organization must repeat it whenever people join, change work, request additional access or leave. It also needs a way to find work that was rejected, delayed or forgotten.
 
-To follow that connection, start with the records ISC needs.
+ISC provides mechanisms for connecting these responsibilities. The organization still supplies the business requirements and accountable owners. A product cannot infer that an invoice reader should also release payments simply because both actions belong to Finance.
 
-## How does a person become connected to an application account?
+## How does ISC know whose account it is?
 
-An **identity** is ISC's representation of a person or other managed entity. For the human-access requirement we're considering, it is the person-level record.
+Before changing an account, ISC needs to connect it to the intended person.
 
-An **account** is a separate record in a particular system. One person can have accounts in several systems; those accounts aren't all the same record.
+ISC keeps a person-level record called an **identity**. For an employee, it can hold information such as department and manager and connect the person's accounts across systems.
 
-A **source** is ISC's configured representation of a system or collection of account data. A **connector** supplies the integration used to read information and, where supported and configured, make changes. Creating a source doesn't create or replace the external application.
+The identity and the invoice account are separate records. The identity represents the person in ISC; the invoice account belongs to the application. One person can have accounts in several applications without those accounts becoming one record.
 
-Reading account information into ISC is called **aggregation**. That gives ISC information about the source's records. **Account correlation** matches and associates a source account with an identity, so its account information can be understood in the context of the person.
+For this example, the employee's identity already exists. The invoice account also already exists in the application.
 
-These responsibilities answer different questions: what account information was collected, and whose account is it?
+ISC represents the application's account data through a configured **source**. A source tells us which system or collection of account data we are managing. Creating it does not create a replacement invoice application.
 
-For a straightforward matching illustration, suppose a person's identity and application account both contain the same agreed, unique employee identifier. The configured comparison can use those values to establish the intended association. Merely displaying a similar username isn't equivalent evidence.
+The **connector** supplies the supported way of reading data from that system and, where supported, making changes. Its capabilities and the configured connection determine which operations are available.
 
-The identity population and matching configuration must already be established for that example. An imported application account doesn't automatically become the right employee identity simply because it arrived.
+ISC first needs information about the invoice account. Reading account data into ISC is called **account aggregation**. For a connected source, the integration retrieves the data; for a file-based source, ISC imports the supplied account information.
 
-An **entitlement** represents an access right on a source, such as a group membership or application permission. Its business meaning comes from what the application permits, not from how reassuring its name sounds.
+After collection, ISC has its own representation of that account. It still needs the correct person relationship.
 
-Once the relevant account is correctly associated, ISC can connect its represented access with the person. Collection and correlation have supplied visibility and a relationship. Neither operation, by itself, decides that new access is justified or proves a change was made in the application.
+**Account correlation** matches and associates a collected account with an identity. That relationship lets ISC connect the account's information and access to the employee.
 
-## Turn a business need into a change that can be checked
+A small matching example helps. Suppose the existing identity and the application account both hold the same agreed employee number. A named field such as employee number is an **attribute**. Under configured matching, the selected account attribute can be compared with the corresponding identity attribute.
 
-A brief illustration makes the distinction concrete.
+For this example, the fields identify the same kind of worker, their values are correct, and the intended match is unique. The matching configuration is already prepared. Similar usernames alone would not establish those conditions.
 
-Suppose a person has one existing application account and needs to read invoices. The application owner confirms that a permission we'll call **Read invoices** allows that action. A separate permission, **Release payments**, allows payments to be released.
+The account is now associated with the right identity. We can ask what that person's invoice account holds and which account an authorized change should affect.
 
-These are hypothetical permission labels, not built-in ISC permissions. The requirement is invoice reading, not payment release.
+Collecting an account and identifying its owner do not grant a permission. They provide information and a relationship that the access process can use.
 
-An **access request** asks for specified access for a recipient. The recipient is the person intended to receive it. In this illustration, the person requests Read invoices for themselves on the existing account.
+## What exactly is the employee asking for?
 
-That is more precise than asking for “Finance access.” The requester can identify what is needed, the reviewer can assess the business purpose, and the engineer can identify the account and access item involved.
+ISC represents a source's access rights as **entitlements**. An entitlement might represent an application permission or membership in a group that the application uses to grant permissions.
 
-For this route, assume entitlement requests are enabled and this entitlement is **requestable**, meaning it is available to request. The person can see it among the items they are allowed to request. The applicable approval configuration requires their manager's decision, and the correct manager is available in ISC.
+Here, Read invoices is represented as an entitlement from the invoice source. The actual application still determines what that permission allows. Changing its display name in ISC would not change its behavior in the application.
 
-Manager approval is a chosen configuration here, not a universal requirement for every ISC request.
+An **access request** asks for specified access for a particular person. That person is the **recipient**.
 
-There must also be a way to deliver an approved change. **Provisioning** attempts account or access changes in a **target system**, the system receiving the operation. **Fulfillment** is the work of carrying out the authorized change; the supported design determines whether that work is automated or manual.
+Our employee requests Read invoices for themselves. The request identifies the needed access and its recipient, rather than merely asking someone to “fix Finance.”
 
-For the automated path below, assume the connector supports adding this entitlement, provisioning is enabled, and the integration has working connectivity and the required privileges. The existing account is correctly correlated, and this request has no future start date or separate activation step.
+The organization has enabled entitlement requests and made this entitlement **requestable**, meaning it is available to request. The employee can see it among the access items they are permitted to request.
 
-Those conditions explain why the illustrated change can proceed. They don't follow merely from creating a source or collecting accounts.
+For this example, the configured approval route sends the request to the employee's manager, and the correct manager is available in ISC. This manager route is a chosen configuration; other requests can use different approved arrangements.
 
-## Follow the decision into the application
+The request concerns the one existing, correctly associated account. The access should begin now and be usable after delivery, with no future start date or additional activation required. No other configuration independently requires this permission for the person in this example.
 
-The person submits the request in ISC. Submission identifies the recipient and access wanted; it starts the configured process.
+Those details make the intended work clear: decide whether this person should receive this permission, then deliver it to this account.
 
-The manager then decides whether invoice reading is justified for that person's work. If the manager denies it, this request doesn't authorize a grant. If the manager approves it, the authorized request can proceed to fulfillment.
+## What changes when the manager approves?
 
-Approval has changed the request's decision state. The target account still needs its separate permission change.
+The manager reviews whether invoice reading fits the employee's work.
 
-ISC initiates the supported provisioning operation through the integration. The operation asks the application to add Read invoices to the existing account. It isn't an instruction to create another account or add every finance permission.
+If the manager denies the request, this request does not authorize the grant. If the manager approves it, the request can proceed to delivery.
 
-In the successful version of this illustration, the application accepts the operation and stores the permission on the intended account. Its own permission logic then allows invoice reading.
+Approval records a decision. The invoice account has not received the permission merely because that decision was saved.
 
-That is how the request interface connects to application behavior: the request leads through its configured decision process to an attempted operation, and the accepted operation changes the target account. The request screen doesn't directly decide what the invoice page permits.
+Why are these separate? The manager is deciding whether the employee should have access. The application needs an account change before its permission rules can allow invoice reading.
 
-The required check is equally specific. Establish that the intended account has Read invoices, that invoice reading works, and that this request didn't add Release payments. Checking only whether the person can sign in would miss the requirement; sign-in already worked.
+The request screen records the decision and progress of the request. It does not directly control what the invoice page allows.
 
-The decision and delivery paths can be pictured separately:
+## How does the approved permission reach the account?
+
+**Provisioning** carries out account or access changes in another system. Adding Read invoices to the employee's account is provisioning work.
+
+The receiving application is the **target system**. **Fulfillment** is the work of carrying the authorized change through to delivery. Depending on the supported design, this can involve an automated operation or work assigned to a person.
+
+For the automated path here, the connector supports adding this entitlement and provisioning is enabled. The connection works, and the integration has the permissions needed to perform the addition.
+
+That last condition deserves attention. The integration uses an account or authorization of its own when communicating with the application. It must be allowed to make the change. The employee's account is the account receiving the permission; it is not necessarily the account performing the integration operation.
+
+ISC initiates the supported change through the connector. The operation asks the application to add Read invoices to the selected existing account.
+
+In the successful example, the application accepts the change and records the permission on that account. Its own permission rules now allow invoice reading.
+
+We check the intended account and confirm that Read invoices is present, invoice reading works and payment release remains denied. Release payments was not added, and no other relevant permission or application-rule change occurred.
+
+The need has reached the application through a specific chain: the request described the desired access, the manager authorized it, the integration delivered the change, and the application applied it.
+
+The following diagram separates the decision from delivery:
 
 ```text
-Access request submitted in ISC
-                |
-                v
-Reviewer decides business need
-    | denies             | approves
-    v                    v
-No grant from      ISC initiates change
-this request             |
-                         v
-                  Connector sends it
-                         |
-                         v
-                  Target processes it
-                    |             |
-                 accepts       rejects
-                    |             |
-                    v             v
-              Permission      Unchanged
-                added       in this case
+Employee requests Read invoices
+               |
+Manager decides whether work needs it
+       /                       \
+    denies                   approves
+      |                         |
+No grant from            ISC initiates
+this request             permission add
+                                |
+                       Connector sends it
+                                |
+                       Application responds
+                         /             \
+                      accepts        rejects
+                         |              |
+                    Read invoices   No change
+                       added        in this case
 
-Human verification:
-operation evidence + current target state
-required action works; extra right absent
+After a successful grant, check:
+invoice reading works; payment denied
 ```
 
-The first rejection is a business decision. The second is an illustrated application rejection after an authorized change was attempted. In that failure case, the application leaves the account unchanged.
+The manager's denial is a business decision. The application's rejection is a failed delivery attempt after approval. In the illustrated rejection branch, the application makes no change.
 
-The arrows show selected responsibilities and outcomes for the supplied existing-account, automated-delivery conditions. They aren't ISC's private architecture or every possible waiting state, retry, or failure. Other operation failures can require different checks.
+The arrows show this configured existing-account path, not a private ISC service map or a promise about every failure. Verification is a separate human check. A decision not to grant through this request also does not establish what unrelated assignments or later actions might do.
 
-“No grant from this request” also doesn't mean no other process could ever provide that access. Keep the conclusion tied to the process and evidence being examined.
+## Why might an approved request still leave the employee unable to work?
 
-## Which observation answers which question?
+Change one condition: the integration can read accounts, but lacks permission to add Read invoices.
 
-When investigating access, ask what the visible information represents and how it became available.
+Suppose activity shows that the addition was attempted on the intended account and the application rejected it for that missing integration privilege. A current application check confirms that the account still lacks Read invoices.
 
-A request view concerns requested access and its decision history. Provisioning activity and account activity details help establish the attempted operation and reported result. Collected account data represents information ISC obtained from the source. A current application check concerns the account's state or behavior at the time checked.
+The manager's approval is not the missing part. The application refused the technical change.
 
-They can all be useful without proving the same thing.
+Another manager approval would leave the integration's privilege unchanged. Another account read could refresh what ISC knows, but it would not perform the rejected addition.
 
-| Observation | What it supports | What still needs separate evidence |
-|---|---|---|
-| A reviewer approved the request | The configured access decision was made | Whether the target account was updated |
-| Activity reports a rejected change | That attempt encountered the reported problem | The current account state and whether a later correction occurred |
-| Collected account data contains the permission | ISC recorded it from the available data | Whether the target has changed since that observation |
-| A current target check confirms the permission | It is present on the intended account when checked | Whether it remains justified, and whether unrelated functions work |
+The next investigation concerns the reported operation, its account, the error and the integration's authority. The responsible team needs to arrange an approved correction for the operation.
 
-ISC's identity views bring related person-level information and access together. That convenience doesn't remove the need to distinguish records or check freshness.
+Before retrying, check the current account and outstanding work. Someone may have corrected the access manually since the failed attempt. Recovery should use the supported mechanism for the operation's current state, rather than blindly repeating a broad action.
 
-So “it's showing in ISC” needs a more specific explanation. Is it a request, an approval, an operation result, or collected access information? Each answers a different part of the investigation.
+For this example, assume the required privilege is corrected through the approved process and supported recovery adds the permission. Fresh checks then confirm invoice reading works and payment release remains denied.
 
-## What if the decision was right but delivery failed?
+That establishes this account's recovery. It does not establish that every other failed operation recovered too.
 
-Change one condition in the permission illustration. The integration can read accounts, but its credentials lack permission to add Read invoices.
+A working read connection and a working write operation are different capabilities. This is why collecting accounts successfully cannot, by itself, establish successful grants or removals.
 
-Assume the application rejects the attempted change, leaves the account unchanged, and reports that rejection in the activity details. The person still cannot read invoices.
+## Which screen would you check?
 
-The approval remains a business decision about justified access. The unresolved work is now technical delivery.
+Different views help answer different parts of the question.
 
-Sending another request through the same manager doesn't repair the integration's missing privilege. Inspect which operation was attempted, which account it targeted, the reported rejection, and the relevant integration permissions. Establish who owns the correction.
+| Question | Useful information |
+|---|---|
+| What did the person request, and who decided? | The request record and its decision history |
+| Which account change was attempted, and what happened? | Provisioning Activity or Account Activity details |
+| What account access has ISC collected? | The source account data and its collection history |
+| What can the account do now? | Current application permissions and the intended action checked on that account |
 
-Check the current target state before deciding what to retry. A failed attempt from earlier doesn't establish that nobody corrected the account afterward. The supplied rejection evidence guides the investigation; it isn't permission to invent a repair or repeat operations blindly.
+The identity view brings related person and access information together. That helps you follow the account across records, but it does not make every displayed status mean the same thing.
 
-Reading and changing a system are different capabilities. A working collection process cannot establish that a grant or removal will also work.
+Suppose the application now has Read invoices, while an older collected account record in ISC does not show it. The account data may have been collected before the successful change and not refreshed afterward.
 
-## What if changes must be made by a person?
+Check which record you are looking at and when its information was obtained. An older observation and a failed write are different explanations, even when both make an ISC screen look incomplete.
 
-An application can participate in a governed process even when its changes aren't automated.
+A current permission also does not explain whether the employee still needs it. Delivery evidence and business justification answer different questions.
 
-For a supported flat-file/manual-fulfillment design, account information is imported into ISC, and required changes can be assigned as manual tasks. A responsible person performs the change in the external application and records completion through the agreed process.
+## What if a person must make the change?
 
-Importing the file doesn't make that application change. The design still needs a responsible owner, a clear required action, a way to track unfinished work, and evidence of the resulting account state.
+Some systems provide account information without an automated change connection.
 
-A completed task and a verified application result are different observations. Someone recording that work is complete doesn't independently demonstrate that the correct permission reached the correct account.
+A file-based source can import a list of accounts and permissions into ISC. That read tells ISC what the supplied file contains. It does not write a new permission back into the application.
 
-Manual delivery can be a deliberate, accountable control. Unassigned work or an assumption that somebody will handle it is a gap.
+In a supported manual-fulfillment arrangement, required work can instead be assigned as a **manual task**. The task identifies the change a responsible person must perform outside ISC.
 
-## Must every access change begin with a request?
+The operator changes the application account, records completion through the agreed process and supplies the required evidence. The account information can then be refreshed through the supported collection process.
 
-A request is one route. ISC also supports configured automatic assignment.
+The design needs an owner, a clear account and action, a way to track unfinished work and a check of the application result. A completed task records completion by the operator; it is not independent proof that the correct account received the correct permission.
 
-A **role** groups access for a business responsibility. Its configured membership conditions can select identities whose data meets the agreed requirement. Relevant processing evaluates those conditions and can initiate the associated access changes.
+Manual delivery can therefore be part of an accountable service. “Someone will probably do it” leaves the delivery responsibility unresolved.
 
-The organization must define what qualifies someone for that responsibility. “Everyone in Finance” may be too broad if payroll staff, invoice readers, and payment approvers need different capabilities. Reliable identity data and meaningful membership conditions are part of the design.
+## Does everyone have to submit a request?
 
-**Lifecycle states** describe business stages such as active employment, leave, or departure. Their configured access and account actions determine what should happen at those stages. **LCS** is informal shorthand for lifecycle state, not a separate ISC object.
+A request is one route. Organizations also define access that should follow an agreed responsibility or business stage.
 
-A state label is information used by a configured process. It isn't evidence that every connected application has completed a required grant, removal, or account action.
+A **role** groups access for a business responsibility. A role for invoice-review work could include the access needed for that work.
 
-Automatic assignment uses a different trigger and decision path from the request illustration. It doesn't need to reproduce that manager-review sequence. But it still needs a justified requirement, correct inputs, supported delivery, and verified outcomes.
+Its configured membership conditions can select identities using their information. For example, an approved condition could select employees whose recorded work classification identifies invoice-review duties.
 
-Automation applies a configured decision. It can't make an undefined or overly broad requirement appropriate.
+ISC evaluates the relevant identity information and configured access requirements through **identity processing**. A matching role condition can establish an assignment requirement and initiate provisioning for its access.
 
-## Why does access need attention after the grant?
+This route uses the configured condition to determine eligibility. It does not need to repeat the manager-approval sequence from our individual request.
 
-An approved grant answers a need at a particular time. It doesn't establish that the same access should remain forever.
+The condition still needs a business decision behind it. “Everyone in Finance” may include payroll staff, invoice readers and payment approvers with different needs. An automated condition can consistently grant the wrong access if its design is too broad or its input data is wrong.
 
-When responsibilities change, determine what the new work requires, which previous rights remain justified, and which should end. Adding new access doesn't explain what happened to the old access.
+A **lifecycle state** represents a business stage, such as working, leave or departure. Its configuration can drive access and account actions for people in that stage. **LCS** is informal shorthand for lifecycle state.
 
-A department change alone isn't enough to decide every permission's fate. Someone may retain a legitimate approved responsibility across departments. Establish the actual requirement rather than replacing judgment with a label.
+For example, a configured departure action might require disabling an account on a particular source, where that operation is supported. The state identifies the business situation; the configured action determines the required account work.
 
-ISC provides review mechanisms as well. A **certification campaign** organizes access review work. A **certification** is an assigned review within that campaign, in which a reviewer examines access and makes the decisions supported for the items presented. The access model affects which items are individually reviewable or revocable.
+A departure label in ISC is not confirmation that the application account has been disabled. The resulting operation and its outcome still need checking.
 
-If access is to be removed, **remediation** is the work of carrying out the required correction. A recorded revoke decision isn't the same as completed removal. Follow the applicable review completion and remediation process, then verify the result.
+Automatic assignment changes what initiates the work. It does not remove the need for correct information, an appropriate access requirement, supported delivery and confirmation of the result.
 
-Departure makes the timing and scope more demanding. For each relevant account and access path, establish the intended action and how its result will be checked. A changed employment status doesn't demonstrate that every target system has acted.
+## What happens when the work changes?
 
-Access reviews also have boundaries. A campaign using collected accounts from two applications cannot establish the state of a third application excluded from its scope. That exclusion isn't proof of misuse either; the third system may have separate controls. Obtain its evidence before reaching a conclusion.
+The invoice-reading grant was justified for a particular responsibility. It does not establish a permanent need.
+
+If the employee stops reviewing invoices, someone must decide whether Read invoices is still needed. Giving access for the new job does not automatically explain what happened to the old permission.
+
+A department change can be a useful signal, but it does not settle every permission. The person might retain an approved responsibility across departments. Check the actual work and any continuing assignments before arranging removal.
+
+ISC also supports organized access reviews.
+
+A **certification campaign** organizes an access review for selected people and access items. The work is assigned to reviewers through **certifications**, the individual reviews within that campaign. Each reviewer examines the access presented to them and makes the decisions supported for those items.
+
+The way access is grouped and assigned is the **access model**. It affects which items can be reviewed or removed on their own. **Revoking** access means withdrawing it through the applicable process. Check the item and how the person receives it before choosing a removal action.
+
+When a review requires a correction, carrying it out is **remediation**. If a directly requested, revocable permission should end, the applicable review must be completed and the removal delivered through the supported process.
+
+A saved removal decision is not the same as a removed application permission. Follow the review's required completion and remediation steps, then check the actual account result.
+
+Departure makes scope and timing particularly important. The employee can have accounts in several systems. Establish what should happen to each relevant account and access path, and verify the required actions. Changing employment status in one place does not demonstrate completion everywhere.
+
+The review itself also has a scope. A campaign covering collected accounts from two applications cannot establish access in a third application it did not include. That third application may have separate controls, but their results need separate evidence.
+
+## Where do governance and administration fit?
+
+We have followed two kinds of work throughout the example.
+
+Deciding who should have access, why they need it and whether they should keep it is **identity governance**.
+
+Carrying out and maintaining the required account and access arrangements is **identity administration**.
+
+Together they are called **identity governance and administration**, or **IGA**.
+
+These responsibilities depend on each other. A justified decision that never reaches the application leaves the employee without required access. A technically successful grant can still provide a permission that the person should never have received.
+
+That is why the question is wider than “Can we create accounts?” The organization needs both a sound decision and a working way to apply and maintain it.
 
 ## What must the organization still decide?
 
-ISC doesn't supply the business meaning of a permission simply by collecting its name.
+ISC cannot discover the business meaning of a permission merely by collecting its name.
 
-If Read invoices also allows an unwanted action in the application's actual configuration, successfully granting it won't make the design safe. The application owner's description and the native behavior need to agree.
+If Read invoices also permits an unwanted action under the application's real rules, successfully adding it will not correct that design. The application owner must establish what the right actually allows.
 
-Similarly, a recorded approval doesn't make an uninformed decision sound. The reviewer needs enough information and the appropriate authority to judge the need.
+A reviewer also needs enough information and authority to make an informed decision. Saving an approval cannot turn an unclear or unjustified requirement into a sound one.
 
-Incomplete scope is another limit. Reports and reviews based on included systems cannot demonstrate that every system or account population has been checked. Poor input data can also misdirect a technically successful process.
+The same applies to scope and data. A report built from incomplete systems or incorrect account relationships can look orderly while leaving important access unexamined.
 
-These limits lead to practical implementation questions:
+Before implementation, establish:
 
-- Which people, accounts, and systems are included, and which are outside the managed scope?
-- Who owns the underlying information and corrects errors?
-- What does each access item permit, and who decides when it is justified?
-- Which grants and removals can be automated, and who handles the supported manual work?
-- What evidence will establish that the required result was achieved?
+- Which people, systems and accounts are included, and which are outside the managed scope.
+- Who supplies the underlying information and corrects errors.
+- What each access item allows, and who can decide whether it is appropriate.
+- Which changes the integration supports and who owns any manual work.
+- How the team will confirm the required result and find unfinished changes.
 
-Those decisions are part of the implementation. A working connector alone cannot answer them.
+These decisions give the configuration something meaningful to implement. Available features, supported source operations and the organization's chosen settings determine what the service can actually do.
 
-## Could tickets or scripts meet the requirement instead?
+## Could tickets and scripts provide this instead?
 
-For a specific requirement, they may.
+For some requirements, they can.
 
-A ticketing process can record a request, assign work, and capture a response. A script can perform a defined change. The relevant question is whether the complete arrangement supplies the controls the organization needs.
+A ticket can record the request, assign work and capture a response. A script can perform a defined account change.
 
-If a script adds a permission, what establishes the intended person and account? What authorizes the change? What initiates its later removal? Who investigates a rejected operation? Can someone reconstruct the decision and result?
+Consider the complete arrangement. What establishes the correct person and account? Who authorizes the change? What starts removal when the need ends? Who finds a failed operation? Can another engineer reconstruct the decision and the actual result?
 
-If an existing solution answers those questions reliably, it already provides parts of the required control. More scripts won't resolve gaps in ownership, requirements, or evidence unless the design connects those responsibilities.
+If the existing arrangement answers those questions reliably, it already supplies parts of the required control. Adding a product or more scripts does not resolve an undefined owner or an unclear access requirement by itself.
 
-The case for ISC is a repeatable, connected way to manage identity and access across the systems in scope. Judge it against outcomes such as fewer unresolved access delays, appropriate removal of old rights, clear accountability, and evidence that decisions reached applications.
+The case for ISC is a repeatable connection between these responsibilities across the systems in scope.
 
-Those are objectives to measure. Buying the product doesn't guarantee them.
+Judge an implementation through outcomes: fewer unresolved access delays, appropriate withdrawal of old rights, clear ownership and evidence that decisions reached the intended accounts. Those are objectives to measure, not guarantees that follow from buying the product.
 
-## What would you conclude?
+## Work through these situations
 
-### The application has no error
+### The application reports no fault
 
-A person no longer performs invoice-checking work, but their old permission still lets them read invoices. The application behaves exactly as configured.
+The employee no longer performs invoice-review work, but still has Read invoices. The application correctly allows reading.
 
-Does correct application behavior establish that the retained access is appropriate? What would you check?
+Does the application's correct behavior establish that the retained access is appropriate? What should happen next?
 
-### Approval is recorded, but the operation was rejected
+### Approval exists, but the addition failed
 
-An approved request has activity showing that the application rejected the permission change. A colleague proposes repeating manager approval.
+The manager approved Read invoices. Activity identifies a rejected addition to the intended account, and current application evidence confirms the permission is absent.
 
-Which part is already established, and what evidence should guide the next action?
+Would repeating approval address the known gap? What would you investigate?
 
-### The accounts were imported
+### The account file was imported
 
-An application supplied a file of accounts and permissions. The import finished, but there is no automatic change integration and nobody has agreed responsibility for manual fulfillment.
+ISC has imported a file of application accounts and permissions. There is no automated change connection, and nobody has agreed who will perform manual fulfillment.
 
-What has been achieved, and what is still missing?
+What has the import achieved, and what is missing from the service?
 
-### Everything reviewed was appropriate
+### The review covered two applications
 
-A review covered collected accounts from two applications. A third application was excluded.
+All reviewed access was appropriate in a campaign covering two applications. A third application was excluded.
 
-What can you conclude about access across all three, without assuming the excluded application is either safe or unsafe?
+What can you conclude about the third application's access?
 
-## Compare the reasoning
+## Compare your reasoning
 
-For the working application, check continuing business need with the accountable decision owner. The application can correctly enforce access that is no longer justified. If removal is required, identify its supported mechanism and verify its result. Equally, avoid removing access solely because a label changed when a legitimate approved need remains.
+For the first situation, the application is enforcing its recorded permission. Check continuing business need with the accountable decision owner. If no justified requirement remains, arrange the supported removal and verify its result. A legitimate continuing responsibility could justify retention; the technical permission alone cannot make that decision.
 
-For the rejected operation, approval is established; successful delivery isn't. Inspect the account, operation, reported error, relevant integration permissions, and current target state. Another approval doesn't correct a rejected write. The precise repair depends on the proven cause, not the fact that access is still missing.
+For the rejected addition, the authorized decision is already recorded. Investigate the operation, account, reported error, integration permissions and current target state. Another approval does not supply a missing write privilege. Select a correction based on the actual cause, then confirm delivery.
 
-For the imported file, visibility has been established within the file's scope and freshness. A delivery arrangement is still missing. Agree the supported fulfillment method, responsible people, tracking, and outcome checks. Manual fulfillment can be valid; an unowned assumption is not a complete design.
+For the imported file, ISC has account visibility within the file's scope and freshness. It still needs a supported delivery arrangement, responsible people, tracking and outcome checks. Reading account data does not perform external changes.
 
-For the limited review, keep the conclusion within the included items and relevant observation time. Obtain separate evidence about the third application. Exclusion establishes a visibility boundary, not the presence or absence of a problem.
+For the limited review, the result concerns the included access and its relevant observation time. Obtain separate evidence for the third application. Being excluded proves neither appropriate access nor misuse.
 
 ## Explain the need for a different application
 
-A customer-support system has separate permissions for viewing cases and exporting customer records. Only a defined team should export records. Accounts already exist, approvals are scattered across email, and no one routinely reassesses access when team membership changes.
+A customer-support application has separate permissions for viewing cases and exporting customer records. Only a defined team should export records.
 
-What would an ISC implementation add beyond account creation? Explain the information, decisions, delivery, and continuing checks it would need. Don't assume automated changes are supported.
+Accounts already exist. Approvals are scattered across email, and nobody routinely reassesses export access when team membership changes.
 
-A complete proposal connects the support accounts to the correct identities and establishes the actual scope of viewing and exporting. It identifies the authority for export access, brings the relevant account and permission information into scope, and configures the appropriate request or assignment and review processes.
+What would an ISC implementation add? Explain what information it needs, who should decide, how an approved change would reach the account and how access would be reconsidered later. Do not assume that automated changes are supported.
 
-Delivery still depends on the application's supported integration and privileges. If automation isn't available, an owned manual process must carry out approved changes. Team changes need a defined response for retained export access, followed by evidence of any required removal.
+A complete proposal connects the accounts to the correct identities and establishes what viewing and exporting actually permit. It identifies the decision authority for export access and brings the relevant account and permission data into scope.
 
-A well-defined population could use configured automatic assignment instead of individual requests. That is a different valid mechanism when its conditions are reliable; it doesn't remove the need for the business decision or outcome checks.
+Requests can provide one route to the access. A well-defined population could instead use configured automatic assignment, if the conditions and input data reliably identify the intended team.
 
-The reason to implement ISC is the connection between these responsibilities: whose access is being managed, why it is justified, how a required change reaches the right account, and how its continuing appropriateness and actual result can be established.
+Delivery depends on the supported integration and its privileges. Where automation is unavailable, an owned manual process must carry out approved changes and supply completion evidence.
+
+When a team member leaves that responsibility, the organization needs a defined response for export access, followed by confirmation of any required removal. Keeping the account for case viewing need not justify keeping export capability.
+
+ISC is useful when it connects those parts: the person, the account, the justified access, the required change and the continuing checks that keep the arrangement appropriate.

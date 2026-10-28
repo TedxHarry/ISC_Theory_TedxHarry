@@ -1,0 +1,20 @@
+Employee requests Read invoices
+               |
+Manager decides whether work needs it
+       /                       \
+    denies                   approves
+      |                         |
+No grant from            ISC initiates
+this request             permission add
+                                |
+                       Connector sends it
+                                |
+                       Application responds
+                         /             \
+                      accepts        rejects
+                         |              |
+                    Read invoices   No change
+                       added        in this case
+
+After a successful grant, check:
+invoice reading works; payment denied

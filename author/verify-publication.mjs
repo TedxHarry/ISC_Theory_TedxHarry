@@ -37,20 +37,23 @@ function units(md) {
 }
 const tableCount = md => (md.replace(/^`{3}[^\n]*\n[\s\S]*?^`{3}\s*$/gm,"").match(/^\|[-|: ]+\|[ \t]*$/gm)||[]).length;
 const assets=(await readdir(new URL("assets/",root))).filter(p=>p.endsWith(".txt"));
+const revisionFiles=await readdir(new URL("author/revisions/",root));
 const assetText=new Map(await Promise.all(assets.map(async p=>[p,norm(await read("assets/"+p))])));
 let diagrams=0,tables=0,localUnits=0;
 const source=new Map();
 for(const path of changed) {
  const md=await read(path); source.set(path,md);
  const id=path.split("/")[1].slice(0,7);
- const record=await read("author/revisions/"+id+"_Concept_Led_Revision_Record.md");
- assert.ok(/revision\s*:?\s*2\.0/i.test(record),id+" revision record");
+ const beginnerRecord=id+"_Beginner_Explanation_Revision_Record.md";
+ const isBeginner=revisionFiles.includes(beginnerRecord);
+ const record=await read("author/revisions/"+(isBeginner?beginnerRecord:id+"_Concept_Led_Revision_Record.md"));
+ assert.ok(isBeginner?/revision\s*:?\s*3\.0/i.test(record):/revision\s*:?\s*2\.(?:0|2)/i.test(record),id+" revision record");
  assert.ok(!record.includes("Pending final save-time checks."));
  for(const m of md.matchAll(/^`{3}text\n([\s\S]*?)\n^`{3}/gm)) {
   const block=norm(m[1]);
   if([...assetText.values()].includes(block)) {
    diagrams++;
-   assert.ok(Math.max(...block.split("\n").map(x=>x.length))<=42,id+" diagram width");
+   assert.ok(Math.max(...block.split("\n").map(x=>x.length))<=(isBeginner?52:42),id+" diagram width");
   }
  }
  tables+=tableCount(md);

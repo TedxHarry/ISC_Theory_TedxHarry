@@ -1,8 +1,10 @@
-# ISC course teaching specification, version 3.1
+# ISC course teaching specification, version 3.2
 
 Concept-led approach adopted October 25, 2026, after the user's review of the SYS-005 and COR-004 pilots. Apply it to existing lessons in course order, one complete revision at a time, and to future lessons. Older lessons retain their previous status until individually revised and reviewed.
 
 Version 3.1 records the explanation and pacing standard approved after the SYS-002 revision 2.2 read-through on October 25, 2026. It strengthens the existing concept-led approach; it does not mark earlier lessons rereviewed or impose a common lesson layout.
+
+Version 3.2 records the beginner-explanation refinements developed through TRN-004 pilot 1.1 and authorized for application from SYS-001 on October 28, 2026. Apply them one complete lesson at a time. The pilot is author material, not an out-of-sequence revision of the published TRN-004 lesson. Earlier lesson revisions retain their recorded status until individually revised. Author read-through is a simulated beginner review, not an observed learner result.
 
 ## What every lesson must accomplish
 
@@ -93,6 +95,26 @@ These are author checks, not required learner-facing headings, a fixed sequence,
 Complete an understandable basic mechanism before adding integration variants or dense implementation detail, where that ordering helps. Put essential conditions beside the steps they govern, then develop additional rules and failures as explicit variations. Do not turn concept-led writing into compressed technical prose or remove the explanatory bridges when removing a fictional story.
 
 During author review, trace whether a reader can follow who does what, with which information, why the result follows, and what happens next. Check first-use meanings and the connections between paragraphs, not just term presence or coverage counts. Clearer author narration and successful structural checks do not substitute for observed beginner teach-back.
+
+### Make the explanation carry an unfamiliar reader
+
+Establish the actual situation early: what already exists, what information is being used, which record or capability should change, and why. If information moves between records, make its origin and intended destination clear before tracing the operation. Do not leave the reader to discover halfway through that a different record is being updated.
+
+Explain the everyday meaning of example fields and actions as well as the technical terms. A label such as preferredName, a permission name, or an account status may need interpretation before its role in a calculation or decision makes sense. Preserve exact technical spelling when referring to configured names.
+
+Introduce supporting ISC objects through the jobs they perform in the current operation. Independence means supplying the context needed here; it does not require a preliminary glossary or moving the same glossary into the middle. After defining a term, show what it does with the current records or values before depending on another cluster of terms. Avoid defining an unfamiliar abstraction mainly through other unfamiliar abstractions.
+
+Where a complete configuration helps, explain its useful parts before asking a beginner to interpret the whole. Distinguish source data, calculation instructions, object references and destination mappings. Explain two different selection or ordering mechanisms separately and use a small changed-input example when their difference is otherwise hard to picture. Not every lesson needs configuration or code.
+
+Finish an understandable normal mechanism, then develop variations where that helps the topic. Keep conditions that govern the current result beside that result. Replace repeated lists of what a fact does not prove with a positive explanation of what happened, followed by the specific uncertainty that matters. Do not remove meaningful conditions to make prose smoother.
+
+“Additional logic is needed” is not a complete explanation when that logic is part of the learning objective. Explain what would be tested, which branch would be chosen and why. Clearly distinguish a proposed logical design from supported behavior actually implemented by a displayed configuration. For an unverified runtime outcome, establish the verified mechanism and the design boundary; do not invent a return value, exception, retry or resulting stored state.
+
+Before handing a revision to the user, reread the whole saved lesson from the position of someone with basic account/access familiarity but no assumed ISC terminology. Check where that reader would ask what a word means, which record is involved, why one action follows another, or what changes under a different condition. Resolve the missing explanatory steps, including in the middle and ending. Coverage counts, a clear opening and passing file checks do not establish understandable teaching.
+
+Use reasoning questions to check the connections as well as individual definitions. A changed source value that has not reached ISC, a decision without delivered access, or a result from a different account can expose a missing connection. Select questions for the subject; no common question, diagram, table, section or word count is required.
+
+Real beginner feedback remains separate and valuable evidence. Record it as pending when unavailable; do not represent the author's simulation as an independent reader test or introduce an automatic approval gate merely because no participant is available.
 
 ## How the narration should feel
 

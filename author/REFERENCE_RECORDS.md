@@ -6,14 +6,16 @@ Publication update, October 28: the current authorized snapshot includes all 91 
 
 ## Record maintenance
 
+October 28 beginner-explanation pass: the user authorized application from SYS-001 after TRN-004 pilot refinement. SYS-001, SYS-002 and SYS-003 revisions 3.0 are local under teaching specification 3.2; the published snapshot remains unchanged. The other 88 learners retain their earlier revision status. See the current SYS-001/SYS-002/SYS-003 records for checked claims, preserved coverage and review limits.
+
 Keep official sources mapped to lesson sections or claims, together with the revision reviewed, documentation-check date, limitations, and review status. A saved citation is not evidence of fresh verification. Update these records when technical content is checked or changed.
 
 On October 19, 2026, the existing citations were relocated from both lessons. This was an editorial change, not a new documentation check, tenant test, learner-validation pass, or publication approval. Existing verification dates and notes are preserved below.
 
 ## SYS-001
 
-- Current lesson: [SYS-001](../lessons/SYS-001_Why_an_Organization_Needs_ISC.md), concept-led revision 2.0.
-- Current source verification and baseline-coverage mapping: [SYS-001 revision 2.0 record](revisions/SYS-001_Concept_Led_Revision_Record.md), October 25, 2026. The references and assessment mappings below describe revisions 1.x unless explicitly updated; their old headings and named example are historical, not the current learner narration.
+- Current local lesson: [SYS-001](../lessons/SYS-001_Why_an_Organization_Needs_ISC.md), beginner-explanation revision 3.0; published source remains revision 2.0 until publication is requested.
+- Current source verification and preserved-coverage mapping: [SYS-001 revision 3.0 record](revisions/SYS-001_Beginner_Explanation_Revision_Record.md), October 28, 2026. [Revision 2.0 record](revisions/SYS-001_Concept_Led_Revision_Record.md) is historical. The references and assessment mappings below describe revisions 1.x unless explicitly updated; their old headings and named example are historical, not the current learner narration.
 - Source-bearing revision before relocation: 1.1.
 - Documentation check recorded by the preceding authoring work: October 19, 2026.
 - Historical revision 1.3: example identifiers, LCS shorthand, campaign/certification wording, and diagram presentation revised on October 20, 2026. The earlier citation relocation is preserved in the source-bearing history.
@@ -125,8 +127,8 @@ Added as author assessment metadata on October 20, 2026. FND-001 remains revisio
 
 ## SYS-002
 
-- Current lesson: [SYS-002](../lessons/SYS-002_Authentication_Authorization_and_ISC.md), concept-led revision 2.2.
-- Current coverage, source mapping and review: [SYS-002 revision 2.2 record](revisions/SYS-002_Concept_Led_Revision_Record.md), October 25, 2026. The explanation now begins with sign-in and invoice denial, completes the basic account/session/permission flow, then develops ISC delivery and federated sign-in. All 52 baseline mappings and the 2.1 requested-entitlement, concrete mapping, cookie/session, actor and checkpoint corrections remain. The record separates historical 2.0/2.1 checks from current results and retains pending beginner validation. The section mappings, named example, diagram and notes below describe historical revisions 1.x. SYS-001 revision 2.0 remains unchanged by this task.
+- Current local lesson: [SYS-002](../lessons/SYS-002_Authentication_Authorization_and_ISC.md), beginner-explanation revision 3.0; published source remains revision 2.2 until publication is requested.
+- Current coverage, source mapping and review: [SYS-002 revision 3.0 record](revisions/SYS-002_Beginner_Explanation_Revision_Record.md), October 28, 2026. All 52 preceding coverage mappings plus requested-entitlement assignment enforcement remain. [Revision 2.2 record](revisions/SYS-002_Concept_Led_Revision_Record.md) is historical. The section mappings and named examples below concern historical revisions 1.x. SYS-001 revision 3.0 is preserved; actual beginner validation remains pending.
 - Historical revision 1.x documentation check: October 20, 2026.
 - Review method: read official sources for the mechanisms taught; distinguish general identity standards and security guidance from ISC product behavior.
 - The finance and document applications, permission rules, account identifiers, event times, and outcomes are fictional teaching examples. No tenant or application test was performed.
@@ -187,8 +189,9 @@ Unique example number 12002 and a shorter conceptual sign-in validation step; de
 
 ## SYS-003
 
-- Current lesson: [SYS-003](../lessons/SYS-003_Who_Owns_What_in_Identity_and_Access.md), concept-led revision 2.0.
-- Current coverage, source mapping and review: [SYS-003 revision 2.0 record](revisions/SYS-003_Concept_Led_Revision_Record.md), October 25, 2026, under teaching specification v3.1. It records 65 coverage mappings, connected explanations, 15 official sources, four checkpoint purposes, vendor transfer and the task-assignment correction.
+- Current lesson: [SYS-003](../lessons/SYS-003_Who_Owns_What_in_Identity_and_Access.md), beginner-explanation revision 3.0, saved locally.
+- Current coverage, source mapping and review: [SYS-003 revision 3.0 record](revisions/SYS-003_Beginner_Explanation_Revision_Record.md), October 28, 2026, under teaching specification 3.2. All 65 prior purposes are preserved; full simulated-beginner author read-through is recorded separately from pending actual learner validation.
+- Historical coverage and review: [SYS-003 revision 2.0 record](revisions/SYS-003_Concept_Led_Revision_Record.md), October 25, 2026, under teaching specification v3.1; retained for comparison.
 - General manual entitlement provisioning and certification manual remediation are taught separately. The removal checkpoint now uses a completed review and the documented source-owner task path; inspect actual task assignment in each implementation.
 - Learner validation, graphical publication-format review and formal approval remain pending. Local only, with no tenant operation or publication.
 

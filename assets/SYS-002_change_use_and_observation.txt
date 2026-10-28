@@ -1,0 +1,22 @@
+CHANGE
+Access request -> configured approval
+      |
+Supported provisioning to target account
+      |
+Application account holds Read invoices
+
+USE
+Accepted sign-in selects application account
+      |
+Application session connects later requests
+      |
+Server finds that account's current access
+      |
+Read invoices present -> allow reading
+Read invoices absent  -> deny reading
+
+OBSERVE
+Application account -> collection -> ISC view
+
+Human investigation compares these records.
+Reading access and changing it are different.

@@ -1,0 +1,15 @@
+HR worker record
+preferredName: null; givenName: "Ana"
+                  |
+        aggregation collects data
+                  v
+HR account data held in ISC
+                  |
+ accountAttribute retrieves name fields
+                  v
+firstValid selects "Ana"
+                  |
+ profile mapping supplies displayGivenName
+                  v
+After application and identity processing:
+current identity displayGivenName: "Ana"

@@ -1,0 +1,30 @@
+MANAGER DATA
+HR confirms effective manager: M-NEW
+      |
+Current employee record reaches ISC
+      |
+Configured match finds manager identity
+      |
+Employee identity links to that manager
+
+NEW REQUEST USING THAT RELATIONSHIP
+Person requests invoice-readers
+      |
+Configured manager review
+ denied -> no grant from this request
+ approved
+      |
+ISC initiates directory membership add
+ rejected -> investigate operation
+ applied
+      |
+Recipient account joins invoice-readers
+      |
+Application recognizes that membership
+      |
+Read invoices allowed; payment denied
+
+SEPARATE CASE CHECKS
+Existing approval assignment inspected
+Teams return evidence for their actions
+Coordinator tracks unresolved outcomes
