@@ -1,0 +1,20 @@
+Human investigation; choose by evidence
+
+Exact source account present in ISC?
+  no  -> inspect collection and scope
+  yes -> inspect its actual association
+
+Intended identity present and ready?
+  no  -> inspect approved identity intake
+  yes -> inspect selected matching data
+
+Wrong existing link?
+  -> inspect origin and persistence
+
+Collected but uncorrelated?
+  -> inspect inputs and evaluation
+
+Manager missing or incorrect?
+  -> inspect manager-specific setup
+
+Verify each approved correction's result.

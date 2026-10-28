@@ -1,351 +1,333 @@
 # The profile appeared. Did ISC actually grant new access?
 
-Devi, employee `110505`, reviews release evidence in BuildLedger Production, a fictional application. Her account, `bl-110505`, already has the groups needed to read evidence and add review comments.
+An application account already lets an employee read release evidence and add review comments. Later, SailPoint Identity Security Cloud (ISC) displays a named package for that combination among the employee's access.
 
-The engineering team later defines a package for that capability in SailPoint Identity Security Cloud, or ISC. This package is called an **access profile**. After ISC reevaluates Devi's record, the profile appears among her access in ISC.
+Nobody submitted a request for the package.
 
-Nobody submitted a request for it.
+The package association is new. Does that mean the application access is new too?
 
-Did ISC just give Devi new application access?
+You need to compare what was already held with what, if anything, changed on the account. ISC can recognize an existing combination and represent it as a named package without adding memberships to the application account.
 
-The profile's appearance alone does not establish that. ISC can recognize access that already exists and associate it with a matching access profile. That changes how the access is represented in ISC without necessarily adding anything to the application account.
+The records, permissions, configurations and outcomes below are hypothetical. The main example uses one source and one correctly associated account; it does not assume how every multiple-account or inherited-access arrangement works.
 
-The question to follow is: did ISC recognize existing holdings, or did a separate requirement cause a source change?
+## Establish the account's access before the package appears
 
-All people, records, identifiers, native permissions, configurations and observations here are fictional. The example uses one source and one correctly associated account so that we can examine the distinction without assuming how every multiple-account arrangement is handled.
+An **account** is the external record through which a person or another entity uses a system. A **group** collects members, such as accounts. Membership can provide a **permission**, which allows an action on a resource.
 
-## Establish what is already there
+In ISC, an **entitlement** represents source access, such as one of those memberships.
 
-In ISC, an **entitlement** represents a source access right, such as a group membership. An **access profile** is a named bundle of related entitlements from one source.
+A **source** is ISC's configured representation of a system or collection of account data. Its **connector** supplies the supported integration for reading data and, where supported and configured, making changes.
 
-A **source** represents a connected system or account-data collection in ISC. Its **connector** reads data and, where supported and configured, makes changes.
+Our source, Releases Production, supports collecting accounts and groups and adding or removing the memberships used here. **Native** means belonging to the external application itself.
 
-Here, the source represents BuildLedger Production. The supplied integration supports reading accounts and groups and adding or removing the memberships used in the example.
+The application contact confirms these rules and initial holdings:
 
-An **account** is the application's login record. An ISC **identity** represents the person. Devi's identity is correctly associated with `bl-110505`, her only account on this source.
-
-The application team verifies the following native access. “Native” means in BuildLedger itself.
-
-| Native group | Confirmed meaning and initial membership |
+| Native group | Confirmed meaning and initial state |
 |---|---|
-| `BL-5501`, Release Readers | Read release evidence in the account's assigned project. Already on `bl-110505`. |
-| `BL-5502`, Review Comments | Add review comments when the same account also has Release Readers. Already on `bl-110505`. |
-| `BL-5599`, Release Approvers | Approve a release, a responsibility outside ordinary evidence review. Also already on `bl-110505`. |
+| Release Readers | Read release evidence within the account's assigned project; already held |
+| Review Comments | Add comments when the same account also has Readers; already held |
+| Release Approvers | Approve releases, outside the employee's evidence-review work; also already held |
 
-Devi's current work requires reading and commenting, not approving releases. The third membership therefore needs its own appropriateness investigation.
+The account is enabled, sign-in succeeds and its assigned project is North. The native application also requires those account and resource conditions.
 
-All three memberships are **standing access**: they do not require a separate activation before each use. Just-In-Time access, which has separate activation behavior, is outside the main example.
+An **identity** is ISC's representation of a person or another entity. The account is correctly associated with the employee's identity and is their only account on Releases Production.
 
-BuildLedger also requires an enabled account, successful sign-in and the relevant assigned-project scope. Devi's account is enabled, she can sign in, and its assigned project is North.
+All three memberships are **standing access**: they do not require a separate just-in-time activation before use. Activation-based access has additional behavior outside this example.
 
-The proposed profile is **Release evidence review**, containing the first two entitlements. It deliberately excludes Release Approvers.
+The employee's current work needs reading and commenting, not release approval. That extra Approvers membership needs its own appropriateness investigation.
 
-We will call the profile `AP-5505` and its referenced ISC entitlement records `E-5501` and `E-5502`. These are teaching labels, not real ISC ID formats or an API payload. The ISC record identifiers are distinct from native group keys.
+An **access profile** is a named bundle of related entitlements from one source. The team defines **Release evidence review**, referencing the represented Readers and Comments entitlements. Approvers is deliberately excluded.
 
-The profile is enabled. Direct requests for it are off in a supported request configuration. No role or lifecycle requirement grants this profile in the main example.
+A **reference** points to another record. Each represented entitlement has its own ISC identifier, separate from its native group's identifying value. Selecting a record with a similar display name is not sufficient; the intended source and access object must match.
 
-## An entitlement in the catalog is not a membership
+## A group in the catalog does not identify its members
 
-ISC needs information about both the access item and who holds it.
+**Aggregation** collects external data into ISC. Two collection responsibilities matter here.
 
-**Entitlement aggregation** collects definitions and details of access items, such as their names and descriptions. It can build a catalog containing groups that no account currently holds.
+**Entitlement aggregation** collects definitions and details of access items, such as group names and descriptions. Its catalog can include a group that no account currently holds.
 
-**Account aggregation** collects account records, including the fields that represent their entitlement holdings. Reading a group definition and reading an account's membership in that group answer different questions.
+**Account aggregation** collects account records and fields describing their access. That supplies information about who holds a membership.
 
-The source's **account schema** describes its account fields and identifies which represent entitlements. In this example, the `groups` field carries the membership keys. Its entitlement type and values are correctly linked to the represented group objects.
+A **schema** describes fields and how ISC interprets them. The source's account schema marks its `groups` field as entitlement-bearing and able to hold multiple values. An **entitlement type** identifies the kind of access object; here the field is linked to the source's `groups` type.
 
-The collected account shows `BL-5501`, `BL-5502` and `BL-5599` in that field.
+For the selected records, the native identifying values are:
 
-That is relevant holding evidence. The mere existence of three group definitions in the catalog would not establish that Devi holds any of them.
+- `release-readers` for Release Readers.
+- `review-comments` for Review Comments.
+- `release-approvers` for Release Approvers.
 
-The account must also be associated with the right person. **Account correlation** is the matching and association of source accounts with ISC identities. A correctly read membership on someone else's account is not evidence that Devi holds it.
+The collected account's groups field contains all three values. Each matches the native identifier of the correct represented group within that source and type. These are illustrative native values, not ISC object IDs or an API payload.
 
-When investigating detection, follow the exact source, entitlement references, account holdings and account-to-identity association. Familiar display names are not enough.
+This linkage explains which exact access objects the account is recorded as holding. The profile does not infer Comments from a group name or create the linkage merely by bundling two records.
 
-## Detection recognizes the complete required set
+**Account correlation** matches and associates source accounts with ISC identities. That relationship answers whose account this is. Profile recognition answers a different question about the access held through the associated account.
 
-**Access-profile detection** is ISC recognizing during identity processing that a user holds all the entitlements in an access profile and associating that profile with the identity.
+Reading the right memberships from someone else's account would not establish this employee's holdings. Check the source, exact entitlement references, account values and account-to-identity association together.
 
-**Identity processing** evaluates identity information and applicable access-model configuration. It is different from the source read that supplied the membership data.
+## Recognition asks whether every required item is held
 
-For the single-account situation here, compare the profile's exact two entitlement references with the holdings recorded for Devi through `bl-110505`.
+**Identity processing** evaluates identity information and relevant identity/access-model configuration. It is separate from the source read that supplied the account's membership information.
 
-Does the recorded access include Release Readers? Yes.
+**Access-profile detection** recognizes during that evaluation that an identity holds all the entitlements in a profile and associates the profile with the identity.
 
-Does it include Review Comments? Yes.
+Here, the required set means the two items listed in Release evidence review. Compare those exact references with the recorded holdings:
 
-Both required items are present, so the complete profile set is present.
+Readers is required and recorded. Comments is required and recorded. Every required item is present.
 
 ```text
-Profile AP-5505 requires
-E-5501 -> group BL-5501
-E-5502 -> group BL-5502
+Profile requires Readers + Comments
+Collected account holdings:
+  Readers + Comments + Approvers
              |
-             | compare recorded holdings
+             | both required items held
              v
-bl-110505: BL-5501 + BL-5502 + BL-5599
+Identity processing recognizes profile
              |
-             | required set present
              v
-ISC associates AP-5505 with Devi
+Profile associated with identity
 
-Detection does not add native groups.
-BL-5599 remains outside this profile.
+Native memberships are unchanged.
+Approvers remains outside the profile.
 ```
 
-The arrows from `E-5501` and `E-5502` identify the native items represented by those records. The comparison arrow means checking the required set against recorded holdings. It does not mean writing those memberships to the application.
+The comparison concerns recorded holdings. Its arrows describe recognition and association, not adding groups to the application or a private backend job sequence.
 
-Notice the extra group, `BL-5599`. Holding the required set does not mean holding only that set.
+The profile requires Readers and Comments. The account holds those two plus Approvers. Having more access does not make the required pair absent.
 
-The extra membership does not become part of Release evidence review merely because it is on the same account. Nor does recognizing the two-item package remove the extra membership.
+But “holds the required set” is different from “holds only appropriate access.” Approvers stays outside this profile. Detection neither includes it in the bundle nor removes it.
 
-Detection gives the existing required combination a profile association in ISC. It does not create a new native parent group or replace the two native memberships with a single BuildLedger membership called `AP-5505`.
+ISC can represent the required combination through the profile instead of treating those contents as independent access items. The two native memberships remain separate in the application. Detection does not create a new native parent group or replace them with a single membership named after the profile.
 
-The way ISC groups or presents access can change while the actual application permissions remain the same.
+## Trace what changed in ISC and what did not change natively
 
-## Trace the existing-access path before calling it a grant
+An **enabled** profile is available for supported access-model use. Release evidence review is enabled.
 
-The supplied timeline makes the distinction concrete.
+An **access request** asks for an access item for a recipient. A **requestable** profile allows its direct request route under supported configuration. Direct requests are off here, in a tenant configuration that supports an enabled, non-requestable profile.
 
-At **09:00 UTC**, native inspection shows all three groups on `bl-110505`. A controlled North-project read and review comment already succeed.
+An **ISC role** groups access for a broader business requirement and can select identities using configured criteria or a list. A **lifecycle state** describes an identity's organizational stage and can carry configured access requirements.
 
-At **09:10 UTC**, the account information available in ISC records those same group holdings and the correct association with Devi. The group definitions and linkage are also correct.
+No profile request, role requirement, lifecycle requirement or other new grant mechanism supplies this package in the controlled main example.
 
-At **09:20 UTC**, the team saves and enables Release evidence review with `E-5501` and `E-5502`.
+Follow these supplied observations from the same day, in UTC:
 
-At **09:25 UTC**, the reviewed access-model changes are applied through the relevant identity processing. Saving a new profile does not itself establish that every unchanged identity has already been evaluated against it.
+- **09:00:** Native inspection shows Readers, Comments and Approvers. A North-project read and comment already succeed.
+- **09:10:** The collected ISC account records those same memberships. Its association, group definitions and type/identifier linkage are correct.
+- **09:20:** The team saves and enables the two-item review profile.
+- **09:25:** Relevant identity processing applies the reviewed access-model configuration.
+- **09:28:** Identity evidence shows the review-profile association. Fresh native inspection shows the same three memberships; North reading and commenting still work.
 
-At **09:28 UTC**, the supplied identity evidence shows `AP-5505` associated with Devi. No profile request, role assignment or lifecycle requirement explains a new grant. The existing collected set explains the association.
+Saving the new definition did not prove that unchanged identities had already been evaluated against it. The relevant evaluation establishes the association.
 
-A fresh native check still shows the same three memberships. The application action worked before the profile existed and still works afterward.
+The before-and-after observations establish something more precise than “access appeared.” The profile association is new; the native reading and commenting rights already existed. Native permissions and other relevant account conditions are unchanged in this trace.
 
-The profile association is new. The underlying reading and commenting access is not new in this timeline.
+That conclusion is about this recognition result. The same processing run can evaluate other requirements and initiate separate changes; it is not a promise that the entire run is read-only.
 
-That does not mean every identity-processing run is read-only. The same run can evaluate other requirements and initiate unrelated changes. We are separating this detection result from any separate provisioning work, not promising that the whole run can never write to a source.
+The timestamps are observation times, not fixed processing delays. Also, 09:00 establishes that the memberships existed by then. It does not identify when someone originally granted them.
 
-These times are fictional observations, not fixed delays or a universal processing order.
+## A partial combination is not an instruction to grant the rest
 
-## A partial set does not tell ISC to complete the package
+Now take an independent variation. The account holds Readers only. The profile still requires Readers and Comments. No request or configured automatic requirement supplies Comments.
 
-Now take an independent variation of the same example.
+The recorded set is incomplete. Detection cannot recognize this account's access as the complete two-item package.
 
-Devi's account has only `BL-5501`. The profile still requires both `BL-5501` and `BL-5502`. No approved request, applicable role, lifecycle requirement or other grant route supplies the second item.
+It does not add Comments merely to make the account fit.
 
-Detection cannot establish the complete profile set. One required entitlement is missing from the recorded holdings.
+Why would that be the wrong interpretation? A reader group could be widely held. Treating one component as an instruction to grant every other component would create an unintended route to commenting, editing or approval.
 
-Does ISC add `BL-5502` just to make the profile fit?
+If additional access is justified, establish the employee's work need and use an appropriate supported request, role or lifecycle requirement. Those mechanisms can require access for a selected recipient. Detection recognizes access already held.
 
-No. Detection recognizes a combination already held. It is not a rule saying everyone who holds one component should receive the rest.
+## Change the authorization facts, then follow provisioning
 
-That distinction prevents a serious design mistake. A broadly held reader group could otherwise become an unintended route to editing, approval or other access bundled with it.
+Continue with the partial-access variation, but introduce a separate approved grant.
 
-If the business wants readers with a particular responsibility to receive commenting access, define that requirement through an appropriate supported grant route. Do not expect the detection comparison to invent it.
+The organization deliberately makes the profile directly requestable under its supported configuration. The employee submits a permitted request for access now. The configured recipient-manager review approves it.
 
-An ISC **role** is a broader access requirement that can include profiles and use configured membership criteria or a list of identities. A **lifecycle state** describes an organizational stage, such as prehire or working, and can have configured access requirements.
+An **approval** is the decision that the request may proceed. **Provisioning** carries out account or access changes through a supported integration or manual process.
 
-Those configurations can select recipients and require access. They are different from discovering that a recipient already holds a complete set.
-
-## A separate request can require the missing access
-
-Continue with the partial-access variation, but now change the authorization facts.
-
-The organization makes Release evidence review directly requestable. An **access request** asks for access to be given to a recipient. A **requestable** profile allows that direct request route under the supported configuration; it does not grant access merely by being visible.
-
-Devi submits an eligible request for access now. The configured manager review approves it. An **approval** is the decision that the request may proceed.
-
-**Provisioning** is the separate work of changing a source account or its access through a supported integration or manual process.
-
-The observed operation in this variation attempts to add the missing `BL-5502` membership to `bl-110505`. That operation changes the source account; detecting an already complete set did not require this change.
+The supplied operation attempts to add Comments to the selected existing account. That is a source change required by this new grant route. Detection of an already complete set did not need that addition.
 
 ```text
-Independent partial-access variation
-bl-110505 has BL-5501 only
-             |
-             v
-Detection: required set incomplete
-No missing-group grant from detection
+Only Readers held
+  Required set incomplete
+  No Comments grant from detection
 
 Separate approved profile request
              |
              v
-Provisioning attempts BL-5502 addition
+Attempt to add Comments membership
              |
        +-----+------+
        |            |
     rejected     delivered
        |            |
        v            v
-Verify absent   Verify native membership
-Investigate     and intended action
+Check absence   Verify membership
+and error       and intended action
+
+These are alternative outcomes.
 ```
 
-The upper portion shows why detection alone stops short of associating a complete set in this variation. The lower portion introduces a separate approved request. It is not a continuation that detection automatically starts.
+The upper part ends with incomplete recognition; it does not automatically initiate the request below it. The approved request is a separate mechanism. The two outcome branches are alternatives, not simultaneous results for one operation.
 
-The two outcome branches compare different possible provisioning results. They are not two simultaneous outcomes for one operation.
+In the successful outcome, current native evidence confirms Readers and Comments on the same account. With the account enabled, sign-in successful and the target evidence in North, commenting succeeds.
 
-If the operation reports a permission rejection and a current native check shows `BL-5502` absent, the missing access has not been delivered. Investigate the selected account, operation and source permissions.
+Now consider the rejected outcome. The Comments-add operation reports that the integration lacks required write permission, and current native evidence confirms Comments absent. Approval did not deliver the missing access.
 
-If the operation is delivered and native evidence confirms `BL-5502` alongside `BL-5501`, test the intended action with the relevant account and project conditions. The application can then permit commenting under the supplied native rule.
+An **integration credential** is the account or authorization the connector uses for source operations. Investigate the exact account, source, operation and required permission. Under an approved correction and supported recovery, a later native check confirms the missing membership and successful North commenting. No other relevant permission, account or application-policy change occurred in that recovery example.
 
-Do not turn this example into a promise that every connector issues exactly one minimal write or handles an already held entitlement identically. The concrete operation here is supplied evidence. Verify the actual operation for the source you are managing.
+These are supplied results, not real credential changes or a guaranteed retry procedure.
 
-A manual delivery path needs the same separation. An approved requirement can produce a task for a person to make the change; the existence of that task is not proof that the native membership was added.
+The observed operation is one membership addition. That does not promise that every connector performs exactly one minimal write or handles already held items identically. Inspect actual activity rather than deriving a call count from the profile's two entries.
 
-## Recognition does not establish who approved the original access
+A **manual provisioning task** is a work item asking someone to make a required source change. Its existence establishes work to do, not that the membership has been delivered. Native verification is still needed.
 
-Return to the main example, where the groups predate the profile.
+## A current association cannot supply missing grant history
 
-The profile's name matches a useful work capability. That does not prove that every current holder was approved for the capability.
+Return to the main full-set example.
 
-Detection can organize access that was granted through another process, including access added directly in the application. It does not retroactively create an approved ISC request or reconstruct a missing business justification.
+Detection can organize rights that were granted through another process, including a change made directly in the native application. It does not retroactively create an approved ISC request or establish that the person still needs the rights.
 
-Devi's extra Release Approvers membership makes this visible. The detected review profile does not explain why she can approve releases or establish that she should.
+Keep three events separate: the original native grant, collection of its membership data, and recognition of the profile. They can happen at different times.
 
-Distinguish three dates: when a native grant happened, when ISC collected it, and when ISC recognized the profile combination. They can differ. In our example, the 09:00 inspection establishes that access already existed then, not the exact date someone originally granted it.
+An **assignment origin** is the route by which an access association or requirement arose. To investigate it, inspect available request decisions, role/lifecycle requirements, native application audit records and approved work needs.
 
-To investigate origin, examine available request decisions, role/lifecycle assignment evidence, application audit records and approved work requirements. **Assignment origin** means the route by which an access association or requirement arose.
+Missing request history alone does not prove detection. Another configured route, unavailable older records or insufficient evidence can explain that absence. In our controlled trace, the supplied configuration and before-and-after observations support the detection explanation.
 
-Missing request history alone does not prove detection was the origin. There could be another configured route, an earlier record outside the available history, or insufficient evidence. In our controlled main example, the supplied configuration and before-and-after observations establish the detection explanation.
+The review profile also does not explain the employee's Approvers membership. Even if the review package is suitable, the separate approval capability still needs justification or an authorized correction.
 
-When the real evidence is incomplete, say what you know and what you still need. Do not manufacture a historical approval from a current profile label.
+State what the evidence establishes and what remains unknown. A current label cannot reconstruct a historical approval.
 
-## Recorded access is not a live authorization test
+## Recorded holdings and current application access can differ
 
-ISC's comparison depends on the information available to it. That information can differ from the current application state.
+In another independent variation, the 09:10 collection still records both required memberships. A native administrator removes Comments at 09:15. ISC still has the older full-set record when the profile is evaluated.
 
-Suppose a native administrator removes `BL-5502` after the 09:10 account read. ISC still has the earlier full-set record when the new profile is evaluated.
+The comparison is using an observation that no longer describes the current membership. A visible profile association does not restore Comments or prove that commenting still works.
 
-That recorded set is no longer reliable evidence of current native membership. The comparison and the current application result can disagree because they concern different observations, not because the profile association has magically restored a group.
+Inspect the particular account's collected values, read coverage and freshness, relevant evaluation and current native state.
 
-Inspect collection scope and freshness, the specific account's recorded values, the relevant processing and the native state.
+A successful group-definition aggregation does not refresh the account's membership field. A source-wide successful run also does not by itself establish that this account was included and updated. Check the actual account result.
 
-A successful group-definition aggregation does not resolve a stale account-membership record. A source-wide success message also does not, by itself, prove that a particular account was included and updated.
+There is another reason an action can fail with both groups present: resource scope. Under our unchanged native rule, a North account can comment on North evidence while South commenting is denied.
 
-Conversely, the two groups can be present and correctly detected while a South-project comment is denied. Under the supplied native rule, Devi's account is scoped to North. The denial does not automatically mean a membership is missing.
+That denial does not establish a missing membership or wrong detection. Inspect the intended account, action and project before diagnosing a provisioning problem.
 
-If you are dealing with multiple accounts or inherited access, establish which native account and supported represented relationships are involved. Do not add together permissions from unrelated accounts or assume that every native inheritance path is automatically represented in the same way.
+For multiple accounts or rights obtained through other native relationships, establish the supported representations and the account actually performing the action. Do not combine unrelated accounts' rights or assume every inherited relationship is represented as the same direct membership.
 
-Use each observation for the claim it can actually support:
-
-| Observation | What it establishes, and what it does not |
+| Observation | What it establishes and what remains separate |
 |---|---|
-| The profile contains `E-5501` and `E-5502` | The package definition. Not a membership or an approved recipient. |
-| The two groups exist in the entitlement catalog | Represented access objects. Not proof that Devi holds them. |
-| A correctly linked, collected account records both memberships | Recorded full-set holding evidence at that observation. Not a continuous live check of the application. |
-| The identity shows `AP-5505` | A profile association in ISC. Alone, it does not establish a new native grant or historical approval. |
-| An approved request and its account activity identify an attempted addition | A decision and a specific operation. The operation can still be pending or unsuccessful. |
-| Current native membership and a controlled North-project comment succeed | Present capability under those account and resource conditions. Not authorization for every project or proof that all other access is appropriate. |
+| The profile references Readers and Comments | Package definition; not an account membership or an approved recipient |
+| Both groups exist in the catalog | Represented access objects; not who holds them |
+| The correctly linked collected account records both | Recorded full-set holding evidence at that observation; not a continuous live check |
+| The identity shows the profile association | An ISC association; alone, not a new native grant or historical approval |
+| Approval and activity identify an attempted addition | Decision plus an operation that can still be pending or unsuccessful |
+| Current native membership and North commenting succeed | Capability under those checked conditions; not all-project authorization or justification for every extra right |
 
-## Detection is useful for governance, but it is not cleanup
+## Recognition supports a review. It does not make the decision
 
-The benefit is practical: an existing reader-and-commenter combination can be governed as a meaningful capability rather than forcing a reviewer to infer the relationship between technical groups.
+A meaningful reader-and-commenter package helps a reviewer understand a capability without reconstructing it from technical group labels.
 
-A **certification** is a review of whether existing access should be retained. Detected profiles can be reviewed through the applicable certification configuration. A profile association is information for that decision, not the decision itself.
+A **certification** reviews whether existing access should be retained. Detected profiles can be reviewed through applicable certification configuration. Which items appear and how they can be acted on depend on the supported review configuration and access model.
 
-The reviewer still needs the package's current meaning, the person's work need and relevant access outside the package. Release Approvers does not become appropriate because Release evidence review is sensible.
+The reviewer still needs current package meaning, the person's work and access outside the package. Detection does not make Approvers appropriate or clean it up.
 
-Do not use package creation to make an excessive membership look less visible or to imply that recognition has removed it. Inspect the person's full relevant access.
+Also distinguish recognition from **revocation**, an action requesting that access be taken away. Revoking a detected profile can cause supported removal of its underlying entitlements. It is not necessarily a harmless deletion of an ISC label.
 
-Also distinguish recognizing a profile from revoking one. A **revocation** asks for access to be taken away. Revoking a detected profile is not necessarily a harmless removal of a label: a supported revocation can remove its underlying entitlements.
+Before removal, inspect actual requirements, origin and the operation's documented overlap behavior. Another profile sharing a right does not establish that every removal path preserves it. Verify the selected native outcome separately.
 
-Before any removal, establish the actual assignment requirements and the operation's documented overlap behavior. Do not assume another profile always preserves a shared entitlement. Verify the selected native result separately.
+## A detected package is not an ongoing instruction to add future contents
 
-## An observed combination is not a promise to add future contents
+Consider one final independent change. The employee held the original two-item profile through detection only. The **profile owner**, responsible for maintaining the package, adds Comparison Tools. This third entitlement permits comparing versions of release evidence within the assigned project.
 
-Consider one final changed condition.
+The employee lacks that entitlement. No role/lifecycle requirement or new request requires it.
 
-The profile originally contains two entitlements and was associated with Devi through detection only. The owner later adds a third entitlement, `BL-5503`, for a newly required comparison feature.
+For a detection-origin profile, adding an entitlement to the definition does not provision that addition to existing holders. On relevant evaluation, the identity retains the profile only if it already holds the revised full set.
 
-Devi does not already hold that third entitlement. No role or lifecycle assignment requires it, and there is no new grant request.
+Here, the third item is absent, so the revised full set is not held. The earlier native memberships do not change merely because the definition changed. Under the supplied unchanged application rules, the old North reading/commenting capability can remain while the revised profile association is lost.
 
-For profiles held through detection, adding an entitlement to the definition does not provision that added entitlement to existing holders. At the next relevant identity evaluation, the identity retains the profile only if it already holds the complete revised set.
+That is a specific definition-addition behavior, not a universal statement about every removal or recovery operation. Current role or lifecycle requirements have different documented addition behavior.
 
-The old native holdings do not automatically change merely because the definition now contains another item.
-
-That is a specific definition-change rule. Do not generalize it into a universal statement about every removal, retry or repair operation. Profiles required through roles or lifecycle states have different documented change behavior.
-
-The engineering habit is to establish the current definition and the assignment origin before predicting its effect on people.
+Check both the current definition and origin before predicting a shared change's effects.
 
 ## Work through the evidence
 
-### Case 1: Both groups are in the catalog
+### 1. Both groups exist in the catalog
 
-**Facts:** `BL-5501` and `BL-5502` have catalog entries. Devi's collected account records only `BL-5501`.
+The catalog contains Readers and Comments, but the employee's collected account records Readers only.
 
-Is the catalog enough to detect the two-item profile for Devi?
+Is the catalog enough to recognize the two-item profile as held?
 
-**Reasoning:** No. A catalog entry describes an access object, not the account's membership. Inspect the entitlement-bearing account field and its linkage. The recorded holding set in this case is incomplete.
+**Reasoning:** No. Definitions do not establish membership. Inspect the entitlement-bearing account field and correct linkage. The supplied holding set is incomplete.
 
-### Case 2: One group is present and no grant route exists
+### 2. Only Readers is held and no grant route applies
 
-**Facts:** The enabled profile contains the two groups. Only the reader is recorded. No request, role, lifecycle requirement or other authorized grant route supplies the commenter.
+The enabled profile requires both items. No request, role, lifecycle requirement or other authorized route supplies Comments.
 
-Should detection add the commenter membership?
+Should detection add Comments?
 
-**Reasoning:** No. It does not convert partial holdings into a grant requirement. Establish the approved work need and configure or use an appropriate supported route if additional access is justified.
+**Reasoning:** No. An incomplete set does not create a grant requirement. Establish the actual work need, then use a supported route if more access is justified.
 
-### Case 3: The account has the required pair plus an approver
+### 3. The account holds the pair plus Approvers
 
-**Facts:** Devi is correctly associated with a collected account holding `BL-5501`, `BL-5502` and `BL-5599`. The profile references only the first two.
+The correctly associated collected account holds Readers, Comments and Approvers. The profile references the first two only.
 
-Does recognizing the profile establish that she has only review access?
+Does recognition establish that the person has only review access?
 
-**Reasoning:** No. The required pair is present, but the extra approver remains outside the bundle. Inspect the full relevant access and the approval responsibility. Detection does not remove or legitimize that extra capability.
+**Reasoning:** No. The required pair is present, while Approvers remains outside the package. Inspect the full relevant access and approval responsibility. Recognition neither removes nor justifies the extra membership.
 
-### Case 4: No direct requests are allowed
+### 4. Direct requests are off
 
-**Facts:** The enabled profile is not directly requestable. The full required set already exists in the correctly represented account holdings, and relevant processing evaluates it.
+The enabled profile is not directly requestable under supported configuration. The full set is correctly represented, and relevant processing evaluates it.
 
-Does the absence of a request prevent recognition of existing access?
+Does lack of a request prevent recognition?
 
-**Reasoning:** No. Requestability controls the direct profile-request route. Detection recognizes the supplied complete set; it does not need to create a request for memberships already held.
+**Reasoning:** No. Direct requestability controls a different route. Detection can recognize the existing complete set without inventing a request for rights already held.
 
-### Case 5: The native membership changed after the read
+### 5. Comments was removed after collection
 
-**Facts:** ISC's account record contains both groups from 09:10. A native administrator removes the commenter at 09:15. The current application denies commenting, while the profile association is still visible in ISC.
+ISC records the full set from 09:10. Native Comments membership is removed at 09:15. Current commenting is denied, while a profile association remains visible.
 
-Does the visible association prove that commenting still works?
+Does that association establish working access now?
 
-**Reasoning:** No. The records concern different observations. Inspect the native account, the membership read's scope and freshness, and the subsequent processing. Do not try to fix current access merely by trusting or renaming the profile label.
+**Reasoning:** No. Compare the account read's coverage/freshness, current native membership and subsequent evaluation. These observations differ in time. A label is not a live authorization result or evidence of restored membership.
 
-### Case 6: The request was approved but the write failed
+### 6. Approval exists but the write failed
 
-**Facts:** In the partial-access variation, the new request is approved. The commenter-add operation reports a source permission rejection. A current native check confirms the commenter is absent.
+In the partial-access request variation, Comments addition reports a source permission rejection. Current native evidence confirms Comments absent.
 
-Has the approval supplied the missing membership?
+Has approval supplied the missing membership?
 
-**Reasoning:** No. It supplied the decision to proceed. The observed source operation failed. Investigate that specific failure, use an authorized supported recovery path and verify the resulting membership and action.
+**Reasoning:** No. Approval supplies the decision. Investigate the specific rejected operation, use authorized supported correction/recovery and verify membership and the intended action.
 
-### Case 7: North works and South fails
+### 7. North works and South is denied
 
-**Facts:** Both groups are present on Devi's enabled account, sign-in succeeds, and the account is assigned to North. A North comment succeeds; a South comment is denied.
+Both required groups are present on the enabled account, sign-in succeeds, and the account is assigned to North.
 
-Does the South denial prove profile detection was wrong?
+Does South comment denial prove incorrect profile detection?
 
-**Reasoning:** No. The account's scope explains the supplied outcome. Detection of the two entitlements is not a guarantee of authorization on every resource. Verify the native project condition before diagnosing a missing grant.
+**Reasoning:** No. The stated project restriction explains it. Recognition of the entitlement set does not authorize every resource; verify account and project conditions before diagnosing missing access.
 
-### Case 8: The detected profile gains a third item
+### 8. The detected profile gains a third item
 
-**Facts:** Devi held the original two-item profile through detection only. Its definition now also requires `BL-5503`, which she lacks. No role/lifecycle requirement or new grant request applies.
+The original profile was held through detection only. Its definition now includes Comparison Tools, which the employee lacks. No current role/lifecycle requirement or new grant request applies.
 
-Should the definition edit provision the third item automatically?
+Will the edit automatically deliver that item?
 
-**Reasoning:** No. For this detection-origin definition change, the added entitlement is not provisioned. After relevant evaluation, the profile is retained only if the revised full set is already held. Do not mistake the old association for an ongoing requirement to deliver every future addition.
+**Reasoning:** No. This detection-origin addition does not provision it. On relevant evaluation, the revised full set is required to retain the profile. The old association is not a standing instruction to grant every future addition.
 
-## Try the distinction on a different source
+## Try the distinction on a directory source
 
-A fictional directory source supplies two groups: `D-51` allows viewing support tickets and `D-52` allows adding internal notes. An enabled **Ticket collaboration** profile references both.
+A directory source represents Ticket Readers and Internal Notes. An enabled Ticket collaboration profile references both. The application's confirmed rules use those memberships for ticket viewing and internal notes.
 
-The catalog contains both groups. One employee's correctly associated account records both memberships. Another employee's account records only `D-51`. Neither has a role/lifecycle requirement or a request for the profile.
+The catalog contains both groups. One employee's correctly associated account records both memberships; another employee's correctly associated account records Readers only. Neither employee has a profile request or role/lifecycle requirement.
 
-Explain what can be recognized, what cannot be inferred about approval, and whether the second employee should automatically receive `D-52`.
+What can be recognized, what does it say about past approval, and should the second employee receive Notes automatically?
 
-The first employee's complete represented set supports detection during relevant processing. The catalog alone would not. That association does not prove who authorized the original memberships or whether they remain appropriate.
+**Reasoning:** The first employee's complete represented set supports recognition during relevant processing. The catalog alone would not. Recognition does not establish who authorized the original memberships or whether the current work still needs them.
 
-The second employee has only a partial set. Detection does not grant the missing internal-notes capability. Establish that person's work requirement before choosing any grant route.
+The second account is incomplete. Detection does not grant the missing Notes right; establish the person's requirement before choosing a grant route.
 
-Now change the evidence: a source administrator confirms the first employee's native `D-52` membership was removed after the last account read.
+Now a source administrator confirms that the first employee's native Notes membership was removed after the last account read.
 
-The earlier represented full set no longer proves current capability. Investigate the updated account collection and processing, while checking the current native permissions used by the ticket application.
+The old full-set record no longer establishes current capability. Investigate the updated account collection and processing, and check the current native rights actually used by the ticket application.
 
-Do not report that a newly appearing profile means a newly delivered permission. Connect the package definition to recorded holdings, the association's origin, any actual source operation and the current application result.
+When a profile appears, connect its definition to recorded holdings and origin. Use separate operation and current-application evidence before describing it as newly delivered access.

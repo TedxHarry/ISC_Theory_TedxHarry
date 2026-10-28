@@ -1,0 +1,11 @@
+[Identity needs required Work Email]
+                 |
+      selected input depends on
+                 v
+[Future directory account with mail]
+                 |
+      this project's path needs
+                 v
+[Established identity with email]
+
+[No initial alternative is supplied]

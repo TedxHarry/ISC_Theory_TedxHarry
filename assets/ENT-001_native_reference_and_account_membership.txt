@@ -1,0 +1,17 @@
+Invoice Production source
+
+Employee's ISC identity
+  |
+  | correlated account
+  v
+Collected employee account
+  businessUnit: West
+  groups: [invoice-readers]
+             |
+             | same native reference
+             v
+Entitlement type: groups
+  id: invoice-readers
+  displayName: Invoice Readers
+
+One group; many account memberships.

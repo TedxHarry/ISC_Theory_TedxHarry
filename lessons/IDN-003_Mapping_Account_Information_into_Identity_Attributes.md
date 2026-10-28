@@ -1,207 +1,217 @@
 # How does an account value become an identity value?
 
-Devi, employee number `63003`, is a payroll analyst. Her collected directory account contains Work Email input `Devi63003@Example.com`, but her identity in SailPoint Identity Security Cloud (ISC) shows `devi63003@example.com`.
+A collected directory account contains mail USER-W103@EXAMPLE.INVALID. The identity's Work Email in SailPoint Identity Security Cloud (ISC) is user-w103@example.invalid.
 
-Has ISC changed the directory account? Has it read a different account? Or has a configured calculation changed the value used on the identity?
+Did ISC change the directory account? Did it choose a different account? Or did a calculation change the value used on the identity?
 
-The lowercase result can be correct. To explain it, we need the account ISC used, the field it read and the mapping that produced the identity value. Looking at two screens and noticing a difference isn't enough.
+The lowercase result can be correct. To explain it, follow the account, field, calculation and applied identity output. A difference between two screens isn't enough to identify a defect.
 
-## Start with the two records
+## Two records can correctly hold different values
 
-An **account** is a record in a particular system. An **identity** is ISC's representation of a person or another managed entity. Here, the identity represents Devi and connects her person-level information with her accounts and access.
+An **account** is a record in a particular system. An **identity** is ISC's representation of a person or another managed entity, connecting identity information, accounts and access.
 
-A **source** is ISC's configured representation of a system or account-data collection. The source's **connector** supplies its supported integration behavior. **Account aggregation** reads account information into ISC; the collected source account represents what ISC obtained through that integration.
+A **source** is ISC's configured representation of a system or collection of account data. Its **connector** provides supported integration behavior. **Account aggregation** reads account information into ISC.
 
-An **attribute** is a named piece of information. `mail` on a directory account is an account attribute. Work Email, whose technical name is `email`, is an identity attribute. They are fields on different objects.
+An **attribute** is a named piece of information. Directory mail is an account attribute. Work Email, technical name email, is an identity attribute. They belong to different objects.
 
-An **identity profile** is shared configuration for the identities governed by it, including their identity attribute mappings. An **authoritative source** supplies the accounts from which ISC establishes identities through that profile. Devi's governing profile is **Employees**, associated with **WorkerLedger Production**.
+An **identity profile** supplies shared configuration, including mappings, for its identities. An **authoritative source** establishes identities through that profile.
 
-Our fictional example already has a complete identity and correctly associated accounts: worker account `hr-63003` and **Corporate Directory** account `cd-63003`. **Account correlation** is the matching and association of accounts with their identities. We assume that association is correct here, rather than using a value calculation to repair account ownership.
+Consider an existing identity governed by the Employees profile. Its authoritative source is HR-Production. The identity has correctly associated accounts: hr-record on HR-Production and directory-user on Directory-Production.
 
-Corporate Directory is non-authoritative for this employee population. It can still supply Work Email. The source that establishes a person does not have to supply every person-level value.
+**Account correlation** is the matching and association of accounts with their owning identities. That relationship is already correct. We aren't using a calculation to repair ownership.
 
-## The account schema and the identity mapping do different work
+Directory-Production isn't authoritative for this population, but can still supply Work Email. The source establishing the person needn't supply every identity value.
 
-An **account schema** describes the account fields ISC expects on a source, including their types and whether a field can hold multiple values. It also designates account-identifying fields.
+All data and results below are supplied examples, not observations from a real tenant. The email strings are illustrative, not claimed real mailboxes.
 
-Corporate Directory's configured Account ID uses `accountKey`. Its value `cd-63003` identifies this source account; `devi63003` is the login name. Neither is the identity attribute's technical name `email`.
+## The schema makes a field available; the mapping chooses to use it
 
-These selected account values are shown as **JSON**, a text format using named fields and values. Quoted values are text; square brackets enclose a list.
+An **account schema** describes represented fields, their types and whether they hold one value or several. It also designates identifying fields.
+
+Here, Account ID selects accountKey, whose value is directory-user. Login user.w103 is another field. Neither field is the identity attribute email.
+
+These selected values use **JSON**, JavaScript Object Notation, a format of named properties and values. Quoted values are text; square brackets contain a list:
 
 ```json
 {
-  "accountKey": "cd-63003",
-  "login": "devi63003",
-  "mail": "Devi63003@Example.com",
+  "accountKey": "directory-user",
+  "login": "user.w103",
+  "mail": "USER-W103@EXAMPLE.INVALID",
   "officeCodes": ["blr", "hyd"]
 }
 ```
 
-This is a fictional teaching record, not an ISC API response or upload template. The directory schema includes `mail` as a text field and `officeCodes` as a multi-valued text field.
+This isn't a complete system response or upload template. The schema represents mail as text and officeCodes as multi-valued text.
 
-The schema makes these fields available as represented account data. It does not decide that `mail` populates Work Email, or that the first office code should become identity Location.
+That makes the fields available. It doesn't select mail for Work Email or decide which office means primary location.
 
-An **identity attribute mapping** supplies that separate instruction. It selects the input for a person-level field and, where configured, the calculation that produces the result.
+An **identity attribute mapping** supplies the separate instruction: which input provides the identity value, and which calculation applies.
 
-Adding a field named `email` to an account schema does not automatically create a correctly configured identity Work Email mapping. Likewise, changing the identity mapping doesn't repair a connector that extracted the wrong account field during collection.
+Adding a source field named email doesn't automatically connect it to identity Work Email. Changing an identity mapping also doesn't repair a connector that extracted the wrong field.
 
-## A direct mapping uses the selected value
+## Follow the input through a direct mapping first
 
-A **direct mapping** obtains an identity value from the configured source account attribute without an additional conversion in that mapping.
+A **direct mapping** uses the selected source-account attribute without an additional conversion in that mapping.
 
-Suppose WorkerLedger supplies `workerNumber` as text `63003`. The Employees profile maps identity Identification Number, technical name `identificationNumber`, from that account attribute. With the intended associated worker account selected, the result is `63003`.
+Suppose HR-Production supplies workerNumber text W-103. Employees maps it to identity Identification Number, technical name identificationNumber. With the intended HR account selected, the output is W-103.
 
-The source field and destination field have different names. A mapping connects them; matching names are not required.
+Different field names don't prevent that relationship. The configured mapping connects them.
 
-Here are selected mappings for Devi. Assume the required account data is available, each source has only the intended eligible account for this primary example, and no other configured input overrides these selections.
+For the main example, each source has only the intended eligible account for this identity. Required account data is available, and the calculation uses the selected source and field:
 
-| Identity attribute | Selected input, operation and expected result |
+| Identity attribute | Selected input and result |
 |---|---|
-| Identification Number, `identificationNumber` | WorkerLedger `workerNumber`: `63003`. Direct mapping produces `63003`. |
-| User Name, `uid` | WorkerLedger `iscUserName`: `employee63003`. Direct mapping produces `employee63003`. |
-| Last Name, `lastname` | WorkerLedger `familyName`: `Rao`. Direct mapping produces `Rao`. |
-| Work Email, `email` | Corporate Directory `mail`: `Devi63003@Example.com`. Converting to lowercase produces `devi63003@example.com`. |
+| Identification Number, identificationNumber | HR-Production workerNumber W-103; direct result W-103 |
+| User Name, uid | HR-Production iscUserName user-w103; direct result user-w103 |
+| Last Name, lastname | HR-Production familyName Worker; direct result Worker |
+| Work Email, email | Directory-Production mail USER-W103@EXAMPLE.INVALID; lowercase result user-w103@example.invalid |
 
-The table's WorkerLedger label refers to WorkerLedger Production. These are selected fields, not the complete profile configuration.
+The first three rows use direct values. Work Email needs a conversion.
 
-The first row answers, “Where did this identity number come from?” The last row needs one more explanation: how did the input become lowercase?
+A **transform** performs a configured calculation or conversion. Here, Employees selects collected mail and converts its letters to lowercase.
 
-## A transform calculates the output
+The administration interface offers **ToLower**. The developer operation is **lower**. The display label and technical name refer to lowercase conversion.
 
-A **transform** performs a configured calculation or conversion on input data. For Work Email, Employees selects the directory's `mail` and applies the supported lowercase conversion.
+**Normalization** means conversion into an agreed representation. This example assumes an approved lowercase-text convention. It doesn't establish that every email address is universally case-equivalent or that lowercasing validates a mailbox.
 
-**Normalization** means converting information into an agreed representation. Here, the agreed representation uses lowercase letters. It changes how the value is represented, not which mailbox the organization intends to identify.
+USER-W103@EXAMPLE.INVALID becomes user-w103@example.invalid.
 
-The administration interface provides a **ToLower** option. The developer transform operation is named `lower`. Both describe converting text to lowercase; don't confuse a friendly display label with a technical operation name.
+## Apply that result to the identity, not to the directory
 
-For this mapping, the input is `Devi63003@Example.com`. Converting its letters to lowercase produces `devi63003@example.com`. That is the expected identity value.
+**Identity processing** evaluates identity information under the relevant configuration, including mappings and access requirements.
 
-The transform doesn't change the account's `mail` merely by producing this result. It also doesn't check that the mailbox exists or accepts mail. The organization's approved email convention supplies the reason for this conversion; lowercase is not a universal repair for every data problem.
+In this main example, the mapping is already applied and the identity Work Email is independently confirmed as user-w103@example.invalid.
 
-**Identity processing** evaluates identity information against configuration, including its profile mappings and applicable access requirements. The route for this mapping is:
-
-```text
-Corporate Directory account cd-63003
-mail: Devi63003@Example.com
-                 |
-                 | Employees Work Email mapping
-                 | selects collected mail input
-                 v
-ToLower conversion
-devi63003@example.com
-                 |
-                 | mapping result used in
-                 | identity processing
-                 v
-ISC identity Work Email
-email: devi63003@example.com
-
-Directory mail is not rewritten here.
-```
-
-The diagram shows the value dependencies when this mapping is evaluated and applied. It doesn't prescribe private service calls, database transactions or a fixed processing duration.
-
-The input is ISC's collected account information. Evaluating the mapping isn't proof that the connector has just made a fresh call to the directory. If the directory changed after the last relevant account read, inspect that freshness separately.
-
-Transforms can also combine inputs, make decisions or convert formats. If a requirement needs supported code-based calculation, an identity mapping can use a **rule**. That is a separate extension mechanism, not a reason to write custom code for a straightforward direct mapping or lowercase conversion. Applicable cloud rule review and approval requirements still apply.
-
-There is one detail you should inspect when a calculation appears to ignore the visible Source and Attribute selections. A transform can define an **explicit input**, meaning its definition supplies the input rather than relying on the interface's selected source/attribute combination.
-
-In that situation, trace the configured transform definition too. A familiar mapping label doesn't prove which value the calculation actually consumed.
-
-## Which account supplied that field?
-
-The primary example has one eligible directory account. Now change that condition.
-
-Suppose Devi has two correctly associated accounts on Corporate Directory: ordinary account `cd-63003` and administrative account `adm-63003`. Their `mail` values differ.
-
-Choosing Corporate Directory and `mail` identifies a source and field. It does not, by itself, express the business requirement “use the ordinary employee account, never the administrator account.”
-
-The supported **Account Attribute transform**, technical operation `accountAttribute`, looks up an account on a specified source for the identity and returns a selected attribute. Its account-selection options matter when more than one account is eligible.
-
-For this transform, the documented default sorts accounts by their `created` attribute in ascending order, so the oldest is considered first. If that account's requested value is null, meaning no value is present, the default can continue to another account with a non-null value.
-
-Those are this transform's defaults, not a universal “oldest record wins” rule for every ISC feature or calculation. Don't read `created` as the employee's hire date or assume it is the business date you intended.
-
-The transform supports configured filtering and sorting. **Filtering** narrows the eligible accounts. **Sorting** orders the remaining accounts. Its `accountReturnFirstLink` option also controls whether the first account's value is returned even when null, rather than continuing to a non-null value on another eligible account.
-
-For example, an approved filter can limit selection to the intended ordinary account classification. Sorting alone cannot express “never use an administrator account” unless the resulting eligibility and ordering actually establish that requirement.
-
-These account-selection filters apply to choosing among the identity's accounts for the calculation. They are not connector collection filters and don't change which external accounts aggregation reads.
-
-If no account meets the approved selection, investigate that missing eligible input. Don't silently accept an unrelated account's value because it makes the field look populated.
-
-## One account can still contain more than one value
-
-**Cardinality** means how many values a field can hold. A single-valued field holds one value; a multi-valued field can hold a list.
-
-In Devi's selected record, `mail` is one text value, while `officeCodes` contains `["blr", "hyd"]`. Choosing the correct account doesn't decide what a one-value identity Location should mean when the account lists two offices.
-
-For the identity-profile mapping-transform behavior documented in the administration guide, adding a multi-valued attribute takes its first value and transforms it into a single value.
-
-If that list is `["blr", "hyd"]` and the mapping uses uppercase conversion, the resulting single value is `BLR`, not both offices and not automatically the employee's primary office. `HYD` has not become an additional identity Location through that operation.
-
-This does not mean every transform or API treats every list the same way. Trace the specific supported operation and the required result.
-
-If the business needs one primary location, obtain a reliable primary-location input or an approved selection rule. If it needs the complete set, design for that requirement. Taking the first item isn't a business definition of “primary.”
-
-## Check the kind of value, not just how it looks
-
-A **data type** describes what kind of value is represented, such as text, a number or a date. A conversion can preserve or destroy information depending on what that value means.
-
-Suppose a cost-centre identifier is text `0042`. Converting it to a number produces `42`; the leading zeros are lost. If another system treats `0042` and `42` as different identifiers, that conversion changed the meaning needed for a match.
-
-Don't solve this by adding zeros without knowing the identifier's approved format. Trace the original representation and the consumer's actual requirement.
-
-A **fallback** is an alternative input or result used under a configured condition. It needs an approved meaning. An old email address, a fabricated surname or a generic identifier is not automatically valid just because it avoids a blank.
-
-Also separate missing, null and empty values. A missing field isn't supplied. Null represents no value. An empty string is text containing zero characters; a space is a character. These are not interchangeable inputs, and a fallback calculation's behavior must be checked rather than assumed.
-
-User Name `uid`, Work Email `email` and Last Name `lastname` are required identity attributes. Their mappings must produce non-null values; `uid` must also be unique across identities from all profiles. Missing required values and duplicate usernames generate identity exceptions, which report identity-data problems. Missing required attributes also appear as Incomplete Identities.
-
-A non-null Work Email is not proof of email-format validation or a usable mailbox. Don't use an arbitrary string to turn an incomplete record into an apparently complete one.
-
-## What runs after the account changes?
-
-When aggregation changes identity data, event-based identity processing can update mapped values according to the profile. A change to configuration is a different event: after editing an identity mapping, you must apply that configuration through the relevant identity processing.
-
-**Preview** evaluates mappings for a selected identity using available data and shows proposed results. It does not establish that those values have been persisted, meaning stored on the identity, or written to an application.
-
-For a saved mapping change, **Apply Changes** on the profile initiates processing for identities associated with that profile. A profile showing **Needs Processing** is not evidence that the saved change already affected every identity.
-
-Processing also evaluates applicable access requirements. Review those dependencies before applying a shared mapping change; this is more than reloading a page.
-
-A **role** can package access and use identity values as membership criteria. A **lifecycle state** describes a business stage such as active employment and can drive configured access changes. **Attribute synchronization** can send selected identity values to existing correlated source accounts. **Provisioning** carries out supported account or access changes.
-
-These consumers explain why a correct-looking mapping can have effects beyond the field you're investigating. They do not mean every mapping change must change a role, state or target account.
-
-Keep the direction clear:
+The directory account's represented mail remains USER-W103@EXAMPLE.INVALID. Nothing is configured to write the lowercase identity value back to that account.
 
 ```text
-Collected account value
-          |
-          | profile input and calculation
-          v
-Identity attribute value
-          |
-          +-- Configured role/state decisions
-          |
-          +-- Configured account synchronization
-                  |
-                  | supported provisioning
-                  v
-              Target account value
+[Directory account: directory-user]
+[mail: USER-W103@EXAMPLE.INVALID]
+                 |
+[Employees selects collected mail]
+                 |
+[ToLower / lower conversion]
+                 |
+[Identity Work Email]
+[user-w103@example.invalid]
 
-Each required outcome needs evidence.
+[Directory mail is not rewritten]
 ```
 
-The upper path calculates identity information. The lower branches describe possible configured consumers, not mandatory stages for every mapping. Verify an external result separately; identity processing does not validate successful provisioning after starting that work.
+The connected lines trace collected input through selection and conversion to the identity output. They don't describe private services, transactions or a completion time.
 
-In our main example, the profile and lowercase mapping are already applied, and the supplied identity Work Email is confirmed as `devi63003@example.com`. Directory `mail` remains `Devi63003@Example.com`; no email synchronization write is configured. The difference is explained by the mapping, not by an assumed directory update.
+The separated directory statement marks a different outcome. Calculating a lowercase identity value doesn't, by itself, rewrite source mail.
 
-## Write down the value's route
+The input is collected account information. Mapping evaluation isn't evidence of a new connector call. If the external directory changed after collection, verify that freshness separately.
 
-Use the same questions when reviewing a proposed mapping or investigating an unexpected value. Record observations rather than filling gaps with assumptions.
+Transforms can also combine inputs, choose results or convert formats. A supported code-based **rule** is a separate calculation mechanism. A cloud rule used for this mapping requires SailPoint Services review. A simple direct mapping or lowercase requirement doesn't inherently need custom code.
+
+Now change one condition. A transform can specify an **explicit input** in its definition rather than consume the interface's source/attribute selection.
+
+For example, lowercase conversion with explicit EXAMPLE produces example, even if the screen displays Directory-Production and mail.
+
+Inspect the complete saved definition. A familiar label doesn't establish which value the calculation used.
+
+## Which account supplied the field?
+
+The main case has one eligible directory account. An independent variation adds a correctly associated administrative account, directory-admin, with another mail value.
+
+Selecting the source and field doesn't, by itself, express “ordinary account only.”
+
+The **Account Attribute transform**, technical name accountAttribute, obtains an attribute from an associated account on a specified source. Its selection settings matter when several accounts are eligible.
+
+For this transform, the documented default orders accounts by created in ascending order. The oldest is considered first. If its requested value is null, meaning no value, default behavior can continue to another eligible account with a non-null value.
+
+Those are this operation's defaults, not a universal account-selection rule for every ISC feature. Created isn't automatically the employee's hire date or the business date that should choose a primary account.
+
+**Filtering** narrows eligible accounts. **Sorting** orders the remaining candidates. The transform supports both.
+
+Its accountReturnFirstLink option changes null handling: true returns the first sorted account's value even if null. The default false returns the first non-null value in the sorted eligible set.
+
+If the requirement excludes administrator accounts, establish an approved filter or other supported selection that actually enforces that requirement. Merely sorting doesn't prove the unwanted account is ineligible.
+
+These filters choose among the identity's source accounts for the calculation. They aren't connector collection filters and don't change which external records aggregation reads.
+
+If no approved account qualifies, investigate the missing input. A populated result from an unrelated account isn't automatically valid.
+
+## A field can contain several values even on one account
+
+**Cardinality** is how many values a field holds. Single-valued means one; multi-valued can mean a list.
+
+The selected account has one mail value and officeCodes ["blr", "hyd"]. Correct account selection doesn't tell you which office a single identity Location should represent.
+
+For the identity-profile mapping-transform behavior documented in the administration guide, a multi-valued attribute contributes its first value, which is transformed to a single value.
+
+Under that specified behavior, uppercase conversion takes blr and produces BLR. HYD doesn't become another identity Location through this operation.
+
+The supported uppercase UI/operation names are ToUpper and upper. The conversion changes letter case; it doesn't decide business priority.
+
+This isn't a claim about every transform or API. An **API**, application programming interface, lets software request operations or data; its particular operation contract still matters.
+
+If one primary office is required, establish a reliable primary input or deliberate selection. If the complete set is needed, design for that set. “First in this list” isn't itself the meaning of primary.
+
+## Preserve what the kind of value means
+
+A **data type** describes the kind of value, such as text, number or date.
+
+Cost-centre text "0042" is an identifier. Converting it to number 42 loses zeros. If a consumer expects the exact code "0042", numeric equivalence doesn't satisfy that requirement.
+
+Don't add zeros blindly either. Establish the approved format and trace what reached the calculation.
+
+A **fallback** is an alternative input or result used under a configured condition. Its meaning needs approval. Old email, fabricated surname or generic identifier isn't valid merely because it fills a field.
+
+Missing, null and empty are distinct. Missing means the field wasn't supplied. Null represents no value. An empty string has zero characters; a space is a character.
+
+Check the calculation's handling rather than assuming all of those trigger the same fallback.
+
+Identity uid, email and lastname must be mapped and non-null. Uid must also be unique across identities from all profiles.
+
+Missing required values and duplicate usernames produce **identity exceptions**, reports of identity-data problems. Identities missing required attributes also appear as **Incomplete Identities**.
+
+Non-null email doesn't establish format validation or a usable mailbox. A transform producing text doesn't make that text suitable for the required business field.
+
+## Separate preview, application and downstream use
+
+When aggregation changes identity data, event-based processing can update mapped values. Editing mapping configuration is a different event; apply the change through the relevant identity processing.
+
+**Preview** evaluates proposed mappings for selected data. It doesn't prove those outputs were persisted, meaning stored, or delivered to an application.
+
+**Apply Changes** on the profile initiates processing for its identities. **Needs Processing** isn't evidence that the saved mapping already affected everyone.
+
+Processing can evaluate access requirements too. A shared mapping therefore needs impact review beyond the one visible field.
+
+A **role** can use identity values as access-membership criteria. A **lifecycle state** is a business stage that can drive configured access changes.
+
+**Attribute synchronization** can send selected identity values to existing correlated accounts. **Provisioning** performs supported external account or access changes.
+
+```text
+[Collected account value]
+             |
+[Profile input and calculation]
+             |
+[Identity attribute value]
+             |
+[Configured consumers, if applicable]
+[Role / lifecycle / attribute sync]
+             |
+    if target change is required
+             |
+[Supported provisioning]
+             |
+[Target account result]
+
+[Engineer verifies required outcomes]
+```
+
+The upper part computes an identity value. The consumer rows describe possible configured uses, not mandatory steps every mapping takes.
+
+If a required consumer leads to an external change, verify its supported provisioning result and actual target state. Identity processing doesn't establish successful delivery merely by starting the work.
+
+The separated engineer line is verification, not an automatic backend stage. Our main lowercase example confirms only the applied identity output; no directory email write is configured or implied.
+
+## Record the value's route
+
+Use these questions to capture observations and missing evidence:
 
 1. Name the identity and output. Record the identity reference, governing profile, identity attribute's technical name, expected value and actual value. A matching display name alone does not identify the person or field.
 2. Identify the configured input. Record the source and account attribute, plus any calculation or explicit input that changes where the value comes from. Inspect the saved definition, not just a familiar label.
@@ -212,102 +222,102 @@ Use the same questions when reviewing a proposed mapping or investigating an une
 7. Verify the applied identity value. Record the relevant processing evidence and the value now shown on the identity. Separate a saved mapping, completed processing and the observed result.
 8. Follow the consumers when required. Identify any matching, lifecycle, role, synchronization or provisioning behavior that uses this value. Verify each required downstream outcome with its own evidence; a correct identity value does not prove a successful target change.
 
-For Devi's Work Email, the filled trace is: Employees governs the identity; `email` selects Corporate Directory account `cd-63003`, attribute `mail`, input `Devi63003@Example.com`; ToLower produces `devi63003@example.com`; the applied identity value matches; no directory write is configured or implied.
+For the main Work Email, the filled trace is: Employees governs the identity; email selects Directory-Production account directory-user, attribute mail, input USER-W103@EXAMPLE.INVALID; ToLower produces user-w103@example.invalid; the applied identity value matches; no directory write is configured or implied.
 
-If the investigation stops at “Corporate Directory is selected,” the account, field, calculation and observation evidence are still missing.
+Stopping at “Directory-Production is selected” leaves the account, field, calculation and observation evidence unresolved.
 
-## Use the screen that represents the right stage
+## Use the view for the stage it represents
 
-| Evidence | What it helps establish | What it cannot establish alone |
+| Evidence | What it helps establish | What it doesn't establish alone |
 |---|---|---|
-| Source account details | Collected account, represented fields and association | That the application currently has the same value or the profile selects this account |
-| Account schema | Available field names, expected types and value counts | The identity mapping's selected field or calculation |
-| Governing profile's mapping and transform definition | Intended source/attribute, explicit input and selection/calculation behavior | That every required account/input exists or processing finished |
-| Mapping Preview | Proposed values for the selected identity and current inputs | Population coverage, stored values or target changes |
-| Identity Details after processing | The represented person-level output | Correct source authority, business approval or successful external delivery |
+| Source account details | Collected fields and association | Current live application value or actual profile selection |
+| Account schema | Represented fields, types and value counts | Selected identity input or calculation |
+| Profile mapping and transform definition | Configured input, explicit overrides, selection and calculation | Availability of every required input or completed processing |
+| Mapping Preview | Proposed result for selected data | Complete population, stored output or target delivery |
+| Identity Details after processing | Current identity output | Business approval of the selected source or successful external change |
 
-A correct calculation can still implement the wrong requirement. If the approved source or field has not been established, escalate that design question to its owner. Don't choose the value you personally prefer and call it a technical fix.
+A calculation can correctly implement the wrong requirement. If field ownership isn't agreed, establish that design decision with its owner. A preferred-looking value isn't automatically the approved input.
 
-## Try tracing these changed conditions
+## Trace these changed conditions
 
-These are fictional variations with their own supplied facts.
+### 1. The directory changed after collection
 
-### 1. The live directory changed after the collected account
+The live email changed, but collected mail is older. The mapping correctly lowercases that stored input.
 
-**Facts:** The live directory has a new email. ISC's collected `mail` is still the old value. The mapping correctly lowercases that collected input.
+Does another preview prove the new source value was read?
 
-**Question:** Does another mapping preview prove the new directory value has been read?
+**Worked reasoning:** No. Check the account observation and supported collection/update path, then relevant processing and actual output. The calculation can be correct for stale input.
 
-**Reasoning:** No. Inspect when and through which operation the account data was collected. The calculation can be correct for an old input. Verify the approved account-data update path and the relevant processing, then check the identity output.
+### 2. The right field exists, but another is selected
 
-### 2. The right field exists, but the mapping selects another one
+The account has valid mail. Work Email selects login, without another input override.
 
-**Facts:** The source account contains valid `mail`, but the profile's Work Email mapping selects `login`. No other calculation changes the input.
+Should mail be renamed in the source schema?
 
-**Question:** Should you rename the source schema's `mail` field to repair the identity?
+**Worked reasoning:** No. Review and correct the approved mapping selection and its effects. Renaming a correctly represented field doesn't repair the mistaken selection and can affect other consumers.
 
-**Reasoning:** No. The evidence points to input selection. Confirm the approved mapping, correct it through the normal review process and verify its effects. Renaming a correctly represented field can break other consumers without changing the mistaken selection.
+### 3. The transform defines its own input
 
-### 3. The calculation has an explicit input
+The screen shows Directory-Production and mail, but saved lowercase input is explicit EXAMPLE.
 
-**Facts:** The mapping screen shows Corporate Directory and `mail`. The saved transform definition instead supplies explicit text input `EXAMPLE` to lowercase conversion.
+What does it produce?
 
-**Question:** What output should you expect from that calculation?
+**Worked reasoning:** example. Inspect the full definition before changing account data. A lowercase string isn't valid Work Email merely because conversion succeeded.
 
-**Reasoning:** `example`. The transform consumes its explicit input, not the directory value you expected from the screen. Inspect the complete definition before changing account data. That text is not a valid Work Email merely because it can be lowercased.
+### 4. The oldest eligible account has null
 
-### 4. The first eligible account has no value
+Two eligible accounts are sorted oldest first. The first requested value is null and the second is non-null. Default null handling applies.
 
-**Facts:** An Account Attribute transform has two eligible accounts, oldest first. The first account's requested field is null; the second is non-null. Default null-selection behavior is unchanged.
+Must the result be null?
 
-**Question:** Does the oldest account's null force a null result?
+**Worked reasoning:** No. The default returns the first non-null value in the ordered set. Setting accountReturnFirstLink to true instead returns the first account's value, even null. Verify approved selection and meaning, not only field population.
 
-**Reasoning:** No. The documented default returns the first non-null value in that ordered set. With `accountReturnFirstLink` set to true, the first account's value would be returned even if null. Verify which behavior the requirement needs, not just which one produces a populated field.
+### 5. The supplying account is absent
 
-### 5. The intended directory account doesn't exist
+No eligible associated directory account provides Work Email. There is no alternative input, and a missing-email exception is reported.
 
-**Facts:** Work Email requires an input from an associated directory account, but no eligible directory account is present. The configured mapping has no alternative input, and a missing required email exception is reported.
+Will another letter-case conversion solve it?
 
-**Question:** Does selecting a different letter-case conversion create the missing input?
+**Worked reasoning:** No. The dependency is missing before conversion. Establish the account/input availability or an approved initial-value design; a transform doesn't establish a verified mailbox from absent account data.
 
-**Reasoning:** No. The dependency is missing before conversion. Establish how the required account and email should become available, or review an approved initial-value design. A transform cannot turn absent account data into a verified mailbox.
+### 6. Two offices become one uppercase value
 
-### 6. The source supplies two office codes
+The input list is ["blr", "hyd"]. The specified mapping-transform behavior uses the first value and uppercases it.
 
-**Facts:** `officeCodes` is `["blr", "hyd"]`. The specified identity-profile mapping transform takes its first value and converts it to uppercase.
+Does BLR prove the primary office?
 
-**Question:** Does the resulting `BLR` prove BLR is the employee's approved primary office?
+**Worked reasoning:** No. It explains the selected item and conversion. Business meaning and ordering guarantees still need evidence, or a deliberate primary-office design.
 
-**Reasoning:** No. It proves the calculation used the first listed value under the supplied behavior. You still need the business meaning and ordering guarantee, or a deliberate primary-office selection design.
+### 7. Numeric conversion removes zeros
 
-### 7. A numeric conversion removes zeros
+The source provides identifier text "0042". Conversion produces 42, but the consumer expects exact text "0042".
 
-**Facts:** A source supplies cost-centre identifier text `0042`. A conversion produces `42`. The receiving comparison expects the exact identifier `0042`.
+Is the conversion harmless?
 
-**Question:** Is the conversion harmless because both can describe the number forty-two?
+**Worked reasoning:** No. Preserve or deliberately produce the approved identifier representation. Arithmetic equality doesn't replace the consumer's exact-code requirement.
 
-**Reasoning:** No. The consumer expects a particular identifier representation. Preserve or deliberately produce the approved text format; don't substitute arithmetic equivalence for identifier equality.
+### 8. Preview is correct, but application isn't verified
 
-### 8. The preview matches, but the stored identity doesn't
+The saved mapping previews correctly. Needs Processing remains, and no completed application or stored result has been verified.
 
-**Facts:** A saved mapping preview is correct. The profile shows Needs Processing. No completed application of the change or current stored value has been verified.
+What is missing?
 
-**Question:** What evidence is still missing?
+**Worked reasoning:** Approved processing and actual identity-output evidence, plus relevant consumer results. Preview doesn't establish completed identity or target effects.
 
-**Reasoning:** Check the approved change's processing and the actual identity result. Also inspect relevant consumers if the field affects access or synchronization. A good preview is evidence for the proposed mapping, not proof of its completed effects.
+## Review a returning contractor's input
 
-## Transfer the reasoning to a returning contractor
+Two accounts on Contractor-Production are correctly associated with one identity. The older inactive account has an old email. The current active account's email is null.
 
-A contractor has two correctly associated accounts on ContractorHub Production. The older account is inactive and has an old email address. The current account is active, but its email is null.
+The requirement says to use the current active account. An accountAttribute filter leaves only that account, with no approved fallback.
 
-The approved requirement says “use the current active account's email.” An Account Attribute transform filters to active accounts, leaving only the current account. No approved fallback is configured.
+Someone proposes removing the filter so the old email can clear the exception.
 
-Someone proposes removing the filter so the older non-null email can fill Work Email and clear the exception.
+What would that change, and which evidence is needed instead?
 
-Explain why that changes the requirement, and what evidence you would request instead.
+**Worked reasoning:** It changes eligibility. The historical account isn't approved for the current contact value; making its non-null email available doesn't make it correct.
 
-The filter establishes which account is allowed to supply the input. Removing it makes an ineligible historical account available; a populated result would not prove current contact information. The default non-null selection behavior cannot select the excluded old account while the approved filter remains in place.
+With the approved filter, default non-null selection can't reach the excluded account. Investigate the owner, availability and validation of current email, then verify the supported account and identity updates.
 
-Investigate who supplies and validates the current email, when it should be available, and how the approved account-data and identity updates will be verified. If onboarding needs an initial alternative, that is a design decision requiring an approved source and meaning, not permission to reuse an old address.
+If an initial alternative is needed, agree its source and meaning as a design decision. Don't disguise reuse of historical data as a technical fix.
 
-The useful explanation follows the whole route: this identity, this profile, this eligible account, this field, this calculation and this observed result. Once you can point to each part, a difference between account and identity values becomes something you can explain and investigate.
+A useful explanation identifies the identity, profile, eligible account, field, calculation and observed result. That route explains why two values differ and where to investigate when the result is wrong.

@@ -1,0 +1,9 @@
+[Correct destination and read actor]
+                 |
+[Native query and returned records]
+                 |
+[Filtering, paging and extraction]
+                 |
+[Collected accounts and access values]
+                 |
+[Viewing conditions and data freshness]

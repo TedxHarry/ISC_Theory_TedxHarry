@@ -1,314 +1,364 @@
 # The source already has a value. Do we need a transform?
 
-Devi, employee `81001`, already has an employee identity in SailPoint Identity Security Cloud (ISC). Her HR record says her department is `Finance` and her cost centre is `0042`.
+The HR record supplies cost centre `0042` and department `Finance`. The identity needs the same cost-centre code, but its approved department representation is lowercase: `finance`.
 
-The team needs two identity fields. Cost Centre must retain `0042` exactly. Department must contain a lowercase department label, so `Finance` must become `finance`.
+Should both fields use a transform?
 
-Should both fields have a transform because transforms are available?
+Start with the difference each field needs. The code already meets its requirement. The department label needs a particular change. That gives you a reason to calculate one value while preserving the other.
 
-Let's start with what each field needs to mean. One value already meets its requirement. The other needs a specific change. That difference determines the design.
+The presence of a transform option isn't itself a reason to use it.
 
-## First separate the records we are working with
+## What value belongs on which record?
 
-An **identity** is ISC's representation of a person or another managed entity. An **account** is a record belonging to a connected system. An **attribute** is a named field on a record, such as department.
+In SailPoint Identity Security Cloud, or ISC, an **identity** represents a person or another managed entity. An **account** is a record in a connected system. An **attribute** is a named field on either record.
 
-A **source** is ISC's configured representation of a system or collection of account data. In this fictional design, **PeopleLedger Production** represents the HR worker records. It is authoritative for the Employees population: those worker records establish employee identities through the Employees **identity profile**.
+A **source** is ISC's configured representation of a system or collection of account data. **Account aggregation** reads those records into ISC.
 
-The identity profile is shared configuration governing that population, including how its identity attributes receive values. An **identity attribute mapping** identifies the data or calculation that supplies one of those fields.
+An **identity profile** holds mappings and other settings for an identity population. Its **authoritative source** supplies the accounts used to establish that population. An **identity attribute mapping** identifies the selected source information or calculation that supplies an identity field.
 
-Devi's collected HR account is `pl-81001`. It is already correctly associated with her identity, which we'll call `I-81001`. That is a teaching label, not an actual ISC object ID. She has exactly one account on this source.
+For this hypothetical example, the person's identity already exists under Employees. Its authoritative source is `HR-Primary`. Exactly one collected account on that source is correctly associated with the identity.
 
-**Account aggregation** reads account data into ISC. For the main example, it has already collected the correct record and values. We are deciding how identity fields should use those values, not investigating a failed collection.
+**Account correlation** establishes that account-to-identity relationship. Here the relationship and collection are already correct. We are deciding how the identity should use two available account values.
 
-The HR owner has approved the following meanings. A **string** is text; digits in a string do not make it a number for arithmetic.
+A **string** is text. Digits inside a string don't make the value a quantity for arithmetic.
 
-| Item | Supplied fact or requirement |
+The HR owner has approved these requirements:
+
+| Collected account field and value | Required identity value |
 |---|---|
-| HR account | PeopleLedger Production, account `pl-81001`, belongs to Devi |
-| HR field `costCentreCode` | One string: `0042`; the leading zeros are part of the code |
-| HR field `departmentLabel` | One string: `Finance`; an approved department label |
-| Identity Cost Centre, `costCenter` | Must contain the HR code unchanged |
-| Identity Department, `department` | Must contain the approved label in lowercase: `finance` |
-| Selection and ownership | One associated HR account; no competing account or alternate input |
-| Other identity fields | Already valid; no changes to username, email, manager or lifecycle configuration are proposed |
+| `costCentreCode` is the single string `0042`. Its leading zeros are part of the code. | Cost Centre, `costCenter`, must contain the same string `0042`. |
+| `departmentLabel` is the single string `Finance`, an approved department label. | Department, `department`, must contain that approved label in lowercase: `finance`. |
 
-These are example agreements, not universal ISC requirements. Another organization can require the Department value `Finance` unchanged, or use a department code rather than a label. You cannot choose the calculation from the field's name alone.
+Both values come from the same associated HR account. There is no competing account or alternative input in the main design. Other required identity fields are already valid.
 
-## What does a direct mapping actually do?
+These requirements belong to this design. ISC doesn't universally require department labels to be lowercase. Another population might require `Finance` unchanged or use a department code instead.
+
+The field's name alone doesn't decide its representation.
+
+## When the selected value already meets the requirement
 
 A **direct mapping** supplies an identity attribute from a selected source account attribute without adding a value-changing calculation.
 
-For Cost Centre, Employees selects PeopleLedger Production and `costCentreCode`. The intended identity value is the same string, `0042`.
+For Cost Centre, Employees selects `HR-Primary.costCentreCode`. That field already contains the required text `0042`.
 
-There is still processing involved. ISC must use the applicable identity profile and the relevant source account data. “Direct” does not mean that ISC continuously watches the HR database, bypasses collection, or copies every field automatically.
+ISC still needs to evaluate this mapping using the applicable profile, the associated account and its collected value. Direct mapping doesn't mean a continuous live read from HR or automatic copying of every source field.
 
-It means that this mapping does not need a calculation to turn the selected value into a different value.
+It means this selected value needs no additional calculation to become the required identity value.
 
-Why keep it direct? Because the approved source already supplies exactly the information required. An extra calculation would introduce another instruction to maintain without solving a demonstrated problem.
+Why preserve `0042`? Because the requirement is a four-character business code. Converting it to a number can discard the leading zeros and produce `42`. Those values may represent the same arithmetic quantity, but the required identifier is still `0042`.
 
-Now consider removing those leading zeros because `0042` “looks like 42.” That would change an identifier's representation. If a consuming system expects the four-character code, `42` is wrong even though both strings could describe the same quantity in arithmetic.
+Removing zeros and trying to add them back introduces another dependency without supplying missing information.
 
-A business code is not necessarily a quantity. Preserve its agreed meaning and type.
+Direct mapping also preserves a wrong input if the source is wrong. If HR publishes `0043` by mistake, copying it doesn't establish that the person's cost centre changed legitimately.
 
-Direct mapping also does not repair bad data. If HR accidentally supplies `0043`, a direct mapping can faithfully carry the wrong code. “No transform” is not a statement that the source is always correct. It is a statement that no calculation is needed when the selected input meets the agreed requirement.
+The decision to map directly therefore follows verified meaning, ownership, type and account selection. It isn't a claim that source data can never be wrong.
 
-## When is a calculated value justified?
+## When a transform supplies a justified difference
 
-A **transform** is a configurable ISC object that obtains or manipulates attribute data and returns a result. Its operation determines what it does.
+A **transform** is a configurable ISC object that obtains or manipulates attribute data and returns a result. Its configured operation determines what happens.
 
-Here, the selected **input** is `Finance`. The **operation** is lowercase conversion. The **output**, meaning the returned result, is `finance`.
+For Department, the **input** is the selected value `Finance`. The **operation** is lowercase conversion. The **output** is the returned result, `finance`.
 
-ISC's `lower` transform converts letters to lowercase. The identity-profile interface also provides a simple **ToLower** choice for this purpose.
+ISC's `lower` transform converts a string's letters to lowercase. The identity-profile interface also provides the simple **ToLower** choice.
 
-That is a justified calculation: the source owns the department label, while this identity field's approved representation is lowercase. We are not changing Devi's department. We are expressing the same approved label in the required form.
+In this main design, ToLower reads the `departmentLabel` field selected by the mapping. No separate input instruction redirects it.
 
-A transform is not always a mathematical formula, and it does not always change the characters. Lowercase conversion returns `finance` unchanged if its input is already `finance`. It is still a calculation because the configured operation is evaluated.
+Why is that calculation justified? The source supplies the approved department label, while the identity's agreed representation uses lowercase. The calculation expresses the same label in that form. It isn't a decision to move the person into another department.
 
-There are also transforms that retrieve a value rather than alter it. The `accountAttribute` operation, for example, selects a field from an account associated with the identity. So “transform” does not mean “the text must visibly change.”
+A transform doesn't have to be a mathematical formula. Nor must its output always look different. If lowercase conversion receives `finance`, it returns `finance`; the operation was still evaluated.
 
-The useful distinction here is whether a simple source-field mapping meets the requirement or whether an additional retrieval, formatting or decision instruction is necessary.
+Some transforms retrieve information. The `accountAttribute` operation selects a field from an account associated with the identity. Retrieving a value can be the required instruction even when no letters change.
 
-The following is a conceptual value-flow diagram. Arrows mean “supplies the next value,” not private ISC services or guaranteed completion. Both branches start from the already collected, correctly associated HR account.
+So the useful question is whether ordinary source-field mapping meets the requirement, or whether an additional retrieval, formatting or decision instruction is needed.
 
 ```text
-Employees mapping for I-81001
-PeopleLedger Production / pl-81001
-                |
-       selected account fields
-                |
-      +---------+---------+
-      |                   |
- costCentreCode     departmentLabel
-     "0042"              "Finance"
-      |                   |
- direct mapping       lower operation
-      |                   |
- costCenter           department
-     "0042"              "finance"
+One collected, correctly linked HR account
+                  |
+          selected source fields
+                  |
+      +-----------+-----------+
+      |                       |
+costCentreCode          departmentLabel
+    "0042"                  "Finance"
+      |                       |
+ direct mapping          lower operation
+      |                       |
+ costCenter               department
+    "0042"                  "finance"
 
-Calculated values require application.
-No HR or target write is shown here.
+These are the expected mapping results.
+Both still need relevant application.
+No source or target write is shown.
 ```
 
-The left branch preserves the code. The right branch changes letter case. Neither branch changes HR's stored record.
+Both branches start from the already collected, correctly associated HR account. Arrows carry selected values into the proposed mapping results; they aren't private services or proof that the identity has already been updated.
 
-The reason for the right branch is the approved lowercase requirement, not the existence of a transform menu.
+The left branch preserves the code. The right branch changes letter case. Neither branch rewrites HR's stored record.
 
-## The input matters as much as the operation
+## How does an expected result become an applied identity value?
 
-Let's keep the lowercase operation but change its input to `Legal`.
+Saving a mapping establishes an instruction. A transform definition describes a calculation; the mapping attaches it to a particular identity field.
 
-The result is `legal`. The operation works correctly, yet the result is wrong for Devi if her approved department is Finance.
+Neither observation alone establishes the identity's current value.
 
-That is why you investigate both selection and calculation. A working operation can produce a believable wrong value from the wrong input.
+**Preview** evaluates mappings for a selected identity using available data. Here, expected results are Cost Centre `0042` and Department `finance`.
 
-A transform can use an **implicit input**, supplied by the source and attribute selected in the identity-profile mapping. It can instead define an **explicit input**, its own instruction for where to obtain the value.
+That checks the selected evaluation. It doesn't establish that every Employees identity now holds those results.
 
-For the main design, ToLower uses the mapping's selected PeopleLedger `departmentLabel` as its implicit input. No explicit input overrides it.
+**Identity processing** reevaluates identity data and configured requirements, including attribute mappings. It can be initiated by relevant data changes or manually. A saved mapping change needs appropriate application; saving and applying are different outcomes.
 
-If a custom transform explicitly reads a different account field, changing only the mapping's visible source selector will not redirect that explicit read. You need to inspect the transform's actual input configuration as well.
+The profile's **Apply Changes** action processes identities associated with that profile. Previewing one person doesn't make a shared mapping change a one-person edit.
 
-For example, suppose a separately associated directory account contains `departmentLabel = Legal`, left over from an earlier job. A lowercase transform explicitly reading that directory field returns `legal`, even if the mapping screen also shows PeopleLedger.
+A **consumer** is a configuration or system that uses the resulting value. Before applying the shared change, establish the affected population and those dependent uses.
 
-The right correction is to restore the approved input, not replace the word `legal` with `finance` inside a special case for Devi.
+For example, a **role** is a configured bundle of access for a business need. Its assignment conditions can use identity attributes. Review how the configured condition treats the value before changing its representation; don't assume every comparison ignores case.
 
-That special case would conceal the dependency error. It would also stop representing future legitimate department changes.
+For the supplied successful continuation, the team approves the shared change, reviews other affected identities and consumers, and completes the relevant processing. Current identity evidence then shows text `costCenter = 0042` and `department = finance`.
 
-Account selection matters within a source too. If an identity has multiple accounts, you need to know which account supplies the input. The `accountAttribute` transform has documented sorting and filtering controls; it does not select an account because its visible name looks most appropriate to a person.
+The collected HR account still contains `costCentreCode = 0042` and `departmentLabel = Finance`. That difference is expected: the identity mapping didn't write back to HR.
 
-Our main example deliberately has one associated HR account. That removes selection ambiguity; it does not establish a universal one-account-per-person rule.
+The completed outcome is the identity's two applied values. No external write or application-use test is supplied.
 
-## A cleaner-looking value can still be wrong
+## What if the operation works on the wrong input?
 
-**Normalization** means converting agreed equivalent representations into a consistent form. Lowercasing an approved department label is normalization in this example.
+Keep lowercase conversion but change its input from `Finance` to `Legal`.
 
-It is not permission to invent business equivalence.
+The result is `legal`. Lowercase conversion did its job. The value is still wrong for this person's approved Finance department.
 
-Suppose HR supplies `FIN`, while the identity field requires the full label `finance`. Lowercasing produces `fin`. It does not expand the abbreviation.
+This is a selection problem to investigate, rather than proof that lowercase conversion is broken.
 
-A **lookup** is a configured translation from an input key to an output value. An approved lookup could translate `FIN` to `finance`, but the business owner must establish what the code means and how unknown codes should be handled.
+A transform can use an **implicit input**: the value supplied by the source and attribute selected in the identity-profile mapping. Our main ToLower design uses that input.
 
-Do not add that lookup simply because two values look related. `FIN` might mean a division in one system and a legal entity in another.
+An **explicit input** is an input instruction defined inside the transform. It takes precedence over the input the mapping would otherwise supply.
 
-The same care applies to missing data. **Null** means no value, an **empty string** contains no characters, and whitespace-only text contains spaces or similar characters. They are not interchangeable evidence.
+Consider a separate associated account on `Directory-Primary`. Its `departmentLabel` still contains `Legal` from an earlier job.
 
-A lowercase instruction alone does not define an acceptable department for an absent input. A **fallback** is a deliberately chosen alternative when the intended input is unavailable or unsuitable. It needs an agreed condition and meaning.
+If a custom lower transform explicitly retrieves that directory field, its result is `legal`, even when the mapping's visible source selector shows HR.
 
-Defaulting every missing department to `finance` could make an empty field appear valid while misclassifying people. A nonempty output is not proof of a correct output.
+The source selector explains the mapping's offered input. The transform's explicit configuration explains the input it actually uses. Inspect both before deciding the result is inexplicable.
 
-Also distinguish a failed calculation from a successful calculation that returns the wrong business value. An error requires evidence about the operation and its inputs. A wrong value may require correcting source ownership, account selection or the requirement itself. Do not assume every problem is a syntax error.
+Changing only that selector doesn't redirect an explicit directory read.
 
-For each proposed calculation, ask what information it preserves and what information it discards. Case conversion discards the original letter case. Converting a code to a number can discard leading zeros. Taking one value from a list discards the others.
+The correction is to restore the approved input dependency. Hard-coding `finance` for this person would conceal the selection error and stop the calculation reflecting future legitimate department changes.
 
-A **multi-valued attribute** holds a list rather than one value. Identity-profile mapping transforms do not automatically transform an entire list into an equivalent list: adding a multi-value attribute to a mapping transform takes its first value and produces a single value.
+## Which account supplies a retrieved value?
 
-Our example supplies single strings. If that assumption changes, revisit the design before treating one returned department as the person's complete set of departments.
+Source selection isn't the whole question if the identity has several accounts on that source.
 
-## Where does the result become real?
+**Null** means no value is present.
 
-A saved transform definition is an instruction. A mapping attaches an instruction to a particular use. Neither observation alone proves that the identity now contains the intended result.
+The `accountAttribute` transform has documented sorting and filtering controls. By default, it considers accounts by created date, oldest first, and returns the first non-null selected value unless configured otherwise.
 
-**Preview** lets you inspect how the mappings populate attributes for a selected identity using available data. In the example, we expect Cost Centre `0042` and Department `finance`.
+Suppose the oldest associated account contains `Legal` and a newer account contains `Finance`. Both values are present. The business requirement is to use the current active worker account.
 
-That is evidence about the selected calculation. It is not evidence that all Employees identities were updated or that an external application received anything.
+Under the supplied default selection, the retrieved input is `Legal`. Lowercase conversion returns `legal`. Running lowercase conversion again still returns `legal`.
 
-**Identity processing** reevaluates identity data and related decisions against the applicable configuration. It can follow relevant aggregation or provisioning changes, or be initiated manually. A saved mapping change needs to be applied through the appropriate processing; saving is not the same outcome as applying it.
+The missing design decision is how to identify the approved active account. Review the actual records and retrieval's filtering and sorting. Neither a familiar-looking account name nor a second formatting operation supplies that rule.
 
-The identity-profile **Apply Changes** action processes identities associated with that profile. Therefore, a shared mapping change is not a one-person edit merely because you previewed Devi.
+These defaults describe `accountAttribute`; they aren't a claim that every direct mapping exposes or uses identical selection controls.
 
-Check the affected population and dependent uses before applying it.
+Our main design has one correctly associated HR account, so it doesn't have this ambiguity. That local assumption isn't a universal one-account-per-person rule.
 
-A **consumer** is a configuration or system that uses the resulting value. For example, a role can assign access when identity attributes meet its membership conditions. A role is a configured access bundle; its condition might distinguish the string `Finance` from the string `finance`.
+## Lowercase, trim and translation solve different problems
 
-Changing representation without reviewing consumers can change those decisions.
+**Normalization** means expressing agreed equivalent values in a consistent form. Lowercasing the approved department label is normalization in this example.
 
-**Provisioning** is the work of making account or access changes in a connected system. **Attribute synchronization** is separately configured propagation of identity values to eligible source account fields. An identity calculation does not, by itself, establish either delivery path or its success.
+It doesn't establish that two business values mean the same thing.
 
-Transforms also have uses in account-creation configuration. Those are separate uses: a calculation attached to an identity mapping is not automatically attached to every target account field.
+If the selected value is `FIN`, lowercase conversion returns `fin`. It doesn't expand the code into the label `finance`.
 
-Here is a human verification sequence, not a claim that ISC implements these boxes as internal services. Each check needs evidence for its own outcome.
+A **lookup** is a configured translation from an input key to an output value. An approved translation could map `FIN` to `finance`. First establish what the code means and what should happen for an unknown code.
+
+Without that agreement, choosing the lookup value would invent business meaning. The same code could identify different things in different systems.
+
+Now consider `Finance `, with one trailing space. Lowercase conversion produces `finance `, still with that space. If the consumer requires exactly `finance`, the output doesn't meet its requirement.
+
+**Trim** is a separate operation that removes whitespace at the beginning and end of a string. The producer might need to correct the input, or an approved normalization design might include trimming. Lower alone doesn't implement both decisions.
+
+Each instruction should correspond to a verified difference. Case conversion changes letter case; trimming removes surrounding whitespace; a lookup translates an agreed key. Their purposes aren't interchangeable.
+
+## A value can be nonempty and still be unacceptable
+
+An **empty string** is text with no characters. Whitespace-only text contains spaces or similar characters.
+
+Those are different observations, and lowercase conversion alone doesn't define the acceptable business response to them.
+
+A **fallback** is a deliberately chosen alternative when the intended input is unavailable or unsuitable. Its condition and meaning need agreement.
+
+Suppose the department is null and a proposed fallback returns `finance` for every missing value. The result looks usable, but the department may influence access. Without an approved policy, the calculation has supplied an unverified business fact.
+
+A nonempty output doesn't establish correctness.
+
+Also separate a failed calculation from a calculation that succeeds but returns the wrong business value. For an error, inspect the operation and inputs. For a believable wrong result, inspect source authority, account selection and the requirement as well.
+
+You don't need to invent a universal lower-null result to reject an unauthorized Finance default.
+
+## Check what information the calculation discards
+
+Case conversion discards the original letter case. Numeric conversion can discard zeros in a text code. Selecting one item from a list discards the other items.
+
+A **multi-valued attribute** contains a list instead of one value.
+
+For identity-profile mapping transforms, the documented behavior when adding a multi-value attribute is to take its first value and transform it into a single value. It isn't automatic transformation of the entire list into an equivalent list.
+
+If a source begins supplying several departments instead of one, the design needs review. A single returned label may no longer describe all the information the business intended to preserve.
+
+Our two main inputs are explicitly single strings. That is a condition behind the design, not an incidental formatting detail.
+
+## An applied identity value doesn't establish an external change
+
+The identity's current values can affect decisions or be used by external-write configurations. Those are separate outcomes to inspect.
+
+**Provisioning** attempts supported account or access changes in a connected system. **Attribute synchronization** is a separately configured write path from mapped identity values to eligible fields on existing correlated accounts.
+
+An identity transform doesn't, by itself, configure either path or demonstrate successful delivery.
+
+Transforms can also be attached to account-creation configuration, which supplies values for a new account. That use is configured separately from an identity mapping. Adding a calculation to Department on the identity doesn't automatically attach it to every target account field.
+
+Check the consumer's actual decision and, if a write is configured and required, its operation and target state.
 
 ```text
 Human verification for this change
-                |
-  Approved meaning and input selected?
-                |
-  Preview: "0042" and "finance"?
-                |
-  Authorized processing completed?
-                |
-  Applied identity has both values?
-                |
-      Consumer needs a change?
-          /             \
-        no              yes
-        |                |
-  No write inferred   Check its decision
-                         |
-                   Write configured?
-                     /         \
-                    no         yes
-                    |           |
-                No delivery  Check operation
-                inferred     and target state
 
-A preview is not target confirmation.
+Approved meaning and actual input
+                |
+                v
+Preview expected values
+                |
+                v
+Approved processing and affected scope
+                |
+                v
+Current identity values verified
+
+Dependent decision in scope?
+  -> inspect the actual decision
+
+External write configured and needed?
+  no  -> no delivery inferred
+  yes -> inspect operation and target
+
+Preview isn't target confirmation.
 ```
 
-For a supplied successful continuation, assume the team approved the shared change, checked other affected identities and consumers, and completed the relevant processing. Current identity evidence then shows `I-81001.costCenter = 0042` as text and `I-81001.department = finance`.
+These are human evidence checks, not a private execution pipeline. They don't require ISC decisions to wait until someone inspects the identity. A consumer may already have acted during processing; its actual result still needs checking.
 
-The collected HR account still shows `costCentreCode = 0042` and `departmentLabel = Finance`. That difference is expected. The identity calculation did not rewrite its input.
+A reported successful write is useful evidence about that operation. Confirm the intended target account and field or permission before extending the result.
 
-No external write or application-use test is supplied in this continuation. Do not extend the result beyond the evidence.
-
-| Observation | What it establishes, and what remains unproved |
+| Observation | What it establishes |
 |---|---|
-| Saved source, attribute and transform configuration | The intended instructions exist; execution and actual input selection still need checking |
-| Preview returns `finance` for Devi | That selected evaluation returns the expected representation; it does not establish population-wide application |
-| Current identity shows `finance` after the relevant processing | The identity value is applied; a role decision or external update still needs its own evidence |
-| A consumer reports a successful write | That operation reports success; confirm the intended target account and current field or permission |
-| The intended target has the expected current value | That target outcome is confirmed; it does not prove every other identity or target succeeded |
+| Saved source, field and transform configuration | Instructions exist; actual selection, evaluation and applied values still need evidence. |
+| Preview returns `finance` for the selected identity | That evaluation returns the expected representation; profile-wide application remains unproven. |
+| Current identity shows the two expected values after processing | Identity application is established; dependent decisions and external delivery remain separate. |
+| A consumer reports a successful write | That operation reports success; inspect the intended target and current result. |
+| The intended target has the expected value | That specific target outcome is confirmed, without proving every other identity or target succeeded. |
 
-## Choose the smallest design that meets the actual requirement
+The main continuation supplies only the applied identity values and unchanged collected HR fields. It doesn't supply a target write or a sign-in result.
 
-“Always use direct mappings” is too broad. A source might supply dates in a different format or only provide components that need combining.
+## Choose the design from the requirement
 
-“Always use transforms to clean the data” is too broad as well. Cleaning can hide a broken feed or replace meaning without authorization.
+Begin with the required meaning, approved data owner and accepted representation. Compare that with the actual selected account value.
 
-Start with the required field meaning, its approved owner and the consumer's accepted representation. Then compare that requirement with the selected account value.
+If they already agree, direct mapping meets the requirement.
 
-If they already agree, direct mapping is a complete design decision.
+If they differ in an approved and precisely described way, choose a calculation that implements that difference. Explain its input, operation and expected output.
 
-If they differ in an approved, precisely described way, choose a calculation that implements that difference. Explain its input, operation and expected output with concrete examples.
+Neither “always use direct mappings” nor “always clean everything with transforms” answers the question. Dates might need formatting; separate components might need combining. Equally, an unnecessary cleanup can hide a broken feed or discard part of an identifier.
 
-If the input is wrong, missing without an agreed policy, or attached to the wrong person, resolve that problem rather than hiding it behind a plausible result.
+If the input belongs to the wrong person, comes from the wrong account or is missing without an agreed policy, resolve that cause. A plausible calculated output doesn't repair those dependencies.
 
-Before changing shared configuration, test changed conditions as well as the comfortable example: an already lowercase value, another valid department, a missing value, an unexpected code and an identity with multiple accounts.
+Check changed conditions before applying shared configuration: an already lowercase value, another legitimate department, an unexpected code, a missing value and multiple accounts.
 
-For a proposed fallback or conversion, establish how an unacceptable input becomes visible to the people who must correct it. Silently producing an access-bearing default is not a substitute for that decision.
+For an approved fallback or conversion, establish how unacceptable input becomes visible to the people responsible for correcting it. Silently returning a value that could grant access doesn't replace that decision.
 
-## Try the decision with changed facts
+## Work through the changed evidence
 
-### 1. A valid code is already available
+### The code already meets its requirement
 
-**Facts:** HR supplies single text value `0042`. The identity field and its consumer both require `0042`. Ownership and account selection are verified. Someone proposes removing zeros and adding them back.
+HR supplies single text value `0042`. The identity field and consumer require exactly that code, with verified ownership and account selection.
 
-Which design would you choose?
+Would you remove the zeros and reconstruct them, or map directly? Why?
 
-**Reasoning:** Use the direct mapping. The selected value already meets the requirement. Removing and recreating characters adds failure opportunities without supplying missing information. Retain evidence that the value remains text with its zeros intact.
+### Only letter case needs changing
 
-### 2. The department arrives in a different case
+The approved identity representation is lowercase. The selected HR value is `FINANCE`, without spaces. ToLower uses that mapped input.
 
-**Facts:** The approved identity representation is lowercase. The selected HR value is `FINANCE`, with no spaces. The mapping uses ToLower with that implicit input.
+What should it return, and what would that result alone leave unproven?
 
-What result should the operation return?
+### The code needs an approved meaning
 
-**Reasoning:** `finance`. The operation changes letter case, and the requirement authorizes that change. This expected result says nothing yet about whether identity processing has applied the mapping or any consumer acted.
+The selected value is `FIN`, and the identity requires the full label `finance`. The owner hasn't confirmed the translation.
 
-### 3. The code needs a meaning, not a new case
+Does ToLower meet the requirement?
 
-**Facts:** The selected field contains `FIN`. The identity field requires the full label `finance`. The owner has not yet confirmed a code-to-label translation.
+### The selector and explicit input differ
 
-Would ToLower solve the requirement?
+HR has `Finance`. A custom lower transform explicitly retrieves associated directory `departmentLabel = Legal`. Preview returns `legal`.
 
-**Reasoning:** No. It produces `fin`, not `finance`. Confirm the code's meaning and approved translation, including unknown-code handling, before choosing a lookup or another source field. Lowercase conversion cannot supply the missing agreement.
+What explains the result, and which dependency would you inspect first?
 
-### 4. The mapping screen and the result disagree
+### A space survives
 
-**Facts:** PeopleLedger has `Finance`. A custom lower transform explicitly reads an associated directory account's `departmentLabel`, which contains `Legal`. Preview returns `legal`.
+Input is `Finance `, with one trailing space. Only lowercase conversion is configured. The consumer requires exactly `finance`.
 
-Where is the first useful check?
+Is the returned value acceptable?
 
-**Reasoning:** Inspect the explicit input and selected directory account. That input explains `legal` without a failure of lowercase conversion. Check the approved field authority, then correct the input dependency if it violates that agreement. Changing only the visible mapping source does not override the explicit input.
+### Missing input receives a plausible default
 
-### 5. A space survives the calculation
+HR department is null. The proposed fallback returns `finance` whenever the department is missing. Department can influence access, and the owner hasn't authorized that default.
 
-**Facts:** The input is `Finance `, with one trailing space. Only lowercase conversion is configured. The consumer requires exactly `finance`.
+Does always returning text make the design acceptable?
 
-Is the result acceptable?
+### Preview is correct but the target is unchanged
 
-**Reasoning:** No. Lower changes case; it is not a trim instruction. The resulting text is `finance `, still containing the trailing space. Determine whether the producer should correct the data or whether approved normalization should also remove surrounding whitespace. Do not claim the current operation already does both.
+Preview returns `finance`. Relevant processing and application evidence aren't supplied. The directory still shows `Finance`, and sync configuration hasn't been checked.
 
-### 6. Missing data becomes a believable department
+Can you conclude the transform failed to provision?
 
-**Facts:** The HR department is null. A proposed fallback returns `finance` whenever no department exists. Department can influence access decisions, and the owner has not authorized this default.
+### Two accounts supply different departments
 
-Should you accept the design because it always returns text?
+An `accountAttribute` retrieval uses default selection. The oldest associated account contains `Legal`; the newer contains `Finance`. Both are non-null. The requirement is to use the current active worker account, but the default selects the oldest.
 
-**Reasoning:** No. It substitutes an unverified business fact. Agree on the missing-data policy and correction responsibility, and assess dependent access before implementing any fallback. No universal null behavior for lower is needed to reach this design conclusion.
+Would another lowercase operation repair the result?
 
-### 7. Preview looks right, but the target is unchanged
+## Compare your reasoning
 
-**Facts:** Preview returns `finance`. No relevant application or processing evidence is supplied. A directory account still shows `Finance`, and no synchronization configuration has been checked.
+For the valid code, choose direct mapping. The selected text already meets the agreed requirement. Preserve zeros and type rather than adding an unnecessary remove-and-recreate sequence.
 
-Has the transform failed to provision?
+For `FINANCE`, ToLower returns `finance`. The conversion is authorized by the representation requirement. That expected calculation doesn't establish applied identity state or a consumer outcome.
 
-**Reasoning:** That conclusion is unsupported. Preview establishes a calculated result, not an applied identity value or a configured directory write. Check application/processing and current identity evidence first, then whether an authorized consumer should send a change. If so, inspect its operation and target evidence separately.
+For `FIN`, lowercase conversion returns `fin`. Establish code meaning, approved translation and unknown-code treatment, or select another approved source field that supplies the label. Case conversion can't supply the missing agreement.
 
-### 8. A second account changes the question
+For explicit directory input, `Legal` explains `legal`. Inspect that retrieval and account selection against approved field authority. Changing only the mapping's source selector won't override the explicit instruction.
 
-**Facts:** A custom `accountAttribute` input uses its default account selection. An identity has two associated accounts on that source: the oldest contains `Legal`; the newer contains `Finance`. Both are non-null. The business requirement is to use the current active worker account, and the default selects the oldest.
+For the trailing space, lower returns `finance `, retaining that space. Correct producer data or apply approved whitespace normalization if required; the current operation doesn't trim.
 
-Would another lowercase operation fix the result?
+For the null fallback, reject an unauthorized business default. Agree on missing-data handling, responsibility and dependent access effects. No universal null behavior for lower is required to reach that conclusion.
 
-**Reasoning:** No. Lowercase converts the selected `Legal` into `legal`; repeating it leaves `legal`. Review the retrieval's sorting/filtering against the active-worker requirement and verify the source records. The problem is which account supplies the input, not how letter case is converted.
+For Preview versus directory, the supplied evidence doesn't establish failed provisioning. Establish relevant processing and current identity values, then whether a configured consumer should write anything. If so, inspect that operation and target separately.
 
-## Explain your decision for another population
+For two accounts, the retrieved `Legal` becomes `legal`; another lower operation leaves it unchanged. Establish an approved active-account selection design and verify retrieval. Formatting doesn't select the correct account.
 
-A project team gives you 100 proposed identity-field mappings. These are separate reviewed categories, not counts of failed identities:
+## Explain your choices for another population
+
+A project reviews 100 proposed identity-field mappings:
 
 - 40 already supply the exact required single text value.
-- 25 require lowercase conversion of approved department labels.
-- 15 contain department codes needing an approved label translation.
+- 25 need lowercase conversion of approved department labels.
+- 15 contain codes needing an approved label translation.
 - 10 have no input and no approved missing-value policy.
 - 10 draw from multiple accounts without an agreed selection rule.
 
-What would you recommend, and what evidence would you require before declaring the work successful?
+These are mapping categories, not counts of failed identities.
 
-For the first 40, use direct mapping after confirming authority, type and selection. For the next 25, a lowercase calculation meets the stated difference; test representative inputs and dependent uses.
+What would you recommend, and what evidence would establish success?
 
-The 15 need a confirmed translation and unknown-code policy, not just case conversion. The missing-input group needs an agreed response and correction path. The multiple-account group needs an explicit selection design. Those last groups are not ready for a blind shared rollout.
+For the first 40, confirm authority, type and selection, then use direct mapping. For the next 25, lowercase conversion meets the stated difference; inspect representative inputs and dependent uses.
 
-For every accepted design, retain the requirement, selected source/account/field, calculation if needed, representative preview results and applied identity evidence after authorized processing. Verify any dependent decision or target change separately.
+The 15 translation cases need approved meaning and unknown-code handling. The 10 missing-input cases need an agreed response and correction path. The 10 selection cases need a rule identifying the intended account. Those unresolved groups aren't ready for a blind shared application.
 
-If someone asks why you chose a transform, your answer should identify the precise difference it resolves. For Devi's Department, that difference is `Finance` to `finance`. For her Cost Centre, there is no difference to resolve.
+An approved producer correction or another authoritative field may remove the need for a calculation. The chosen design must still meet the requirement.
+
+Retain the field requirement, selected source/account/attribute, calculation when needed, representative Preview results and current identity evidence after approved processing. Verify any dependent decision or target change separately.
+
+A useful explanation of a transform choice identifies the exact difference it resolves. Here Department needs `Finance` expressed as `finance`. Cost Centre already contains the required `0042`.

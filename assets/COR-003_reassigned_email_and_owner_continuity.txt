@@ -1,0 +1,13 @@
+Earlier:
+[Identity and account mail agree]
+[worker.a@example.invalid]
+
+Later supplied facts:
+[Original person has a new address]
+[Old address belongs to another person]
+[Old project account keeps old mail]
+                 |
+[Email equality points to new holder]
+
+[Person reference remains P-73003]
+[Account and intended identity agree]

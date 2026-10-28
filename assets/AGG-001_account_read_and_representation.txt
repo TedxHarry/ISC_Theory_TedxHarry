@@ -1,0 +1,7 @@
+[ISC requests account collection]
+                 |
+[Connector reads the application]
+                 |
+[Returned record selected and mapped]
+                 |
+[ISC represents that source account]

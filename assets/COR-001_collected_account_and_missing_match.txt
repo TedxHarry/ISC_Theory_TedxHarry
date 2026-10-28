@@ -1,0 +1,15 @@
+[Existing employee identity]
+[identificationNumber: "W-107"]
+[name: worker-w107]
+
+[Collected payroll account pay-account]
+[Account Name: pay.user]
+[displayName: Worker A]
+[employeeRef: null]
+                  |
+[Configured reference: no match]
+[Default name comparison: no match]
+                  |
+[Recorded: uncorrelated]
+
+[Engineer verifies intended ownership]

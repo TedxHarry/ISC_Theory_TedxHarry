@@ -1,337 +1,349 @@
 # What should a profile's name, description and owner tell you?
 
-Devi, employee `110303`, reviews case evidence in EvidenceHub Production, a fictional application. Her account is `eh-110303`. Her work requires reading cases in her assigned queue and adding review notes. It does not require bulk export or deleting evidence.
+An employee needs to read case evidence and add review notes for cases in their assigned queue. They do not need bulk export or evidence deletion.
 
-The access catalog offers a package called **Case support**. Its description says “Standard access for the team.” The owner field contains Leela's name.
+The access catalog offers **Case support**. Its description says “Standard access for the team.” An owner is recorded.
 
-Would you know whether that package fits Devi's work?
+Would you have enough information to decide whether this is the right access?
 
-The label tells you very little. You cannot tell whether “support” means reading evidence, changing cases or administering the application. “Standard” does not identify the permissions. Leela's name identifies a responsible person, but it does not explain what the package permits.
+“Support” could mean reading evidence, changing cases or administering the application. “Standard” does not identify a capability or data boundary. The owner field gives you someone to contact, but it does not tell you what the access permits.
 
-Before approving, assigning or changing that access, you need a more dependable account of what it contains and why.
+Let's inspect the access behind those words, then make the package understandable enough to choose and maintain.
 
-All people, records, identifiers, permission rules and observations below are fictional. The application rules are supplied facts, not claims about every connector or application.
+The records, application rules, configured decisions and outcomes below are hypothetical. They are not observations from a real tenant or a built-in connector contract.
 
-## Start with the access behind the label
+## Establish the actual access before writing its explanation
 
-In SailPoint Identity Security Cloud, or ISC, an **entitlement** represents a source access right, such as membership in an application group. An **access profile** is a named bundle of related entitlements from one source.
+An **account** is the external record through which a person or another entity uses a system. A **permission** allows an action on a resource. A **group** collects members, such as accounts; the application can use those memberships when deciding which actions to allow.
 
-A **source** represents a connected system or account-data collection in ISC. Its **connector** is the integration that reads data and, where supported and configured, makes changes.
+In SailPoint Identity Security Cloud (ISC), an **entitlement** represents source access, such as one of these group memberships. A **source** is ISC's configured representation of a system or collection of account data. Its **connector** supplies the supported integration for reading information and, where supported and configured, making changes.
 
-Here, the EvidenceHub Production source represents the live application. A separate EvidenceHub Test source represents its test environment. Similar names do not make those two sources interchangeable.
+Our source is Cases Production. A separate Cases Test source represents the test environment. A similar group name in Test does not supply Production access.
 
-The application team verifies these Production rights:
+The application contact confirms these current native rules. **Native** means belonging to the external application itself.
 
-| Native group | Confirmed behavior |
+| Native group | Confirmed capability |
 |---|---|
-| `EH-3301`, Case Readers | Read case evidence within the account's assigned queue. |
-| `EH-3302`, Review Notes | Add review notes when the same account also has Case Readers. Does not permit changing or deleting the evidence. |
-| `EH-3399`, Bulk Export | Export case evidence across all queues. Not required for Devi's review work. |
+| Case Readers | Read evidence within the account's assigned queue |
+| Review Notes | Add review notes within that queue when the same account also has Readers; does not change or delete the evidence itself |
+| Bulk Export | Export evidence across all queues; outside the stated review need |
 
-“Native” means in the application itself. The first two rows provide the intended review capability. The third crosses a different data boundary.
+The integration supports collecting and assigning these groups. That is a condition of this example, not a promise about every connector.
 
-The main example uses ordinary standing access: granted memberships remain until an applicable change removes them, rather than needing a separate activation for each use. The fictional integration supports collecting and assigning these groups.
+An **access profile** is a named bundle of related entitlements from one source. The intended review profile references the represented Readers and Review Notes records from Cases Production. A **reference** identifies another record; it does not create a new native group or rewrite the group's permissions.
 
-The profile should reference the first two entitlements, not the export entitlement. We will call the represented ISC entitlement records `E-3301` and `E-3302`, and the profile `AP-3303`. These are readable teaching labels, not actual ISC ID formats or an API payload.
+These two items together provide the required review capability. Bulk Export adds a different data exposure, so it stays outside the package. Evidence deletion and administration are not provided by the selected rights.
 
-An **account** is the application's login record. An ISC **identity** represents the person. In this example, Devi's identity is correctly associated with `eh-110303`, her only EvidenceHub Production account. That account's assigned queue is West.
+An **identity** is ISC's representation of a person or another entity. The employee's existing account is correctly associated with their identity and is their only Cases Production account. It is enabled, sign-in succeeds and its assigned queue is West.
 
-Those facts let us explain both the package and its limits. Membership supplies the capabilities; the application's queue rule restricts which cases the account can use them on.
+The account's queue is a field maintained separately in the application. The memberships provide the capabilities; that field helps determine which cases the account may use them on.
 
-## Give the package a name someone can choose correctly
+## Let the name distinguish the choices
 
-A useful name helps a person distinguish this package from nearby choices.
+Compare **Case support** with **Cases: Case review (Production)**.
 
-Compare **Case support** with **EvidenceHub \| Case review \| Production**.
+The second makes the system, work and environment visible. This is an example naming convention, not required ISC syntax. Use a consistent convention that distinguishes the actual choices in your catalog.
 
-The second name identifies the system, the work and the environment. The separators are a naming convention for this example, not required ISC syntax. Choose a consistent convention that helps your organization distinguish real choices.
+Why include the work rather than only the team?
 
-Do not copy a department name into every package simply because that department requested the first one. If Compliance and Quality employees need exactly the same case-review capability, **Compliance standard** can mislead Quality staff and encourage duplicate packages.
+If Compliance and Quality staff need exactly the same review capability, **Compliance standard** can mislead Quality staff and encourage unnecessary duplicate packages. The first department to request access does not necessarily define its lasting purpose.
 
-Conversely, two packages should not look identical if one permits only reading and the other permits reading plus bulk export. The difference affects the decision, so make it visible.
+If a second package permits bulk export, its name should reveal that meaningful difference. Otherwise, a requester can choose the wrong item while believing the two choices are equivalent.
 
-Names should be unique and descriptive. That does not mean they need to contain every entitlement key, every owner or the entire eligibility policy. Put the purpose in the name; explain the necessary detail in the description.
+Use unique, descriptive names. You do not need to fit every entitlement identifier, owner and eligibility condition into the title. Put the distinction needed for choosing in the name and the necessary explanation in the description.
 
-Do not put “West only” into the name unless the actual package and native controls justify that meaning. In this example, the two memberships use whichever queue is assigned to the account. They are not intrinsically West-specific.
+Queue scope needs particular care. The selected groups use whichever queue is assigned to the account. They are not intrinsically West-only groups.
 
-For Devi, that queue happens to be West. For another account, it could be North. Calling the same package **West case review** would imply a boundary that the selected groups do not themselves establish.
+The main account happens to use West; another account could use North. Calling the same package **West case review** would suggest a restriction its contents do not establish.
 
-The source reference, entitlement references and account/application controls settle the technical question. The name needs to describe that reality.
+Check the source and entitlement references and the application's actual controls before making a boundary claim in a name.
 
-## Write the description from a decision someone must make
+## Write the description to support a decision
 
-Here is a usable description for the verified two-entitlement package:
+For the verified two-item package, a useful description is:
 
-> Read case evidence and add review notes in EvidenceHub Production for cases within the account's assigned queue. Intended for staff with an approved case-review responsibility. Includes Case Readers and Review Notes. Does not provide bulk export, evidence deletion or application administration. Queue assignment is managed separately in EvidenceHub.
+> Read case evidence and add review notes in Cases Production within the account's assigned queue. Intended for staff with an approved case-review responsibility. Includes Case Readers and Review Notes. Does not provide bulk export, evidence deletion or application administration. Queue assignment is managed separately in the application.
 
-Each part answers a practical question.
+Each sentence helps someone decide something.
 
-“Read case evidence and add review notes” tells the requester what work the access supports. “Within the account's assigned queue” gives the data scope. “Production” distinguishes live information from test data.
+The actions explain the work. The queue condition states the data scope. Production distinguishes live information from test data. The intended-use statement lets a reviewer compare the employee's responsibility with the package purpose.
 
-The intended-use sentence helps a reviewer compare the recipient's work with the package purpose. The exclusions distinguish this bundle from more privileged choices. The final sentence explains a dependency the package does not manage.
+The exclusions distinguish this item from more privileged choices. They need to be supported by the actual permissions, not added because the words sound reassuring.
 
-Why mention queue assignment separately?
+The last sentence identifies a separate dependency. If the account has both groups but is assigned to the wrong queue, granting the same groups again will not correct that field. Investigate the queue assignment and its approved maintenance process.
 
-Suppose Devi has both groups but the application account is assigned to the wrong queue. Granting the same groups again does not correct that account field. You would investigate the queue assignment and its approved maintenance process.
+Keep changing support rosters and personal contact details in an appropriate maintained record. The description should still explain the access when the support team changes. Essential access meaning, however, must remain available to the person making the decision.
 
-Also consider what the description does not say. It does not promise that anyone in a department automatically receives access. It does not say that naming Leela as owner grants her the groups. It does not treat a sentence as an application permission rule.
+## Which parts explain access, and which parts control it?
 
-Keep operational details that change frequently, such as support rosters and individual phone numbers, in an appropriate maintained record. The description should remain useful when someone else takes over support. Do not hide essential access meaning in a document the reviewer must somehow discover.
+There are two decisions to keep separate.
 
-## The description explains a boundary. It does not enforce it
+The organization decides who should receive the package through its actual request or assignment controls. Writing “For reviewers only” explains intended use; it does not configure a rule selecting reviewers.
 
-Let's separate two questions:
+The application decides what a particular account may do on a particular case. **Authorization** is that allow-or-deny decision. Here, it uses the account's native memberships and assigned queue, with an enabled account and successful sign-in as required conditions.
 
-Who should receive the package?
-
-What may an account do after receiving its entitlements?
-
-The first is an access-decision question. It depends on the organization's requirement and the actual assignment or request controls. Writing “For reviewers only” does not create a technical rule selecting reviewers.
-
-The second is an application-authorization question. **Authorization** is the application's decision to allow or deny an action on a resource. Here it depends on the account's memberships and assigned queue, along with successful sign-in and an enabled account.
-
-The profile description supplies neither a membership nor a queue restriction.
+The profile's description supplies neither a membership nor a queue restriction.
 
 ```text
-Profile AP-3303
+Access profile in ISC
 |
-+-- Name and description
-|   Explain purpose and limits
++-- name and description
+|   Explain purpose and scope
 |
-+-- Source and entitlement references
-|   EvidenceHub Production
-|   E-3301 -> group EH-3301
-|   E-3302 -> group EH-3302
++-- source and entitlement references
+|   Cases Production
+|   Case Readers
+|   Review Notes
 |
-+-- Primary owner: Leela
-    Accountable for this package
++-- owner references
+    Record package responsibility
 
-Separate native application checks:
-account rights + assigned queue
-Not taken from description text.
+Native application
+  Account memberships + assigned queue
+      -> permitted actions/resources
+
+Description text is not enforcement.
 ```
 
-The branches show different information on the same profile, not a processing sequence. The arrows from entitlement records to group keys mean “represents this native access item.” They do not mean the profile creates those native groups.
+The branches show information belonging to the ISC profile. They are relationships, not a processing sequence. The entitlement references identify represented native access; they do not create parent groups or native permission rules.
 
-The application checks are separate because it is the application that permits reading and note-writing. It does not read the profile's descriptive sentence to decide whether a case belongs to West.
+The lower path shows the application using account relationships and queue scope. It does not read “within the assigned queue” from the profile description and implement that restriction.
 
-Now change one fact. The selected group unexpectedly permits reading every queue.
+Suppose the application changes Readers to permit reading every queue. Rewriting the description cannot narrow that native permission. Establish the changed capability, affected accounts and authorized correction: a narrower native right, a different represented entitlement, or another appropriate access design.
 
-You cannot repair that exposure by replacing “assigned queue” with a more reassuring sentence. First establish whether the group should have narrower native permissions or whether the package should use a different entitlement. Review the affected accounts and the authorized correction.
+The wording must describe the verified boundary.
 
-The description must match the verified result. It cannot substitute for it.
+**Metadata** is descriptive information about an access item. A custom value such as `Audience = Reviewers` can provide context. It does not by itself implement recipient selection. If a separate control consumes that value, inspect that control and its conditions before claiming enforcement.
 
-The same applies to contextual metadata, which means descriptive information about an access item. A custom label such as `Audience = Reviewers` does not, by itself, configure recipient selection. If a separate control uses that metadata, inspect that control and its conditions. Do not infer enforcement from the label alone.
+## What does the owner take responsibility for?
 
-## What responsibility does the owner accept?
+The **primary owner** is the identity recorded as owning the profile. ISC also supports additional owners selected as identities or a governance group.
 
-The **primary owner** is the identity recorded as owning the profile. ISC also supports additional owners, selected as identities or a governance group.
+A **governance group** is an ISC group whose members can perform configured governance work, such as reviewing whether access is appropriate. It is different from the native Case Readers group: one supports governance responsibilities; the other supplies application access.
 
-A **governance group** is a group of ISC users who can perform configured governance work, such as reviewing whether access is appropriate. It is not the application's Case Readers group. Joining the governance group and receiving a native application membership are different relationships.
+For our example, one identity is primary owner and another is an additional owner. Both have accepted their organizational responsibilities. The primary owner has no Cases application account.
 
-For the main example, Leela is primary owner and Anil is an additional owner. They have accepted responsibility for maintaining the package's meaning and responding to the work assigned to them.
+Saving an owner reference records who is selected. It cannot prove that the person understands or has accepted the responsibility.
 
-That acceptance is an organizational responsibility, not something a field can prove by itself.
+An accountable owner needs to explain why these rights belong together, what work justifies them and whether the stated exclusions still match the application. They also need a way to obtain native permission evidence and identify users and access-model objects affected by changes.
 
-Leela should be able to answer: Why do these entitlements belong together? What work justifies them? Do the description and exclusions still match the application? Who can confirm a native permission change? Which users or other access-model objects depend on the package?
+They do not need to operate every connected system personally. They need appropriate knowledge, reliable contacts and an agreed maintenance process.
 
-She does not need to personally operate every connected system to be accountable for those answers. She needs reliable contacts and an agreed maintenance process.
+Different responsibilities can belong to different people:
 
-Do not collapse every kind of ownership into hers:
+- The profile owner maintains the purpose and boundaries of the whole package.
+- An entitlement owner is responsible for an individual represented access right.
+- The source's responsible team handles the integration and system-specific work allocated to it.
+- The recipient's manager confirms the work need.
 
-- The profile owner is responsible for the bundle as a whole.
-- An entitlement owner is responsible for a particular represented access right. The two entitlement owners need not be the profile owner.
-- The source's responsible team handles the integration and system-specific questions allocated to it.
-- Devi's manager can confirm her work need without knowing every native permission detail.
+This is a distinction between responsibilities, not a required staffing chart. One person can hold more than one responsibility if they are suitable and accept it. Selecting the same identity in several fields does not make the fields mean the same thing.
 
-These are responsibility distinctions, not a mandatory staffing arrangement. One person can hold more than one role. Recording the same person in multiple fields does not make the underlying responsibilities identical.
+Profile ownership also does not automatically grant native memberships or ISC administrator permissions. Administrative authority is configured separately. The primary owner here does not need an application account merely to own this package.
 
-Nor does profile ownership automatically grant application access or make someone an ISC administrator. Administrative permissions are configured separately. In this example, Leela has no EvidenceHub account and does not need one merely because she owns the package.
+When selecting an owner, verify the intended identity behind the display name. A familiar name, departed employee or unmaintained team is not evidence of current decision coverage.
 
-Check that the owner reference selects the intended identity, not just a familiar display name. A person who has left, an unmaintained team or an incorrectly selected identity is not dependable decision coverage.
+## Trace an owner-based approval through its actual configuration
 
-## Ownership and approval routing are different configurations
+An **access request** asks for an access item for a recipient. An **approval** is a decision that the request may proceed. **Provisioning** carries out account or access changes through the supported integration or manual process.
 
-An **access request** asks for access to be given to a recipient. An **approval** is a decision that the request may proceed. **Provisioning** is the separate work of creating or changing the account's access through a supported integration or manual process.
+The owner reference and reviewer configuration connect when you deliberately configure an owner-based review stage. Ownership alone does not insert a stage.
 
-The owner field is not itself an approval chain.
+For this example, the profile is enabled for supported use and offered through a supported direct request route. The configured reviewer order is **Manager**, then **Primary Owner**.
 
-For this example, profile requests have an explicitly configured reviewer sequence: first **Manager**, then **Primary Owner**. Manager means the manager of the person receiving the access.
+Manager means the manager of the person receiving access. That manager checks whether case review belongs to the employee's current work. After approval, the Primary Owner stage uses the profile's recorded primary owner to review the package's suitability.
 
-Devi's manager considers whether case review belongs to her current work. After that approval, Leela considers whether this package is appropriate. If either required stage rejects the request, the supplied chain does not authorize it to continue as an approved request.
+In the supplied successful path, both required stages approve. Provisioning then establishes the required native memberships on the selected account, which initially had Readers only. Current native evidence confirms Readers and Review Notes. Reading and note-writing work for West cases, while cross-queue review, bulk export, evidence deletion and administration remain unavailable. No other relevant rights or application-policy changes occurred.
+
+This is **standing access**, delivered without a separate just-in-time activation requirement. The approval sequence explains the decisions; the native observations establish delivery and the checked capability.
 
 ```text
-Request for AP-3303
-|
-v
-Configured chain in this example:
-Manager
-  |
-  | approves
-  v
-Primary Owner: Leela
-  |
-  | approves
-  v
-Continue toward access delivery
+Configured direct-profile request
+  Recipient's manager
+       |
+       | approves
+       v
+  Primary Owner
+       |
+       | approves
+       v
+  Continue toward access delivery
 
-Different configured option:
-All Owners: Leela or Anil
-  |
-  | either one approves
-  v
-Continue toward access delivery
-
-Ownership alone starts neither path.
+Alternative reviewer stage
+  All Owners
+  Primary OR additional owner
+       |
+       | one approves this stage
+       v
+  Continue through configured process
 ```
 
-The second path is an alternative configuration, not another stage appended to the first. **All Owners** allows any one primary or additional owner to approve that reviewer stage. It does not mean every owner must approve.
+In the upper path, each approval allows the request to reach its next configured responsibility. A rejection at a required stage does not authorize the request to continue as approved. The final arrow leads toward delivery, not a guarantee that every native operation succeeds.
 
-If the requirement is two separate decisions, configure the required stages explicitly. Do not rely on the English word “All” to create unanimity.
+The lower path is an independent alternative configuration. **All Owners** allows any one primary or additional owner to approve that reviewer stage. It does not require unanimous approval.
 
-Anil's additional-owner reference does not make him a required approver in the main Manager-then-Primary-Owner chain. A Manager-only chain would not automatically add Leela either.
+If policy requires separate decisions, configure the stages that express them. The word “All” does not create a second mandatory decision.
 
-These are profile-request examples. A requested ISC role, a broader access-model object that can include profiles, uses its own request approval process. Access delivered by automatic role assignment or a configured lifecycle state does not invoke this profile-request approval chain. A **lifecycle state** records an organizational stage, such as prehire or active employment, and can have configured access requirements.
+The additional owner is not a required approver in our Manager-then-Primary-Owner chain. Likewise, a Manager-only configuration would not automatically add either owner.
 
-Also, turning off local Require Approval is not proof that all approval is bypassed; global approval configuration can still apply.
+## Check which process is asking for the decision
 
-A **certification** is a review of whether existing access should be retained. Its configured reviewer assignment is a separate question. Do not carry this profile-request chain into every certification or manual task by assumption.
+The examples above are direct requests for the profile itself.
 
-The practical check is always: what kind of work is this, and what configuration actually assigns the decision?
+An **ISC role** groups access for a broader business purpose and can include profiles or entitlements. A request for a role that includes this profile uses the role's request approval process.
 
-## Keep the package small enough to explain, but complete enough to use
+A **lifecycle state** describes an identity's organizational stage, such as prehire or active employment, and can carry configured access requirements. Automatically assigned role or lifecycle access does not invoke this direct-profile request approval chain.
 
-A sensible boundary follows a meaningful capability.
+Turning off local Require Approval also does not establish that all approval is bypassed. Global approval configuration can still apply.
 
-Case Readers and Review Notes belong together because reviewers need both for the supplied work. Bulk Export has a broader data scope and a different justification. It should not enter the package simply because all three items come from EvidenceHub Production.
+A **certification** reviews whether existing access should be retained. Its configured reviewer assignment is separate from the direct-request chain.
 
-Do not split every entitlement into its own profile merely to keep the list short. That would make recipients assemble pieces of one capability and leave reviewers checking incomplete combinations. A one-entitlement profile can be useful when that entitlement already supplies the complete intended capability.
+A **manual provisioning task** asks someone to carry out a required source change when the applicable delivery path uses human work. That task also has its own assignment evidence.
 
-At the other extreme, a package called **All case-team access** can conceal unrelated work, different data exposure and responsibilities that no single owner can explain.
+Before inferring who must act, identify the kind of work and the configuration that assigns it. Owner, request reviewer, certification reviewer and manual-task assignee are related responsibilities, not interchangeable fields.
 
-Use meaningful differences to decide whether separate packages are justified. Examples include reading versus exporting, Production versus Test, and ordinary review versus application administration.
+## Set a boundary one owner can explain
 
-A department difference alone does not prove the permissions differ. An owner difference alone does not prove they should be combined. Ask what access every recipient of this particular package actually needs.
+Readers and Review Notes belong together because the required review task uses both. Bulk Export has broader data scope and a different justification.
 
-If the desired task also needs another source, do not disguise that cross-source requirement with a longer profile description. Keep source-specific components separate and consider an appropriate broader ISC role. A business task can cross systems; an access profile remains source-specific.
+Splitting every entitlement into its own profile can leave requesters assembling incomplete pieces of one capability. An enabled profile must contain at least one entitlement; a one-item profile is useful when that item already supplies the intended capability.
 
-## When something changes, identify which layer needs attention
+At the other extreme, **All case-team access** can combine unrelated work, exposure and decision requirements. A short catalog is not useful if nobody can explain what each recipient receives.
 
-Suppose the team renames **Case support** to **EvidenceHub \| Case review \| Production**, corrects the description and records a replacement owner.
+Reading versus export, Production versus Test and ordinary review versus administration are meaningful differences to consider. A department difference alone does not prove different permissions are needed. Sharing an owner alone does not justify combining different capabilities.
 
-The profile's ISC ID identifies the existing record. Check that ID when tracing the rename; do not treat the changed display name as proof that a new package was created. Conversely, a newly created profile with the old name is not automatically the same object.
+Ask whether every intended recipient needs each included right for this package's purpose.
 
-A native permission change is different. If EvidenceHub adds bulk export to `EH-3301`, the profile's references can remain unchanged while the capability becomes broader. The owner must revisit the description and design because the meaning behind one referenced entitlement changed.
+If the job also needs access from another source, keep that source-specific component separate and consider an appropriate ISC role for the broader requirement. A longer description does not remove the single-source profile boundary.
 
-Use the evidence that addresses the specific change:
+## Identify the kind of change before choosing the repair
 
-| Observation | What it establishes, and what still needs checking |
+Suppose Case support becomes Cases: Case review (Production), its description is corrected and a replacement owner is recorded.
+
+The profile's **ISC identifier** identifies that record. In this supplied rename, the identifier, source and entitlement references remain the same. The wording changed on the existing profile; it did not establish a new native grant.
+
+Conversely, creating a replacement profile with the old display name does not make it the same record. Trace the identifier and actual references rather than matching names alone.
+
+A native permission change is another kind of work. If Readers gains bulk export while the profile still points to the same entitlement record, the capability has broadened under an unchanged list. Recheck the design, description and affected holders.
+
+| Evidence | What it establishes and what remains to check |
 |---|---|
-| Profile ID, revised name and saved description | Which ISC definition was edited. Not a new native restriction or a completed grant. |
-| Owner references and actual reviewer configuration | Who is recorded as responsible and which reviewer categories are configured. Inspect the live work item to establish its assignees. |
-| Entitlement references and native permission configuration | Which access items are packaged and what those items permit. Check whether actual contents support the claimed exclusions. |
-| Recipient account, provisioning activity and current application evidence | The selected operation, reported result and observed access. An approval or clear description alone does not establish delivery. |
+| Profile identifier, name and saved description | Which definition was edited; not native restriction or completed access delivery |
+| Owner references and reviewer configuration | Recorded responsibility and configured reviewer categories; inspect current work to establish actual assignees |
+| Exact entitlement references and native permission rules | Which access is packaged and whether its capabilities support the claimed purpose and exclusions |
+| Selected account, delivery activity and current application result | The relevant attempted/reported change and observed access; approval or clear wording alone cannot establish delivery |
 
-For identity effects of changed access-model configuration, account for the relevant identity processing, which reevaluates identities against configured requirements. Saving a record and observing the resulting access are different events. This does not mean every wording correction should cause a native membership change.
+**Identity processing** evaluates identities and relevant identity/access-model configuration. Account for the relevant application of configuration changes before judging their identity effects. Saving a record, completing evaluation and observing native access are separate events.
 
-If an excessive entitlement is removed from the profile definition, existing holders do not lose that entitlement merely because its reference was removed. Assess their current need and assignment history, then use the appropriate separately authorized removal path and verify the native outcome.
+That does not imply that every name, description or owner edit must generate a membership change.
 
-Do not promise that a corrected definition automatically cleans up every previous grant.
+Consider another independent repair. An older version wrongly included Bulk Export, and the selected holder received that profile through a direct profile request, without a role or lifecycle requirement. Removing Export from the definition and applying relevant processing can leave the earlier entitlement individually held.
 
-## Hand ownership over without abandoning existing work
+The definition is corrected, but current native export still needs investigation. Establish current need and grant history, arrange any separately approved removal, then verify the actual account and capability.
 
-Leela is moving to another team. The package remains necessary.
+Do not turn this into a universal “definition changes never remove access” rule. Configured **role access removal propagation** can deprovision access, meaning remove native rights, after specified definition changes involving an enabled role and its associated profiles. Inspect the origin, role state, operation and supported configuration.
 
-A proper handover establishes who accepts responsibility, confirms the actual owner references, checks the package contents and wording, and reviews the processes that depend on ownership.
+A corrected explanation or definition alone is not proof that every prior exposure ended.
 
-Pending work deserves its own inspection. If an existing approval still shows Leela as assignee, the new owner field is not evidence that the task has moved. Use the supported reassignment or administration mechanism for that work and confirm the result.
+## Complete the handover by checking outstanding work
 
-A certification and a manual provisioning task can have different reassignment mechanisms. Do not assume that changing one ownership field rewrites every active assignment.
+The current primary owner is moving to another team. The additional owner will take over primary responsibility, and the package remains necessary.
 
-If a governance group provides additional coverage, maintain its membership. Governance-group membership does not automatically update merely because a member's lifecycle state becomes inactive or the identity is disabled. A group name that sounds like a functioning team is not proof of current coverage.
+The incoming owner confirms the business purpose and current native permissions, accepts responsibility, and checks the intended owner references and dependent decision configurations. The old owner's reference is updated according to the approved handover.
 
-Before closing the handover, check a representative decision path against the intended configuration and inspect outstanding work. Replacing a name is only part of transferring responsibility.
+Now inspect pending work. In this supplied variation, an already pending profile-request approval still records the former primary owner as its assignee.
+
+The profile's new owner reference does not establish that this particular item moved. The item's own assignment is the evidence that matters.
+
+An authorized administrator uses the supported request-review reassignment mechanism. A fresh inspection shows the incoming owner assigned to that review and a recorded reassignment. The item is still awaiting a decision; changing its reviewer did not approve it.
+
+That resolves the selected outstanding assignment. It does not establish that every request, certification or manual task was transferred. Review those items through their own supported mechanisms and confirm their actual results.
+
+If a governance group provides coverage, maintain its membership. Changes from active to inactive lifecycle state, or identity disablement, do not automatically update governance-group membership.
+
+A group name that sounds like a functioning team is not evidence that its current members can provide coverage. Check the actual membership and relevant work assignments.
+
+Before closing the handover, check a representative decision path and outstanding items against the intended arrangement. Responsibility has transferred when accepted ownership, maintained access meaning and actual decision coverage agree.
 
 ## Work through the evidence
 
-### Case 1: The description says West only
+### 1. The description says West only
 
-**Facts:** The profile contains Case Readers and Review Notes. The native rules use each account's assigned queue. The description is changed to “West only,” but no application or selection configuration changes.
+The two groups use each account's assigned queue. Only the profile description changes to “West only”; no recipient-selection or application configuration changes.
 
-Has the edit restricted the package to West?
+Has the edit restricted this package to West?
 
-**Reasoning:** No. The text does not alter recipient selection or native queue assignment. Verify both separately. Correct the description to match the actual boundary, or make an approved technical change that genuinely establishes the intended West-specific design.
+**Reasoning:** No. Text changes neither recipient selection nor native queue assignment. Check both. Correct the description to match the actual boundary, or make an approved technical change that genuinely implements a justified West-specific design.
 
-### Case 2: Leela becomes primary owner
+### 2. A new primary owner has no application account
 
-**Facts:** Leela's identity is saved as primary owner. She has no EvidenceHub account. No access assignment is submitted.
+An identity is saved as primary owner. The person has no Cases account, and no access assignment is initiated.
 
-Should the ownership edit give her Case Readers and Review Notes?
+Should the edit give them Readers and Review Notes?
 
-**Reasoning:** No. The field records responsibility for the package, not an account membership. If Leela needs application access for separate work, establish that need and use the relevant assignment process.
+**Reasoning:** No. The reference records responsibility, not native membership. If they need application access for separate work, establish that need and use the appropriate supported assignment route.
 
-### Case 3: The request uses Manager only
+### 3. The configured reviewer is Manager only
 
-**Facts:** The configured profile-request reviewer is Manager. Leela is primary owner and Anil is additional owner. No other owner-review stage is supplied.
+The profile has a primary and additional owner. The supplied request configuration contains only Manager, with no additional owner-review stage.
 
-Does their ownership add two more required approvals?
+Does ownership add two more required approvals?
 
-**Reasoning:** No. Inspect the actual configured chain. Ownership makes them available for owner-based configuration; it does not insert reviewer stages into this Manager-only example.
+**Reasoning:** No. Inspect the actual chain. Owner references support configured owner-based stages; they do not insert stages into this Manager-only example.
 
-### Case 4: All Owners has two people
+### 4. One All Owners stage has two eligible owners
 
-**Facts:** A different configuration uses one All Owners stage. Leela and Anil are the only owners. Anil approves that stage.
+The only owners are the primary and additional identity. The additional owner approves the All Owners stage.
 
-Must Leela also approve because the option says All Owners?
+Must the primary owner also approve that stage?
 
-**Reasoning:** No. Any one primary or additional owner can approve this stage. If the policy requires separate decisions, the configuration must express them. Do not infer a second decision from the option's name.
+**Reasoning:** No. Any one primary or additional owner can approve it. Separate required decisions need explicit configured stages; unanimity does not follow from the option's name.
 
-### Case 5: The package keeps its ID after a rename
+### 5. A rename preserves the profile identifier
 
-**Facts:** Before and after the rename, the profile is `AP-3303` with the same source and two entitlement references. Only its name and wording change.
+The identifier, source and two entitlement references remain the same. Only the name and description change.
 
-Does a new label prove new native access was delivered?
+Does the new label prove new native access was delivered?
 
-**Reasoning:** No. The supplied record evidence shows a naming and description edit to the same profile. Native access requires separate account and operation evidence. Preserve the ID when tracing historical references rather than matching names alone.
+**Reasoning:** No. The facts establish an edit to the same profile. Native access needs separate operation/account evidence. Trace the identifier when reviewing history, not only the display name.
 
-### Case 6: The entitlement now permits export
+### 6. Readers now permits bulk export
 
-**Facts:** The native application adds bulk export to `EH-3301`. The profile still references `E-3301` and `E-3302`; its description still says “Does not provide bulk export.”
+The application adds export to the Readers group. The profile keeps the same references and still says it does not provide export.
 
-Is the unchanged entitlement list enough to keep that exclusion trustworthy?
+Does the unchanged list keep that exclusion trustworthy?
 
-**Reasoning:** No. The capability behind a referenced entitlement changed. Confirm the native permission change, assess affected holders, and review the package and description. Renaming the profile does not remove export. An approved correction must address the native right or the selected access design.
+**Reasoning:** No. The native capability behind a reference changed. Confirm the permission change, review affected holders and correct the justified design and wording. Renaming the profile cannot remove export.
 
-### Case 7: The new owner cannot find an old approval
+### 7. The former owner is still assigned pending work
 
-**Facts:** Anil replaces Leela as primary owner. An already pending approval still records Leela as assignee.
+The new primary owner is correctly recorded, but an existing approval still names the former owner as assignee.
 
-Can the engineer close the handover because the profile owner is correct?
+Can you close the handover on the owner-field evidence alone?
 
-**Reasoning:** No. Responsibility metadata and existing task assignment are separate evidence. Inspect and, where authorized, reassign that work through its supported mechanism. Confirm who can act on the pending item rather than assuming retroactive rerouting.
+**Reasoning:** No. Inspect and, where authorized, reassign that specific work through its supported mechanism. Confirm the resulting assignee and decision state. Neither a new owner field nor reassignment proves that the request was approved.
 
-### Case 8: Export was removed from the definition
+### 8. Export was removed from the profile
 
-**Facts:** An older package wrongly included `EH-3399`. The team removes its reference and corrects the description. Current native evidence still shows an existing holder has `EH-3399`.
+The holder obtained the old package through a direct profile request, with no role or lifecycle requirement. Export is removed from the definition and relevant processing applies the change. Current native evidence still shows Export.
 
-Has correcting the package proved that the holder can no longer export?
+Has the definition correction proved the holder can no longer export?
 
-**Reasoning:** No. Removing an entitlement from a profile does not itself remove that entitlement from existing holders. Investigate the holder's requirement and grant history, arrange any separately approved removal, and verify the application's resulting access. The definition repair and the holder repair are different work.
+**Reasoning:** No. Under these facts, the earlier entitlement can remain individually held. Establish continuing need and origin, carry out any separately approved removal and verify native access. A role-driven propagation scenario would need its own configuration evidence.
 
-## Try the same reasoning with a reporting package
+## Try the same reasoning with reporting access
 
-A fictional reporting application has two proposed profiles on the same Production source. One permits reading assigned-region summary reports. The other permits exporting all-region detailed records.
+Two proposed profiles share a reporting Production source. One permits reading assigned-region summary reports. The other permits exporting all-region detailed records.
 
-The team proposes calling both **Reporting access**, giving both the description “For Finance,” and recording the reporting platform's integration engineer as owner. The engineer can maintain the connector but has not accepted responsibility for deciding appropriate data use.
+Both are named Reporting access and described as “For Finance.” The integration engineer is proposed as owner. They maintain the connector but have not accepted responsibility for appropriate data use.
 
-Explain what you would change and what you would verify before either package is used.
+What would you change and verify before using these packages?
 
-Give the choices names that distinguish the work and data scope, such as **Regional summary reading** and **All-region detail export**, with the system and environment clear in the catalog. State the real capabilities and supported exclusions. “For Finance” alone does not explain the difference or enforce eligibility.
+**Reasoning:** Give the choices distinct purpose and scope, such as Regional summary reading and All-region detail export, with system and environment clear in the catalog. Explain actual actions, data boundaries and supported exclusions. “For Finance” alone supplies neither that distinction nor an eligibility control.
 
-Confirm that the selected entitlements and native permissions actually match those descriptions. A friendly label cannot make an all-region right regional.
+Verify the selected entitlements and native permissions. An all-region permission cannot become regional through wording.
 
-Establish an accountable owner who understands the access purpose and can obtain the necessary technical evidence. The integration engineer can remain the right contact for delivery questions without automatically becoming the business decision-maker. If the engineer genuinely accepts both responsibilities and is qualified to perform them, document that arrangement rather than ruling it out by job title.
+Establish an owner who accepts responsibility for the access purpose and can obtain the required technical evidence. The integration engineer can remain the delivery contact. If they are suitable for both responsibilities and accept them, document that arrangement rather than ruling it out by job title.
 
-Then inspect the actual request or assignment controls, the reviewer configuration and existing pending work where relevant. Owner metadata alone does not determine any of those outcomes.
+Then inspect the actual request or assignment controls, reviewer configuration and relevant outstanding work. Owner metadata alone establishes none of those outcomes.
 
-A dependable package lets you connect its stated purpose to exact access references, current native permissions and someone who accepts responsibility for keeping those facts consistent.
+When reviewing a package, connect its stated purpose to the exact entitlement references, current native permissions and accepted owner responsibility. Use the actual decision or operation records to establish any approval, delivery or reassignment.

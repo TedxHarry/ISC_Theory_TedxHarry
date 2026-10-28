@@ -1,0 +1,11 @@
+[HR approves the business value]
+                 |
+[Producer delivers the approved record]
+                 |
+[ISC collects the source account]
+                 |
+[Profile mapping supplies identity value]
+                 |
+[Supported target update]
+                 |
+[Human check: actual target expiry]

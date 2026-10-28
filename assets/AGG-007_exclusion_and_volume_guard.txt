@@ -1,0 +1,11 @@
+[1,000 external accounts still exist]
+                 |
+[Active-only read returns 850]
+                 |
+[150 accounts absent from result]
+                 |
+[15% missing / 10% limit]
+                 |
+[Run canceled; warning reported]
+
+[Engineer checks app-user separately]

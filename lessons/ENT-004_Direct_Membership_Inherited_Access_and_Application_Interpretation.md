@@ -1,320 +1,324 @@
 # The membership was removed. Why does access still work?
 
-Devi, employee number `100404`, uses account `rd-100404` in ReportDesk. An approved change removes that account from Support Team.
+An approved change removes an employee's account from Support Team. Current application evidence confirms that membership is gone, but the account can still read a West-region report.
 
-Fresh application evidence confirms the membership is gone. Yet Devi can still read a West-region report.
+Does the successful read mean the removal failed?
 
-Does that mean the removal failed?
+It depends on how the account receives permission to read. Removing one membership can interrupt one route while leaving another route in place. To understand the result, we need to follow the actual relationships and the rule that uses them.
 
-Not necessarily. A permission can be reached through more than one relationship. We need to identify what was removed and which route still allows the action.
+## What exactly is connected to what?
 
-The ReportDesk system, records, policies, changes and results below are fictional. Supported account and group reads, correct identity association and the stated hierarchy representation are supplied facts. Every allowed or denied result uses a fresh authorization check against the stated current relationships, not an old signed-in session. No actual tenant or application is changed.
+An **account** is the record through which a person or another entity uses an external system. A **group** collects members, which can include accounts and, where supported, other groups.
 
-## First distinguish the relationship from the permission
+A **membership** connects a member to a group. A **permission** allows an action on a resource, such as reading a particular report.
 
-An **account** is a record in an external system. A **group** collects members, such as accounts or other supported groups.
+An account does not receive a permission merely because a relationship can be drawn on a diagram. The application must use that relationship when deciding whether to allow the action.
 
-A **membership** connects a member to a group. A **permission** allows an action on a resource, such as reading a report.
+Let's use one account in a reporting application. Before the approved removal, its **direct memberships** are Support Team and Exception Readers. Direct means the account itself is a member of the group, without passing through another group.
 
-Those concepts connect, but they are not interchangeable. An application can use memberships when deciding whether an account has a permission.
+The account is not a direct member of Report Readers.
 
-An **entitlement** is an access right represented in SailPoint Identity Security Cloud (ISC). A source group can be represented as an entitlement even when that group carries more than one permission.
+The application also supports a group-to-group relationship: Support Team is a member of Report Readers. These facts give us two kinds of connection: account-to-group and group-to-group.
 
-A **source** is ISC's configured representation of a system or collection of account data. Our source is ReportDesk Production. It represents this application directly, not an unrelated directory whose groups the application may or may not use.
+The records, policies, changes and results here are hypothetical. Supported reads, correct account ownership and the stated relationships are supplied. Each allowed or denied outcome is a fresh permission decision based on the stated current relationships. No other grant, restriction or separate activation requirement is included.
 
-Devi's account belongs on her ISC **identity**, the record representing her as a person. **Account correlation** establishes that account-to-identity association. The correct association is verified here; the digits in a username don't prove ownership.
+## How can the account reach a group it did not join directly?
 
-The permission question is still about the account used for the report action, not every account that might belong to Devi.
+Follow the first connection from the account to Support Team. Then follow Support Team's membership in Report Readers.
 
-## What does direct membership mean?
+That group-to-group relationship is **nested membership**: one group is a member of another.
 
-An account is a **direct member** when it belongs to a group through an account-to-group relationship, without passing through another group.
+Under this application's supplied interpretation, the account is an **indirect member** of Report Readers through Support Team. There is a route to Report Readers, but no separate direct account-to-Report Readers membership.
 
-Before the removal, the current native account record has these direct memberships:
+**Transitive membership** means following a chain of membership relationships beyond the first direct connection. A supported chain can have more than one intermediate group.
 
-- G-8401, Support Team.
-- G-8403, Exception Readers.
+Why organize access this way? An application can let a team receive a shared set of permissions by making its team group a member of the group carrying those permissions. Each account need not receive another direct membership for that same route. Whether this arrangement actually grants access still depends on the system's rules.
 
-**Native** means information or behavior in the external system's context. These identifiers refer to ReportDesk groups, not ISC entitlement object IDs.
+The direction matters. Support Team belongs to Report Readers. That does not mean every member of Report Readers belongs to Support Team. A person could reach the broader group through a different team or a separate direct membership.
 
-The account is not a direct member of G-8402, Report Readers.
+You may see the containing group called a parent and the contained group called a child. Before relying on those labels in an export or configuration, check what the field contains. “Groups containing this group” points in the opposite direction from “groups contained by this group.”
 
-That last fact does not yet answer whether the account can receive permissions associated with G-8402. We also need the group-to-group relationships and the application's rules.
+## Which rule turns the route into permission?
 
-## Now follow the nested relationship
+**Authorization** is the decision about whether an account may perform an action on a resource. **Effective access** is what that account can actually do under the conditions being evaluated.
 
-ReportDesk allows one group to be a member of another. G-8401, Support Team, is a member of G-8402, Report Readers.
+For this reporting application, the owner supplies these rules:
 
-That is **nested membership**: a group participates as a member of another group.
-
-Devi's account is directly in Support Team. Support Team is in Report Readers. Through that chain, the account is an **indirect member** of Report Readers under ReportDesk's supplied membership interpretation.
-
-**Transitive membership** means following a chain of membership relationships rather than checking only one direct relationship. A chain can extend beyond one intermediate group when the system supports it.
-
-**Inherited access**, as used here, means permission the application grants through those indirect group relationships. It does not mean the account received a new, separate direct membership in every group along the chain.
-
-The direction matters:
-
-“Support Team is a member of Report Readers” does not mean “every Report Readers member belongs to Support Team.”
-
-A group that contains another group is sometimes called a parent, while the contained group is called a child. Before using those labels in a configuration or export, establish what the field actually represents. A list of containing groups and a list of contained groups point in opposite directions.
-
-For this fictional source, a group field named parentGroups lists the groups containing it. On G-8401, that field contains G-8402. That field name and direction are part of the supplied integration contract, not a universal ISC attribute naming rule.
-
-## The application decides whether the chain grants anything
-
-**Authorization** is the decision about whether an account may perform an action on a resource. **Effective access** is what the account can actually do under the conditions being evaluated.
-
-The application owner confirms this ReportDesk policy:
-
-| Supplied relationship or condition | Meaning for this application |
+| Relationship or condition | Effect in this application |
 |---|---|
-| Membership reaching G-8402, Report Readers | Permits report reading, including through the supported nested chain |
-| Direct membership in G-8403, Exception Readers | Independently permits report reading |
-| Account businessUnit West | Limits either reading route to West-region reports |
-| Account enabled and successful sign-in | Required before either reading route can be used |
+| Membership reaching Report Readers | Permits reading, including through the supported Support Team chain |
+| Direct Exception Readers membership | Independently permits reading |
+| Account business unit West | Limits either reading route to West-region reports |
+| Enabled account and successful sign-in | Required to use either reading route |
 
-The account's businessUnit is West. An **attribute** is a named piece of information, such as businessUnit on the account.
+The account's business unit is West. An **attribute** is a named piece of information on a record, such as the account's business unit.
 
-The two reading routes are alternatives. Either one can satisfy the group-based part of the policy. This is **OR** logic: route A or route B is sufficient for that part.
+**Inherited access**, as used here, is permission received through an indirect membership route that the application honors. Support Team leads to Report Readers, and the application accepts that chain for reading. That is why this account can inherit reading permission without joining Report Readers directly.
 
-The account and region conditions are still required. Those are **AND** conditions: the grant route does not override the other required checks.
+Exception Readers supplies another route. It does not depend on Support Team.
 
-In this example, neither route permits editing reports. Exception Readers does not bypass the West-region boundary simply because the word Exception appears in its name.
+These are alternatives, expressed as **OR** logic: either reading route can satisfy the group-based part of the rule. If both exist, removing one still leaves the other.
+
+The remaining conditions use **AND** logic: the account must also be enabled, sign-in must succeed, and the selected report must fall within the West-region boundary. A reading route does not override those requirements.
+
+Neither group permits editing. The word Exception does not make Exception Readers exempt from the region rule.
 
 ```text
-Path A: nested membership route
-  rd-100404
+Route A: indirect reading
+  Selected account
       | direct member of
       v
-  G-8401 Support Team
+  Support Team
       | group is a member of
       v
-  G-8402 Report Readers
+  Report Readers
       | application permits
       v
   Read West reports
 
-Path B: separate direct route
-  rd-100404
+Route B: independent reading
+  Selected account
       | direct member of
       v
-  G-8403 Exception Readers
+  Exception Readers
       | application permits
       v
   Read West reports
+
+Enabled + sign-in + region checks
+apply to both routes.
 ```
 
-Read each membership arrow as “is a member of.” The later arrows show the permission effect of the supplied application policy. They are not ISC provisioning steps.
+Read the membership arrows as “is a member of.” The later arrows show the permission effect of the supplied application rule. They are not SailPoint operations.
 
-The region, enabled-account and sign-in conditions apply to both paths even though they are not repeated at every arrow. Both paths end at the same selected action; they do not give the account two different copies of the report.
+Both routes lead to the same selected reading action, subject to the account and region conditions. They are separate ways to satisfy a requirement, rather than two copies of the report or two additional direct memberships in Report Readers.
 
-## Don't assume every application follows nested groups
+## Now remove the account's Support Team membership
 
-The same membership chain can have a different permission effect in a different system.
+The approved operation changes one relationship: selected account to Support Team.
 
-Suppose another application checks only direct membership in Report Readers. An account that belongs only to Support Team would not meet that application's direct-membership requirement, even if the group-to-group relationship exists.
+Fresh native evidence confirms that this direct membership is absent. **Native** means information or behavior in the external system's context.
 
-That outcome need not mean collection or provisioning failed. The application doesn't use the relationship in the way the proposed design expects.
+The account still directly belongs to Exception Readers. Support Team still exists and remains a member of Report Readers. Other Support Team members retain their relationships. No other membership, policy or account-condition change occurs in this example.
 
-There are real product-specific boundaries. Microsoft Entra group-based assignment to enterprise applications does not cascade assignment to nested groups. That is a restriction on that assignment mechanism, not a statement that every Microsoft service treats group nesting identically.
+Route A no longer starts from this account. The account cannot use its former Support Team membership to reach Report Readers.
 
-For any integration, ask which permission decision consumes the group information and whether that decision supports nesting. Directory membership, application assignment and permission inside the application can be separate decisions.
+Route B still starts from the account because Exception Readers remains. The account is enabled, sign-in succeeds, and the selected report is in West. The supplied rule therefore allows a fresh read.
 
-A diagram showing a path is therefore not enough. You need evidence that the relevant system honors that path for the selected action.
+The continued read has an explanation consistent with the verified removal. It does not require us to assume the operation failed.
 
-## What can ISC represent?
+**Provisioning** carries out supported account or access changes. A requirement to remove access, an attempted operation and a confirmed native result are different pieces of evidence. Here, we have confirmation of the selected membership removal, followed by a separate check of the reading outcome.
 
-A **connector** provides the supported integration used to read data and perform supported changes.
+If the approved requirement was “remove this account from Support Team,” the supplied evidence establishes success.
 
-**Aggregation** collects external data into ISC. Account collection can supply membership values; entitlement collection can supply group definitions and supported relationships between access objects.
+If the requirement was “eliminate this account's report-reading capability,” the remaining Exception Readers route means that broader outcome has not been achieved. Review that requirement and the remaining access before deciding on another change.
 
-A **schema** describes represented attributes and their designated uses. An **entitlement type** identifies a supported kind of access object.
+## What changes when a route or condition changes?
 
-Here, the account attribute groups is marked as entitlement information, supports multiple values and is connected to the groups entitlement type. Its source values identify the referenced groups. The group schema identifies each group through groupKey and displays its label.
+Each row below is a separate variation. The account is enabled, sign-in succeeds, its business unit is West, it has no direct Report Readers membership, and no other grants exist.
 
-The supplied read contract says groups contains direct account memberships. The group data separately supplies the G-8401-to-G-8402 relationship. Supported collection and schema interpretation represent that hierarchy in ISC.
+| Current memberships and attempted action | Result under the supplied rules |
+|---|---|
+| Support Team and Exception Readers; read West | Allowed through both routes |
+| Exception Readers only; read West | Allowed through the independent direct route |
+| Support Team only; read West | Allowed through the supported nested route |
+| Neither group; read West | Denied because neither reading route exists |
+| Both groups; read East | Denied because the resource is outside the West boundary |
+| Both groups; edit West | Denied because neither route permits editing |
 
-ISC supports representing hierarchical entitlement relationships for applicable source types. A group schema can expose a setting called hierarchyAttribute identifying the field supplying hierarchy references. The actual source support, identifiers and relationship direction still need verification.
+The answers depend on both the relationships and the application rule. Correct memberships can coexist with a correctly denied action.
 
-Merely adding a plausible field name does not create native nesting, teach a connector to read unsupported relationships or change the application's authorization rules.
+This is also why a report saying “has Report Readers” is incomplete for an investigation. Is that a direct membership, an indirectly reached group or simply a displayed access requirement? What action was attempted, through which account, on which report?
 
-Also check whether the collected membership list is direct-only or already expanded. An expanded list can include indirectly reached groups. Seeing G-8402 in such a list does not establish a separate direct account-to-G-8402 membership.
+## Would another application honor the same chain?
 
-Do not count every displayed group as an independently writable grant without understanding what the representation contains.
+Suppose another application accepts only direct Report Readers membership. Our account belongs only to Support Team, and Support Team still belongs to Report Readers.
+
+The chain exists, but it does not meet that application's direct-only rule. Drawing the same relationship does not make the permission outcome the same.
+
+A denial in that situation need not indicate failed collection or failed provisioning. The proposed access design relies on a relationship the application does not accept for that decision.
+
+There is a real example of this boundary: Microsoft Entra group-based assignment to enterprise applications does not cascade assignment to nested groups. That statement concerns this assignment mechanism. It should not be generalized to every Microsoft resource or group-based permission.
+
+For an integration, identify the decision consuming the membership information. Directory membership, assignment to an application and permission inside that application can be different decisions. Check which one supports nesting.
+
+## How does ISC learn about these relationships?
+
+An **entitlement** is an access right represented in SailPoint Identity Security Cloud (ISC). A source group can be represented as an entitlement without every member holding it directly.
+
+A **source** is ISC's configured representation of a system or collection of account data. Reports Production represents the reporting application directly in this example. A **connector** provides its supported integration for reading data and making supported changes.
+
+An **identity** is ISC's representation of a person or another entity. **Account correlation** matches and associates a collected account with the appropriate identity. The selected account is correctly associated with its owner here. That association identifies whose recorded access we are reviewing; authorization still concerns the account used.
+
+**Aggregation** collects external data into ISC. Account collection can supply membership values; entitlement collection can supply group definitions and supported relationships between them.
+
+A **schema** describes the attributes represented for a record kind and their designated uses. Our supplied account schema has a field named `groups`. Its **Entitlement** designation tells ISC to interpret the values as access information. Its **Multi-Valued** designation allows several group references rather than only one.
+
+An **entitlement type** identifies a supported kind of access object. The native type here is `groups`, and the account field's **Type** setting points to it. The group schema selects `groupKey` for the **Entitlement ID** and `label` for the **Entitlement Name**.
+
+Those selections connect exact native values to their represented group records. For example, `support-team` is the value identifying Support Team. An account membership containing that value points to that group's details in the correct source and type.
+
+This integration supplies a direct-only account list. Before removal, `groups` contains `support-team` and `exception-readers`, not a direct `report-readers` membership.
+
+The group data supplies the other relationship. A field named `parentGroups` lists groups containing the group being described. On Support Team, it contains `report-readers`. This field name and direction belong to the hypothetical supported integration; they are not universal ISC names or parent/child display conventions.
+
+ISC can represent hierarchical entitlement relationships for applicable sources. A group schema's `hierarchyAttribute` setting names the field supplying hierarchy references. In our supplied source, the supported mapping uses `parentGroups` for the stated containing-group references. The source capability, actual identifiers, field direction and supported interpretation must agree.
+
+Adding a field name to a schema does not create a native group relationship or give a connector an unsupported capability.
 
 ```text
-Collection evidence
+Collected representation
   Native account + group records
         |
-        | supported reads and mapping
+        | supported reads and schema
         v
   ISC membership + hierarchy view
 
-Authorization evidence
-  Account used + current relationships
+Application authorization
+  Account + current relationships
         |
-        | ReportDesk permission policy
+        | application's permission rules
         v
-  Action/resource allowed or denied
+  Action on resource allowed or denied
 
-A represented edge is not a new grant.
-A read is not a permission change.
+A represented link is not a new grant.
+Reading a link does not change it.
 ```
 
-The two sections are evidence boundaries, not a required sequence of backend jobs. ISC's view describes collected relationships. ReportDesk makes the permission decision in the supplied example.
+The first section shows how supported reads and schema interpretation supply ISC's view. The second shows the application using current relationships and its permission rules to decide an action. These are responsibility boundaries, not a required sequence of backend jobs.
 
-A relationship can exist natively even when the integration hasn't collected it. Conversely, an old represented relationship can remain visible after a native change until the relevant evidence is updated. Match observation times and coverage before deciding which state a view describes.
+A native relationship can exist even if it was not collected into ISC. An older represented relationship can also remain visible after a native change. Check the observation time and read coverage before treating a view as current evidence.
 
-## Removing one route doesn't remove the other
+## Does a displayed group prove a direct membership?
 
-Return to the approved change.
+Not always. The answer depends on the read's meaning.
 
-Before it, rd-100404 directly holds G-8401 and G-8403. It reaches G-8402 indirectly through G-8401.
+A **direct-only list** contains the account's own group memberships. An **expanded list** also includes groups reached indirectly by following supported relationships.
 
-The authorized operation removes the account's direct G-8401 membership. Current native evidence verifies that exact relationship is absent. The group G-8401 still exists and remains a member of G-8402; other Support Team members are unaffected by this selected account change.
+If an expanded list includes Report Readers, it may be showing the Support Team route. That does not establish a separate direct membership available for removal.
 
-Devi's account now directly holds only G-8403.
+Inspect the native direct relationship and the chain behind the displayed item. A derived relationship is not automatically an independently writable grant.
 
-Path A no longer starts from this account. Path B still does. Reading a West-region report therefore remains allowed under the supplied policy.
+Likewise, if ISC's collection omitted the native Support Team-to-Report Readers relationship, that omission would leave its explanation incomplete. It would not remove the native relationship or force the application to stop using it.
 
-The successful read does not contradict the verified G-8401 removal.
+## Which relationship would a proposed correction change?
 
-Compare these independent variations. In each row, the account is enabled, sign-in succeeds and all other grant paths are excluded unless stated.
+Removing an account from Support Team and removing Support Team from Report Readers are different operations.
 
-| Current account memberships and selected action | Result under the supplied policy |
-|---|---|
-| G-8401 and G-8403; read West report | Allowed through both routes |
-| G-8403 only; read West report | Allowed through the independent direct route |
-| G-8401 only; read West report | Allowed through G-8401 to G-8402 |
-| Neither G-8401 nor G-8403, no direct G-8402; read West report | Denied because neither reading route remains |
-| G-8401 and G-8403; read East report | Denied because the West-region boundary still applies |
-| G-8401 and G-8403; edit West report | Denied because neither group grants editing |
+The account removal affects that account's connection. The group-to-group change affects a shared relationship and can change the route for other Support Team members.
 
-These outcomes follow from the stated ReportDesk rules, not a universal permission-combining algorithm. Another system may apply different grant, restriction or denial rules.
+The wider effect of a change is sometimes called its **blast radius**: the people, accounts and capabilities it can affect beyond the selected account. A ticket for one person does not make a shared group change private to that person.
 
-If the approved requirement was only “remove Support Team membership from this account,” the supplied evidence establishes that outcome.
+Support Team may also supply other legitimate permissions. Before removing it to interrupt reading, review those permissions and the approved requirement. A correction must account for required access that the proposed change could disturb.
 
-If the requirement was “eliminate this account's report-reading capability,” the remaining G-8403 route means that broader outcome has not been achieved.
+Similarly, adding direct Report Readers membership just to make the screen easier to interpret creates another access path. It needs its own authorization and later removal handling.
 
-Name the requirement before declaring the work complete.
+An **access profile** bundles related entitlements from one source. An **ISC role** groups access for a business purpose and can contain access profiles or direct entitlements.
 
-## Which relationship would a correction affect?
+These objects express access requirements. They are not the source's group-to-group membership relationship. “Assigned through an ISC role” does not prove native nesting, and changing the native hierarchy does not establish that every ISC requirement has been removed.
 
-**Provisioning** performs supported account or access changes. A removal request, an attempted operation and a confirmed current native relationship are different evidence.
+Before attempting to remove an indirectly displayed item, establish the supported action and exact relationship it would change. Do not assume one removal command eliminates every path supporting that item.
 
-If an account receives Report Readers indirectly, don't assume a request to remove that displayed item will remove every supporting relationship. Identify the supported action and the actual relationship it changes.
+## What if the current result still does not fit?
 
-There is a practical difference between removing rd-100404 from G-8401 and removing G-8401 from G-8402.
+Start with the account, action and resource. “The person still has access” can hide a different account or a report governed by different rules.
 
-The first changes one account's membership. The second changes a shared group relationship. It can affect other accounts reaching Report Readers through Support Team.
+Trace current direct memberships, group-to-group relationships, the policy using them and resource restrictions. Check whether the evidence covers all those links, rather than just group names.
 
-That wider effect is the change's **blast radius**: the people, accounts and capabilities it can affect beyond the selected example.
+If every known route is reportedly absent but reading still succeeds, keep the unanswered question visible. The evidence may omit another grant or describe a different observation time.
 
-Support Team could also carry other legitimate permissions. Before removing it to interrupt report access, review those permissions and the approved requirement. A valid security outcome doesn't justify an unrelated loss of required access.
+A **session** is an ongoing signed-in interaction. The application may be evaluating information obtained for that session rather than the membership report you just inspected. Establish how it obtains and refreshes that information. An older session does not prove a new grant exists, and there is no universal waiting period to prescribe.
 
-Do not flatten a nested relationship by adding direct G-8402 membership just to make a screen easier to interpret. That creates another native access path and can make later removal harder.
+The supplied reading checks in our example deliberately use the stated current relationships. They do not rely on old-session behavior or an invented refresh delay.
 
-An **access profile** bundles entitlements from one source. An **ISC role** groups access for a business purpose. Those objects can express access requirements, but they are not themselves the source's group-to-group membership relationship.
+A denied action also needs interpretation. The wrong account, resource restriction or a direct-only policy can explain denial while the collected membership is correct. A relationship defect, collection gap and policy outcome require different corrections.
 
-An ISC requirement for a group and a native nested route to that group need their own evidence. Don't interpret “assigned through a role” as proof of native group nesting, or assume editing the native hierarchy removes every ISC requirement.
+## Follow the path before choosing the answer
 
-## When the visible result doesn't fit
+Each question supplies an independent variation on the relationships and rules.
 
-Trace the account, action and resource first. “Devi still has access” can conceal a different account or a different report.
+### 1. Report Readers is absent from the direct list
 
-Then inspect each part of the proposed path: current direct memberships, group relationships, the permission rules that use them and the relevant resource conditions. Check whether the read covered all needed groups and relationships, not just their names.
+The account directly holds Support Team only. Support Team belongs to Report Readers. The application honors that nested route, and the enabled-account, sign-in and West conditions are satisfied.
 
-If the application still permits an action after every known route is reportedly removed, record the gap. The evidence may be incomplete. The application may be evaluating different membership or session information than the report you inspected.
+Must another direct Report Readers membership be added?
 
-A **session** is an ongoing signed-in interaction. Establish how the application obtains and refreshes the information used for that session. Don't assume an old session proves a new grant exists, or prescribe a universal waiting period. Our supplied checks deliberately exclude old-session evidence.
+**Reasoning:** No. The supplied nested route already satisfies the reading rule. Absence from the direct list is expected. Another grant would create an additional access path that needs authorization and removal handling.
 
-Equally, a denied action doesn't prove every membership is missing. A resource restriction, wrong account or direct-only application policy can explain a denial while the membership records are correct.
+### 2. One removal is confirmed
 
-Separate a relationship defect, a collection gap and a policy outcome. They require different corrections.
+Current native evidence confirms removal of Support Team from the account. Exception Readers remains, and a fresh West read succeeds.
 
-## Work through the paths
+Does the read prove that the selected operation failed?
 
-Each case supplies its own relevant facts. Use the membership direction and application rule before choosing an explanation.
+**Reasoning:** No. Exception Readers supplies the remaining route. The selected removal succeeded, while a broader requirement to eliminate reading would remain unmet. Review that requirement and the legitimate remaining access before another change.
 
-### Case 1: The direct Readers membership is absent
+### 3. The application accepts direct membership only
 
-**Facts:** rd-100404 directly holds G-8401 only. G-8401 is a member of G-8402. ReportDesk honors that nested route. The account meets the West-region and sign-in conditions.
+Another application's rule accepts only direct Report Readers membership. The account has Support Team only, with the same nested relationship. No other grant exists.
 
-Must the account also be added directly to G-8402 to read a West report?
+Does the chain establish authorization?
 
-**Reasoning:** No. The supplied nested path already satisfies the reading rule. Absence of a direct G-8402 membership is expected, not a missing grant. Adding it would create an additional path that needs its own authorization and later removal handling.
+**Reasoning:** No. Its direct-only rule does not accept the indirect path. Review the approved design and supported assignment path rather than assuming the hierarchy proves a provisioning failure.
 
-### Case 2: One removal is confirmed
+### 4. Someone follows the arrows backward
 
-**Facts:** The account's G-8401 membership is confirmed removed, but G-8403 remains. A fresh West reading check succeeds.
+Support Team is a member of Report Readers. Another account belongs directly to Report Readers but not Support Team. No reverse or additional relationship is supplied.
 
-Does this prove the G-8401 operation failed?
+Does that make the account a Support Team member?
 
-**Reasoning:** No. G-8403 explains the remaining capability. The selected membership removal succeeded; a broader requirement to remove reading would still be unmet. Review that broader requirement and the remaining legitimate grants before proposing another change.
+**Reasoning:** No. Membership in the containing group does not establish membership in its contained groups. Follow the actual member-to-containing-group direction.
 
-### Case 3: Another application requires direct membership
+### 5. A person's ticket leads to a shared change
 
-**Facts:** A different application's access policy accepts only direct G-8402 membership. The account has G-8401 only, and G-8401 belongs to G-8402. No other grant exists.
+Many accounts belong to Support Team. A proposed correction removes Support Team from Report Readers instead of changing the selected account's membership.
 
-Does the chain establish authorization for that application?
+Is the proposed effect limited to that account?
 
-**Reasoning:** No. Its direct-only rule does not accept this indirect route. Verify the approved access design and supported assignment path instead of assuming a hierarchy display proves a provisioning failure.
+**Reasoning:** No. The shared relationship can support other members' access. Review affected accounts, permissions and requirements before authorization. The ticket's origin does not limit the operation's reach.
 
-### Case 4: The arrows are reversed
+### 6. An expanded list includes Report Readers
 
-**Facts:** G-8401 is a member of G-8402. Another account is directly in G-8402 but not G-8401. No reverse membership or other relationship is supplied.
+A report explicitly combines direct and indirect memberships. It includes Report Readers, but the account's native direct-membership record has not been inspected.
 
-Can that account be described as a member of Support Team?
+Does that prove a direct Report Readers grant exists to remove?
 
-**Reasoning:** No. Membership of the containing group does not establish membership of every group contained in it. Follow member-to-containing-group direction; don't reverse the relationship to manufacture access.
+**Reasoning:** No. The item may be derived from the nested route. Inspect the direct relationship and supporting chain under the read contract before treating it as independently writable.
 
-### Case 5: One edge change reaches other people
+### 7. ISC did not collect the hierarchy
 
-**Facts:** Many accounts belong to G-8401. A proposed correction for Devi removes G-8401 from G-8402 rather than changing Devi's account membership.
+The native Support Team-to-Report Readers relationship and the application's nested reading rule are verified. ISC has account and group records, but the selected collection omitted group-to-group relationships.
 
-Is the change limited to Devi because her ticket prompted it?
+Must the application deny reading because ISC lacks the link?
 
-**Reasoning:** No. The proposed operation changes the shared group-to-group relationship. Review other affected members, permissions and requirements before authorizing it. A person's ticket does not make a shared configuration change private to that person.
+**Reasoning:** No. Missing representation does not remove the native path. The application can still use it. Investigate supported hierarchy collection and interpretation instead of adding unnecessary access.
 
-### Case 6: The expanded list looks direct
+### 8. Both routes exist, but the report is East
 
-**Facts:** A source report explicitly combines direct and indirect memberships. It lists G-8402. No native direct-membership record for the selected account has been inspected.
+The account has both reading routes, its business unit is West, and a fresh attempt to read an East report is denied.
 
-Does the list prove there is a direct G-8402 membership to remove?
+Should aggregation be repaired to force an allowed result?
 
-**Reasoning:** No. The item may be present through expansion. Inspect the direct relationship and supporting chain under the source's read contract. Don't convert a derived relationship into an assumed independently writable grant.
+**Reasoning:** No. The denial follows the region condition. Either reading route can satisfy the grant part, but neither bypasses the resource boundary. Establish a legitimate new requirement before changing data or access.
 
-### Case 7: The hierarchy was not collected
+## Try a native role as the second route
 
-**Facts:** The native G-8401-to-G-8402 relationship and the application's nested reading rule are verified. ISC has account and group records, but its selected collection omitted group-to-group relationships.
+A document-system account directly belongs to Project Reviewers. That group belongs to Document Readers. The account also holds a separately assigned native document-reader role.
 
-Must the missing hierarchy in ISC make the application deny reading?
+A **native application role** is an access object or assignment defined by that application. It is different from an ISC role organizing business access.
 
-**Reasoning:** No. Missing representation doesn't remove the native relationship. The application can use the supplied native path while ISC's explanation is incomplete. Investigate supported hierarchy collection and interpretation, not an unnecessary new account grant.
+The application owner confirms that either the supported nested route or the separate native role permits reading the selected project. No other grants exist, and account, sign-in and resource conditions are satisfied.
 
-### Case 8: Memberships are right, but the resource is outside scope
+An approved operation removes the account from Project Reviewers. Fresh native evidence confirms removal, yet a fresh reading check succeeds.
 
-**Facts:** Both reading routes exist. The account businessUnit is West. A fresh request to read an East report is denied.
+Explain the remaining path and whether the selected removal failed.
 
-Should the engineer repair aggregation to force an allowed result?
+**Reasoning:** The separate native role still permits reading. The group membership can be successfully removed while that independent role assignment retains the capability. The two routes depend on different relationships.
 
-**Reasoning:** No. The denial matches the stated resource restriction. Neither grant bypasses the region condition. Establish a legitimate new business requirement before changing data or access to make the action succeed.
+Now consider a separate variation: the native role is absent, the document application accepts only direct Document Readers membership, and the account has none. In this variation, the account still directly belongs to Project Reviewers, which belongs to Document Readers.
 
-## Try a different access model
+Would that group chain establish reading?
 
-A document system has account doc-551. The account is a direct member of Project Reviewers. That group is a member of Document Readers. The account also has a separate, explicitly assigned document-reader role.
+**Reasoning:** No. The changed policy does not honor the nested route, and neither qualifying direct membership nor the separate role exists. The chain cannot provide an authorization rule the application does not use.
 
-The owner confirms that either supported nested membership or that separate native role permits reading the selected project. These are application objects, not ISC roles. There are no other grants, and the account meets the resource and sign-in conditions.
-
-An approved operation removes the account from Project Reviewers. Fresh native evidence verifies the removal, but reading still succeeds.
-
-Explain the remaining route and whether the selected removal failed.
-
-The separately assigned native document-reader role still grants reading. The Project Reviewers removal can be successful while the broader capability remains. The role and membership are different relationships.
-
-Now change one fact: the separate native role is absent, and this document system does not use nested groups for reading. Only direct Document Readers membership would qualify, and that membership is absent.
-
-The original group chain no longer establishes reading under that changed policy. The data structure alone cannot supply an authorization rule the application doesn't use.
-
-A useful explanation of inherited access names every relationship, its direction and the policy that turns the chain into a permission. A useful removal explanation then identifies the exact relationship changed, the paths still present and the evidence for the required outcome.
+An explanation of inherited access needs the relationship, its direction and the policy accepting it. An explanation of removal then needs the exact relationship changed, the paths remaining and evidence that the approved outcome was reached.

@@ -1,0 +1,16 @@
+[Collected account value]
+             |
+[Profile input and calculation]
+             |
+[Identity attribute value]
+             |
+[Configured consumers, if applicable]
+[Role / lifecycle / attribute sync]
+             |
+    if target change is required
+             |
+[Supported provisioning]
+             |
+[Target account result]
+
+[Engineer verifies required outcomes]

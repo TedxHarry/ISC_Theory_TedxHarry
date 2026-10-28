@@ -1,330 +1,297 @@
 # Why give a set of entitlements a name?
 
-Devi, employee `110101`, needs to enter supplier invoices in ReceiptWorks Production, a fictional application. Her account, `rw-110101`, can already read invoices for her assigned business unit. It cannot create invoice drafts.
+An employee needs to enter supplier invoices. Their application account already permits reading invoices for its assigned business unit, but cannot create invoice drafts.
 
-The application team confirms that invoice intake requires two groups in the application itself, or **native groups**:
+The application requires a combination of access, not just a group whose name sounds appropriate:
 
-- `RW-1101`, Invoice Readers, permits reading invoices within the account's assigned business unit.
-- `RW-1102`, Invoice Draft Entry, permits creating drafts within that unit, provided the account also has Invoice Readers.
+- Invoice Readers permits reading invoices within the account's assigned business unit.
+- Invoice Draft Entry permits creating drafts within that unit, provided Invoice Readers is also present.
+- A separate Payment Release group permits releasing payments. Invoice intake does not require it.
 
-A different group, `RW-1199`, permits releasing payments. Devi's intake work does not require it.
+These are supplied application rules. An **account** is the external record through which a person or another entity uses the system. A **group** collects members, such as accounts. A **membership** connects an account to a group. A **permission** allows an action on a resource, such as reading an invoice; the application uses membership when deciding which actions to allow.
 
-Now imagine the same requirement arriving for several new intake staff. Each request says “invoice access.” Someone has to translate those words into the right group combination every time.
+Now consider several legitimate invoice-intake requests. If each asks only for “invoice access,” someone must translate that phrase into the correct combination each time. One account might receive reading only; another might receive draft entry without its dependency.
 
-One person receives only the reading group. Another receives draft entry without its reading dependency. Someone else chooses a broad finance group because the name sounds suitable.
+A reviewed, reusable package gives those requests a clearer meaning.
 
-The problem is not a shortage of groups. It is the absence of a clear, reusable description of the access needed for this piece of work.
+The records, application rules, configurations and outcomes below are hypothetical. They are not a built-in connector specification or tenant observations.
 
-All systems, groups, requirements and observed results below are fictional. They illustrate access-profile reasoning, not a built-in ReceiptWorks connector or operations performed in an ISC tenant.
+## What does an access profile add?
 
-## Keep the technical permissions, but name the useful combination
+In SailPoint Identity Security Cloud (ISC), an **entitlement** represents an access right from a source, such as a group or application permission.
 
-In SailPoint Identity Security Cloud, or ISC, an **entitlement** represents an access right from a source, such as a group or application permission.
+A **source** is ISC's configured representation of a system or collection of account data. Our source, Invoices Production, represents the invoice application. Its **connector** supplies the supported integration for reading data and, where supported and configured, making changes.
 
-A **source** represents a connected system or account-data collection in ISC. Here, it represents ReceiptWorks Production. The **connector** is the integration used to read information from that system and, where supported and configured, change it.
+An **access profile** is a named bundle of related entitlements from one source. It gives a useful access combination a maintained purpose, rather than making each requester reconstruct its technical contents.
 
-An **access profile** is a named bundle of related entitlements from one source. It lets the organization describe a useful access package without asking every requester to reconstruct its technical contents.
+The team defines **Invoice intake**, referencing Invoice Readers and Invoice Draft Entry from Invoices Production. Its explanation says:
 
-For Devi's work, the team defines **Invoice intake**, containing references to `RW-1101` and `RW-1102` from ReceiptWorks Production.
+> Read invoices and create drafts within the account's assigned business unit. Intended for invoice-intake work. Does not include payment release.
 
-Its explanation says:
+The two references point to represented entitlement records. A **reference** identifies another record; it does not copy or rewrite that access item's native definition. **Native** means belonging to the external system's context.
 
-> Read invoices and create invoice drafts within the account's assigned business unit in ReceiptWorks Production. Intended for invoice-intake work. Does not include payment release.
+The native groups remain separate. The profile names their intended combination without combining their identifiers or changing either group's permission.
 
-Each reference points to a represented entitlement rather than copying its native definition. The two entitlement references remain separate. The access profile does not replace the native groups, combine their identifiers, or change what either group permits.
+This does not impose a minimum of two entitlements. An enabled profile can contain one entitlement if that is the useful access item. It must contain at least one.
 
-It gives their intended combination a business meaning that a requester, manager and application contact can discuss.
+## Where does that package exist?
 
-Although a bundle is useful for several related permissions, an enabled access profile can contain just one entitlement. The requirement is a meaningful, maintainable access item, not an arbitrary minimum of two groups. An enabled profile must have at least one entitlement.
+An **identity** is ISC's representation of a person or another entity. The employee's account is correctly associated with its identity, and it is the only account on Invoices Production in this example.
 
-## The profile exists in ISC, not as another application group
+The account holds native memberships. The profile exists in ISC and references the access the organization wants to manage together.
 
-An **account** is the login record in the target application. An ISC **identity** represents the person. In this example, `rw-110101` is correctly associated with Devi's identity, and it is her only account on this source.
-
-The profile's definition describes entitlements. The application's account holds native memberships.
+For the selected records, `invoice-readers` identifies Invoice Readers and `invoice-draft-entry` identifies Invoice Draft Entry in the source's integration context. These are illustrative native references, not ISC object IDs or executable input.
 
 ```text
-ISC access profile: Invoice intake
+ISC: Invoice intake access profile
 |
-+-- source: ReceiptWorks Production
++-- source: Invoices Production
 |
 +-- entitlement references
-    |
-    +-- RW-1101: Invoice Readers
-    |
-    +-- RW-1102: Invoice Draft Entry
+    +-- invoice-readers
+    +-- invoice-draft-entry
 
-Native account: rw-110101
-|
-+-- group memberships
-    -> application permission rules
+Native application
+  Selected account's group memberships
+      -> application permission rules
 
-Profile references are not
-a new native parent group.
+The profile is not a native group.
 ```
 
-The upper branches mean “this profile references these source access items.” The lower branch means “the application uses the account's native memberships when deciding what it permits.” This is an object relationship map, not an execution sequence.
+The upper branches describe the profile's source and contents. The lower branch describes the application using actual account memberships to determine allowed actions. This is a relationship map, not a processing sequence.
 
-There is no new ReceiptWorks group named Invoice intake in the supplied application configuration. Creating an ISC access profile does not automatically create a native parent group or put the two groups inside it.
+Creating Invoice intake does not create another native application group or nest the existing groups inside a new parent. You would find the account and its native groups in the application; the ISC bundle is a separate object.
 
-That distinction matters when someone asks, “Where can I find the profile in ReceiptWorks?” You would find the account and its groups there. The named bundle is maintained in ISC.
+A native application role with the same name would also be a separate object. Its native identifier and permission meaning need their own evidence. Likewise, a profile referencing a Test source does not grant similarly named Production access.
 
-If ReceiptWorks independently has a native role also called Invoice intake, that is a different object. You must establish its native identifier and permission rules rather than treating the shared name as a connection.
+## Why not copy another employee's groups?
 
-The same caution applies to Test and Production. A profile referencing ReceiptWorks Test entitlements does not grant the similarly named Production permissions.
+Another employee may have payment release, temporary investigation access or older rights that do not belong in the intake task.
 
-## What does the named bundle improve?
+The bundle should follow the work requirement and confirmed permission meanings. For our example, Readers and Draft Entry belong together because the application's draft operation requires both.
 
-Without the bundle, a request might ask for “group RW-1101 and group RW-1102.” The requester must know the keys, and the reviewer must remember why they belong together.
+An **access profile owner** is the identity recorded as responsible for the bundle. That responsibility includes maintaining its meaning and coordinating application knowledge. Ownership does not establish that the person holds its access or receives every approval task.
 
-With the bundle, the request can ask for Invoice intake. The selected access item already identifies the intended source and entitlement combination. A reviewer can still inspect those contents, but does not have to infer the purpose from two technical names.
+A named item gives the requester, manager and application contact something specific to discuss. The reviewer can inspect its contents instead of inferring a purpose from group codes.
 
-The bundle also gives the organization a maintained place for a description and an owner.
+It also makes a design mistake reusable. If Payment Release is included for convenience, every later use can carry that excessive design. Writing “do not release payments” in the description does not cancel the group's native permission.
 
-An **access profile owner** is the identity recorded as responsible for that bundle. Ownership is not proof that the person holds its access, understands every native permission, or automatically receives every approval. The organization needs an accountable person who can confirm the purpose and coordinate the necessary application knowledge.
+A meaningful name helps only when its contents and scope remain appropriate.
 
-Why not simply copy a colleague's groups?
+## Who receives the defined bundle?
 
-The colleague may have payment release, temporary investigation access or an old permission that no longer fits the job. A useful bundle is designed from the work requirement and confirmed permission meanings. It is not a copy of the broadest existing account.
+The definition answers what is included. It does not, on its own, select recipients.
 
-For Invoice intake, excluding `RW-1199` is part of the design. Putting it in the profile and writing “do not release payments” in the description would not remove its native capability.
+An **assignment** records an identity's association with an access item through a particular mechanism. That mechanism matters because it explains why the item is present and what process governs it.
 
-The profile makes a reviewed design reusable. It cannot make an excessive design appropriate.
+An **access request** asks for an access item for a recipient. The configured request process may require approval before the supported delivery path supplies the access.
 
-## Defining the bundle and deciding who receives it are different jobs
+An **ISC role** groups access for a broader business purpose. It can include access profiles or direct entitlements. An automatically assigned role can select identities using configured criteria, then use Invoice intake as a source-specific component.
 
-A profile definition answers, “What access is in this package?”
+A **lifecycle state** describes an identity's organizational stage, such as active employment or termination. Its configured requirements can include access profiles. A label such as active does not inherently mean everyone should enter invoices; including the profile would be an explicit business design choice.
 
-An **assignment** records that an identity has an access item through a particular mechanism. The mechanism matters because it explains why the access is present and what process governs it.
+These routes have different selection and review behavior. The approval settings for a direct profile request are not a universal approval stage for automated role or lifecycle grants.
 
-Saving Invoice intake does not assign it to every employee in Finance. Selecting an owner does not make that owner a recipient. A useful name does not supply a rule for choosing people.
+Saving the profile does not assign it to everyone in Finance. Selecting an owner does not make the owner a recipient. A department word in the name is not a configured selection rule.
 
-There are different ways the profile can become associated with a person:
+## Follow an approved request into the application
 
-An **access request** asks for access to be granted. Where the service and request configuration allow it, someone can request Invoice intake, with the configured review process deciding whether the request is approved.
+An **enabled** profile is available for supported access-model use. **Requestable** means it is offered through the applicable request configuration. Request availability is separate from approval and from who actually receives access.
 
-A **role** describes a broader business access requirement. It can contain access profiles or entitlements. An automatically assigned role can select identities using configured criteria, such as an approved combination of job function and organizational attributes. The role can use Invoice intake as its ReceiptWorks component.
+For this main example, Invoice intake is enabled, directly requestable through the tenant's supported configuration, and requires manager approval. No automatic role or lifecycle requirement supplies it to this employee.
 
-A **lifecycle state** describes an identity's organizational stage, such as active employment or termination, and can drive configured access changes. A profile included in a state's access requirements can be granted to identities in that state.
+The employee already has an enabled account, sign-in succeeds, and there is no account-selection ambiguity. This is **standing access**: entitlements are delivered without a separate just-in-time activation requirement. No new account creation is needed in this example.
 
-Those are different reasons for access. A state called active does not inherently mean everyone should enter invoices. That would be a business design choice expressed in the state's configuration, with a potentially much wider population than Devi's intake team.
+**Provisioning** carries out account or access changes. The approved profile request identifies the bundle; its contents identify the source access items; fulfillment must establish the required memberships on the selected account.
 
-Do not invent a department rule simply because the profile's name includes “Finance.” The assignment mechanism must actually express the intended selection.
+**Identity processing** is ISC's evaluation of an identity and relevant identity/access-model information. New or changed profile configurations need relevant processing to apply them to identities. Saving and applying configuration are different from granting or delivering access.
 
-## Enabled and requestable do not mean assigned
+Use these supplied same-day observations, with UTC as the shared time reference:
 
-An **enabled** profile is available for supported use in the access model. Whether people can request it is a separate configuration question.
+- At 10:00, Invoice intake is saved with the two entitlement references. The account still holds Readers only.
+- At 10:05, the configuration has been applied through the relevant identity processing. No grant requirement has yet been initiated, and the account still holds Readers only.
+- At 10:10, the configured manager approves the employee's profile request.
+- At 10:12, the recorded attempt to add Draft Entry to the selected account is rejected because the integration credential lacks the required write permission.
+- At 10:15, current native evidence confirms Readers present and Draft Entry absent. Reading works; creating a draft within the assigned business unit is denied.
 
-A **requestable** profile is made available through the configured access-request mechanism. Requestability does not mean that everyone is entitled to receive it without a decision.
+The **integration credential** is the account or authorization the connector uses for its source operations. Supporting a membership-write operation does not establish that the credential has the permission required for this attempt.
 
-For example, an organization can enable a profile for use in automated assignment without offering it as a direct request item. Conversely, making a profile available for requests does not automatically grant it to the people who can see it.
+The evidence identifies a delivery problem. It does not identify an unsuitable bundle or a missing second approval. The desired combination is clear; the rejected change did not establish it.
 
-Check the request experience and capabilities available in the tenant. Do not turn a conceptual distinction into an assumed API default or a promise that every tenant exposes identical settings.
+Readers existed before the request and remains present afterward. A **rollback** would undo changes made by an operation. The retained pre-existing membership is not evidence that an undo occurred. One named request does not make every required source change an all-or-nothing transaction, and it does not imply that every referenced entitlement requires a new write.
 
-These states answer different questions:
+Under an approved correction to the integration's permissions and the appropriate supported recovery, later native evidence confirms both memberships on the same account. A fresh application check permits draft creation within the assigned unit and denies payment release. The account has no payment-release group or other payment-release route. No other membership, application policy or relevant account-condition change occurred.
 
-| Observation | What you can conclude |
-|---|---|
-| Invoice intake is saved with two entitlement references | Its bundle definition exists. This does not establish an assignment or account change. |
-| The profile is enabled | It is enabled for supported use. This does not select the recipients. |
-| The profile is available for requests | A configured route exists for asking for it. This is not evidence of approval. |
-| Devi's request is approved | The configured decision is complete. Native delivery still needs its own evidence. |
-| Both memberships are confirmed on `rw-110101` | That account holds the specified native groups at the observation time. Investigate the assignment origin separately. |
-| ReceiptWorks permits the intended draft operation | The tested account, action and resource worked under the observed conditions. This does not prove every possible permission is appropriate. |
+That closes the selected intake requirement. The observed result does not establish a universal retry interval, atomic delivery guarantee or success for other accounts.
 
-## Follow a request into the application
+## Why can the profile appear without a new request?
 
-This example uses **standing access**, where granted entitlements are delivered without a separate activation step. Access that must first be activated just in time is a different delivery model and is not included in this bundle.
+Consider a separate variation. Before any Invoice intake request, the employee's only account already holds Readers and Draft Entry. Current membership information has been collected into ISC.
 
-**Provisioning** is the process of changing accounts or access in a target system. An approved profile request can drive provisioning of its entitlements through the supported connection.
+**Aggregation** collects external data into ISC. The collected view is evidence of what was read; it is not automatically a live application check.
 
-That is how a business-readable package connects to native permissions. The request identifies the profile; the profile identifies the source access items; the delivery process works with the relevant target account and entitlements.
+**Detection** recognizes that an identity already has the full entitlement set described by a profile. With the enabled definition applied through relevant identity processing, ISC can record Invoice intake as held from that existing set.
 
-ReceiptWorks still decides whether the account can create an invoice draft. In our fictional policy, it needs both groups, and the invoice must be within the account's assigned business unit. Signing in successfully is not a substitute for those permission conditions.
-
-Here is the distinction between delivery and a separate mechanism called detection:
+Recognizing the combination is different from provisioning the native memberships that make it up.
 
 ```text
-Request for Invoice intake
-             |
-             v
-Configured approval decision
-             |
-       if approved
-             |
-             v
-Supported account-access delivery
-             |
-             v
-Check memberships and capability
+Grant route, as configured here
+  Profile request
+       |
+       v
+  Manager approval
+       |
+       v
+  Supported account-access delivery
+       |
+       v
+  Verify groups and intended action
 
-Separate detection path:
-Current collected entitlement set
-             |
-             v
-Identity processing finds full set
-             |
-             v
-Access profile recorded as held
+Separate detection route
+  Current collected full set
+       |
+       v
+  Identity processing recognizes set
+       |
+       v
+  Access profile recorded as held
 ```
 
-The upper path shows the logical responsibilities for the configured request example. It does not promise a private queue order, a separate write for every listed entitlement, or successful completion.
+The upper route summarizes the configured manager-approved request example. The lower route recognizes an existing collected set. They are separate explanations, not compulsory stages of every profile association or a private backend job order.
 
-The lower path uses **identity processing**, ISC's evaluation of an identity and the relevant access-model information. **Detection** recognizes that the collected access already satisfies a profile's entitlement set.
+Detection does not establish who originally granted the access, whether a profile request was approved or whether the access remains justified. Inspect the history and current business requirement.
 
-The paths are separate explanations, not two compulsory phases of every request.
+If the account holds only Readers, it does not satisfy the full set. Detection alone is not an instruction to add Draft Entry to complete the package. A qualifying request or configured automatic requirement would be a different mechanism.
 
-For the main request example, assume Invoice intake is enabled, directly requestable through the configured service, and requires the configured manager approval. The source supports the necessary membership write. Devi already has an enabled ReceiptWorks account, and no account-selection ambiguity exists.
+Also distinguish current native state, collected state and processing result. If a membership changed after collection, a displayed profile name does not independently prove current application access.
 
-In the fictional observations:
+## Which evidence answers which question?
 
-- At 10:00 UTC, the saved profile contains `RW-1101` and `RW-1102`. Devi's account still holds only `RW-1101`.
-- At 10:10 UTC, the request is approved for Devi.
-- At 10:12 UTC, the recorded attempt to add `RW-1102` to `rw-110101` is rejected because the integration credential lacks the required write permission.
-- At 10:15 UTC, current native evidence still shows only `RW-1101`. Reading works, but creating a draft is denied.
+| Observation | What it establishes |
+|---|---|
+| Two saved entitlement references on Invoices Production | The bundle definition exists; this does not select a recipient or change an account |
+| Profile enabled | It is enabled for supported use; recipients still need the relevant mechanism |
+| Profile offered for requests | A configured route exists for asking; approval has not thereby occurred |
+| Manager approval recorded | The configured decision is complete; native delivery needs evidence |
+| Both groups currently verified on the selected account | That account holds the specified native memberships; the grant origin is a separate question |
+| Intended draft operation succeeds | That account/action/resource worked under the checked conditions, not every possible action |
 
-The **integration credential** is the account or authorization used by the connector to perform its source operations. A connector supporting membership writes does not prove that its credential currently has permission to perform this one.
+This distinction helps you investigate a result without repeating the wrong step. A missing group after a rejected write needs delivery investigation. A profile saved without any recipient mechanism does not need another approval or an invented grant to every incomplete account.
 
-What failed here?
+## One source does not mean one whole job
 
-The supplied evidence identifies a rejected membership change. It does not identify a bad business bundle or a missing second approval. The desired combination remains understandable; the delivery did not establish it.
+Suppose intake staff also need a document-attachment permission from Documents Production.
 
-There is also no evidence that the pre-existing reading membership was removed. Treating a profile as one request does not make its source changes an all-or-nothing transaction.
+That entitlement cannot be inserted into the Invoices Production access profile merely because it supports the same job. Model the other source's component separately. An ISC role can bring source-specific components into a broader business requirement where appropriate.
 
-In a later fictional observation, after an approved correction to the integration's permissions and the appropriate supported retry, current evidence confirms both memberships on `rw-110101`. ReceiptWorks allows draft creation within its assigned unit. Payment release remains denied.
+The boundary is the ISC source. One directory source can contain groups governing several applications. That does not automatically make every group from that source a sensible single package; related purpose still matters.
 
-That closes the stated intake outcome. It does not claim a guaranteed retry time, automatic rollback, or success for every account on the source.
+There are also other similarly named objects.
 
-## A profile can appear because the access was already there
+An **access application** is an ISC configuration used to group a source's access profiles in the request experience and support configured password-management functions. It is not the native software, the connector or another membership delivered by the profile.
 
-Now consider an independent variation using the same profile definition.
+An **identity profile** configures the source used to establish an identity population, its identity-field mappings and lifecycle configuration. It is not a bundle of source access rights.
 
-Before any request for Invoice intake, Devi's account already holds both native groups. The organization has collected that current membership information. The enabled profile definition is then applied through relevant identity processing.
+Keeping these responsibilities separate helps you find the right record: source for integration data, entitlement for represented access, access profile for a related same-source bundle, role for a wider access requirement.
 
-ISC can detect that the identity has all the entitlements in the profile and record the profile as held. Recognizing a full existing set is different from sending a new grant to create that set.
+## Enablement, account choice and later changes still matter
 
-So if you see Invoice intake on an identity, ask how it became associated with that identity. Do not assume it proves an approved profile request.
+A supported tenant configuration can use an enabled profile for automated assignment without offering it as a direct request item. Turning requestability on is not the repair for an unrelated role-selection or provisioning defect.
 
-Detection is also not proof that the original access was justified. An administrator might have granted the groups directly, or a previous process might have supplied them. Establish the actual history and continuing business need.
+Inspect the tenant's request experience and supported settings. The conceptual difference does not imply a universal interface default.
 
-Change one condition: the account holds only `RW-1101`. That is not the full two-entitlement set. Detection alone is not a rule that supplies `RW-1102` to finish the package. A separate qualifying grant mechanism would be needed to require the missing access.
+Our example has one account. Where an identity has several accounts on a source, automatic profile provisioning can use configured account-selection criteria. A useful package name does not choose which account should receive it.
 
-Keep current native state distinct from collected state. **Aggregation** reads source data into ISC. Detection uses the information available for processing; it is not an independent live inspection of ReceiptWorks every time a profile name is displayed.
+When a new or changed configuration needs to be applied, relevant identity processing must evaluate the affected identities. Saving is not proof that everyone was reevaluated; processing completion is not proof that each target operation succeeded.
 
-If membership changed after the relevant read, investigate the fresh source evidence, collected memberships and processing result separately.
+For the standing entitlements discussed here, disabling a profile can remove its association after identity processing while the native entitlements remain. Deleting the profile is also not, by itself, entitlement deprovisioning. Removing an entitlement from the definition does not establish its removal from existing holders.
 
-## One source is a design boundary, not one whole job
+Actual removal depends on the operation and assignment mechanism. Do not assume another overlapping access profile always protects a shared entitlement. Check the documented path and assignment evidence before deciding what will remain.
 
-Invoice intake references entitlements from ReceiptWorks Production. Suppose the same employee also needs a permission from DocumentStore Production to attach supporting documents.
+Likewise, a later native permission change can broaden what a referenced group allows without making the profile's familiar name look different. Maintain the contents and their meaning, not just the label.
 
-That second source's entitlement cannot be added to this access profile as if it were another ReceiptWorks group. Use a separate source-specific access component and, where appropriate, a role to express the broader business requirement.
+## What would you conclude from these facts?
 
-The boundary is the ISC source, not simply the number of business applications a user recognizes. Directory groups from one directory source can govern access to different applications. You still have to decide whether grouping them represents a sensible access package.
+Each question supplies an independent variation.
 
-An **access application** is another ISC configuration object that can group a source's access profiles in the request experience and support configured password-management functions. It is not the native ReceiptWorks software, a new connector, or an extra membership automatically granted by Invoice intake.
+### 1. Saved definition, unchanged account
 
-An **identity profile** configures the source used to establish an identity population, how its identity fields are populated, and its lifecycle settings. It is not a named bundle of source access rights.
+Invoice intake contains both groups. No grant mechanism has been initiated for the employee, whose account still holds Readers only.
 
-The object names can sound similar. Their responsibilities are different: the source represents the integration's data, entitlements represent source access rights, the profile groups related rights from that source, and a role can express a wider business requirement.
+Does missing Draft Entry prove saving failed?
 
-## Inspect the definition before celebrating the simpler request
+**Reasoning:** No. The saved definition did not select a recipient or initiate a grant. Verify the source and contents, then identify the intended request or automatic assignment route. Do not assume every account lacking part of a profile should receive it.
 
-A single request is easier to understand only if the included access is appropriate.
+### 2. Payment release was added for convenience
 
-Before using the bundle, confirm each entitlement's native meaning, resource scope and environment. Check why the items belong together, who owns the package and who needs it.
+The profile now includes Payment Release alongside Readers and Draft Entry. The approved work remains intake only.
 
-For this example, Invoice Readers and Invoice Draft Entry are related because ReceiptWorks requires both for the approved intake task. Payment release is excluded because it permits a different action that Devi does not need.
+Does the profile's familiar name justify the extra access?
 
-A profile's description explains that design. It does not override the application. If `RW-1102` is later changed natively to include more operations, the profile name alone will not reveal the expanded capability.
+**Reasoning:** No. Compare actual capabilities with the requirement. Correct the design through the controlled process and investigate affected holders separately. A description exclusion or renamed bundle does not remove native access already granted.
 
-Also plan which account receives the access. Our example has one account. Where identities have multiple accounts on a source, automatic profile provisioning can use configured account-selection criteria. Do not assume a useful bundle name chooses the correct account.
+### 3. Approval exists, but the write was rejected
 
-Applying new or changed access-model configuration requires relevant identity processing. Saving a definition is not evidence that all affected identities have been reevaluated, and reevaluation is not proof that every target change succeeded.
+Draft Entry delivery was rejected. Readers remains on the account and reading works.
 
-Nor is removing a name from the model a universal revocation method. For the standing entitlements in the example, disabling or deleting a profile does not itself deprovision its existing entitlements. Removing an entitlement from its definition is also not proof that existing holders lost it.
+Would another approval repair this result?
 
-Actual removal behavior depends on the operation and assignment mechanism. Do not assume another overlapping profile always preserves a shared entitlement. Inspect the documented path and actual assignment evidence before changing access.
+**Reasoning:** No. Inspect the required credential permission and exact source/account/operation, use the approved correction and supported recovery, then verify memberships and capability. Existing Readers is neither proof of rollback nor a complete intake combination.
 
-## Work through the evidence
+### 4. Both groups preceded any profile request
 
-### Case 1: The profile is saved, but the account is unchanged
+No profile request was submitted. Current collected data shows both groups on the employee's only account, and relevant processing records Invoice intake as detected.
 
-**Facts:** Invoice intake contains both groups. No grant mechanism has been initiated for Devi. Her account still holds only `RW-1101`.
+Does that establish that ISC originally provisioned the memberships?
 
-Is the missing draft-entry membership evidence that saving the profile failed?
+**Reasoning:** No. Detection explains recognition of the existing set. Inspect native and ISC history for grant origin and confirm continuing need. The profile association is not evidence of a historical request approval.
 
-**Reasoning:** No. Saving the definition did not supply a recipient-selection or grant decision. Verify the saved source and entitlement references to establish the definition, then identify the intended request or automatic assignment mechanism. Do not infer that every incomplete account should receive the missing group.
+### 5. Detection sees only Readers
 
-### Case 2: Someone added payment release “for convenience”
+Current collected data contains Readers but not Draft Entry. No role, lifecycle requirement or approved request requires the profile.
 
-**Facts:** The profile now contains `RW-1199` as well as the two intake groups. Devi's approved work is still invoice intake, not payment release.
+Will detection supply the missing membership?
 
-Does the familiar profile name make that addition appropriate?
+**Reasoning:** No. The set does not satisfy the profile. Establish the work need and approved grant route instead of treating detection as an access-completion instruction.
 
-**Reasoning:** No. Judge the included capability against the requirement. The native payment-release group permits a different action. Review and correct the design through the controlled process, and independently investigate any affected holders. Renaming the profile or adding an exclusion sentence does not remove a native grant.
+### 6. The work also needs another source
 
-### Case 3: The request is approved, but draft creation fails
+A document-attachment entitlement comes from Documents Production, while Invoice intake uses Invoices Production.
 
-**Facts:** The membership write for `RW-1102` was rejected. Native evidence shows only `RW-1101`; invoice reading works.
+Can it be added to this same profile?
 
-What would another approval establish?
+**Reasoning:** No. Keep source-specific components separate and consider a role for the wider requirement. A common job does not erase the access-profile source boundary.
 
-**Reasoning:** It would not repair the supplied delivery error. Inspect the credential's required write permission and the correct source, account and operation. Use the approved correction and supported recovery process, then verify membership and application capability. Do not call the existing reader permission a rollback or a completed intake package.
+### 7. Enabled, but not directly requestable
 
-### Case 4: Both groups existed before the profile request
+In this tenant's supported configuration, an enabled role includes the enabled profile and selects the intended employees. The profile is not directly requestable.
 
-**Facts:** No profile request was submitted. Current collected data contains both groups on Devi's only account. Relevant identity processing records Invoice intake as detected.
+Must the direct request route be enabled first?
 
-Does this prove ISC originally provisioned the two memberships?
+**Reasoning:** No. Automatic assignment and direct request availability are different routes. Check selection, profile configuration, processing and native results rather than turning on an unrelated request mechanism.
 
-**Reasoning:** No. Detection explains the profile association from the observed entitlement set. Investigate native and ISC history to establish who or what granted the groups. The continuing business need also requires evidence; recognition of a combination is not approval of its origin.
+### 8. Disabling removed the profile name
 
-### Case 5: Only one group is present
+After disabling the profile and relevant processing, its held-profile association disappears. Current native evidence still shows both standing memberships.
 
-**Facts:** Current collected data contains `RW-1101` but not `RW-1102`. No role, lifecycle requirement or approved request requires Invoice intake.
+Does that contradict disabling behavior?
 
-Will detection alone finish the package?
+**Reasoning:** No. Disabling is not entitlement deprovisioning. If access must end, establish the approved requirement and correct assignment/removal path, then verify the native result. A missing profile label does not prove lost application access.
 
-**Reasoning:** No. The observed set does not satisfy this profile. Detection does not invent the missing business grant. Determine whether the person needs the full package and which approved mechanism should provide it.
+## Try a permission and a license together
 
-### Case 6: A second source is needed
+A **license** gives an account the right to use a product or feature set under the application's licensing model.
 
-**Facts:** Invoice intake uses ReceiptWorks Production. A document-attachment permission comes from DocumentStore Production.
+On one supported design-platform source, project reporting needs the Report Authors permission and an Editor license. The proposed Project report preparation profile references both entitlements and excludes tenant administration.
 
-Can both sources' entitlements be placed in this one profile because they support the same job?
+The worker already has Report Authors but lacks the license. No request is approved and no automatic assignment requirement is configured.
 
-**Reasoning:** No. The profile's entitlement bundle is source-specific. Model the second source separately and consider a role for the wider requirement. A common business purpose does not erase the source boundary.
+What does creating the profile solve, and what would establish delivery?
 
-### Case 7: It is enabled but not offered for requests
+**Reasoning:** It gives a maintained name and purpose to a related same-source combination. Different native entitlement kinds do not, by themselves, prevent that bundle.
 
-**Facts:** In this tenant's supported configuration, Invoice intake is enabled and not directly requestable. An enabled role includes it and selects the intended employees through its configured criteria.
+The definition does not authorize or deliver the missing license. Confirm the worker's need, supported route and any license-capacity dependency. After an authorized grant, inspect the selected account's permission/license assignments and the intended reporting outcome.
 
-Must direct requestability be enabled before that automatic route can use the profile?
+If the two items come from different sources, use separate source-specific components. If the full set already exists and processing detects the profile, investigate those prior grants rather than calling detection a new approved request.
 
-**Reasoning:** No. Direct request availability and automatic assignment are different mechanisms. Verify the role's selection, profile configuration, processing and target results. Do not turn on a request route merely to repair an unrelated selection or provisioning problem.
-
-### Case 8: The profile name disappeared after disabling
-
-**Facts:** The profile containing standing entitlements is disabled. After relevant processing it no longer appears as a held profile. Current native evidence still confirms its two memberships.
-
-Does the remaining access contradict the documented disabling behavior?
-
-**Reasoning:** No. Disabling is not entitlement deprovisioning. Investigate the approved removal requirement and the correct assignment/removal path if access should end. A missing profile label is not evidence that native access disappeared.
-
-## Try it with a report permission and an editing license
-
-A fictional design platform has one source, DesignHub Production. A worker needs the Report Authors permission and an Editor license together to prepare approved project reports.
-
-The team proposes an access profile, Project report preparation, referencing those two source entitlements. It excludes tenant administration. The worker already has Report Authors but lacks the license. No request has been approved and no automated assignment requirement has been configured.
-
-Explain what creating the profile solves, what it does not solve, and what evidence would establish delivery.
-
-The profile gives a maintained name and explanation to a source-specific combination. It keeps people from rebuilding the same permission-and-license list for every appropriate worker. The different native entitlement types do not, by themselves, prevent a single-source bundle.
-
-The definition does not justify or assign the missing license. Determine the worker's need and the supported grant route. If license availability is limited, that is a delivery dependency to investigate, not a reason to call the definition complete access.
-
-After an authorized grant, inspect the correct account's permission and license assignment and test the intended reporting operation. Approval and a readable profile name are not substitutes for those results.
-
-If the two access items instead come from different ISC sources, separate their source-specific components. If both already exist and processing detects the profile, investigate the prior grants rather than treating detection as a newly approved request.
-
-An access profile lets you speak about a useful access package while retaining its technical contents. The engineering responsibility is to keep that package meaningful, choose the right recipients and prove that the right native access exists.
+An access profile connects a business-readable package to its technical contents. To explain a particular person's access, also identify the selection mechanism, account and evidence that the intended native capability exists.

@@ -1,0 +1,17 @@
+Bristol AND EMP qualify
+       |
+Bristol Workspace -> Bristol Tools
+       |
+Directory-Primary entitlement BR-WORK
+
+Automatic selection: type equals Primary
+primary account: selected
+administrator account: not selected
+
+18:17 primary group add: permission error
+18:18 group absent on both accounts
+18:34 approved group recovery completes
+18:35 primary present / admin absent
+
+These are supplied observations,
+not guaranteed execution durations.

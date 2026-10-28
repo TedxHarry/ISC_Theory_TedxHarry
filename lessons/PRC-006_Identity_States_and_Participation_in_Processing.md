@@ -1,294 +1,269 @@
 # Inactive in ISC. Inactive for which process?
 
-Devi is on leave. An administrator cannot select her in the Request Center, where access can be requested for a person, and concludes that ISC has stopped processing her identity.
+An administrator can't select a person as an access-request recipient and concludes that ISC has stopped processing the identity. Another sees that person's directory account enabled and concludes that the ISC identity must be Active.
 
-Another administrator sees that her directory account is still enabled and concludes that her ISC identity must still be Active.
+Neither observation answers both questions.
 
-Both conclusions need more evidence.
+In SailPoint Identity Security Cloud, or ISC, **identity state** controls participation in particular features and processes. The directory account's enabled status belongs to the directory. To investigate either result, we need to identify the operation and the record it concerns.
 
-In SailPoint Identity Security Cloud (ISC), **identity state** controls whether a person participates in particular ISC features and processes. It does not directly describe whether every account can sign in, and “Inactive” does not mean “excluded from every operation.”
+## Follow the business input to the participation setting
 
-The distinction becomes useful when a scheduled update, access-model change or account correction appears to have missed someone. Before repeating the operation, ask: which identity state applies, and does this particular operation include that state?
+An ISC **identity** is the record representing a person across their accounts. An **account** is that person's record in a particular system. An **attribute** is a named field on a record.
 
-## Give each status its own meaning
+The person already has a valid identity and correctly associated accounts on HR-Primary and Directory-Primary. A **source** is ISC's configured representation of a system's account data.
 
-Devi's employee number is 96006. Her ISC **identity** is the record representing her as a person. We will call it I-96006; this is a teaching label, not an actual ISC object ID.
+HR-Primary is **authoritative** for this employee population: its worker accounts participate in establishing and maintaining the identities. The Employees **identity profile** supplies shared configuration for them.
 
-Her correctly associated worker account is `pr-96006` on PeopleRegister Production. A **source** is ISC's configured representation of a system's account data. PeopleRegister is authoritative for these employees: its worker records establish and maintain their identities.
+A **mapping** specifies how an identity field receives a value. The Lifecycle State mapping reads the collected HR workerStage and applies these approved translations:
 
-The Employees **identity profile** holds shared instructions for their identity values and lifecycle configuration.
+| Collected workerStage | Selected lifecycle technical name | Configured identity state |
+|---|---|---|
+| EMP | employed | Active |
+| LEAVE | leave | Inactive (short-term) |
+| EXIT | retained | Inactive (long-term) |
 
-A **lifecycle state** describes a business stage and connects it to configured access or account actions. The profile in this example has three enabled lifecycle states:
+A **lifecycle state** describes a business stage and connects it to configured access or account actions. The three lifecycle states in this table are enabled.
 
-- employed, configured with identity state Active.
-- leave, configured with identity state Inactive (short-term).
-- retained, configured with identity state Inactive (long-term).
+Their names don't choose the participation setting automatically. The lifecycle configuration explicitly supplies the Identity State value shown in the last column.
 
-These are technical lifecycle names chosen for this fictional configuration. Their names do not automatically determine their identity-state settings.
-
-An identity **mapping** selects or calculates a person-level value from available information. Here, the Lifecycle State mapping reads PeopleRegister workerStage: EMP selects employed, LEAVE selects leave, and EXIT selects retained. The business has approved these exact translations.
-
-Devi already has a correctly associated WorkDirectory account, `wd-96006`. Its enabled or disabled status belongs to WorkDirectory.
-
-Put the four kinds of information beside one another.
-
-| Information | What it tells you here |
-|---|---|
-| PeopleRegister workerStage | The collected business input: EMP, LEAVE or EXIT. |
-| Assigned ISC lifecycle state | The business-stage configuration selected for Devi: employed, leave or retained. |
-| ISC identity state | Which participation setting applies through that lifecycle configuration. |
-| WorkDirectory account status | Whether wd-96006 is enabled or disabled in that system at the time checked. |
-
-An HR stage, an assigned lifecycle state and a target-account status are not alternative labels for one field.
-
-We will also use **attribute synchronization**, or attribute sync: a configured process that updates selected fields on existing associated accounts to agree with identity values.
-
-Identity employmentCode reads PeopleRegister employmentCode directly. On WorkDirectory, the existing workerCode account field is directly mapped from identity employmentCode in the Create Account definition and selected for ongoing attribute sync. The Create Account definition supplies account-creation instructions, but its direct mappings also determine which fields are eligible for this sync configuration. Attribute sync itself updates existing accounts; it does not create a missing account.
-
-The source supports the required field update and account-disable operations, with provisioning enabled. **Provisioning** performs changes in connected systems. Supported operation capability is not a guarantee that the connection has permission to complete every attempt.
-
-An **access profile** bundles related access items from one source. A **role** groups access requirements and can assign them through configured criteria.
-
-No account deletion, new account creation, access removal or new role assignment is part of Devi's example. Remove all access is not configured for these states, and retained grants no WorkDirectory access profile that would prevent its account-disable action. The tenant has roles implemented for other identities; that matters when we discuss its evening recurring population.
-
-All records, configurations, observations and outcomes here are fictional. No real account or tenant is changed.
-
-## Start with the three participation settings
-
-**Active** is the broad participation setting for people joining or working in the organization. It allows participation in the features compared below, but does not bypass their other conditions.
-
-For example, an Active identity being selectable as a recipient does not guarantee that a particular access item is requestable or that its approval will succeed.
-
-An **access request** asks ISC to arrange particular access for a person. The **Request Center** is the place where a user selects a recipient and access to request. Whether a person appears as a recipient is separate from whether they already hold access.
-
-**Inactive (short-term)** supports reduced participation while a person is temporarily away or moving through separation. It excludes the person from Request Center recipient selections and the manager's My Team member list, while retaining participation in the specified processing and synchronization paths below.
-
-This explains why an employee can be absent from a request selection yet still receive a relevant scheduled reevaluation.
-
-**Inactive (long-term)** excludes the person from more recurring and broad operations. It is not identity deletion and does not prevent every administrative correction.
-
-The words short-term and long-term describe participation choices. They are not timers that automatically advance an identity after a fixed number of days. In our configuration, workerStage and the lifecycle mapping determine whether leave or retained applies.
-
-The relationship is:
+Keep the responsibilities separate. workerStage is the collected business input. The assigned lifecycle state is the business configuration selected for the identity. Identity state determines participation. Actual account status is a separate observation in the external system. An enabled status alone doesn't establish a successful sign-in or usable application permissions.
 
 ```text
-PeopleRegister workerStage
-  EMP   -> lifecycle employed -> Active
-  LEAVE -> lifecycle leave
-           -> Inactive (short-term)
-  EXIT  -> lifecycle retained
-           -> Inactive (long-term)
+Applied lifecycle state
+             |
+     +-------+--------+
+     |                |
+Identity State    Account action
+     |                |
+participation     provisioning
+rules             result
+     |                |
+check inclusion   check target status
 
-Lifecycle configuration also defines
-  account actions and access requirements
-
-Identity state -> participation rules
-Account action -> provisioning outcome
-Check the actual account separately
+A participation change doesn't prove
+that the target account was disabled.
 ```
 
-The arrows show configuration relationships, not a guaranteed backend execution sequence. The branch describing account actions is separate from the branch describing participation.
+The diagram shows configuration relationships, not a required sequence of private services.
 
-If a business wants directory accounts disabled during leave, it must configure and verify that requirement. Selecting Inactive (short-term) does not itself prove such a disable occurred.
+Short-term and long-term aren't countdowns. ISC doesn't advance this example from leave to retained after a fixed number of days. The approved input and lifecycle mapping determine which state applies.
 
-## Use the rule for the operation you actually started
+The records, configuration and observations below are hypothetical. They are supplied for reasoning, not results from a real tenant.
 
-Here is the participation comparison relevant to everyday investigation.
+## On leave, an enabled account can be the approved result
 
-**Aggregation** collects account data from a source into ISC. Identity-attribute promotion means using updated account information to update mapped values on the person record. For example, collected employmentCode EXIT-CORR can supply identity employmentCode EXIT-CORR. This is separate from writing that value to WorkDirectory.
+Initially, workerStage is EMP. The assigned lifecycle is employed, identity state is Active, and the existing directory account is enabled.
 
-| Operation or feature | Identity-state boundary |
+The business's leave policy deliberately keeps that account enabled. The leave lifecycle has no account-enable or account-disable action.
+
+**Account aggregation** collects account information into ISC. Suppose LEAVE reaches the correct HR account and relevant **identity processing**, evaluation of identity information and applicable requirements, applies lifecycle leave.
+
+The resulting identity state is Inactive (short-term).
+
+That changes recipient selection. An **access request** asks ISC to arrange specified access for a person. The **Request Center** is where a user selects a recipient and the access to request.
+
+Both Inactive states are excluded from Request Center recipient selections and the manager's My Team member list. Being absent from those views doesn't establish that the identity or its accounts were deleted.
+
+An Active identity can participate in those selections, but that doesn't make every access item requestable or guarantee its approval. Recipient eligibility is one condition, not the whole request.
+
+For leave, a different configured change also needs to reach the directory. Identity employmentCode reads the HR account's employmentCode directly. That value changes from EMP to LEAVE.
+
+**Attribute synchronization**, or attribute sync, keeps selected account fields aligned with mapped identity fields. Here, the existing directory workerCode should follow identity employmentCode.
+
+The sync configuration is already established. Directory workerCode is included in its **Create Account** definition, which supplies new-account field instructions. It is mapped directly from identity employmentCode there and selected for ongoing sync. Employees also maps employmentCode.
+
+These conditions make it an eligible configured alignment. Sync applies to existing correlated accounts, accounts associated with identities; it doesn't create a missing account.
+
+**Provisioning** carries out required account or access changes through supported automatic or manual delivery. Directory-Primary supports the field update and account-disable operations, and provisioning is enabled. Each attempt still needs the right execution permission.
+
+In our supplied leave result, the identity employmentCode is LEAVE, the workerCode update succeeds, and a fresh directory check shows workerCode LEAVE with the account still enabled.
+
+All those results can be correct together: reduced recipient participation, continued eligibility for specified processing, successful field alignment and an enabled account preserved by the leave policy.
+
+If someone expected disablement, inspect the approved action configuration first. A missing requirement and a failed operation are different problems. Here, no leave disable was configured or attempted.
+
+Changing identity state back to Active merely to restore request selection would change participation without resolving that policy question.
+
+## Which operation includes which state?
+
+The three identity states have different participation boundaries.
+
+**Active** is the broad setting for people joining or working in the organization. **Inactive (short-term)** reduces participation while retaining the processing paths described below. **Inactive (long-term)** excludes more recurring and broad operations while leaving specified correction paths available.
+
+To read the action names, an **access profile** bundles related access items from one source. A **role** groups configured access requirements and can assign them through conditions.
+
+| Feature or operation | Identity-state boundary |
 |---|---|
-| Request Center recipient selection and My Team member list | Active is included; both Inactive states are excluded. |
-| Recurring identity processing and Apply Changes from role, access-profile or application lists | Active and Inactive (short-term) are included, subject to the process's other conditions; Inactive (long-term) is excluded. |
-| Apply Changes from an identity profile, or Process Identity for selected identities | All three states are included within the chosen profile or selected scope. |
-| Ordinary automatic attribute sync | Active and Inactive (short-term) participate. Long-term has the transition and manual exceptions explained below. |
-| Identity-attribute promotion after updated accounts arrive through aggregation | All three states are included. Long-term does not mean mapped identity information is permanently frozen. |
+| Request Center recipient selection and My Team member list | Active included; both Inactive states excluded. |
+| Recurring processing and Apply Changes from role, access-profile or application lists | Active and Inactive (short-term) included subject to other conditions; Inactive (long-term) excluded. |
+| Apply Changes from an identity profile, or Process Identity/Process Identities for a selected scope | All three states can be included within that profile or selected scope. |
+| Ordinary automatic attribute sync | Active and Inactive (short-term) participate. Long-term has the transition and manual paths explained below. |
+| Mapped identity-value updates after updated accounts arrive through aggregation | All three states participate; long-term doesn't permanently freeze mapped identity information. |
 
-Role and access-profile list-page Apply Changes actions initiate broad reevaluation, not a change to one target account.
+The last row is **identity-attribute promotion**: using updated account information to update mapped fields on the person record. It isn't a write from the identity back to a target account.
 
-The identity-profile action has a different scope: identities associated with that profile. The selected-identity action explicitly chooses the identity or set.
+Notice the two Apply Changes scopes. A role, access-profile or application list action is broad access-model reevaluation. The profile action processes identities associated with that profile; the selected actions choose the identity or set.
 
-Do not transfer the long-term exclusion from the role-list action to the profile action just because both involve identity processing. “We ran Apply Changes” is incomplete evidence until you know where it was initiated and whom it included.
+Don't copy the role-list long-term exclusion onto the profile or selected action. "Apply Changes finished" is incomplete evidence until the initiating location and intended population are known.
 
-Processing an included identity also does not guarantee changed results. A correct value or continuing assignment can stay the same.
+Inclusion also doesn't establish execution, a changed value or successful delivery. A correct result can remain unchanged after processing.
 
-### Scheduled inclusion still needs its other conditions
+No new role assignment, access removal, account creation or deletion is part of our main example. **Remove all access** isn't configured. The tenant does have roles implemented for other identities, which matters to recurring selection.
 
-**Identity processing** reevaluates identity values and applicable relationships and access requirements. A scheduled job is one way to initiate it.
+## Scheduled inclusion still needs more than a state
 
-For recurring processing, the morning population requires an account on a source configured for attribute sync, in addition to Active or Inactive (short-term) state. The evening population includes those two states when the tenant has roles implemented; without roles, the profile's periodic-refresh requirement matters.
+The morning recurring population requires an account on a source configured for attribute sync, as well as Active or Inactive (short-term) identity state.
 
-The recurring times are 08:00 and 20:00 in the tenant's configured time zone. They are queue times, not proof that a particular identity finished at that minute.
+The evening population includes those two states when the tenant has roles implemented. Without roles, the profile needs an identity attribute marked for periodic refresh, meaning it is flagged for repeated evaluation.
 
-In our example, Devi's WorkDirectory account and established sync configuration satisfy the morning account condition. The tenant's implemented roles establish the evening roles condition. During short-term leave, her identity state does not exclude her from those recurring populations.
+The recurring jobs are scheduled for 08:00 and 20:00 in the tenant's configured time zone. Those are queue times; other work can delay the start. They aren't evidence that every included identity finished at that minute.
 
-After retained assigns Inactive (long-term), those recurring populations no longer include her. Waiting for the next evening run is not a supported explanation of how a required correction will reach her through that excluded path.
+During this approved short-term leave, the person has the established directory sync account. The morning account condition is met. Roles implemented elsewhere in the tenant supply the evening roles condition.
 
-That does not establish a failure of the scheduler. It identifies a selection boundary.
+Absence from a request-recipient selection therefore doesn't exclude the identity from those qualifying recurring populations.
 
-The separate per-identity Next Processing Date mechanism is not the recurring job itself. Do not infer its full state behavior from this recurring comparison or assume a timestamp bypasses an exclusion. Check the supported mechanism and actual result for the requirement at hand.
+When retained assigns Inactive (long-term), that recurring path excludes the identity. Waiting for another evening run doesn't explain how an update will reach someone through a path that doesn't include them.
 
-## Follow Devi through leave without inventing a disable
+That identifies a selection boundary, not a scheduler failure.
 
-Initially, PeopleRegister workerStage is EMP and employmentCode is EMP. Devi's assigned lifecycle state is employed, identity state is Active, and wd-96006 is enabled with workerCode EMP.
+**Next Processing Date** plans an additional per-identity processing time. It isn't the recurring job itself. Don't infer its full state behavior from this recurring comparison or assume a timestamp bypasses an exclusion; verify the supported mechanism and actual result.
 
-The leave state has no account-enable or account-disable action. It is deliberately configured to preserve the directory account's enabled status during this approved leave.
+## On exit, check participation and disabling separately
 
-After LEAVE is collected and relevant processing applies the new lifecycle assignment, Devi's identity state is Inactive (short-term). Her identity employmentCode is LEAVE.
+Later, an approved update changes workerStage and employmentCode to EXIT.
 
-A verified sync updates WorkDirectory workerCode to LEAVE. A fresh target check still shows wd-96006 enabled, exactly as this leave policy requires.
+The retained lifecycle is explicitly configured with Inactive (long-term) and an action to disable accounts on Directory-Primary. The target account is in scope, with no source exclusion.
 
-Can those results coexist? Yes. The request-selection restriction, continued processing eligibility, field update and enabled target account answer different questions.
+The state grants no Directory-Primary access profile that would prevent this disable action. No access-removal or new access-grant operation is introduced in this example.
 
-Do not “repair” this case by setting her identity Active to restore request selection without reviewing the approved leave policy. That would alter participation beyond the account observation that prompted the investigation.
+The identity-state change governs participation. The disable configuration requires a separate target operation.
 
-If someone expected the account to be disabled, compare that expectation with the actual approved lifecycle action configuration. A policy or configuration defect is different from a failed disable attempt. Here, no leave disable was configured or attempted.
+There is also a documented final attribute sync when an identity transitions to Inactive (long-term). That is different from continuing ordinary automatic sync afterward.
 
-## Long-term changes the recurring paths, not the need for evidence
-
-Later, an approved exit changes workerStage and employmentCode to EXIT.
-
-The retained lifecycle state is configured with identity state Inactive (long-term) and an action to disable accounts on the specific WorkDirectory source. The state does not grant a WorkDirectory access profile, and no source exclusion removes this account from the action's scope.
-
-This is a configured target action as well as a participation change. They still need separate outcomes.
-
-At the transition into Inactive (long-term), ISC performs a final attribute sync under the applicable configuration. That is distinct from continuing ordinary automatic synchronization afterward.
-
-For this example, the final workerCode update succeeds, but the account-disable attempt fails because the connection lacks permission to disable the account.
-
-The supplied observations on October 23, 2026, in UTC are:
+The supplied results on October 23, 2026, in UTC, Coordinated Universal Time, are:
 
 ```text
 15:00 employed / Active
-      wd-96006 enabled; workerCode EMP
+      target enabled; workerCode EMP
 
 15:12 leave / Inactive (short-term)
-      workerCode LEAVE sync confirmed
-      account enabled; no disable action
+      workerCode LEAVE; target enabled
 
 16:03 retained / Inactive (long-term)
       identity employmentCode EXIT
 
-16:04 workerCode EXIT sync confirmed
-      account-disable attempt failed
+16:04 final workerCode EXIT sync succeeds
+      account-disable attempt fails
 
-16:05 fresh WorkDirectory check
-      wd-96006 enabled; workerCode EXIT
+16:05 fresh directory check
+      target enabled; workerCode EXIT
 ```
 
-The earlier LEAVE and later EXIT inputs have been collected before their respective applied observations. These are supplied results, not measurements from a live tenant or a processing-time guarantee. The diagram records observation times; it does not require sync and disable operations to use that execution order in other runs.
+The LEAVE and EXIT account inputs were collected before their respective applied results. These times are observations, not runtime measurements or promised delays.
 
-At 16:05, Devi has the intended identity-state setting but not the intended account status. Calling the exit complete would hide the failed disable.
+The timeline doesn't require sync and disable to execute in that order in other runs. It separates their results: the final workerCode update succeeds, while disabling fails because the connection lacks permission for that operation.
 
-Do not conclude that the identity state must be Active because the account is enabled. The failed provisioning attempt explains why the two disagree with the intended account outcome.
+At 16:05, the intended participation setting is applied but the required disable isn't complete. The enabled target account doesn't prove identity state Active. The verified long-term setting doesn't prove a disabled account.
 
-Likewise, do not assume recurring processing will repeatedly enforce a lifecycle account-disable action. Lifecycle account actions are not persistent account-state enforcement. Investigate the failed operation and use the supported, approved recovery path.
+A successful field write doesn't supply the missing disable evidence either. The operations have different requirements and outcomes.
 
-A later successful operation or fresh target check would be needed to establish recovery. Neither the long-term label nor the successful workerCode write supplies that evidence.
+Lifecycle enable/disable actions execute once; they aren't persistent account-state enforcement that repeatedly retries merely because a later processing run occurs. Inspect the actual failure and supported recovery path rather than assuming the next scheduled job will fix it.
 
-## Correcting a long-term identity is still possible
+Preserve the operation and target observations, correct the approved cause and verify recovery through the supported path. A later successful result and fresh account-status evidence would be needed to establish the required disablement.
 
-Suppose PeopleRegister later corrects employmentCode from EXIT to EXIT-CORR while workerStage remains EXIT.
+## Long-term doesn't freeze the identity's information
 
-The updated account is collected and the applied identity employmentCode is independently verified as EXIT-CORR. The assigned lifecycle state remains retained and identity state remains Inactive (long-term).
+Suppose HR later corrects employmentCode from EXIT to EXIT-CORR while workerStage remains EXIT.
 
-This is consistent with identity-attribute promotion from updated accounts being available for all three states. It does not prove that every external field will follow automatically.
+The updated account is collected, and the applied identity employmentCode is separately verified as EXIT-CORR. Lifecycle remains retained and identity state remains Inactive (long-term).
 
-WorkDirectory workerCode is still EXIT at the latest supplied check. Ordinary automatic sync for long-term identities does not provide the continuing update path being assumed.
+That is consistent with the identity-attribute promotion row. Updating a mapped identity field is a different operation from broad role-list processing or an external field write.
 
-An administrator can initiate **Synchronize Attributes** for an individual identity, including a long-term inactive identity. This action evaluates the configured synchronization across that identity's accounts. It is not a request to recompute every identity value from HR first, and it is not restricted to one field merely because one mismatch prompted it.
+The latest supplied directory workerCode still says EXIT. The transition's final sync doesn't establish a continuing automatic update for every later correction while the identity is long-term inactive.
 
-Before using that action, verify the identity value, configured mappings, relevant accounts and expected effects. In this fictional example, an authorized manual synchronization later completes, and a fresh target check confirms workerCode EXIT-CORR on wd-96006.
+A supported correction path is available: an administrator can initiate **Synchronize Attributes** for the individual identity, including one in Inactive (long-term).
 
-The account-disable issue remains a separate open issue unless its recovery is also verified. A field update does not disable the account.
+That action analyzes all accounts for the selected identity under its configured attribute-sync mappings. It isn't limited to the field that prompted the investigation, and it isn't a request to first recompute all identity values from HR.
 
-No temporary change to Active is needed to establish that supported manual-sync path. Changing identity state just to get an operation to include the person can also expose request selections or alter other participation, and does not repair the original failed permission.
+Check the current identity values, configured field mappings, account associations and expected effects before using it.
 
-## Explain an unexpected state before changing it
+In this supplied continuation, authorized manual synchronization completes and a fresh target check confirms workerCode EXIT-CORR.
 
-Identity state comes from the selected lifecycle configuration. Check the assigned lifecycle state and its actual Identity State setting, not only its name.
+That verifies the field result, not account disablement. The earlier failed disable remains unresolved by the supplied recovery evidence; a separate account-status check and operation outcome are still needed.
 
-If there is no assigned lifecycle state, or the assigned lifecycle state has no configured identity state, ISC defaults the identity state to Active.
+There is no need to pretend the business stage is active to use this supported manual path. Changing participation to force an operation can also restore recipient selections or affect other features, while leaving the original permission problem untouched.
 
-A lifecycle display label such as Archived therefore does not prove that Inactive (long-term) is in effect. An unset configuration is not the same thing as an explicitly selected long-term setting.
+## Check the setting behind a label that looks wrong
 
-For a real discrepancy, trace the actual input, lifecycle mapping, assigned state and configured participation setting. A correct mapping Preview is useful, but it does not establish the applied assignment or every downstream action.
+Identity state comes from the assigned lifecycle configuration. Inspect its actual Identity State setting rather than guessing from a label such as Archived.
 
-There is also a separate daily identity-data reconciliation job, SYNCHRONIZE_IDENTITIES, concerned with synchronizing identity data across services such as Search. Long-term inactive identities are excluded from it.
+If no lifecycle is assigned, or the assigned lifecycle has no configured identity state, ISC defaults identity state to Active.
 
-That job is not source-account attribute sync. Waiting for it cannot be used as evidence that workerCode will be written, a disable will be retried, or a long-term identity's search representation will be repaired by that job.
+An unset value isn't an explicit long-term choice. This default doesn't establish any directory disable; that still needs its own configured action and result.
 
-When a person is absent from a screen, identify that screen's purpose and selection rules. Absence from Request Center or My Team is not proof of identity deletion, loss of the manager relationship or deletion of the directory account.
+For a discrepancy, trace the collected input, lifecycle mapping, assigned state and participation setting.
 
-## Work through the participation decisions
+**Preview** evaluates mappings for a selected identity. A correct Preview helps test the proposed result, but doesn't establish applied lifecycle assignment or completed downstream actions.
 
-Use each variation independently.
+When someone is missing from Request Center or My Team, find the existing administrative identity and check these records. Absence from a selection view doesn't prove identity deletion, a lost manager relationship or removal of the authoritative worker account.
 
-### 1. Missing from Request Center, present in processing
+## Platform data synchronization is another responsibility
 
-**Facts:** Devi's applied identity state is Inactive (short-term). She has the configured sync-source account. An administrator cannot select her as a Request Center recipient.
+ISC also has a daily identity-data reconciliation job, `SYNCHRONIZE_IDENTITIES`, concerned with identity information across platform services such as Search.
 
-**Reasoning:** Recipient exclusion is expected for that state. It does not exclude her from the qualifying morning recurring population. Check each operation's rule; do not treat one screen's absence as a universal processing stop.
+Long-term inactive identities are excluded from it. It isn't source-account attribute sync and isn't a retry mechanism for a failed directory disable.
 
-### 2. An Active identity has no qualifying sync account
+Waiting for that job doesn't establish that workerCode will be updated or that the excluded identity's Search representation will be repaired by that job.
 
-**Facts:** Another identity is Active but has no account on any source configured for attribute sync.
+Attach the observation to its purpose: recipient-selection eligibility, mapped identity information, platform visibility, account field alignment and account status need their own evidence.
 
-**Reasoning:** Active satisfies the state part of morning eligibility, not its account condition. The stated facts do not establish inclusion in that morning population. This is a selection issue, not proof that its mappings failed.
+## Work through these participation decisions
 
-### 3. Broad role application misses long-term
+Each question is an independent variation.
 
-**Facts:** Devi is Inactive (long-term). A role configuration changes, and an administrator starts Apply Changes from the role list.
+### Questions
 
-**Reasoning:** That broad action excludes her state. Its completion does not establish her reevaluation. Investigate whether a supported selected or profile-scope processing action is appropriate and authorized. Do not switch her to Active merely to enlarge the broad action's population.
+1. A verified Inactive (short-term) identity has an account on a sync-configured source but can't be selected as a Request Center recipient. Does recipient exclusion establish exclusion from the morning recurring population?
+2. Another identity is Active but has no account on any sync-configured source. Do these facts establish inclusion in the morning population?
+3. A role definition changes while the identity is Inactive (long-term). Apply Changes is started from the role list. Does its completion establish reevaluation for this identity?
+4. A reviewed Employees mapping changes. The long-term identity is still associated with Employees, and Apply Changes starts from that identity profile. Does the role-list exclusion apply here?
+5. The 16:05 observation shows retained, Inactive (long-term), a failed disable attempt and an enabled directory account. Which outcome remains incomplete?
+6. Current identity employmentCode is EXIT-CORR, the latest target workerCode is EXIT and identity state is long-term. Only the transition sync is verified. Does that establish continuing automatic delivery?
+7. An assigned lifecycle displays as Archived, but its Identity State setting is unset. Does the label establish long-term participation?
+8. An administrator searches only the Request Center recipient selection, finds no person and proposes recreating the identity. What does that absence establish?
 
-### 4. Profile application includes long-term
+### Work through the reasoning
 
-**Facts:** A reviewed Employees identity mapping changes. Devi remains associated with Employees and is Inactive (long-term). Apply Changes starts from that identity profile.
+**1. Check the particular feature's rule.** Recipient exclusion is expected, but short-term state and the configured sync account satisfy the stated morning selection conditions. A missing recipient doesn't mean universal processing exclusion.
 
-**Reasoning:** This path includes the profile's identities across all three states. Do not copy the role-list exclusion onto it. Inclusion is still not proof that a particular value changed or a target write succeeded; inspect the current result and any required delivery.
+**2. The account condition is missing.** Active meets the state requirement, not the whole morning rule. Investigate selection before calling it a mapping failure.
 
-### 5. Inactive, but still enabled
+**3. The chosen list-page action excludes long-term.** Its success doesn't establish this identity's evaluation. Review an appropriate authorized profile or selected-processing scope and verify the result; don't change state just to enlarge the list-page population.
 
-**Facts:** The supplied 16:05 observation shows retained, Inactive (long-term), a failed disable attempt and enabled wd-96006.
+**4. The profile action includes associated identities across all three states.** Don't import the list-page filter. Inclusion still doesn't establish a changed current value or successful target delivery.
 
-**Reasoning:** Participation has changed; target disabling has not succeeded. Preserve the evidence and repair the supported operation through approved authorization. The enabled account does not disprove the identity state, and the identity state does not close the disable issue.
+**5. Account disabling is unresolved.** The participation change is verified, while the required target operation failed. Use the approved supported recovery path and fresh target evidence. Neither status disproves the other observation.
 
-### 6. A later field correction remains unsynchronized
+**6. A final transition sync isn't ongoing automatic enforcement.** Review the current identity value, configured mappings and supported manual Synchronize Attributes scope, then verify the actual update. Another identity-processing run and a state change aren't automatically the needed correction.
 
-**Facts:** Current identity employmentCode is EXIT-CORR, state is long-term, and the latest target workerCode is EXIT. Only the original transition sync is verified.
+**7. Check the configured value.** Without a configured identity state, the documented default is Active. Review the approved configuration and application; don't infer long-term or target disablement from the display text.
 
-**Reasoning:** The final transition sync does not imply ongoing automatic updates afterward. Verify the configured mapping and authorized manual Synchronize Attributes path, then its actual outcome. Do not assume changing identity state or processing again is required to resync the field.
+**8. Only absence from that selection view is established.** Both Inactive states are excluded there. Find the existing administrative identity and its source/account evidence before considering creation. The search doesn't prove deletion or a missing worker record.
 
-### 7. The lifecycle label says Archived
+## Try a contractor email correction
 
-**Facts:** A person's assigned lifecycle state displays as Archived, but its Identity State setting is unset.
+A contractor's enabled Contract Ended lifecycle is explicitly configured with Inactive (long-term). An existing application account remains associated with the identity.
 
-**Reasoning:** The documented default is Active when the assigned state lacks a configured identity state. The label alone cannot establish long-term participation. Review the business-approved configuration and apply the appropriate correction; do not report a directory disable without its own evidence.
+An approved email-mapping correction is saved. Preview returns the right email, but the applied identity email is still old.
 
-### 8. A request-selection search finds nobody
+The account's mail field is already configured for direct identity-email synchronization. No account creation is needed.
 
-**Facts:** An administrator looks for Devi only in a Request Center recipient selection, finds no result and proposes recreating her identity.
+An administrator proposes Apply Changes from the access-profile list, followed by waiting for automatic account sync. What is wrong with that plan, and what evidence would establish completion?
 
-**Reasoning:** That view excludes both Inactive states. Find the existing administrative identity and its source/account evidence before considering identity creation. The supplied absence proves neither deletion nor a missing authoritative worker record.
+The broad list-page action excludes long-term. A supported identity-profile application or selected identity-processing action can include the contractor; review the shared effects and choose the authorized scope.
 
-## Try a contractor correction
+First verify the applied identity email. Preview isn't that evidence.
 
-A contractor is in an enabled lifecycle state called Contract Ended, explicitly configured with Inactive (long-term). Their existing application account remains associated.
+Then treat the existing account mail as a separate delivery requirement. Ordinary long-term automatic sync isn't the continuing path to assume. Review the supported manual identity-sync action and its configured account scope, then verify the operation and fresh application-account value.
 
-An approved correction to the contractor's identity email mapping is saved. Preview returns the correct email, but the applied identity email is still the old address. An administrator proposes running Apply Changes from the access-profile list, then waiting for automatic account attribute sync.
-
-The application account's mail field is already configured for direct identity-email synchronization. No account creation is needed.
-
-What is wrong with the proposed reasoning, and what evidence would you need before calling the correction complete?
-
-The broad access-profile action excludes the contractor's long-term state. A supported identity-profile application or selected identity-processing action can include that state; choose an authorized scope after reviewing the configuration's effects.
-
-First verify the correct applied identity email. A correct Preview does not supply it. Then treat the existing account's mail field as a separate synchronization requirement.
-
-Long-term ordinary automatic sync is not the continuing delivery path to assume. Review and use the supported manual identity sync where appropriate, accounting for its configured account scope, then inspect the operation and fresh application-account value.
-
-None of that requires pretending the contract is active. The correct business stage, participation setting and corrected account data can coexist.
-
-When someone says “ISC did not process this inactive person,” ask which state, which operation, which selected population and which result they checked. Those details turn a vague status problem into a specific configuration, selection or delivery question.
+The corrected business information can coexist with the proper ended-contract lifecycle and participation setting. Completion needs the correct applied email and confirmed target mail without misrepresenting the contract as active.

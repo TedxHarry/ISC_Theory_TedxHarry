@@ -1,0 +1,11 @@
+[Proposed identity Department: ENG]
+     |
+     +--> [Role expects Engineering]
+     |    [Condition no longer matches]
+     |    [Reevaluate role / access]
+     |
+     +--> [Configured directory sync]
+          [Attempt to write ENG]
+          [Verify target result]
+
+[Engineer checks each required outcome]

@@ -1,0 +1,16 @@
+Selected identity / HR-Primary account
+departmentCode = " ENG "
+                 |
+lookup keys: ENG / FIN
+No match; no table default
+                 |
+Supplied candidate diagnostic: error
+                 |
+firstValid / ignoreErrors: true
+                 |
+Next candidate: "Finance"
+                 |
+Returned department: Finance
+
+Arrows connect values and outcomes.
+Returned text is not business proof.

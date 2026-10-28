@@ -1,0 +1,23 @@
+Application capability evidence
+              |
+              v
+Owner confirms action and scope
+              |
+              v
+Usable description and assessment
+              |
+              v
+Review combines access + work need
+              |
+              v
+       Authorized decision
+              |
+       if change is required
+              |
+              v
+Separate delivery to selected account
+              |
+              v
+Current membership + action checks
+
+Human responsibilities, not ISC jobs.

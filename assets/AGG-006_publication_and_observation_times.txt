@@ -1,0 +1,10 @@
+03:00 HR changes WH to DIST
+          |
+03:17 first read gets WH
+03:22 first run completes
+          |
+03:40 HR publishes new batch
+          |
+04:18 second read gets DIST
+04:24 account value confirmed
+04:26 identity value confirmed

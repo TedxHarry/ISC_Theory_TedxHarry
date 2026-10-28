@@ -1,0 +1,11 @@
+Human investigation:
++-- Wrong producer value
+|   owner corrects -> collect input
++-- Wrong extraction
+|   repair integration -> collect input
++-- Wrong mapping/calculation
+    repair -> Preview -> apply
+
+[Relevant identity processing]
+[Verify identity + current exception]
+[Check required target outcomes]

@@ -1,0 +1,22 @@
+HR account in the external system
+department: Engineering
+               |
+      account aggregation reads
+               v
+Collected HR account in ISC
+department: Engineering
+               |
+   Employees department mapping
+   relevant identity processing
+               v
+Current ISC identity
+department: Engineering
+               |
+    established department sync
+    requires account alignment
+               |
+    supported provisioning write
+               v
+External directory account
+department: Engineering
+IF the update succeeds

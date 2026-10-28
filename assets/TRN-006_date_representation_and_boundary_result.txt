@@ -1,0 +1,21 @@
+For the selected identity:
+HR-Primary assignmentEnd
+              |
+"10/23/2026 17:00:00 +0000"
+              |
+Parse: MM/dd/yyyy HH:mm:ss Z
+              |
+ISO value for October 23, 17:00 UTC
+              |
+Compare now >= approved end instant
+          /                 \
+        true                false
+         |                    |
+Boundary reached       Before boundary
+         \                  /
+              Returned label
+                    |
+Mapping: assignmentBoundaryReview
+
+Arrows show value dependencies.
+Errors are not ordinary false results.

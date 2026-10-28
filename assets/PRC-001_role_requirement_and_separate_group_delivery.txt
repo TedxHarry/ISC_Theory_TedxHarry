@@ -1,0 +1,21 @@
+Current identity: Engineering
+               |
+      role condition matches
+               v
+Engineering role requires
+Engineering access profile
+               |
+  profile includes ENG-BASE membership
+               v
+Provisioning: add ENG-BASE
+to the existing directory account
+               |
+      +--------+--------+
+      |                 |
+   succeeds           fails
+      |                 |
+verify membership   inspect operation,
+on target account   error and target
+
+Department sync is a separate write.
+One result does not prove the other.

@@ -1,0 +1,15 @@
+For the selected identity:
+HR-Primary account already collected
+
+Option 1: preferredName returns null
+                 |
+       No non-null value selected
+                 |
+Option 2: givenName returns "Ana"
+                 |
+       First non-null result
+                 |
+             Return "Ana"
+
+Order expresses approved preference.
+A null result is not an error.

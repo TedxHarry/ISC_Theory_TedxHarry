@@ -1,358 +1,304 @@
 # The mapping is saved. What still needs to happen?
 
-Devi's source account already contains the correct cost centre, but SailPoint Identity Security Cloud (ISC) shows an older value on her identity.
+An HR account already has the approved cost centre, but the person's identity in ISC still shows an older one. The administrator finds the cause: the identity mapping reads a historical field instead of the current field.
 
-An administrator finds the cause: the identity mapping reads a legacy field instead of the current cost-centre field. The administrator corrects the mapping and saves it. Preview now returns the right value.
+The mapping is corrected and saved. Preview returns the right value.
 
-Has the change been applied to Devi? Has it been applied to everyone using that mapping? Has any resulting access change reached the application?
+What has been established? The instructions and one calculated result are correct. We still need to check the current identity, the other identities that use those instructions and any access changes that should follow.
 
-Those are different questions.
+## Look at the two fields before choosing another action
 
-**Manual identity processing** is an administrator-initiated reevaluation of identity information and applicable requirements. It provides a supported way to apply configuration changes without waiting for an unrelated source-data change.
+In SailPoint Identity Security Cloud, or ISC, an **identity** is the record representing a person across their accounts. An **account** is that person's record in a particular system. An **attribute** is a named field on either record.
 
-It is not a general “make everything correct” operation, and it is not a harmless substitute for understanding the change's scope.
+The person already has a valid identity and one correctly associated HR account. Its collected information contains:
 
-## Put the saved configuration beside the actual records
+- `costCenter = "0042"`: the approved current cost centre.
+- `legacyCostCenter = "0088"`: a retained historical value.
 
-Devi's employee number is 94004. Her ISC **identity** is the record representing her as a person. We will label it I-94004; that is a teaching label, not an actual ISC object ID.
+These are text values. Their leading zeros are part of the representation.
 
-Her correctly associated HR account is `sl-94004` on StaffLedger Production.
+Call the source HR-Primary. A **source** is ISC's configured representation of a system's account data. HR-Primary is **authoritative** for this employee population: its worker records participate in establishing and maintaining their identities.
 
-A **source** is ISC's configured representation of a system's account data. An **account attribute** is a field on a source account. An **identity attribute** is a field on the identity.
+The Employees **identity profile** supplies shared configuration for that population. Its costCenter **mapping** specifies how identity costCenter gets a value.
 
-The account data is already collected into ISC and contains two distinct fields:
+The old mapping selects legacyCostCenter, so it supplies `0088`. The approved replacement selects costCenter directly, supplying `0042`.
 
-- `costCenter = "0042"`, the approved current cost centre.
-- `legacyCostCenter = "0088"`, a retained historical value that must not supply the current cost centre.
+That is the defect. A **transform** is a calculation used to prepare an attribute value, but no calculation or fallback is needed here. The intended field already contains the right value; ISC needs the right selection and relevant application.
 
-Both values are text. The leading zeros are part of their representation.
+There is no reason to edit HR's correct costCenter just to make another data change.
 
-StaffLedger is authoritative for the employee population: its worker records establish and maintain the related identities. The Employees **identity profile** supplies shared configuration for them.
+## Why this field correction also matters to access
 
-The profile's costCenter **mapping** tells ISC how to obtain the identity costCenter. Its old configuration reads the account's legacyCostCenter. Its approved replacement reads the account's costCenter directly.
+An enabled Finance Baseline **role** tests whether identity costCenter equals the text `0042`. A role groups configured access around a business responsibility and can use assignment conditions to determine who receives it.
 
-No transform or fallback is needed. A **transform** is a calculation used to prepare a value; adding one would not repair choosing the wrong source field.
+It includes the enabled Finance Tools **access profile**, a bundle of access from one source. That profile contains an **entitlement**, ISC's representation of a source-specific permission: directory group membership `FT-BASE`.
 
-Devi's identity currently has 0088 because of the old mapping. Her source account does not need another HR edit to supply 0042.
+The person already has a correctly associated account on Directory-Primary. It lacks FT-BASE. The source supports the group addition and has provisioning enabled.
 
-The business owner has approved both the field correction and its access consequences.
+**Provisioning** carries out required account or access changes through a supported automatic or manual delivery path. A matching role condition can require the membership, but the group operation still needs execution permission and a successful result.
 
-An enabled automatic role called Finance Baseline tests whether identity costCenter equals the text 0042. A **role** groups configured access and can assign it using identity conditions.
+This is ordinary ongoing membership, with no separate activation step. There is no previous `0088` assignment to remove, no cost-centre field synchronization and no account creation in this example.
 
-Finance Baseline contains the enabled Finance Tools **access profile**, a bundle of access from FinanceDirectory. It includes an **entitlement**, the governed representation of membership in group `FT-BASE`.
+The owner has approved the field correction and its access consequences. Other mappings and access configurations are reviewed and unchanged in the main example.
 
-This is ordinary ongoing access, with no separate activation step. Devi already has correctly associated FinanceDirectory account `fd-94004`, which initially lacks FT-BASE. The source supports the group-add operation and has provisioning enabled.
+All records, approvals and observations below are hypothetical. They are supplied for reasoning, not results from an actual tenant.
 
-There is no 0088-based access assignment to remove, no cost-centre attribute sync, and no account creation in this example. Other mappings and access configurations are assumed reviewed and unchanged.
+## Save the instructions, then distinguish the proposed and current results
 
-These records, approvals, actions and results are fictional. No real tenant or target account is changed.
+**Save** stores the configuration. Here, inspect the saved Employees mapping: it must select HR-Primary costCenter rather than legacyCostCenter. A plan to change it isn't evidence of what was saved.
 
-## Save, Preview and application answer different questions
+**Preview** evaluates mappings for a selected identity using available data. Returning `0042` establishes that this selected evaluation produces the expected value.
 
-**Save** establishes the configuration you have stored. For this case, we verify that the saved Employees mapping selects StaffLedger costCenter, not legacyCostCenter.
+It doesn't apply that value to the identity or perform the group addition. Check the current identity separately.
 
-**Preview** evaluates mappings for a selected identity using available data. A result of 0042 tells us that this selected evaluation produces the expected value.
+For the supplied example, Preview returns `0042` while a separate current identity observation still shows `0088`. The correction has not yet appeared in that current record.
 
-It does not prove the current identity costCenter has changed. Check that record separately.
+**Manual identity processing** is administrator-initiated evaluation of identity information and applicable requirements. It provides a supported way to apply configuration changes without waiting for an unrelated source edit.
 
-It also does not establish that the role was assigned or that FinanceDirectory accepted FT-BASE membership. Preview is not an external provisioning test.
+With the corrected mapping, processing can establish identity costCenter `0042`. The Finance Baseline condition then matches, so its configured access can be required.
 
-**Applying the change** means initiating the relevant supported processing and verifying its results for the intended population.
-
-A saved definition, a proposed result and an applied result are separate facts.
-
-There is another boundary worth keeping clear: Save is not a private staging area.
-
-Role configuration is used when identities are analyzed, and shared mappings or definitions can be consumed by relevant processing. A selected Preview or a plan to process only Devi does not create an isolated copy of the saved configuration.
-
-Do not assume nobody else can encounter a saved shared change until you choose your preferred application action. Plan the timing, other processing and change coordination accordingly.
-
-Where available, use an appropriate test environment before introducing a consequential shared change into production.
-
-## Start with who the configuration can affect
-
-Employees currently contains twelve identities. All twelve are in the Active identity state.
-
-An **identity state** controls participation in ISC processes and features. Active and Inactive (short-term) are distinct states used in processing scope rules; a person's business department is not their identity state.
-
-Our reviewed population is:
-
-| Population group | Collected input, expected identity value and role effect |
-|---|---|
-| Four identities, including Devi | legacyCostCenter 0088; current account costCenter 0042. The correction should change identity costCenter to 0042 and newly satisfy Finance Baseline. |
-| Two identities already using the same value in both fields | Both account fields contain 0042. The corrected mapping should keep identity 0042; these identities already have the role and confirmed FT-BASE access. |
-| Six identities with another unchanged cost centre | Both account fields contain 0090. The corrected mapping should keep identity 0090; the role condition remains false. |
-
-Four plus two plus six gives twelve. Six should satisfy the role condition after the corrected mapping is applied, but only four are newly eligible because of this correction.
-
-That is a prediction from the supplied records and configuration. It is not proof that six target accounts already have membership.
-
-No external write is required merely to make the two already-correct identities look newly processed. Their correct existing access can remain unchanged.
-
-Review consumers before application. A **consumer** is a configuration or system that uses the value. Here, Finance Baseline consumes costCenter.
-
-In another project, costCenter might also supply account attributes, routing, lifecycle calculations or other roles. A **lifecycle state** is a business-stage configuration that can drive access. **Manager correlation** resolves manager information to the corresponding identity.
-
-Identity processing can evaluate applicable responsibilities beyond the one field you are investigating. Knowing that the current change is small does not prove every consequence is small.
-
-If a mapping uses a shared referenced transform, inspect its other callers too. A **reference** reuses another named transform's instructions; a caller is a calculation using that shared definition.
-
-A profile-local application does not prove that every caller in another profile has been evaluated.
-
-## Choose the processing path by its actual scope
-
-ISC supports several manual entry points. Their names do not make their populations identical.
-
-| Supported action | Scope and interpretation |
-|---|---|
-| Apply Changes on an identity profile | Initiates processing for identities associated with that profile. For our Employees example, the reviewed profile population is twelve identities. |
-| Apply Changes from the role, access-profile or application list pages | Uses the documented broader Active and Inactive (short-term) identity population. Do not assume it is limited to the one role, person or editor row that prompted the work. |
-| Process Identity | Initiates processing for the selected identity. It is not restricted to recalculating only the cost-centre field or only the newly edited setting. |
-| Process Identities | Initiates processing for the selected set of identities. Selecting several people does not apply the shared change to every other affected person. |
-
-For these list-page actions, roles, access profiles and applications are processed together. Choosing the role list is not a switch for applying only the single role you edited. These are ISC configuration areas, not commands to restart the external business applications.
-
-The identity-profile path's documented scope is its associated identities. Do not automatically substitute the broader list-page path's identity-state filter for that profile scope.
-
-Conversely, do not assume the broader list-page path includes every identity state. Check which population the chosen action covers.
-
-Selected-identity processing can supply useful evidence for a particular case. It is not a substitute for defining and completing the wider application scope.
-
-It also is not a production safety barrier. The saved shared configuration remains shared.
-
-For our correction, a supported selected-identity evaluation can establish Devi's actual result. A later Employees profile application can cover the twelve reviewed identities. Those are different claims even when the same saved mapping is used.
-
-The decision is not simply “small button or big button.” It is which identities require reevaluation, what other applicable configuration they may encounter, and which outcomes must be verified.
-
-## Processing uses current inputs and applicable configuration
-
-A **connector** provides the supported integration with the external system. **Account aggregation** reads account data through that integration, or imports it from a file-based source.
-
-Manual identity processing does not make missing or stale producer data appear. It uses the inputs available to the relevant calculations.
-
-For Devi, the approved account field 0042 is already available. The defect is the mapping's selection, so a new HR edit is unnecessary.
-
-If the account in ISC instead still contained an outdated current cost centre, processing that same input would not magically retrieve HR's newer value. Investigate collection first.
-
-Likewise, do not use an optimized aggregation as an unexplained substitute for applying a saved mapping change. An existing unchanged account can be skipped during optimized account processing.
-
-The UI action named Aggregate Account has its own narrower documented scope: it reloads account data without synchronizing the new data into identity attributes or affecting provisioning. It is not another name for Process Identity.
-
-For the manual processing itself, applicable identity mappings and decisions can be reevaluated. If the corrected identity costCenter is 0042, Finance Baseline can now require Finance Tools.
-
-**Provisioning** carries out required account or access changes through a supported automatic or manual delivery path.
-
-The identity's correct cost centre and its role assignment explain why FT-BASE should be delivered. They do not establish that the group-add operation succeeded.
-
-Here are the boundaries for the main example:
+That explains why the group should be delivered. It doesn't prove it was delivered. Identity processing doesn't validate successful access provisioning after starting that work.
 
 ```text
-Already collected sl-94004
+Collected HR account
 costCenter 0042 / legacy 0088
-                 |
-saved mapping now selects costCenter
-                 |
-      +----------+----------+
-      |                     |
-selected Preview     relevant processing
-      |                     |
-proposed 0042        verify current 0042
-                            |
-                    verify role assignment
-                            |
-                    group-add provisioning
-                            |
-                    verify target FT-BASE
+                |
+saved mapping selects costCenter
+                |
+       +--------+---------+
+       |                  |
+selected Preview   relevant processing
+       |                  |
+proposed 0042      check current 0042
+                          |
+                  check role assignment
+                          |
+                  group-add provisioning
+                          |
+                  check target FT-BASE
 
-Preview does not perform the target write.
+Preview does not perform that write.
 ```
 
-The arrows show dependencies and evidence responsibilities. They are not private backend services, a universal execution order for every identity field, or guaranteed delivery.
+The arrows show inputs, configuration and evidence responsibilities. They don't prescribe private background services or a universal order in which every identity attribute is calculated.
 
-## Follow one identity without claiming the population is done
+**Applying a change** therefore needs more than a saved definition or a correct Preview: initiate the supported processing for the intended scope, then verify the required results.
 
-All observations below occur on October 23, 2026, in UTC, Coordinated Universal Time.
+## Predict the population result before applying it
 
-At 12:00, the approved Employees mapping is saved and its selected source field is verified.
+Employees contains twelve identities, all in the Active identity state.
 
-At 12:05, Preview for Devi returns 0042. A separate current identity observation still shows 0088.
+An **identity state** controls participation in ISC features and processing. Active and Inactive (short-term) are states used in processing scope rules. A business cost centre isn't an identity state.
 
-This establishes the difference between the proposed and current results at that moment. An old screenshot alone would not establish the current value, but here the current record has been checked.
+The reviewed account information divides the twelve identities like this:
 
-At 12:10, the authorized selected-identity processing is initiated for I-94004.
+| Group | Expected identity and role result under the corrected mapping |
+|---|---|
+| Four, including the selected person: legacyCostCenter `0088`, current costCenter `0042` | Identity costCenter should change to `0042`, newly meeting Finance Baseline's condition. |
+| Two: both account fields `0042`, current identity `0042`, role and FT-BASE already verified | Identity value and correct access should remain unchanged. |
+| Six: both account fields `0090` | Identity costCenter should remain `0090`; the Finance Baseline condition remains false. |
 
-At 12:12, relevant processing and current identity costCenter 0042 are verified. Finance Baseline assignment is also verified.
+Four plus two plus six is twelve. After correction, six should satisfy the role condition, but only four become newly eligible because of this change.
 
-At 12:13, the FT-BASE add operation reports insufficient permission. At 12:14, a fresh FinanceDirectory observation confirms that fd-94004 still lacks the group.
+Keep those counts attached to the right claim. Six expected role assignments is not six new group-add operations or six verified target memberships.
 
-The mapping correction has worked for Devi's identity. The resulting access delivery has a separate failure.
+The two already-correct identities don't need a duplicate field change or access addition merely to demonstrate processing. Preserving the correct result can be the intended outcome.
 
-At 12:15, the other eleven current identity values are checked. The other three identities needing the correction still show 0088. The two already-correct identities show 0042, and the remaining six show 0090.
+Before application, inspect the value's **consumers**, the configurations or systems that use it. Here, the role consumes costCenter. That is why correcting this field can change access, rather than only a displayed label.
 
-One selected identity's success has not corrected the other three affected identities in these supplied observations.
+## Choose the action by the identities it processes
 
-This is current evidence for the stated example, not a promise that other identities could not be processed for another reason. We have checked their values rather than assuming selected processing isolated the change.
+ISC provides different manual entry points. The selected action determines the population to process.
 
-Here is the same evidence progression:
+| Supported action | Documented scope and practical meaning |
+|---|---|
+| Apply Changes on an identity profile | Processes identities associated with that profile. Our reviewed Employees population is twelve. |
+| Apply Changes from the role, access-profile or application list pages | Uses the broader Active and Inactive (short-term) population. Roles, access profiles and applications are processed together. |
+| Process Identity | Processes the selected identity, including applicable evaluation beyond just the diagnostic field. |
+| Process Identities | Processes the selected set. Selecting several doesn't cover every other affected person. |
+
+The list-page action isn't limited to one role's current members because that role prompted the work. The edited row doesn't define the entire population, and choosing the role list doesn't restrict the work to that single configuration area.
+
+These are ISC configuration areas. Apply Changes isn't a command to restart the external business applications.
+
+The identity-profile action has its own documented associated-identity scope. Don't automatically apply the list-page identity-state filter to that profile action. Conversely, don't assume the list-page action includes every identity state.
+
+For our correction, selected processing can establish one person's actual result. A later Employees application can cover the twelve reviewed identities. One successful selected result doesn't establish the wider application.
+
+There is another distinction to keep beside this action table: selected processing doesn't create an isolated copy of shared configuration.
+
+A saved shared role change can be encountered by other relevant identity processing. Selecting one identity for your manual run doesn't guarantee that nobody else can encounter it.
+
+Review the configuration's actual reach, coordinate the timing and use an appropriate test environment before a consequential shared production change. A selected run provides evidence for its selected scope; it isn't a private staging area for the saved instructions.
+
+## Follow the selected identity, then complete the reviewed population
+
+The following observations are supplied for October 23, 2026, in UTC, Coordinated Universal Time.
+
+At 12:00, the approved Employees mapping is saved and its selected field is verified.
+
+At 12:05, Preview for the selected identity returns `0042`, while a separate current check still shows `0088`. These are observations of different things at that time, not a comparison with an old screenshot.
+
+At 12:10, authorized processing is initiated for that identity.
+
+At 12:12, relevant processing and current identity costCenter `0042` are verified. Finance Baseline assignment is also verified.
+
+The identity correction is established. Now inspect the required delivery.
+
+At 12:13, the FT-BASE add reports insufficient permission. At 12:14, a fresh directory observation confirms membership is absent on the intended account.
+
+This is a separate provisioning failure. The new identity value and role requirement explain the needed group change; they don't overcome the target operation's permission problem.
+
+At 12:15, current values are checked for the other eleven identities. The other three needing correction still show `0088`; the two already-correct identities show `0042`; the six remaining identities show `0090`.
+
+That supports a precise conclusion: one identity is corrected, but three affected identities still have the old value. Population application isn't complete.
+
+We know those other values because they were checked. We aren't assuming the selected run prevented other processing from occurring.
+
+Before wider application, the saved configuration is confirmed to be the reviewed version. The authorized Employees profile application is initiated at 12:20.
+
+At 12:25, that application has finished and current results across the twelve are verified: four corrected to `0042`, two retained at `0042` and six retained at `0090`. The six qualifying role assignments are verified too.
+
+This completes the stated population's identity and role checks in the supplied example. It doesn't complete every target-delivery check.
 
 ```text
-12:00  corrected shared mapping saved
-12:05  Preview 0042 / current 0088
-12:10  selected identity processing starts
-12:12  current 0042 / role verified
-12:13  group add reports permission error
-12:14  target group still absent
-12:15  other affected values still old
+12:00 corrected shared mapping saved
+12:05 Preview 0042 / current 0088
+12:10 selected processing initiated
+12:12 current 0042 / role verified
+12:13 group add: permission error
+12:14 target group absent
+12:15 three other affected values old
+12:20 profile application initiated
+12:25 all 12 identity results verified
+      six qualifying roles verified
 
-Identity correction: verified for Devi.
-Population application: not complete.
-Target membership: failed at last check.
+At 12:25 no new target check is supplied.
+The earlier failure is historical,
+not a new current membership result.
 ```
 
-This is a fictional observation timeline, not a timing guarantee or a prescribed job sequence.
+The observations aren't runtime measurements or promised delays.
 
-## Apply the reviewed scope, then verify the required results
+The selected person's last target observation is from 12:14. At 12:25, we haven't supplied a new membership result. Neither "now present" nor "definitely still absent" follows from that historical observation alone.
 
-Before broad application, confirm the saved configuration is still the reviewed version.
+Recheck the relevant operation and current target membership. Address the missing permission through the authorized delivery path, and check the other required access outcomes separately.
 
-If another administrator changes an unrelated role or shared transform after your review, the operation can encounter different applicable instructions from the ones you assessed. Do not treat your earlier Preview as approval for those later changes.
+Don't treat Apply Changes as a universal retry command for every previously failed provisioning item. Recovery depends on the actual failed operation and supported mechanism.
 
-For broader role/access-profile/application application, ISC offers Review recent configuration changes before starting the job. It opens a predefined search for changes since the last manual processing initiated through those list pages.
+## Check what else the processing can encounter
 
-That helps identify change scope. It is not a guarantee that only your edit will be processed, a complete dependency analysis, or an isolation mechanism.
+Processing evaluates the applicable configuration, not only the single field that motivated the investigation.
 
-Coordinate related approved changes rather than repeatedly applying one tiny edit after another. Broad processing consumes time and resources. The set should be reviewed and coherent, not an unexamined pile of unrelated edits.
+A cost centre might also supply account fields, route work, participate in a lifecycle calculation or affect another role. A **lifecycle state** describes a business stage and can drive configured access.
 
-In the fictional continuation, the approved Employees profile application is initiated at 12:20.
+**Manager correlation** resolves manager information to the corresponding manager identity. Applicable processing can evaluate manager relationships as well as mappings, lifecycle-driven access and roles.
 
-At 12:25, the relevant application has finished and current identity results are verified across the twelve reviewed identities: four corrected to 0042, two retained at 0042, and six retained at 0090. The six qualifying role assignments are also verified.
+That doesn't mean every responsibility must change. It means the review should identify which outcomes are expected under the configuration the operation will use.
 
-That supports the intended population's identity and role outcomes.
+Shared calculations need similar attention. A **reference** reuses a named transform's instructions. A **caller** is another calculation using those instructions.
 
-It does not establish target membership for every qualifying person. Devi's last target observation is still the failed 12:14 check. Do not silently turn that historical observation into a new current failure or a new current success at 12:25.
+If a changed transform has callers in multiple profiles, processing one profile doesn't establish that every other caller has been evaluated. The main cost-centre example uses a direct field mapping, but this dependency matters when calculations are shared.
 
-Recheck her target result and follow up on the missing permission through the authorized delivery path. Check the other required access outcomes separately.
+Also recheck configuration before execution. Another administrator may have changed a role or shared transform after your review. An earlier Preview doesn't establish approval for those later instructions.
 
-Do not assume Apply Changes is a universal retry command for every previously failed provisioning item. The needed recovery depends on the actual failed operation and supported mechanism.
+For broader list-page application, **Review recent configuration changes** opens a predefined search for changes since the last manual processing initiated through those role, access-profile and application pages.
 
-A manual-processing job's successful completion is not the end of the evidence chain.
+Use it to help assess the change set. It isn't a complete dependency analysis, an isolation mechanism or a guarantee that only your edit will be processed.
 
-## Keep proof of processing separate from proof of delivery
+Coordinate a coherent set of approved changes before broad application. These jobs consume time and resources; repeatedly applying each small edit doesn't replace reviewing the combined effect.
 
-ISC can display active processing jobs, and audit records are available for manual processing initiated with Apply Changes.
+## Processing doesn't collect missing producer information
 
-Those records help establish that the relevant operation started and completed. Keep the scope, time and associated outcome together.
+A **connector** supplies the integration with an external system. **Account aggregation** reads account information into ISC through that integration, or imports it from a supplied file.
 
-A completion event does not prove that every predicted value was correct or every required external change succeeded.
+Manual identity processing uses the information available to its calculations. It doesn't make an uncollected HR edit appear.
 
-Check current identity values and assignments against the approved population prediction. Explain unchanged results where they are expected.
+Our current `0042` input is already available. The defect is the saved field selection, so another HR edit isn't needed.
 
-Then inspect provisioning activity for the exact source, account, operation and result. Where required, confirm the current target state.
+If the collected current field were stale, investigate collection first. Processing the same old input wouldn't establish HR's newer value.
 
-For our example, “the profile application finished” and “all four newly required memberships are confirmed” are different acceptance statements.
+Likewise, repeating an **optimized aggregation**, which can skip an existing unchanged account, isn't proof that a saved mapping correction has been applied. The source data can be unchanged while the instructions need reevaluation.
 
-A source total or job count does not replace record-level evidence for those statements. Equally, one successful target observation does not establish all four.
+The UI **Aggregate Account** action has a narrower documented result: account-data reload without synchronizing those values into identity attributes or affecting provisioning. It isn't another name for Process Identity.
 
-Also distinguish Search visibility from the underlying identity and target observations. A record appearing in a search view is not itself proof of a group-add result.
+Choose the action that addresses the actual missing responsibility rather than repeatedly using a familiar collection action.
 
-When a result cannot yet be verified, name that gap. Do not close the change simply because the most visible status is green.
+## Keep the completion evidence attached to its outcome
 
-## Restoring instructions does not undo completed effects
+ISC displays active processing jobs. Audit records are also available for manual processing initiated through Apply Changes. Use them to establish the relevant start and completion, keeping scope and time together.
 
-Suppose an application check discovers that the approved mapping change was wrong for part of the population.
+Then compare current identity fields and assignments with the approved population prediction. A completed job doesn't establish that every predicted value was correct.
 
-Restoring the previous mapping changes the instructions for later evaluation. Saving the old configuration is not a transaction rollback of every identity value and external write already produced.
+For delivery, inspect the precise source, account, operation and result in provisioning activity, then verify the target state required by the change.
 
-Affected identities may need supported reevaluation under the corrected configuration. External changes need their own authorized correction and verification.
+"Profile processing finished" and "all newly required access outcomes are confirmed" are separate acceptance statements. A source total, job count or one successful account observation can't establish both for the whole population.
 
-Do not blindly remove FT-BASE from everyone in the profile. Some people may have a legitimate assignment through another approved route, and two had the access correctly before this change.
+Search visibility is separate evidence too. Information appearing in a Search view isn't itself a successful group-add result.
 
-A **compensating correction** is a new authorized action intended to repair an earlier effect. It needs a specific target and requirement; it is not an assumption that all previous work disappears.
+Name an unverified outcome explicitly. A green job status doesn't fill that gap.
 
-Preserve the before-and-after evidence so that you can distinguish newly introduced effects from valid preexisting state.
+## Restoring a mapping doesn't undo completed effects
 
-Likewise, repeatedly processing the same incorrect mapping will not repair it. Verify the cause before choosing another run.
+Suppose later review finds the change was wrong for part of the population. The previous mapping is restored and saved.
 
-## Work through the application decisions
+That restores instructions for later evaluation. It doesn't by itself reverse every identity result or external write already produced.
 
-### 1. Save and Preview look correct
+Identify the affected identities and the correction they now require. Apply the appropriate approved reevaluation and verify their current values.
 
-**Facts:** The corrected mapping is saved. Preview returns 0042 for Devi. Current identity costCenter is separately checked and remains 0088.
+External effects need their own review. A **compensating correction** is a new authorized action that repairs an earlier effect. Specify the actual target and required state, then verify it.
 
-Has her identity correction been applied?
+Don't remove FT-BASE indiscriminately from everyone. Two identities already had it correctly before this change, and another approved assignment can justify access independently of the change under investigation.
 
-**Reasoning:** Not in the supplied current observation. Save establishes the instructions and Preview establishes a selected result. Use the relevant supported processing path and verify the current identity. Do not infer a target write from either observation.
+Preserve before-and-after observations so you can distinguish newly introduced effects from legitimate preexisting state. Restoring instructions isn't a transaction rollback of everything that followed them.
 
-### 2. One identity has been processed
+Repeatedly processing an incorrect mapping won't repair its logic either. Confirm the cause before choosing another run.
 
-**Facts:** Devi now has current 0042. At the later current check, the other three identities requiring correction still have 0088.
+## Work through these application decisions
 
-Is the twelve-person population application complete?
+### Questions
 
-**Reasoning:** No. The evidence establishes Devi's correction and the remaining old values. Selected processing does not constitute application to every affected person. Plan and verify the reviewed wider scope; do not rely on assumed isolation or unobserved automatic processing.
+1. The corrected mapping is saved. Selected Preview returns `0042`, but a separate current identity check still shows `0088`. Has the identity correction been applied?
+2. The selected identity now has current `0042`. At the later current check, the other three identities needing correction still show `0088`. Is the twelve-identity population application complete?
+3. An already-correct identity has `0042` in both account fields, current identity `0042`, the role and confirmed FT-BASE. Must a new field change or group addition occur to demonstrate successful processing?
+4. One role is edited, then Apply Changes is chosen from the role list. Is the operation limited to that role's current members?
+5. The account inputs are unchanged, the saved mapping's field selection was the defect, and optimized aggregation skips unchanged accounts. Does another identical source run prove application?
+6. A consequential shared role change is saved. Someone says it can't affect anyone else because only one identity will be processed manually. Is that isolation guaranteed?
+7. All twelve identity results and six role assignments are verified at 12:25. The selected person's last target check was the failed group-add outcome at 12:14. Can current membership be declared present or definitely absent?
+8. Some target writes succeeded before the correction was reconsidered. The old mapping is saved again. Are those writes automatically undone?
 
-### 3. The current identity is already correct
+### Work through the reasoning
 
-**Facts:** One of the two already-correct identities has both account fields 0042, identity costCenter 0042, the required role and confirmed FT-BASE access.
+**1. Not in the supplied current observation.** Save establishes instructions; Preview establishes a selected calculation. Use the supported application/processing path and verify current identity results. Neither observation proves a target write.
 
-Must another field change or membership addition occur to prove processing?
+**2. Three affected values remain uncorrected.** One person's result isn't the population result. Complete and verify the reviewed wider scope, using actual observations rather than assumed isolation or automatic application.
 
-**Reasoning:** No. The corrected mapping can legitimately preserve those results. Verify the appropriate processing and current state; unchanged correctness is not a defect and a duplicate write is not a required success signal.
+**3. Correctness can remain unchanged.** The corrected mapping still supplies `0042`, and the access is already present. Check the appropriate processing and current state; a duplicate write isn't a required success signal.
 
-### 4. Apply Changes is chosen from a list page
+**4. The edited role doesn't define the full scope.** The list-page action uses the documented Active and Inactive (short-term) population and processes roles, access profiles and applications together. Review recent changes and shared consumers before application.
 
-**Facts:** An administrator edited one role and plans to use Apply Changes from the role list.
+**5. Collection success isn't application evidence.** The mapping instructions changed even though account data didn't. Use the supported processing path and verify current results. Stale input, if present, would be a separate collection issue.
 
-Can the administrator assume the operation touches only that role's current members?
+**6. Selected scope doesn't create private configuration.** Other relevant processing can encounter the saved shared change. Coordinate the change and use appropriate preproduction testing rather than treating selection as an isolation barrier.
 
-**Reasoning:** No. The documented list-page scope includes Active and Inactive (short-term) identities. It also processes roles, access profiles and applications together, not just the edited role. Review applicable recent changes, eligibility and shared consumers before application. The edited row does not define the whole processing population.
+**7. Neither current target claim is established.** The earlier failure remains historical evidence. Check the specific operation and current target membership; later identity processing alone doesn't establish delivery.
 
-### 5. An optimized source run is repeated
-
-**Facts:** The account inputs remain unchanged, the defect is the saved field selection, and optimized aggregation skips existing unchanged records.
-
-Is another identical source run sufficient proof of mapping application?
-
-**Reasoning:** No. It does not establish the required identity reevaluation and current results. Use the supported application/processing path for the configuration correction. If input data were stale, that would be a separate collection problem.
-
-### 6. One selected identity is a proposed safety barrier
-
-**Facts:** A consequential shared role change has already been saved. Someone says it cannot affect anyone else because only Devi will be processed manually.
-
-Is that isolation guaranteed?
-
-**Reasoning:** No. The saved shared configuration can be encountered by other relevant identity processing. Selected scope does not create a private version. Use coordinated change control and appropriate preproduction testing rather than treating a selected run as a sandbox.
-
-### 7. Population processing finished
-
-**Facts:** All twelve current identity results and six qualifying role assignments are verified after profile application. Devi's last target check was the earlier failed group-add outcome; target state has not been rechecked since then.
-
-Can you claim her membership is now present, or definitely still absent?
-
-**Reasoning:** Neither current claim follows from that historical observation alone. Recheck the operation and current target membership. Population processing is not proof of delivery, and an old failure is not a new target-state observation.
-
-### 8. The previous mapping is restored
-
-**Facts:** Some target writes succeeded before a correction was reconsidered. The old mapping is then saved.
-
-Are those writes automatically undone by that save?
-
-**Reasoning:** No. Restoring instructions does not itself reverse completed effects. Identify affected identities and legitimate existing assignments, then authorize and verify the required reevaluation and compensating changes. Do not remove access indiscriminately.
+**8. Restored instructions don't reverse completed writes by themselves.** Identify affected records and legitimate grants, authorize the required reevaluation and compensating corrections, and verify the results. Don't revoke access indiscriminately.
 
 ## Apply the same reasoning to a manager correction
 
-A contractor profile's manager mapping is corrected. Preview returns the expected manager-reference value for one person. The project proposes applying the profile change and immediately marking every approval route fixed.
+A contractor profile's manager mapping is corrected. Preview returns the expected manager-reference value for one person. The project proposes applying the profile and declaring every approval route fixed.
 
-What would you need to establish?
+What still needs evidence?
 
-Identify the associated contractor population and the actual manager input. Confirm the mapping and manager-correlation configuration, which resolves that input to the appropriate manager identity.
+First identify the profile population and the actual account input that identifies the manager. Manager resolution needs both the profile's Manager Name mapping and the source's manager-correlation configuration, which compares the employee account's manager reference with the appropriate attribute on the manager's identity.
 
-Inspect representative variations, including missing or unmatched references, before broad application. A correct sample does not establish every manager relationship.
+Check representative missing or unmatched references as well as the successful sample. A correct Preview doesn't establish every current resolved relationship.
 
-Choose the supported application scope and verify the current resolved manager for the required identities.
+Choose the supported application scope, then verify the required identities' current managers.
 
-Then identify the approval process that uses the relationship and when it selects or records its approver. A corrected current manager does not, by itself, prove that an already-created approval was rerouted.
+Next identify the approval process that uses those relationships. For a configured manager approval, the relevant relationship is the manager of the person receiving the requested access. Inspect when that process selects or records its approver.
 
-If approval repair is required, it needs its own supported authorized action and evidence.
+A corrected current manager doesn't by itself prove that an already-created approval was rerouted. If repair is needed, use its supported authorized action and verify that separate result.
 
-The useful change record explains which instructions changed, which identities were reevaluated, which current results were verified, and which separate effects are complete or still open. “Saved and applied” is too short when it hides any of those distinctions.
+A complete change record identifies the changed instructions, the population evaluated, the current results confirmed and the separate effects still open.

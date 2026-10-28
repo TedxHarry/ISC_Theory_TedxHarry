@@ -1,0 +1,15 @@
+Catalog: four group definitions
+  asset-readers
+  asset-approvers
+  exception-reviewers
+  export-operators
+
+Recorded account-group relationships
+  First: ordinary --> asset-readers
+  First: admin    --> asset-readers
+  First: admin    --> asset-approvers
+  Second: account --> asset-approvers
+
+Four relationships; two held groups.
+First employee has two account holders
+of asset-readers, but is one person.

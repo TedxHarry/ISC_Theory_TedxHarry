@@ -1,0 +1,18 @@
+Employee signs into invoice application
+  |
+  v
+Enabled account; sign-in succeeds
+  groups: invoice-readers
+  businessUnit: West
+  |
+  v
+Application evaluates its own policy
+  |
+  +-- Read West invoice --> Allowed
+  |
+  +-- Read East invoice --> Denied
+  |
+  +-- Approve invoice ---> Denied
+
+ISC records the represented access.
+The application enforces these actions.

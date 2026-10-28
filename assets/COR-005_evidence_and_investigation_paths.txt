@@ -1,0 +1,21 @@
+Human investigation; choose by evidence
+
+Account absent from ISC?
+  -> inspect collection and scope
+
+Account value unusable?
+  -> trace its source and delivery
+
+Identity value unavailable?
+  -> trace mapping and applied state
+
+Usable value, no intended candidate?
+  -> reconcile reference and population
+
+Several possible people?
+  -> investigate ownership and data
+
+Existing link points to wrong person?
+  -> inspect history and correct link
+
+Verify the relevant outcome afterward.

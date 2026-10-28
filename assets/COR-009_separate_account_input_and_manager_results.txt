@@ -1,0 +1,16 @@
+Wrong persistent account link
+  app-51: owner P-510 -> owner P-509
+  verify former and intended contexts
+
+Missing account input
+  app-52: personRef null -> P-509
+  collected and evaluated
+  -> intended owner P-509 verified
+
+Missing manager mapping
+  Manager Name selects HR managerRef
+  relevant evaluation occurs
+  -> employee P-509 reports to P-609
+
+Same account keys and logins
+No external write result supplied

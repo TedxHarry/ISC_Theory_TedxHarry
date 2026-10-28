@@ -1,345 +1,291 @@
 # The first comparison found no match. What happens next?
 
-Devi is employee `74004`. Her employee identity already exists in SailPoint Identity Security Cloud (ISC), and a case-management account intended for her has been collected into ISC.
+An application account has been collected into SailPoint Identity Security Cloud, or ISC. The person's identity already exists there, but the account still needs to be connected to it.
 
-The account's employee reference doesn't match any candidate identity. Its email does match Devi's identity.
+You might expect a matching employee reference to make that connection. But what happens if that reference doesn't match and the account's email does?
 
-Should the account remain unassociated because the employee-reference comparison failed?
+The account is a record from the application. The **identity** is ISC's representation of the person. **Account correlation** establishes the relationship between those two records by matching account information to identity information.
 
-Not necessarily. Let's put the saved criteria beside the actual records and follow the result of each comparison. A failed comparison is not automatically a failed correlation process.
+One unsuccessful comparison can be followed by another comparison that establishes the intended relationship. To explain the final outcome, we need to follow the comparisons that apply to this account.
 
-## Start with the account, the identities and the saved criteria
+To understand the outcome, keep the result of a comparison separate from the result of the whole matching process.
 
-An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a connected system. An **attribute** is a named piece of information on either object.
+## What is ISC actually comparing?
 
-**Account correlation** matches and associates source accounts with identities. A **correlation criterion** selects an account attribute and an identity attribute whose values will be compared.
+A **source** is ISC's configured representation of a system or collection of account data. **Account aggregation** reads account information from that source into ISC. Correlation can be evaluated as part of that work.
 
-A **candidate identity** is an identity being considered as the account's possible owner. Finding a matching value and confirming legitimate business ownership are related, but different, checks.
+Reading an account and identifying its owner are different responsibilities. An account can be present in ISC even when its relationship to an identity is unresolved.
 
-A **source** is ISC's configured representation of a system or account-data collection.
+Here, the person's identity already exists. The application account needs a relationship to that identity; it doesn't need a second identity created merely because its first comparison finds no match.
 
-In this fictional design, **PeopleLedger Production** supplies worker records. It is an **authoritative source**: its worker accounts establish identities through the Employees **identity profile**, the shared configuration governing those identities and their attribute mappings.
+A **correlation criterion** pairs an account field with an identity field. Each field is an **attribute**, a named piece of information on its record. The criterion tells ISC which values to compare.
 
-PeopleLedger account `pl-74004` is already associated with Devi's identity. We use `I-74004` as its teaching label, not an actual ISC object ID.
+For example, an account field named `employeeRef` can be paired with the identity field `identificationNumber`. The field names don't have to be identical. What matters is that their values represent the same agreed identifier for the person.
 
-An account is **uncorrelated** when it is not associated with an authoritative identity. For this human-account example, that means ISC hasn't established the account's relationship to an employee identity.
+The standard correlation form uses **Equals**. This operation compares the selected values. It doesn't mean “contains these digits” or “looks like the same person.”
 
-**CasePort Production** represents the case-management application. It does not establish employee identities in this design. Its account `cp-419` should be associated with Devi's existing identity.
+Notice which records participate in that comparison: the collected application account and the existing identity. ISC compares the selected value held on each record. Pairing an account field with an identity field doesn't mean reading any similarly named field directly from HR at that moment.
 
-The application owner confirms that this account belongs to Devi. That ownership evidence lets us check whether a resulting association is correct, rather than trusting a matching percentage.
+So where did the identity get its value? An **identity attribute mapping** defines how an identity field receives information from a selected account or a calculation. An **identity profile** holds those mappings and other settings for a population of identities. Its **authoritative source** supplies the accounts used to establish that population's identities.
 
-Here is the supplied current evidence:
+For example, a worker record can supply the employee reference that a mapping places on the identity. The application account then supplies its own reference for correlation. Those are separate inputs, even if they are supposed to contain the same text.
 
-| Object or configuration | Values and conditions |
-|---|---|
-| Devi's identity `I-74004` | Identification Number, `identificationNumber`, is text `74004`; Work Email, `email`, is `devi.rao@learn.example`; identity `name` is `worker74004`. |
-| Other identity `I-74005` | Identification Number is text `74005`; email is `other.worker@learn.example`; identity name is `worker74005`. |
-| CasePort account `cp-419` | Account key `cp-419`; `loginName = drao.cp`; `employeeRef = OLD-74004`; `mail = DEVI.RAO@learn.example`; friendly display name `Devi Rao`. |
-| Candidate evidence | No identity has Identification Number `OLD-74004`. Only Devi's identity has the matching email under the configured case-insensitive comparison. No identity has name `drao.cp`. |
-| Evaluation conditions | The two listed criteria are the complete saved configured pairing list. Both identity attributes are eligible for correlation, current values are applied, the account is evaluated, and no existing manual association overrides the example. |
+That gives you two questions to investigate: how did the identity receive its identifier, and does the application account contain the corresponding value? A correctly selected pairing can still compare incorrect data if a mapping supplied the wrong identity value.
 
-An **identity attribute mapping** supplies an identity value from selected source data or a calculation. **Identity processing** evaluates identity data and configured requirements, including those mappings.
+## Follow two saved comparisons with actual values
 
-The identity values above are already applied results, not only values shown in a proposed mapping preview.
+Here is a small hypothetical example. The application account and the intended person's identity already exist in ISC. Approved application ownership records identify that person as the account's owner.
 
-The account's **account schema** defines its represented fields. Here it designates the account key as **Account ID** and `loginName` as **Account Name**.
+The complete saved correlation configuration contains these pairings, in this order:
 
-Account ID recognizes the source account. Account Name is its selected naming field. Neither automatically means the person's employee number.
+1. Account `employeeRef` Equals identity `identificationNumber`.
+2. Account `mail` Equals identity `email`.
 
-The saved configured criteria, in order, are:
+For this example, both identity fields are available for use in correlation, and the identity already holds the values shown below. These are current values, rather than a proposed calculation that has only been previewed.
 
-1. Account `employeeRef` compared with identity `identificationNumber`.
-2. Account `mail` compared with identity `email`.
+The account is evaluated using these saved pairings. It has no existing manually assigned relationship that takes precedence over this matching.
 
-Both use **Equals**, the fixed operation in the standard correlation form. Equals compares the selected values; it is not a contains expression or an instruction to interpret `OLD-74004` as `74004`.
+The configured comparisons are **case-insensitive**: differences in uppercase and lowercase letters don't prevent a match.
 
-Configured correlation is case-insensitive by default. The supplied configuration uses that setting.
+Put the selected values beside each other:
 
-## Trace the first criterion all the way to its conclusion
+| Saved pairing | Collected account value | Intended identity's applied value |
+|---|---|---|
+| `employeeRef` to `identificationNumber` | `OLD-E-204` | `E-204` |
+| `mail` to `email` | `USER@learn.example` | `user@learn.example` |
 
-The first account-side value is `OLD-74004`.
+A **candidate identity** is an identity considered as a possible owner during matching. We also need to know whether the selected value could identify someone else: no identity has `identificationNumber = OLD-E-204`, and only the intended person's identity has the matching email.
 
-Devi's selected identity value is `74004`. The other supplied identity's value is `74005`. The candidate evidence explicitly excludes another identity with `OLD-74004`.
+Start with the first row. ISC takes `OLD-E-204` from this account's `employeeRef` and compares it with the selected `identificationNumber` values on identities. The intended identity contains `E-204`, and no other identity contains `OLD-E-204`.
 
-This criterion therefore finds no matching identity under the supplied facts.
+The first criterion therefore finds no matching identity.
 
-What has that established?
+Equals doesn't remove `OLD-` because the remaining characters look familiar. A **transform** is a calculation that can deliberately change an input into another value. Such a calculation or a correction to the source data is separate from this equality comparison. Neither is supplied here.
 
-It has established that this configured comparison did not associate the account. It has not established that the account was missing, that aggregation failed, or that no other applicable comparison can work.
+What happens next? The first comparison has left the relationship unresolved, and another configured pairing is available. ISC can consider that next pairing; the first no-match hasn't rejected every other way to identify the account.
 
-**Account aggregation** reads account information into ISC and can evaluate correlation as part of that work. Collection of `cp-419` succeeded in this example.
+The second row selects a different pair of fields. ISC takes `USER@learn.example` from account `mail` and compares it with identity `email`. The intended identity contains `user@learn.example`. Under the supplied case-insensitive setting, these values match. Only that identity has the matching email in this example.
 
-The old-looking reference needs investigation, but the name of a field or the presence of digits doesn't authorize the comparison to strip its prefix.
+Standard configured criteria are evaluated one attribute pairing at a time, in their saved order. Meeting a criterion can establish the account's association. Here, the second criterion supplies the intended association despite the first criterion finding nothing.
 
-A **transform** calculates a value from inputs. A deliberate transformation or feed correction is separate from the Equals comparison. Don't invent a cleanup step to make the evidence fit the expected owner.
+What has changed is the account-to-identity relationship represented in ISC. The application account is now associated with the person's identity. ISC hasn't needed to turn the unsuccessful employee-reference comparison into a success.
 
-## Now follow the next configured comparison
+The account has been linked, but its employee reference is still `OLD-E-204`. Correlation established a relationship; it didn't repair that field. Its origin and any required correction still need investigation.
 
-ISC documents configured criteria as ordered comparisons: accounts are correlated one attribute pairing at a time, and meeting a criterion can establish the association.
+You can now describe the result precisely: the employee-reference comparison found no match, while the email comparison established the intended relationship under the supplied conditions.
 
-These rows are alternatives, not a declaration that every row must match.
+## Why doesn't every row have to agree?
 
-The second criterion compares CasePort `mail` with identity `email`.
+It is easy to read two rows in a configuration screen as two requirements that must both be satisfied. Let's check that interpretation against what the rows actually do.
 
-Its input is `DEVI.RAO@learn.example`. Devi's identity email is `devi.rao@learn.example`. Under the supplied case-insensitive setting, the letter-case difference does not prevent the match.
+An **AND condition** requires the specified conditions to hold together. An **OR condition** allows an alternative to satisfy the requirement. These configured correlation pairings are ordered alternatives, rather than a combined AND test.
 
-Only the intended identity matches this criterion in the supplied candidate evidence. After the supported evaluation, the supplied result is that `cp-419` is associated with `I-74004`.
+Change the example so that `employeeRef` contains the correct `E-204`, uniquely matching the intended identity. The email is outdated and would match no identity.
 
-The first criterion found no match. The configured correlation still established a relationship through the second.
+The employee-reference criterion can establish the relationship. Once that criterion establishes the association in this straightforward case, the later email row isn't a second confirmation that must also pass. Its no-match doesn't veto the successful first comparison.
 
-That association does not make `OLD-74004` the approved employee reference. Investigate its origin and any required correction rather than closing the data issue just because the account now has a link.
+That is why a later criterion may never become the deciding comparison for an account. Order tells you which pairing gets the opportunity to establish the relationship first.
 
-That is why saying “employee correlation failed” is too imprecise. Did one employee-reference criterion find no match, did configured correlation establish no association, or did the overall account remain uncorrelated? Those are different statements.
+This changes how you should evaluate a proposed design. Adding email after an employee identifier provides another route to an association. It doesn't automatically make the employee-identifier route safer by requiring an email confirmation.
+
+Likewise, adding a company field as another row doesn't mean “the company AND the employee identifier must match the same person.” If the business requirement needs those values considered together, the design must use an approved, supported way to express that combined requirement.
+
+There is no need to imagine a points system here. A unique match isn't “one vote,” and ISC isn't waiting for a majority of fields to agree in the standard configuration described here.
+
+The saved order matters to your trace. Inspect the actual configuration rather than assuming the preferred identifier is first because a design document placed it there.
+
+## What if no configured comparison establishes the relationship?
+
+There is another matching path to inspect: **default correlation**.
+
+First, we need the naming value that this path uses. The source's **account schema** defines the fields used to represent its accounts. One field is designated **Account ID**, which identifies the source account, and one is designated **Account Name**, which supplies its naming value.
+
+When an account can't be correlated using its source's configured correlation, the documented default compares that designated Account Name with an identity's `name`. This comparison is case-insensitive and isn't configurable.
+
+Neither designation automatically means employee number, full name, or email. You need to inspect which field the schema actually selects.
+
+For the main account, suppose `loginName` is designated Account Name and contains `app.user`. The intended identity's `name` is `worker204`. No identity has `name = app.user`.
+
+If both configured criteria found no match, those supplied naming values would also fail to establish a default association.
+
+Now consider a separate account variation for the same intended person. Neither configured pairing finds a match, but `loginName` contains `WORKER204`. Only the intended identity has the matching name `worker204`. With evaluation occurring and no existing manual association, the supplied unique match can establish the relationship through default correlation.
+
+The selected schema field hasn't changed. The variation changes the account's value, not the Account Name designation. Changing Account Name or Account ID after aggregation is strongly discouraged because it can damage account representation and references; it isn't a harmless way to force a match.
+
+A friendly display name isn't a substitute for this comparison. A screen could show an appealing full name while the designated Account Name contains something entirely different.
+
+For an account with no configured match and no default naming match, with no persistent manual relationship or other matching behavior supplied, the outcome is **uncorrelated**. In this human-account context, that means the account isn't associated with an authoritative identity. The collected account can still exist in ISC.
+
+That answers two different questions separately: was the account collected, and was it connected to an identity? The first can be yes while the second is no.
+
+Here is how the configured and default comparisons connect in the simple cases we have just followed. The first pairing can establish the association; if it finds no match, the next pairing has its opportunity:
 
 ```text
-Supplied cp-419 evaluation:
+Evaluated account; no manual link
+                |
+                v
+Configured pairing 1
+  unique intended match -> associate
+  no match
+     |
+     v
+Configured pairing 2
+  unique intended match -> associate
+  no match
+     |
+     v
+Default: Account Name to identity name
+  unique intended match -> associate
+  no match              -> uncorrelated
 
-1. employeeRef = OLD-74004
-   compare with identificationNumber
-   -> no candidate matches
-   -> consider configured criterion 2
-
-2. mail = DEVI.RAO@learn.example
-   compare with email
-   -> unique intended match
-   -> supplied link to I-74004
-
-Only if configured matching
-cannot establish the relationship:
-   -> consider the default path
-
-Human verification:
-   intended owner and recorded link?
+Human verification, separately:
+Does the link identify the right owner?
 ```
 
-The arrows show the documented comparison responsibilities and the supplied straightforward unique-match result. They are not separate mandatory jobs or a diagram of ISC's private services.
+The downward arrows follow a no-match to the next applicable comparison. A unique intended match ends the matching trace with an association. A configured association doesn't continue into default matching to find a replacement owner. The default branch applies when configured correlation can't establish the relationship.
 
-The last branch does not say that the default path runs after a configured association and replaces it. It applies when configured correlation cannot establish the relationship.
+The separate human check asks whether that recorded relationship identifies the legitimate owner. Equality alone cannot answer the business ownership question.
 
-Nor does the figure define what ISC does with ambiguous candidates or processing errors. Those require their own evidence; “continue to the next row” is not an assumed universal response to every abnormal condition.
+Duplicate candidates, unavailable inputs, and evaluation errors aren't resolved by this drawing. Don't interpret every abnormal condition as an instruction to continue to the next row. The figure is a teaching view of documented behavior, not ISC's private service architecture or a set of separate jobs.
 
-## One successful criterion is not a vote from every field
+An uncorrelated outcome also isn't an instruction to disable or delete the external account. Those are separate changes requiring their own reason and authority.
 
-Suppose a changed example has the correct `employeeRef = 74004`, but an outdated email that matches no identity.
+## Change the comparison setting, and the reasoning changes
 
-The employee-reference comparison can establish the relationship under the supplied unique-match conditions. The second field's disagreement does not turn the standard configuration into an all-fields-must-agree test.
+Return to the account email `USER@learn.example` and identity email `user@learn.example`.
 
-An **AND condition** requires all specified conditions to be satisfied together. An **OR condition** is satisfied when at least one alternative condition is satisfied.
+They match under the configured case-insensitive setting used earlier. If that configured comparison becomes case-sensitive, the difference in letter case matters and this email pairing no longer supplies the same match.
 
-For these standard configured pairings, think in terms of ordered alternatives rather than a combined AND check. That explains why adding a weaker second row can widen the ways an account becomes associated.
+That changes this criterion's result. To determine the overall outcome, you still need the other applicable configured comparisons, the default path, and the account's association history.
 
-It is not automatically an additional safety requirement.
+Configured correlation supports an `ignoreCase` setting that controls whether differences in letter case are ignored. This setting applies on a source/configuration-specific basis. Record the actual setting rather than assuming every configured comparison uses the familiar default behavior.
 
-For example, adding a company comparison beside an employee-number comparison does not necessarily require the same candidate to match company and number together. If the design needs that combined meaning, use an approved supported design that actually represents it.
+That setting belongs to configured matching. The separate, non-configurable default Account Name-to-identity-name comparison remains case-insensitive.
 
-Do not describe separate rows as a combined check merely because they are displayed beside each other.
+Ignoring letter case also doesn't establish a rule for trimming spaces, removing prefixes, or converting numbers. Text `E-204` and `E-204 ` differ by a trailing space. Leading zeros in a text identifier may be meaningful. Don't assume a cleanup or conversion step that isn't part of the verified design.
 
-Order also belongs in the saved evidence. Inspect the actual order rather than assuming the strongest reference is first because that was the design proposal.
+**Null** means no value is present. An empty string is text with no characters. Neither is the agreed employee reference. An unavailable value and an evaluation error require their own evidence; neither should be rewritten as an ordinary no-match just to complete a trace.
 
-A clear unique match is not a weighted confidence score. Don't invent “one point for employee number, one point for email” or claim that ISC waits for a majority of attributes to agree.
+## Matching data still needs trustworthy ownership
 
-## A different row can reveal conflicting ownership evidence
+The email match in the main example was useful because the supplied evidence identified one candidate and independently established the intended owner.
 
-Now change the facts again.
+Remove either condition and you have more work to do.
 
-An account's employee reference points to `I-74004`, but its email matches `I-74005`. The application owner's approved records say the account belongs to Devi.
+If two identities share that email, the available value no longer distinguishes one person. Investigate the duplicates and obtain the actual evaluation result. Choosing the first identity on a screen isn't a supported explanation of what ISC did.
 
-The selected fields disagree about the person.
+Now suppose the employee reference identifies one person while the email identifies someone else. The fields disagree about ownership.
 
-Do not use a possible correlation result to decide which business record must be true. First establish why the inputs disagree: stale email, incorrect employee reference, reused address, wrong field selection or another proven cause.
+Preserve the actual saved order, selected values, candidates, and recorded association. Then investigate why the inputs disagree. An outdated email, a reused address, or a wrong employee reference is a possible cause to check, not a cause you can declare without evidence.
 
-The documented ordering is relevant to tracing configured behavior. It does not make a wrong business value legitimate.
+Moving your preferred criterion to the top doesn't repair the contradictory data. A later alternative can still affect other accounts whose first criterion finds no match.
 
-Moving a preferred row higher is not a complete repair for contradictory ownership evidence. A later alternative can still associate another account whose preferred reference is absent or doesn't match.
+Nor can a recorded association decide which business record must be true. Compare it with approved ownership evidence. A matching engine can follow configuration while the resulting relationship is wrong for the business.
 
-For a trace, preserve the actual order, each selected value, matching candidates and the recorded association. If multiple candidates or conflicting relationships are involved, don't guess that collection order, newest identity, another profile's priority or a hidden confidence score resolves them.
+Don't invent a tie-breaker such as newest identity, identity-profile priority, collection order, or a hidden confidence score. Where the evidence doesn't establish a safe unique outcome, keep that uncertainty visible and use the supported investigation path.
 
-A trace should state what is supported and what still needs checking.
+## Did this account actually use the configuration you're inspecting?
 
-## If configured correlation finds nothing, inspect the default path
+So far, the main example has explicitly supplied evaluation under the saved criteria. In everyday investigation, you have to establish that fact.
 
-ISC documents a **default correlation** path when an account cannot be correlated using its source's configured correlation.
+A saved configuration tells you what is configured now. It doesn't establish when an existing account was last evaluated or which configuration was used at that time.
 
-It compares the account attribute designated as Account Name with an identity's `name`, using case-insensitive comparison. This default is not configurable.
+**Optimized aggregation** reads account records and checks them for changes. For an existing unchanged record, correlation evaluation is skipped. A successful optimized read can therefore leave an account's relationship unchanged after you edit the correlation criteria.
 
-It is not a comparison of any friendly full-name field.
+**Unoptimized aggregation** reevaluates correlation even for unchanged account records. It is the documented approach for reevaluation after changing the source's correlation configuration. It addresses whether unchanged records are examined; it isn't an instruction to erase every existing relationship.
 
-For the main account, Account Name is `drao.cp`. Devi's identity name is `worker74004`, and no identity has the name `drao.cp`.
+The reason matters: changing comparison configuration isn't the same as changing application account data. An unchanged account may not enter the evaluation you expected during an optimized read.
 
-If both configured comparisons failed for that account, the supplied default values would not produce a match either.
+There is a separate history question as well. **Manual correlation** creates an explicit persistent account-to-identity link. Later changes to the account's fields don't automatically move that link to another identity, and an unoptimized aggregation doesn't automatically clear it.
 
-Consider an independent account variation, `cp-420`. It belongs to Devi according to approved owner evidence. Neither configured criterion finds a match, but its designated Account Name is `WORKER74004`.
+Accounts created through ISC can also have manual-correlation treatment, indicated by `manuallyCorrelated=true`. “No administrator imported a correlation file” is therefore insufficient to establish that an account has no such treatment.
 
-That value matches identity name `worker74004` case-insensitively. The supplied supported evaluation therefore associates `cp-420` through the default path.
+These are different boundaries. An optimized read may not evaluate an unchanged account. A persistent manual relationship isn't an automatic reassignment just because you performed an unoptimized read.
 
-No schema designation is being changed in this variation. The same `loginName` field remains Account Name; a different account contains a different naming value.
+Before a real correction, establish the intended owner, how the link was created, which records are affected, and the supported authorized correction. Don't reset a source, delete identities, or remove accounts merely to force the outcome of a teaching example.
 
-Now consider `cp-421`, whose configured comparisons find no match and whose Account Name is `unmatched421`. No identity has that name. With no existing manual link or other supplied matching behavior, the recorded result is **uncorrelated**: the account is not associated with an authoritative identity.
+## Use the screens as evidence for particular questions
 
-Here is how the supplied outcomes differ:
+The source's **Account Correlation** page shows the saved attribute pairings and order. A source type can supply a **preset configuration**, meaning initial predefined pairings. Inspect the current saved configuration rather than assuming the preset is still in place. A preset is different from the separate default naming path.
 
-| Supplied account or condition | What explains the result |
-|---|---|
-| `cp-419`: first criterion finds no match; second uniquely matches Devi | Configured correlation supplies the intended association. Failure of the first comparison is not the overall result. |
-| `cp-420`: neither configured criterion matches; Account Name matches identity name | The default path supplies the intended association. It is not evidence that either configured pairing matched. |
-| `cp-421`: neither configured criterion nor default matches | The supplied outcome is uncorrelated. The collected account still exists in ISC. |
-| Unchanged account skipped by an optimized read | The read does not prove this account was reevaluated using new configured criteria. Don't label an unevaluated comparison a failed comparison. |
-| Existing persistent manual association | The current link needs its association history; changing source values and rereading do not automatically erase it. |
+The **Accounts** view lets you inspect the collected source account and its represented attributes. The identity's details and associated accounts let you inspect its current values and recorded relationships. Together, these views help reconstruct what the selected comparisons can do with the current data.
 
-A failed match is not a request to delete, disable or remove permissions from the external account. Those are separate changes.
+The identity profile's **Preview** evaluates mappings for a selected identity. It can explain how a proposed identity value would be calculated. Apply Changes and the resulting identity state are separate evidence; previewing a value doesn't establish that every identity already holds it.
 
-Likewise, a recorded relationship is not proof that the associated person is its legitimate owner.
+Eligibility matters before evaluation too. A **custom identity attribute** is an additional identity field defined for the organization. Identity attributes must be configured as searchable to appear in correlation's Identity Attribute list.
 
-## Case behavior belongs to the comparison you are tracing
+**Identity processing** evaluates identity data and configured requirements, including identity attribute mappings. Manual processing means an administrator starts that evaluation. After making the relevant searchable configuration, the documented preparation includes manual processing for all identities before source aggregation. This prepares the identity side before the source accounts are evaluated for correlation.
 
-The main example uses case-insensitive configured comparison.
+Identity processing isn't the same operation as reading the application account or comparing it with an identity.
 
-Configured correlation supports a source/configuration-specific `ignoreCase` setting. If a configured comparison is made case-sensitive, an uppercase and lowercase value must not be treated as matching merely because the default behavior normally ignores case.
+Being searchable for correlation is also different from being usable as a query field in the separate Search interface. Finding a value there doesn't establish that a new field is prepared for correlation.
 
-Record the actual setting with the criterion.
+The correlation **Test** feature checks a sample of accounts to estimate matching results. That is useful configuration feedback, but a high estimated percentage doesn't establish that every existing account has been evaluated or that all matched accounts have legitimate owners.
 
-That configured setting is different from the documented non-configurable default Account Name-to-identity-name path. Don't assume changing a configured row's case behavior also changes the default path.
+For a real investigation, preserve the source, account key, intended identity, actual selected values, saved criteria and order, case setting, operation scope and optimization setting, observation time, and recorded relationship. Use available aggregation history and event information to establish what ran and when.
 
-Case handling also does not establish whitespace or type handling. `"74004"` and `"74004 "` contain different text; `"0074004"` preserves zeros that a numeric conversion could discard.
+If there is no criterion-by-criterion historical trace available, say so. Explaining why today's data fits today's configuration isn't proof that the same comparison produced an older association.
 
-**Null** means no value is present. An empty string is text with no characters. Neither supplies the approved employee reference. An evaluation error is another condition again.
+## What does establishing the relationship change?
 
-If the evidence shows an error or unavailable input, record it. Do not replace it with a successful equality or a guessed no-match result simply to finish a diagram.
+Correlation establishes whose account ISC represents. It doesn't, by itself, prove that a new external account was created, a permission was granted, or the account's fields were corrected.
 
-## Was this account actually evaluated under these criteria?
+**Provisioning** attempts supported account or access changes in a target system, such as creating an account or changing a permission. Establishing which identity owns an account is a different result from completing one of those external changes.
 
-A saved configuration tells you what is configured now. It does not, by itself, show what ran earlier or what every existing account used.
+**Attribute synchronization** is a configured write path from selected identity attributes to fields on existing correlated accounts. The relationship matters because it identifies the account that receives the person's identity value. If the relationship points to the wrong person, a configured write can carry that wrong person's value to the account.
 
-**Optimization** skips unchanged account records for relevant processing. After changing correlation configuration, the documented unoptimized aggregation approach allows unchanged accounts to be reexamined.
+A real relationship correction can affect these configured writes and other dependent actions. Review them before changing a link, and verify any resulting writes separately.
 
-A successful optimized aggregation can therefore coexist with an unchanged account relationship. Check the operation's scope and mode before concluding that new criteria were ignored.
+No synchronization operation or access-changing request is supplied in the main example. Its established result is the intended account relationship, with the old employee reference still needing attention.
 
-```text
-Saved criteria corrected
-  -> configuration is now different
+## Check the result before reading the reasoning
 
-Existing account data unchanged
-  -> optimized read can skip it
-  -> new comparison not established
+### A changed case setting
 
-Supported unoptimized reevaluation
-  -> unchanged account can be examined
+The first configured criterion finds no match. The second compares `USER@learn.example` with `user@learn.example`, but it is now case-sensitive. The designated Account Name is `WORKER204`, uniquely matching the intended identity's `name = worker204`. Evaluation occurs, and there is no manual override or other matching behavior in this example.
 
-Persistent manual association?
-  -> not cleared by that reread
+Which path can establish the relationship, and why?
 
-Human verification:
-  current inputs, history and link
-```
+### An email with two candidates
 
-The arrows separate configuration, evaluation eligibility and human verification. They do not prescribe a broad rerun or promise that every existing relationship moves.
+The first configured criterion finds no match. The second email criterion fits two identities. The current evidence doesn't identify a unique intended candidate or an observed evaluation result.
 
-**Manual correlation** creates a persistent explicit account-to-identity association. Later source-data changes and unoptimized aggregation do not automatically clear it. Accounts created through ISC can also carry manual-correlation treatment.
+Can you finish the trace by choosing the first identity displayed? What evidence would you obtain instead?
 
-Inspect how the link was established before explaining it as the result of today's configured criteria.
+### A changed configuration and an old link
 
-Do not remove accounts, reset sources or delete identities merely to force a cleaner demonstration. Select an approved correction appropriate to the proven defect and assess the affected scope.
+An account's fields now point to a different person under the new criteria. A successful optimized aggregation leaves its existing link unchanged. Its association history hasn't been checked.
 
-## What does the screen establish, and what does it leave open?
+What would you establish before deciding that ISC ignored the configuration? If a later unoptimized read also leaves the link unchanged, is that enough to prove a defect?
 
-The source's Account Correlation page shows the saved attribute pairings and order. A source type can supply a **preset configuration**, meaning initial predefined pairings; inspect what is actually saved rather than assuming those defaults remain unchanged.
+### Two fields disagree
 
-The Accounts view shows collected source records and their attributes. The identity's details and associated accounts show the values and relationships ISC currently represents for that person.
+An account's employee reference identifies the approved owner. Its email matches another person. The team moves employee reference to the first configured row and declares the data problem resolved.
 
-**Preview** evaluates profile mappings for a selected identity. It can help explain an identity-side value, but it does not prove that value has been applied to every identity or that an account was correlated using it.
+What remains unresolved, including for other accounts using that configuration?
 
-A **custom identity attribute** is an additional identity field defined for the organization. Identity attributes must be configured as searchable to appear in correlation's Identity Attribute list. For a new eligible custom field, the documented preparation requires manual processing for all identities before source aggregation. Searchability for correlation is not the same capability as querying a field in the separate Search interface.
+## Work through the answers
 
-The correlation Test feature uses a sample to estimate correlation results. A successful estimate does not prove every existing account has been evaluated or belongs to the right person.
+For the changed case setting, the second configured comparison doesn't supply a match because letter case now matters. The separate default naming path remains case-insensitive. Under the supplied unique-match conditions, `WORKER204` matches `worker204`, so default correlation can establish the intended relationship. Keep the configured comparison's result separate from the overall outcome.
 
-Keep evidence for the exact source, account key, candidate identity, applied identity values, saved criteria revision/order, case settings, execution and observation time, and recorded association.
+For the duplicate email, the evidence doesn't support selecting one person. Investigate why the value is shared, obtain approved ownership evidence and the actual account relationship or operation result, and use the supported correction or design path. Screen position isn't a verified tie-breaker. Don't label this an ordinary unique match or assume an error or ambiguous result follows the simple no-match branch in the diagram.
 
-If a product view does not expose a criterion-by-criterion execution trace, don't manufacture one. You can state that the current data and configuration explain a result, while separately stating that historical execution evidence is unavailable.
+For the unchanged link, first establish whether the account was eligible for reevaluation in that optimized operation. Then inspect the association history and current inputs. An unoptimized read addresses unchanged-account reevaluation; it doesn't clear persistent manual correlation. Neither observation alone proves a defect or guarantees that an existing relationship must move.
 
-**Provisioning** attempts supported account or access changes in an external system. **Attribute synchronization** is a configured identity-to-account write path for existing correlated accounts.
+For the contradictory fields, row order doesn't correct the email. Establish and repair the proven data cause through the approved process. The email alternative can still associate other records whose first comparison finds nothing. Verify resulting ownership and any affected consumers rather than treating the new order as a complete repair.
 
-Correcting a comparison or relationship can affect configured consumers, so review them before a real change. Our fictional main result supplies no synchronization write or requested access change. The result established is the intended account relationship, not successful target provisioning.
+## Apply the reasoning to a contractor account
 
-## Try the trace with changed facts
+A proposed contractor source uses sponsor number as its first correlation criterion and contractor email as its second. The designers believe both must match the contractor's identity.
 
-### 1. The first criterion finds no identity
+The sponsor number identifies an employee, not the contractor. Contractor email won't exist until another system creates a mailbox. An approved independent contractor reference exists in the application records, but it isn't yet available on both sides of the proposed comparison.
 
-**Facts:** `cp-419` has no employee-reference match. Its second configured email comparison uniquely matches the intended Devi identity under the supplied case-insensitive setting.
+Would you accept the design as ready? Explain which relationship each available value could establish and which evidence is still missing.
 
-Must the account remain uncorrelated?
+The two standard rows are alternatives. A successful sponsor comparison can identify the employee whose sponsor number is present; it doesn't establish the contractor as owner. An email that will exist later isn't an available matching input now.
 
-**Reasoning:** No. The ordered configured alternatives can establish the relationship through the email pairing. Distinguish the first criterion's result from the supplied overall association, and verify the actual owner.
+Evaluate the independent contractor reference: its meaning, uniqueness, actual account value, mapped identity value, and correlation eligibility. Establish how and when both sides will be ready. Then inspect the actual saved pairings and order, case settings, designated Account Name/default behavior, existing associations, and supported reevaluation conditions.
 
-### 2. One criterion matches, another doesn't
+Finally, verify the resulting relationship against approved contractor ownership evidence and review dependent changes separately. The supplied proposal hasn't established a safe completed association.
 
-**Facts:** The employee-reference criterion uniquely matches the correct identity. A second configured email criterion would find no match.
-
-Does the second row automatically veto the first match?
-
-**Reasoning:** No. Standard pairings do not declare an all-rows AND condition. The additional row is not automatically an extra requirement that the selected candidate must satisfy.
-
-### 3. Neither configured pairing matches
-
-**Facts:** Neither configured criterion matches for `cp-420`. Its designated Account Name is `WORKER74004`; Devi's identity name is `worker74004`; no manual link overrides the case.
-
-Can a default association still occur?
-
-**Reasoning:** Yes, under the supplied unique candidate and evaluation conditions. The case-insensitive default compares these naming values. It does not require the account's friendly display name to match.
-
-### 4. Case sensitivity was changed
-
-**Facts:** Account mail is `DEVI.RAO@learn.example`, identity email is `devi.rao@learn.example`, and this configured email comparison is case-sensitive.
-
-Can you reuse the main example's matching conclusion?
-
-**Reasoning:** No. The comparison setting changed. Inspect that configured comparison separately from other configured and default paths; a difference in one criterion is not the overall outcome by itself.
-
-### 5. Two identities have the same email
-
-**Facts:** An email value matches two identity records. No verified evidence identifies a single intended candidate or an observed result.
-
-Should you choose the first identity displayed and call that ISC's outcome?
-
-**Reasoning:** No. The data no longer supports the straightforward unique-match trace. Investigate duplicate values and ownership, obtain supported operation/result evidence and avoid inventing collection-order or hidden tie-breaking rules.
-
-### 6. Employee reference and email point at different people
-
-**Facts:** The employee reference identifies Devi, the email identifies another person, and the approved application records establish Devi as owner.
-
-Is moving the employee-reference row higher a complete data repair?
-
-**Reasoning:** No. Preserve the actual configured order and result, but investigate the contradictory input. A later alternative can still affect other records. Ordering a preferred criterion does not make a wrong email correct.
-
-### 7. A manual link doesn't move
-
-**Facts:** An account was explicitly correlated to one identity. Its current fields now fit another identity, and an unoptimized aggregation has run.
-
-Does that prove the comparison engine is broken?
-
-**Reasoning:** No. Manual correlation is persistent; that reread doesn't automatically clear it. Verify association history, intended owner and the approved supported correction before diagnosing a product defect.
-
-### 8. New criteria, unchanged account
-
-**Facts:** Saved criteria changed. The account data is unchanged, and the next source read was optimized. The relationship remained unchanged.
-
-Has the new configured trace been demonstrated?
-
-**Reasoning:** No. The unchanged record can be skipped for relevant evaluation. Establish supported reevaluation and record-level results rather than treating the read's success as proof that every new comparison ran.
-
-## Trace a contractor-source proposal
-
-A contractor application is configured with sponsor number first and contractor email second. The team believes both values must match the contractor identity.
-
-The sponsor number actually belongs to an employee identity. Contractor email is unavailable for new starters until another system creates their mailbox. The application owner has an independent contractor reference, but it is not yet configured on both sides.
-
-What would you establish before accepting this configuration?
-
-Explain that the two standard rows are alternatives, not the proposed combined requirement. Verify whose identifier the sponsor field contains, which identity each available value can match, and what the actual saved order and case settings are.
-
-Do not predict a safe contractor association from a missing future email or use a successful sponsor match as proof of the contractor's ownership.
-
-Evaluate the independently supplied contractor reference, its mapped identity value and correlation eligibility. Inspect the designated Account Name/default path, existing manual relationships and supported reevaluation requirements.
-
-Then check the actual resulting association against the contractor's approved ownership records and review dependent actions separately.
-
-A useful trace ends with a precise statement: which comparison can establish which relationship under the supplied conditions, what was actually observed, and what evidence remains missing.
+When you explain a correlation result, connect the selected account value, the identity value, the comparison setting, and the evaluation conditions to the recorded relationship. Then check whether that relationship identifies the right owner. That is what turns “correlation worked” into an explanation someone else can follow and verify.

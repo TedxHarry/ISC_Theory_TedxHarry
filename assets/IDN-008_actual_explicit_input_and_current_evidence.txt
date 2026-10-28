@@ -1,0 +1,12 @@
+Approved, but not selected:
+[HR hr-record: "0042"]
+
+Saved calculation:
+[Directory directory-user: " 0900 "]
+                  |
+[Trim surrounding spaces]
+                  |
+[Current Preview: "0900"]
+
+[Current identity also shows "0900"]
+[Past execution needs other evidence]

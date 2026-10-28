@@ -1,12 +1,12 @@
 ISC attribute tracing guide
-Revision: 1.0
-Documentation verification date: October 21, 2026
+Revision: 2.0
+Documentation verification date: October 26, 2026
 
-An account attribute belongs to a collected source account. An identity attribute belongs to ISC's representation of a person or another entity. An identity profile supplies the mapping that selects or calculates the identity value. A source names the configured account-data collection; a connector supplies supported integration behavior. Account correlation associates accounts with their intended identities.
+An account attribute belongs to a collected source account. An identity attribute belongs to ISC's representation of a person or another entity. An identity profile supplies mappings that select or calculate identity values. A source is the configured account-data collection; its connector provides supported integration behavior. Account correlation associates accounts with their intended identities.
 
-Use these questions to record the actual input, calculation and output. They describe evidence to gather, not a universal execution sequence or a tenant-change procedure.
+These questions record input, calculation and output evidence. They are not a universal execution sequence or instructions to change a tenant.
 
-Normalization means converting information into an agreed representation, such as lowercase text. An explicit input is supplied by a calculation's definition instead of relying on the interface's selected source and field.
+Normalization converts information into an agreed representation. An explicit input comes from the calculation's definition rather than the interface's selected source and field. Data type describes text, number or another kind of value; cardinality describes one value or a list.
 
 1. Name the identity and output. Record the identity reference, governing profile, identity attribute's technical name, expected value and actual value. A matching display name alone does not identify the person or field.
 2. Identify the configured input. Record the source and account attribute, plus any calculation or explicit input that changes where the value comes from. Inspect the saved definition, not just a familiar label.
@@ -17,10 +17,19 @@ Normalization means converting information into an agreed representation, such a
 7. Verify the applied identity value. Record the relevant processing evidence and the value now shown on the identity. Separate a saved mapping, completed processing and the observed result.
 8. Follow the consumers when required. Identify any matching, lifecycle, role, synchronization or provisioning behavior that uses this value. Verify each required downstream outcome with its own evidence; a correct identity value does not prove a successful target change.
 
-Worked fictional trace
-Employees governs Devi's identity, employee 63003. Work Email (email) selects Corporate Directory account cd-63003, attribute mail, input Devi63003@Example.com. ToLower produces devi63003@example.com; the applied identity value matches. No directory email synchronization write is configured. The selected account is correctly associated and is the only eligible directory account in this example.
+Worked supplied trace
+Employees governs an existing identity established through HR-Production. Work Email (email) selects the correctly associated Directory-Production account directory-user, attribute mail, with collected input USER-W103@EXAMPLE.INVALID. This is the only eligible directory account in the main example and there is no explicit input override. ToLower (technical operation lower) produces user-w103@example.invalid; the applied identity output is independently confirmed. Directory mail stays uppercase; no synchronization write is configured. Addresses are illustrative, not real mailbox evidence.
 
-Meaning of the downstream checks
-Identity processing evaluates identity information and applicable access requirements. A role can use identity attributes as membership conditions; a lifecycle state describes a business stage and can drive configured access. Attribute synchronization can write selected identity values to existing correlated accounts through supported provisioning, which performs account or access changes. Preview shows proposed mapping results for selected data, not completed identity or target updates.
+Account and value selection
+For the accountAttribute transform, inspect the specific source/account filter, sort and null-handling configuration. Its default created-ascending order and first-non-null selection are not universal defaults for every ISC feature. accountReturnFirstLink=true returns the first sorted account's value even if null. Filtering controls eligibility; removing a filter to obtain an old populated value changes the input requirement.
 
-Keep null (no value), an empty string, an absent field and a list of values distinct. For multiple accounts, inspect the specific supported selection behavior; do not assume the newest or a populated value must be the approved one. Record missing evidence instead of inventing a result.
+For the specific profile mapping-transform behavior documented for multi-valued attributes, first-value conversion doesn't establish business meaning. With ["blr", "hyd"] and the supplied first-item uppercase behavior, BLR is a calculation result, not proof of primary location. Check the actual supported operation and required value shape.
+
+Downstream checks
+Identity processing evaluates identity information and applicable access requirements. A role can use identity values as criteria, and a lifecycle state can drive configured access. Attribute synchronization can send selected values to existing correlated accounts through provisioning, which performs supported external changes.
+
+Preview shows proposed output for available data. Saved configuration, completed processing, observed identity value and target outcome are separate evidence. Applying a shared mapping can affect other identities and consumers.
+
+Missing means a field wasn't supplied; null represents no value; an empty string has zero characters, while a space is a character. A list isn't one text value. Preserve identifier formats such as "0042" where required; converting to number 42 can lose meaning.
+
+Required uid/email/lastname need non-null mapped values, and uid must be unique across profiles. A populated email isn't format, mailbox or delivery proof. Record unavailable evidence or approved input-design questions rather than substituting an arbitrary fallback.

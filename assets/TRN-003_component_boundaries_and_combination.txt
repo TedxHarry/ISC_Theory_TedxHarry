@@ -1,0 +1,22 @@
+Trim after combining raw components:
+" Ana " + " " + " Rao "
+               |
+        " Ana   Rao "
+               |
+         trim outside
+               |
+         "Ana   Rao"
+Three interior spaces remain.
+
+Trim each component before combining:
+" Ana "                " Rao "
+   |                      |
+  trim                   trim
+   |                      |
+ "Ana"                  "Rao"
+   +------- " " ----------+
+               |
+             concat
+               |
+           "Ana Rao"
+One separator space is inserted.

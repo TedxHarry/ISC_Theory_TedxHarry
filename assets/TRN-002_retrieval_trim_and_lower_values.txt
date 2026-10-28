@@ -1,0 +1,17 @@
+For the selected identity:
+
+HR-Primary: associated account
+departmentLabel = " Finance "
+               |
+accountAttribute returns " Finance "
+               |
+trim receives " Finance "
+trim returns "Finance"
+               |
+lower receives "Finance"
+lower returns "finance"
+               |
+Result for identity department mapping
+
+Arrows carry returned values.
+Source data stays unchanged.

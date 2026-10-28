@@ -1,0 +1,14 @@
+Revised bundle: Readers + Entry + Notes
+                  |
+          relevant evaluation
+                  |
++-- Current role/lifecycle requirement
+|   Provision Notes; verify result
+|
++-- Past direct profile request
+    or detection only
+    No automatic Notes addition
+    Revised full set already held?
+      Yes: retain profile
+      No: lose profile association
+          old native rights can remain

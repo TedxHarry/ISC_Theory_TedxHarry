@@ -1,0 +1,11 @@
+[Directory account: directory-user]
+[mail: USER-W103@EXAMPLE.INVALID]
+                 |
+[Employees selects collected mail]
+                 |
+[ToLower / lower conversion]
+                 |
+[Identity Work Email]
+[user-w103@example.invalid]
+
+[Directory mail is not rewritten]

@@ -1,130 +1,93 @@
 # Which characters should this calculation keep?
 
-Devi, employee `83003`, already has an employee identity in SailPoint Identity Security Cloud (ISC). HR supplies her given name as `" Devi "` and family name as `" Rao "`.
+Suppose the available given name is `" Ana "` and the family name is `" Rao "`, each with one space at the beginning and end. The approved display name is `"Ana Rao"`: keep the supplied letters and case, remove surrounding spaces from each part, and put one space between them.
 
-The approved display name is `"Devi Rao"`: preserve the supplied spelling and letter case, remove surrounding spaces from each part, and put one space between them.
+Would combining the raw values first and trimming the finished name produce that result?
 
-You could combine the raw fields first and remove spaces only from the outside of the finished result. Or you could remove surrounding spaces from each part before combining them.
+It would leave `"Ana   Rao"`, with three spaces between the words. To understand why, we need to follow where those spaces come from and which ones each operation can remove.
 
-Would those instructions produce the same text?
+## Decide which characters are part of the value
 
-Let's follow the characters. A calculation can look reasonable while leaving exactly the defect it was supposed to remove.
+A **string** is a text value. Letters, digits, punctuation and spaces can all be characters in it. The quotes in `" Ana "` show the string's boundaries; the spaces inside those boundaries are part of the input.
 
-## First agree what the result is meant to be
+**Normalization** means converting agreed equivalent forms into a consistent representation. Removing accidental surrounding spaces can be normalization. Removing an apostrophe from a family name changes information that may be meaningful.
 
-A **string** is a text value. Letters, digits and spaces can all be characters in that value. In our examples, quotation marks show where a string starts and ends; the marks themselves are not part of the stored name.
+Agree the format with the owner of the name data and the teams that use the display value. The requirement tells us which changes are allowed. Here, the agreement is to preserve the supplied spelling, case, punctuation and interior spaces. Only surrounding spaces on each component are removed, and one separator space is inserted between them.
 
-An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a connected system, and an **attribute** is a named field on that record.
+This is an example display format, rather than a rule for everyone's name. Another population may require family name first, a preferred name, a single name or a different separator. The calculation needs to express the agreed format for its population.
 
-A **source** is ISC's configured representation of a system or account-data collection. Here, **WorkforceBook Production** represents HR worker records.
+## Establish which record supplies the text
 
-The Employees **identity profile** is the shared configuration governing employee identities, including their attribute mappings. WorkforceBook is authoritative for this population: its worker accounts establish employee identities through that profile.
+An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a connected system. An **attribute** is a named field on a record.
 
-Devi's account `wb-83003` is already correctly associated with her identity. We'll call the identity `I-83003`, a teaching label rather than an actual ISC object ID.
+A **source** represents a system or collection of account data in ISC. In this hypothetical configuration, **HR-Primary** represents worker records. The existing identity is governed by the **Employees identity profile**, shared configuration that includes how identity attributes receive their values.
 
-**Account aggregation** reads account data into ISC. It has already collected the following single-valued strings from the correct WorkforceBook account. No other account on that source competes to supply these fields.
+HR-Primary is the profile's **authoritative source**: its worker accounts establish identities through that profile. **Account aggregation** has already read the HR record into ISC, and **account correlation** has associated it with the correct identity.
 
-| Field or requirement | Supplied value or approved rule |
-|---|---|
-| WorkforceBook `givenName` | `" Devi "`, with one space at each end |
-| WorkforceBook `familyName` | `" Rao "`, with one space at each end |
-| Identity Display Name, `displayName` | `"Devi Rao"` for these supplied inputs |
-| Permitted changes | Remove surrounding spaces from each part; insert one space between the parts |
-| Characters to preserve | Supplied letters, case and meaningful punctuation or interior spaces |
-| Scope | Display text only; no username, email, employee-number or account-ownership change |
-| Other identity data | Required attributes are already valid; both name parts are available |
+There is exactly one associated HR-Primary account. Its `givenName` contains the single string `" Ana "`; its `familyName` contains `" Rao "`. Both components are available, and other required identity fields are valid.
 
-This rule is an example agreement, not a universal naming convention. Another population may need family name first, a preferred name, a single name or a different display format.
+An **identity attribute mapping** supplies instructions for obtaining an identity field's value. Our mapping will use a calculation to populate Display Name, whose technical name is `displayName`.
 
-The source owner's agreement tells us which changes preserve the intended name. The availability of a string operation does not authorize every possible alteration.
+The scope is display text. No username, email, employee number or account-ownership change is part of this requirement.
 
-## Normalization changes a representation, not a person's facts
+## Trim the components, then assemble them
 
-**Normalization** means converting agreed equivalent forms into a consistent representation.
+A **transform** is a configurable ISC object that retrieves or manipulates attribute data and returns a result. Its **input** is the value it receives; its **output** is the result it returns. An **operation** is the action selected by its configuration.
 
-Removing accidental surrounding spaces can be normalization. Changing every name to lowercase is not automatically appropriate just because lowercase text is consistent.
+The `trim` operation removes whitespace at the beginning and end of a string. Whitespace includes spacing characters; our worked inputs use ordinary spaces so we can count them exactly.
 
-A **transform** is a configurable ISC object that retrieves or manipulates attribute values and returns a result. Its **input** is the data it receives; its **output** is the result it returns.
+Trim applied to `" Ana "` returns `"Ana"`. Trim applied to `" Rao "` returns `"Rao"`. Neither operation changes the letters or their case.
 
-For this work, distinguish the operations by what they actually change:
+The `concat` operation performs **concatenation**: it assembles strings in the configured order. To obtain the approved result, assemble `"Ana"`, then `" "`, then `"Rao"`.
 
-- `trim` removes whitespace from the beginning and end of a string.
-- `lower` converts letters to lowercase.
-- `upper` converts letters to uppercase.
-- `concat`, short for concatenation, assembles strings in the configured order.
+That middle string is a **separator**, text placed between components. It is a **literal** because the configuration supplies the actual space character, rather than instructions to retrieve it from an account.
 
-Whitespace includes spaces and other spacing characters. Our worked calculations use ordinary spaces, so we can count the exact characters without assuming how every possible invisible character will be handled.
+Concat returns `"Ana Rao"`. It does not insert that space because the components look like names. The separator must be included in the instructions.
 
-Trim does not remove spaces inside a name. Lower and upper do not remove surrounding spaces or insert a separator.
+Now compare the alternative from the opening. Concatenating raw `" Ana "`, the literal space and raw `" Rao "` returns `" Ana   Rao "`.
 
-For Devi's approved display format, we need trim and concatenation. We do not need lower or upper.
+Count the spaces between the words: Ana's trailing space, the inserted separator, and Rao's leading space. There are three. Once the values are combined, all three are inside the result.
 
-If the source contains `"devi"` but the approved spelling is `"Devi"`, do not claim that the main calculation will discover the intended spelling. It preserves the supplied case. Either the approved input or the agreed formatting requirement needs attention.
+Trim applied to the combined string removes only its outside spaces. It returns `"Ana   Rao"`. The operation has behaved as configured, but its placement does not meet the requirement.
 
-## Combining text requires an explicit order and separator
-
-A **separator** is text placed between components. For this display name, it is one literal space, `" "`.
-
-**Literal** means the configuration contains the actual characters to use, rather than an instruction to retrieve them from a record.
-
-The intended composition is:
-
-`"Devi"` followed by `" "` followed by `"Rao"`.
-
-The result is `"Devi Rao"`.
-
-Concatenation does not recognize which values are names. It does not insert a space because two people would expect one, or swap the components because a family name appears first in another convention.
-
-If you omit the separator, the same components produce `"DeviRao"`. If you reverse the components while retaining the space, they produce `"Rao Devi"`.
-
-The separator is part of the result, not formatting decoration around the configuration.
-
-Now compare the raw values. Combining `" Devi "`, one literal space and `" Rao "` produces `" Devi   Rao "`.
-
-There are three spaces between the words: the first field's trailing space, the literal separator and the second field's leading space.
-
-Trimming that combined string removes its outside spaces, leaving `"Devi   Rao"`. The three interior spaces survive.
-
-This conceptual comparison counts returned text, not private ISC processing stages.
+The arrows below carry calculated string values. The plus signs mean “assemble these parts”; they are explanatory notation, not ISC configuration syntax or arithmetic.
 
 ```text
-Trim only after combining:
-" Devi " + " " + " Rao "
-              |
-       " Devi   Rao "
-              |
-          trim outside
-              |
-        "Devi   Rao"
-    Three spaces remain inside.
+Trim after combining raw components:
+" Ana " + " " + " Rao "
+               |
+        " Ana   Rao "
+               |
+         trim outside
+               |
+         "Ana   Rao"
+Three interior spaces remain.
 
-Trim each component first:
-" Devi "              " Rao "
-    |                     |
-   trim                  trim
-    |                     |
- "Devi"                 "Rao"
-    +------ " " ----------+
-              |
-            concat
-              |
-         "Devi Rao"
-      One separator inserted.
+Trim each component before combining:
+" Ana "                " Rao "
+   |                      |
+  trim                   trim
+   |                      |
+ "Ana"                  "Rao"
+   +------- " " ----------+
+               |
+             concat
+               |
+           "Ana Rao"
+One separator space is inserted.
 ```
 
-The plus signs in the diagram mean “assemble these strings”; they are not ISC configuration syntax or arithmetic.
+The difference comes from the input each trim receives. When trim receives an individual component, that component's unwanted spaces are at its boundaries. When trim receives the finished string, those same spaces are between words and remain.
 
-The difference follows from where trim is placed. Once unwanted spaces sit inside the combined string, an outside-only operation cannot remove them.
+## Read the definition that produces the approved result
 
-## Read the calculation that implements the approved rule
+The `accountAttribute` operation retrieves a named field from an account associated with the identity being evaluated, on the specified source.
 
-An **identity attribute mapping** tells ISC how to supply an identity field. Employees uses the following illustrative transform for `displayName`.
+Each component below has its own retrieval and trim. These are **nested transforms**: one operation's returned value supplies another operation.
 
-The `accountAttribute` operation retrieves a named field from an account associated with the identity being evaluated, on the configured source. Each trim below explicitly retrieves its own field.
+The definition uses **JSON**, a text format for structured data. Braces group named properties and settings. A property has a name, a colon and a value; commas separate properties.
 
-These are **nested transforms**: an operation's result supplies another operation's input. No branch is relying on an unexplained default name value.
-
-The definition uses **JSON**, a structured text format. Braces group named settings. The `values` setting contains an **array**, an ordered list inside square brackets. Its order determines the composition.
+The `values` setting contains an **array**, an ordered list inside square brackets. Its items can be literal strings or nested transform instructions. Array order determines the order of the assembled text.
 
 ```json
 {
@@ -138,7 +101,7 @@ The definition uses **JSON**, a structured text format. Braces group named setti
           "input": {
             "type": "accountAttribute",
             "attributes": {
-              "sourceName": "WorkforceBook Production",
+              "sourceName": "HR-Primary",
               "attributeName": "givenName"
             }
           }
@@ -151,7 +114,7 @@ The definition uses **JSON**, a structured text format. Braces group named setti
           "input": {
             "type": "accountAttribute",
             "attributes": {
-              "sourceName": "WorkforceBook Production",
+              "sourceName": "HR-Primary",
               "attributeName": "familyName"
             }
           }
@@ -162,229 +125,203 @@ The definition uses **JSON**, a structured text format. Braces group named setti
 }
 ```
 
-This is a complete illustrative definition, not a tenant upload or a report of actual execution.
+This is an illustrative definition. The outermost, or **root**, operation is concat. Its `attributes` object holds the `values` array.
 
-The root `type` is `concat`. Its `attributes.values` array contains three items: the first trimmed result, the literal space and the second trimmed result.
+Read the first array item as “trim the givenName retrieved from HR-Primary.” Its retrieval returns `" Ana "`, and trim returns `"Ana"`.
 
-The first accountAttribute retrieves `givenName = " Devi "`; its enclosing trim returns `"Devi"`. The other retrieves `familyName = " Rao "`; its trim returns `"Rao"`.
+The second item is the literal `" "`. It contributes exactly one space.
 
-Concat places those returned strings around the literal space in array order. It returns `"Devi Rao"`.
+Read the third item as “trim the familyName retrieved from HR-Primary.” Its retrieval returns `" Rao "`, and trim returns `"Rao"`.
 
-The transform name does not choose the destination field. The identity-profile mapping establishes that use.
+Concat assembles the returned strings in that order and returns `"Ana Rao"`. The trimmed component strings are **intermediate values**, results passed between operations before the final result. Tracing them does not create extra stored identity fields.
 
-Both retrievals explicitly name WorkforceBook and their respective account fields. A different source selector on the mapping screen would not replace those explicit input references. Investigate the actual definition and associated accounts when the result does not match the expected source data.
+The name identifies the transform to someone inspecting or selecting it. The profile mapping establishes that its final result supplies identity `displayName`.
 
-The selected identity matters too. The same instructions can return a different person's name when evaluated for that person's associated account. Formatting does not prove that the account belongs to the correct identity; that relationship needs its own evidence.
+Both retrievals have **explicit input references**: their source and fields are written inside the definition. A different source selector on the mapping screen does not replace those references. To establish the actual inputs, inspect the definition and associated accounts as well as the selector.
 
-## What is different about the join operation?
+The identity being evaluated matters. The same instructions obtain that identity's associated account data. A correctly formatted result does not prove that the account was linked to the correct identity.
 
-ISC also provides `join`. It assembles a configured list of values with a separator between the items.
+## Follow the result through to the identity
 
-With concat, our space is an item in the `values` list. With join, it can instead be the `separator` setting.
+The identity-profile **Preview** evaluates mappings for a selected identity using available data. With the supplied account and definition, the expected Display Name is `"Ana Rao"`.
 
-This separate fixed-value illustration returns `"Devi Rao"`:
+Compare exact characters, including spaces. A page that makes the result look like a reasonable name can conceal a spacing defect.
+
+**Identity processing** reevaluates identity data and applicable decisions. Applying a profile mapping change initiates processing for identities associated with that profile. Review the affected population before applying shared configuration, including the configurations that use Display Name.
+
+For the successful continuation here, assume that review is complete, the intended definition and mapping are saved, Preview returns `"Ana Rao"`, and the authorized relevant processing completes. Current identity evidence then confirms `displayName = "Ana Rao"`.
+
+The collected HR fields remain `" Ana "` and `" Rao "`. The display calculation has not corrected or rewritten HR data.
+
+A **consumer** is a configuration or system that uses a value. **Provisioning** performs account or access changes in a connected system. A required target display-name update needs its own configured path and evidence of the result. Our supplied continuation establishes no target update, login creation, mailbox creation or account-ownership change.
+
+## Concat and join express the separator differently
+
+If you remove the literal space from the main concat array, the trimmed components produce `"AnaRao"`. If you reverse the components while keeping the space, they produce `"Rao Ana"`.
+
+These results follow the configured values and order. Concat does not infer a naming convention.
+
+The `join` operation also assembles a configured list of strings, but it uses a `separator` setting between the items.
+
+This separate fixed-value example returns `"Ana Rao"`:
 
 ```json
 {
   "name": "Illustrate a name separator",
   "type": "join",
   "attributes": {
-    "values": ["Devi", "Rao"],
+    "values": ["Ana", "Rao"],
     "separator": " "
   }
 }
 ```
 
-Those literal names are there to show the operation. They are not a replacement for dynamic per-person account retrieval in the main definition.
+With concat, the separator was an item in the array. With join, the separator is configured separately.
 
-Join defaults to a comma separator when no separator is supplied. For the two fixed values above, omitting `separator` would yield `"Devi,Rao"`, not the approved display name.
+The fixed strings illustrate that distinction. They would return the same literal name for every evaluation, so they are not a replacement for the main definition's per-identity account retrievals. Join can also use nested transform results as its values.
 
-Neither operation makes its own business decision about which name parts are required or in what order they belong.
+If no separator is supplied, join defaults to a comma. For these two fixed strings, it returns `"Ana,Rao"`. Set the required separator explicitly; the operation does not choose one from the meaning of the destination field.
 
-The configured `values` array also does not mean “automatically transform every value of a multi-valued account field.” A **multi-valued attribute** holds a list rather than one scalar value. Identity-profile mapping transforms have a documented first-value/single-result boundary for multi-valued input.
+Also distinguish a configured `values` array from a **multi-valued account attribute**, a field containing a list rather than one value. Putting instructions in an array does not make them automatically process every item from such an account field.
 
-Our fields each contain one string. If that changes, verify the actual input handling and intended result before reusing this design for a list.
+Identity-profile mapping transforms have a documented first-value/single-result boundary for multi-valued input. Our two source fields each contain one string. If the input shape changes to a list, verify the actual supported handling and intended result before reusing this design.
 
-## Choose case conversion for a specific field, not for every field
+## Case conversion needs its own reason
 
-Consider a separate department field. Its approved representation is lowercase, and the selected input is `" Finance "`.
+The `lower` operation converts letters to lowercase; `upper` converts them to uppercase. Neither removes surrounding spaces or inserts a separator.
 
-Trimming then lowercasing gives `"finance"`. That is a different requirement from preserving the spelling and case of a display name.
+Our display requirement preserves the supplied case, so neither operation belongs in the main calculation. If the account supplies `"ana"`, trimming and concatenating preserve that spelling. They do not discover that the intended spelling was `"Ana"`.
 
-For a region code whose approved representation is uppercase, `" us "` can become `"US"` through trim and upper. This does not prove that US is a valid code for every field: changing case is not validating or translating its meaning.
+A separate Department requirement could call for lowercase. With input `" Finance "`, trim returns `"Finance"`, then lower returns `"finance"`.
 
-These are independent field agreements, not new facts about Devi's employment.
+A separate region-code requirement could call for uppercase. With input `" us "`, trim then upper return `"US"`. That changes the representation; it does not establish that US is valid for every code field or translate a different code into it.
 
-| Proposed operation on the supplied text | Result and boundary |
+Look at the boundary of each proposed operation:
+
+| Supplied text and operation | Result and meaning |
 |---|---|
-| Trim `" Finance "` | `"Finance"`; case is unchanged |
+| Trim `" Finance "` | `"Finance"`; letter case is unchanged |
 | Lower `" Finance "` | `" finance "`; surrounding spaces remain |
-| Upper `"us"` | `"US"`; the letters change case, but their business meaning is not checked |
+| Upper `"us"` | `"US"`; code validity has not been checked |
 | Trim `"De la Cruz"` | `"De la Cruz"`; interior spaces remain |
-| Main display calculation with family name `" O'Neil "` | `"Devi O'Neil"`; meaningful punctuation is preserved |
-| Concat `"PLANT-"` with code string `"0073"` | `"PLANT-0073"`; digits remain text, not the number 73 |
+| Main display calculation with familyName `" O'Neil "` | `"Ana O'Neil"`; the apostrophe remains |
+| Concat `"PLANT-"` and code string `"0073"` | `"PLANT-0073"`; the code remains text with its zeros |
 
-A display name with accents or a hyphen does not become invalid merely because another system accepts fewer characters. Establish that system's rule and the approved adaptation separately.
+A hyphen or accent can be part of an intended name. If a target system has a narrower character set, establish its requirements and an approved adaptation for that separate use. Removing meaningful characters from the display value is not automatically the right response.
 
-For instance, converting `"A-B"` and `"AB"` to the same punctuation-free form `"AB"` loses a distinction. If those were identifiers, two different inputs would now collide.
+Suppose two identifier inputs are `"A-B"` and `"AB"`. A proposed punctuation-removal step makes both `"AB"`. That is a **collision**: different inputs produce the same value where a distinction is required.
 
-A **collision** occurs when different records receive the same supposedly distinguishing value. A normalization decision can create one even when the source inputs were distinct.
+Before accepting a “cleaner” result, identify which information was discarded and whether losing that distinction is acceptable.
 
-Do not remove characters just because a shorter result looks cleaner. Identify the requirement, allowed change and information lost.
+## A blank component needs a decision about meaning
 
-## A completed string is not necessarily a complete business value
+An **empty string**, `""`, contains no characters. **Null** represents no value. A whitespace-only string contains characters, although those characters can disappear when trimmed. These are different input conditions.
 
-Our successful trace assumes both components exist and contain usable names.
+Suppose `givenName` is `"Ana"` and `familyName` is three ordinary spaces. The family trim returns an empty string. Assembling the components around the same literal separator returns `"Ana "`.
 
-An **empty string**, `""`, has no characters. **Null** means no value. Whitespace-only text contains characters that may disappear when trimmed. These are different input conditions.
+An extra trim around that finished result would return `"Ana"`. It would remove the trailing space, but it would not establish whether a single-name display is approved.
 
-If `familyName` contains only ordinary spaces, trim returns an empty string. Keeping the same literal separator would compose `"Devi "`.
+A person can legitimately have a single name. A missing family name can also be a data defect. The absence of family-name text alone does not tell the calculation which situation applies.
 
-Trimming the final result as well could hide that trailing space, but it would not establish whether `"Devi"` alone is an acceptable display name for this population.
+A **fallback** is an agreed alternative used under specified conditions. If a single-name format is approved, the design must establish when it applies and express that condition. It must not invent a family name or silently treat every missing value as a legitimate single-name record.
 
-Some people legitimately have a single name. Others have missing data that needs correction. The calculation cannot decide which case applies from “there is no family-name text” alone.
+A failed operation is a different possibility. Do not assume that null always becomes an empty string or that every operation skips missing data. The main definition includes no missing-data policy and no universal null-handling guarantee.
 
-A **fallback** is an agreed alternative used under specified conditions. If a single-name format is approved, the design needs to express when that format applies. It must not invent a family name or silently classify every missing input as a legitimate single-name record.
+Inspect the actual input and evaluation. The correction depends on whether you have missing information, an unsupported input, a failed operation or a successfully calculated string that fails the business requirement.
 
-An operation error is different again. Do not assume every missing value becomes an empty string or that every transform silently skips it. Our main definition provides no missing-data policy and no universal null-handling guarantee.
+## Display text does not establish a unique login
 
-Inspect the actual inputs and evaluation before deciding whether the problem is missing data, unsupported input, a failed operation or a successful but unacceptable string.
+Two distinct people can have the same name components. Each can correctly receive the display value `"Ana Rao"`. Their identities and account relationships still need to remain distinct.
 
-## Does a readable name make a safe username?
+A target system requiring distinct logins needs more than name composition. Its identifier design must address allowed characters, length, uniqueness, name changes and what happens when a proposed value is already in use.
 
-No. Display text helps people recognize a record. It is not necessarily unique, immutable or suitable for another system's identifier rules.
+Display text may change and need not be unique. Turning it into a username requires a separate approved design, rather than a different label on the same calculation.
 
-Two different employees can both be called Devi Rao. Trimming and joining their names can correctly produce the same display name for both.
+Likewise, text shaped like an email address does not prove that a mailbox exists or that the system responsible for email assigned that address. The main definition supplies displayName; it does not establish account creation, email ownership or account matching.
 
-That does not mean their accounts should share an owner or login.
+## Locate the disagreement before adding another operation
 
-If a project proposes a name-derived target login, it needs the target's character and length rules, a uniqueness strategy, handling for name changes, and a response when a candidate is already in use.
+When the observed value differs from the required value, write out the inputs and relevant intermediate strings with their boundaries.
 
-An email-shaped result also does not prove that a mailbox exists or that the address was assigned by the system that owns email.
+If the result is `"Ana   Rao"`, check where trim is placed. If it is `"AnaRao"`, check the separator. If it is `"Rao Ana"`, check the array order. These are different defects with different corrections.
 
-The main definition does none of that work. It supplies displayName. Do not turn a display calculation into account creation, email ownership or account matching by changing its label.
-
-## Verify the returned text and its separate effects
-
-The identity-profile **Preview** evaluates mappings for a selected identity using available data. For Devi and the main definition, the expected display result is `"Devi Rao"`.
-
-Compare exact characters, not just how closely the text resembles a name. Extra spaces can be hard to spot in a normal page.
-
-An **intermediate value** is a result passed between operations. Here, `"Devi"` and `"Rao"` are the trimmed intermediate values. Writing them out with boundaries helps locate a defect without pretending ISC exposes a separate log line for each calculation.
-
-**Identity processing** reevaluates identity data and related decisions against the applicable configuration. Applying a shared mapping change can affect other identities governed by that profile, not only the person selected in Preview.
-
-A **consumer** is a configuration or system using the result. **Provisioning** makes account or access changes in a connected system. A returned display string does not establish that a consumer ran or that a target field was updated.
-
-This is a human evidence sequence, not a guaranteed ISC backend pipeline:
+For this display value, the following diagram describes a person's evidence checks. It does not prescribe backend stages or imply that dependent decisions wait for someone to inspect the identity.
 
 ```text
-Human checks for this display value
+Human checks for the display value
                |
-Correct identity, source and account?
+Correct identity and associated account?
                |
-Exact givenName and familyName inputs?
+Exact component inputs and trim results?
                |
-Each trim result preserves meaning?
+Correct array order and separator?
                |
-Array order and separator correct?
+Preview returns "Ana Rao"?
                |
-Preview returns "Devi Rao"?
+Approved processing and current value?
                |
-Authorized processing applied it?
-               |
-Current identity displayName correct?
-               |
-External change actually required?
-        /                  \
-       no                  yes
-       |                    |
-No write inferred    Check configured path,
-                     operation and target
+External change required?
+         /             \
+        no             yes
+        |               |
+No write inferred  Verify configured path,
+                    operation and target
+
+Human checks are not execution stages.
 ```
 
-In the supplied fictional continuation, the team checks the shared change, previews the intended inputs and completes authorized processing. Current identity evidence then shows `I-83003.displayName = "Devi Rao"`.
+Preview, a saved definition, relevant processing and a current identity field answer different questions. If the identity value is correct but a target still shows older text, inspect whether that external update is required and configured, then inspect its operation and the actual target record.
 
-The collected HR fields remain `" Devi "` and `" Rao "`. The calculation did not repair HR or write those trimmed strings back to its record.
+Repeating a successful display calculation does not establish a missing delivery path.
 
-No target update, login creation, mailbox creation or account-ownership change is supplied.
+## Try the changed conditions
 
-## Work through the changed conditions
+The main requirement preserves spelling and case, trims each supplied component and inserts one space.
 
-### 1. Only the finished name is trimmed
+1. A proposed calculation combines raw `" Ana "`, `" "` and `" Rao "`, then trims only the finished result. Does it meet the requirement? Explain the spaces that remain.
 
-**Facts:** The calculation concatenates raw `" Devi "`, `" "` and `" Rao "`, then trims the result.
+2. Both components are correctly trimmed to `"Ana"` and `"Rao"`, but concat's values array contains only those two strings. What does it return? Which change would meet the separator requirement?
 
-Does it meet the approved one-space-between-components rule?
+3. The inputs are `" Ana "` and `" De la Cruz "`. The main calculation is used. What happens to the spaces within the family name?
 
-**Reasoning:** No. Concatenation returns `" Devi   Rao "`; trim returns `"Devi   Rao"`. Outside spaces are removed, but the three interior spaces survive. Trim the components before combining them for this requirement.
+4. A separate proposed calculation applies lower to the main result `"Ana Rao"`. The approved display rule still requires supplied case. Is the new result acceptable?
 
-### 2. The separator is removed
+5. A join definition has fixed values `["Ana", "Rao"]` and no separator setting. Does it return the same text as the main calculation?
 
-**Facts:** Each component is correctly trimmed to `"Devi"` and `"Rao"`. The concat values list contains only those two results.
+6. Given name is `"Ana"`; family name is three ordinary spaces. Each is trimmed before combination with one literal space. No single-name fallback has been approved. Would an extra final trim resolve the business problem?
 
-What is returned?
+7. Two distinct people have identical name components, so both display calculations return `"Ana Rao"`. A target requires distinct logins. Does concatenation alone meet that requirement?
 
-**Reasoning:** `"DeviRao"`. Concat does not infer a missing space. Add the approved literal separator as an item, or use join with the correct separator and the same selected component values.
+8. After relevant processing, current identity displayName is `"Ana Rao"`. A connected application's display field still has extra spaces. No configured write path or operation evidence is supplied. Which outcome has been established, and what remains to check?
 
-### 3. A family name contains meaningful spaces
+### Compare your reasoning
 
-**Facts:** Given name is `" Devi "`; family name is `" De la Cruz "`. The main trim-per-component and single-separator design is used.
+**1.** Raw concatenation returns `" Ana   Rao "`; the outer trim returns `"Ana   Rao"`. The first component's trailing space, inserted separator and second component's leading space have become interior spaces. Trim each component before combining for this requirement.
 
-Should the interior spaces disappear?
+**2.** It returns `"AnaRao"`. Add the literal space to concat's array, or use join with an explicit space separator and the same selected component values. Both can meet this requirement.
 
-**Reasoning:** No. The trimmed family component is `"De la Cruz"`, so the final result is `"Devi De la Cruz"`. Trim removes surrounding whitespace, not interior word boundaries.
+**3.** The family trim returns `"De la Cruz"`, so the final value is `"Ana De la Cruz"`. The interior word boundaries are preserved.
 
-### 4. Lowercase is added around the whole display calculation
+**4.** Lower returns `"ana rao"`, violating the supplied-case requirement. An operation can return exactly what it was configured to return while the proposed design is wrong.
 
-**Facts:** The main definition returns `"Devi Rao"`. A separate proposed definition applies lower to that result. The approved display rule still requires supplied case.
+**5.** No. Join's comma default produces `"Ana,Rao"`. The required space separator must be supplied explicitly.
 
-Is the new result acceptable?
+**6.** Component trim returns an empty family string, and composition returns `"Ana "`. Final trim can remove the trailing separator, but cannot decide whether a single-name display is legitimate or source information needs correcting. Establish the condition and approved response.
 
-**Reasoning:** Lower returns `"devi rao"`, which violates the stated rule. The operation can work correctly while the design is wrong. Retain case unless an approved requirement calls for changing it.
+**7.** No. The identical outputs demonstrate that composition is not a uniqueness strategy. Preserve the separate people and account relationships, and design approved target identifiers and collision handling for that requirement.
 
-### 5. Join has no separator setting
+**8.** The current identity value is correct. Target delivery is unverified. Establish the field's required configured consumer/write path, then inspect the relevant operation and target state. Adding a string operation does not prove or create that path.
 
-**Facts:** A join definition has fixed values `["Devi", "Rao"]` and no `separator`.
-
-Will it return the same text as the main display calculation?
-
-**Reasoning:** No. Join's default comma produces `"Devi,Rao"`. Set a space explicitly for this requirement. Do not assume a default is selected from the field's meaning.
-
-### 6. One component contains only spaces
-
-**Facts:** Given name is `"Devi"`; family name is three ordinary spaces. Each is trimmed before combination with one literal separator. The organization has not approved a single-name fallback.
-
-Would an extra final trim solve the business problem?
-
-**Reasoning:** It could remove the trailing separator from the composed `"Devi "`, but it would not establish whether a single-name display is legitimate or HR data is missing. Agree on the condition and response. A more polished result is not evidence that the required information exists.
-
-### 7. The result is proposed as a unique login
-
-**Facts:** Two distinct employees have the same supplied name components. Both display calculations return `"Devi Rao"`. A target system requires distinct logins.
-
-Can concatenation alone meet the target requirement?
-
-**Reasoning:** No. The identical outputs demonstrate that name composition is not a uniqueness strategy. Keep the people and their account relationships distinct, and design approved target-identifier generation and collision handling separately.
-
-### 8. The identity is correct but a target still has old text
-
-**Facts:** Current identity displayName is `"Devi Rao"` after relevant processing. A connected application's display field still contains extra spaces. No configured write path or operation evidence is supplied.
-
-Which result has been established?
-
-**Reasoning:** The identity value is correct. Target delivery has not been established. Check whether that field should be updated through a configured consumer, then inspect the relevant operation and current target record. Repeating string normalization does not create an absent delivery path.
-
-## Apply the same reasoning to a different display requirement
+## Change the format without losing the meaning
 
 A second population requires `family name + ", " + given name`, preserving supplied case and interior punctuation.
 
-For the supplied components `" Ana "` and `" O'Neil "`, what should the calculation do? What would you check before accepting the result?
+The available components are `" Ana "` and `" O'Neil "`. What exact text should be returned? What would you inspect before accepting the design?
 
-Trim each component, keep the apostrophe, put family name first, insert the literal comma-and-space separator, then add the given name. The expected text is `"O'Neil, Ana"`.
+Trim each component, keep the apostrophe, place family name first, insert the comma-and-space separator, then add the given name. The expected result is `"O'Neil, Ana"`.
 
-Check the approved field meanings and actual associated-account inputs, component results, ordering and exact separator. Test a missing component and a legitimate name containing spaces; do not silently invent a new naming policy for either.
+Check the approved field meanings and associated-account inputs, each component result, the array order and the exact separator. Test both a missing component and a legitimate name containing spaces. A different valid format is an alternative only when the requirement is explicitly changed.
 
-Use Preview for the selected calculation, then verify application to the identity after authorized processing. Check external effects only where a separate configured use requires them.
+Use Preview to check the selected calculation, then verify the applied identity value after authorized processing. Verify any required external effect through its own configured path.
 
-The useful question is not “Which cleaning operations can I add?” It is “Which characters must change, which must remain, and how does each instruction produce that exact result?”
+For each instruction, you should be able to explain which characters it changes, which it preserves, and why the returned text meets the agreed requirement.

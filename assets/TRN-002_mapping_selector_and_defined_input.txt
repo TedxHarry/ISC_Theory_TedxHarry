@@ -1,0 +1,15 @@
+Mapping selector: Directory-Primary
+departmentLabel = "Legal"
+
+Implicit lower       Explicit main
+      |                    |
+mapped "Legal"        HR-Primary read
+      |                " Finance "
+    lower                  |
+      |                   trim
+   "legal"              "Finance"
+                           |
+                          lower
+                        "finance"
+
+Explicit input overrides mapped input.

@@ -1,38 +1,57 @@
 ISC processing comparison guide
-Revision: 1.0
-Documentation verification date: October 23, 2026
+Revision: 2.0
+Documentation verification date: October 27, 2026
 
 Account aggregation
-Reads configured account data into ISC. Check collection scope and the exact collected account/field. An operation summary is not proof of identity or target outcomes.
+Collects configured account information into ISC. Verify the operation's scope and result and the exact collected account field.
 
 Identity processing
-Uses available identity/account information and applicable configuration to reevaluate identity data and decisions. Check the current identity and relevant requirements; completion does not prove delivered access.
+Evaluates identity information and applicable access decisions using the available data and configuration. Verify the current identity value and relevant requirement.
 
 Provisioning
-Carries out a required account or access change through a supported automatic or manual path. Check the precise operation, result and actual target state.
+Carries out required account or access changes through a supported automatic or manual path. Verify each intended operation, its result and the required target state.
 
 Attribute synchronization
-Uses configured identity-to-account field mappings to require alignment, then provisions eligible account-field updates. Check the mapping, account association, changed value and update result. It is not account creation or general access assignment.
+Specifies selected identity-to-account field alignment and uses provisioning to deliver updates. Verify eligible mappings, account association, scope and each field update.
 
-Relationship
-Aggregation gathers information. Identity processing evaluates identity information and applicable requirements. Provisioning implements required changes. Attribute sync specifies one kind of required field alignment that provisioning delivers. These responsibilities can interact; they are not four mutually exclusive incident categories or a guaranteed universal job sequence.
+How they connect
+Aggregation supplies information that processing can use. Processing can establish an access requirement that provisioning must deliver. Attribute sync is one configured use of provisioning. These responsibilities interact without a universal sequence of four separate jobs.
 
-Important boundaries
-- Available source-account data and current identity data are different records.
-- Relevant aggregation changes can initiate identity processing. The UI Aggregate Account action has narrower documented scope: account-data reload without synchronizing identity attributes or affecting provisioning.
-- Saved configuration and selected Preview do not establish population-wide application.
-- Identity processing does not validate successful provisioning after initiating it.
-- Attribute sync requires eligible configured fields, identity mappings and correlated existing accounts. It does not create accounts; multiple correlated accounts on the source are all in scope.
-- A mapped identity null can propagate through configured sync. Approve missing-data behavior before allowing writes.
-- Reading a native account edit can reveal drift and lead to separately configured corrective provisioning.
-- Create Account field mappings alone do not establish ongoing updates for existing accounts.
-- A source schema or read capability does not establish write support or authorization.
-- Platform service-data synchronization into Search is not account attribute synchronization.
+Which records are involved?
+The producing system's account, ISC's collected account information, the current identity, the configured access requirement and the external target account describe different things. Attach every observation to its actual record, field, operation and time.
 
-Worked fictional result
-Employee91001 / teaching I-91001 has one associated WorkerHub wh-91001, ProjectDirectory pd-91001 and ArchiveDirectory ad-91001. WorkerHub's collected department Engineering supplies identity department Engineering. Engineering Starter requires Engineering Base / ENG-BASE. Established department sync updates pd-91001 to Engineering, while the separate ENG-BASE add fails for insufficient permission and fresh target evidence confirms no membership. ArchiveDirectory remains Finance with no ongoing department update configured. No actual tenant operation performed.
+Boundaries to retain
+- Aggregation or provisioning that modifies an identity can initiate event-based identity processing. This does not require a person to launch every stage separately.
+- The UI Aggregate Account action is narrower: it reloads selected account data/status without synchronizing identity attributes or affecting provisioning. Do not generalize this boundary to every aggregation path.
+- Entitlement aggregation collects access objects. Reading a group does not grant membership.
+- Relevant processing can reevaluate identity mappings, manager correlation, lifecycle-driven access and role assignments. Saving configuration or checking a selected Preview does not establish population application.
+- Processing completion does not validate successful access provisioning after it starts that work.
+- Attribute sync uses eligible Create Account fields mapped directly from mapped identity attributes and selected for sync. A creation mapping alone does not maintain existing accounts.
+- Sync applies to existing correlated accounts, not independent account creation. All correlated accounts for that identity on the source are in scope.
+- A null set by the identity-profile mapping can propagate through configured sync. Review missing-data policy.
+- Collecting a native target edit can reveal drift and lead to a separately configured corrective write. Resolve business authority and exceptions.
+- Source schema presence, read capability, business authority and supported authorized writes are separate questions.
+- A manual task establishes required work, not proof that the target already changed.
+- Platform synchronization into Search is distinct from external account attribute synchronization.
+- Correct fields/memberships alone do not establish successful application authentication or usable authorization.
 
-Investigation questions
-Which exact record and field changed? What approved input is available in ISC? Which mapping and relevant processing establish the current identity value? Which configured field alignment or access decision requires a target change? What supported automatic or manual delivery path applies? What result and fresh target observation establish each required outcome? What remains unverified?
+Supplied hypothetical trace
+HR-Primary is authoritative for Employees. One already associated HR account supplies department directly to identity department. An existing associated Directory-Primary account starts Finance with ENG-BASE absent. Established department sync requires its department to follow the identity. An enabled Engineering role tests identity department Engineering and includes an enabled Engineering access profile containing ordinary ENG-BASE membership. Archive-Primary has no ongoing department update. No Finance-access removal or account creation is involved.
 
-This reference supports the complete inline comparison in PRC-001. Documentation review does not establish tenant execution, beginner validation or formal publication approval.
+October 23, 2026, UTC:
+10:00 HR publishes Engineering.
+10:05 The exact collected HR account has Engineering.
+10:06 Relevant processing, current identity Engineering and Engineering role assignment are verified.
+10:07 Department update result and fresh directory observation confirm Engineering.
+10:08 ENG-BASE add reports insufficient permission.
+10:09 Fresh directory observation confirms ENG-BASE absent.
+
+These are supplied observations, not real runtime measurements or waiting guarantees. Relative target-write order is not mandatory. The department change succeeded while group delivery failed. Archive-Primary remaining Finance alone does not establish failed processing.
+
+Investigation
+Which approved information must reach which record? What does the exact collected input establish? Which mapping and relevant processing establish the current identity? Which field policy or access decision requires a target change? Which supported automatic/manual delivery path applies? What does each operation report? What current target observation verifies the requirement? What remains unproved?
+
+Transfer
+If an approved phone number reaches the collected HR account and current identity but an existing contact account remains old, its Create Account mapping alone does not establish ongoing updates. Confirm the intended authority, account association and eligible approved delivery mechanism, then verify the actual phone update. Repeated HR collection does not create that missing configuration.
+
+This reference supports the complete inline comparison in PRC-001. No actual tenant or target operation occurred. Documentation-based author review, observed beginner validation and publication review are separate.

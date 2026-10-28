@@ -1,98 +1,84 @@
 # Which moment does this date actually mean?
 
-Devi, employee `86006`, has a project assignment that ends at **17:00 UTC on October 23, 2026**. HR supplies the value `"10/23/2026 17:00:00 +0000"`.
+The approved assignment boundary is **17:00 UTC on October 23, 2026**. HR supplies `"10/23/2026 17:00:00 +0000"`.
 
-SailPoint Identity Security Cloud (ISC) needs a review label saying whether that boundary has been reached.
+A review label should say Before boundary at 16:59 UTC, and Boundary reached at exactly 17:00 UTC. Equality belongs on the reached side.
 
-At 16:59 UTC, the label should be `"Before boundary"`. At exactly 17:00 UTC, it should be `"Boundary reached"`.
+That is a business decision, not a formatting preference. “Remain eligible throughout the end date” would describe a different boundary.
 
-That last sentence settles a business decision: equality belongs on the reached side. A different agreement, such as “remain valid throughout the end date,” would require a different boundary.
+To implement this calculation correctly, we need to preserve the agreed moment while reading the text, choose the right comparison and establish when its result is evaluated.
 
-Before choosing a calculation, let's establish what the date means. Changing its appearance is not enough.
+## A date and a moment are different kinds of information
 
-## A calendar date does not identify one moment
-
-A **date-only value**, such as `2026-10-23`, identifies a calendar day. It does not include a time of day or say which place's calendar applies.
+A **date-only value**, such as `2026-10-23`, identifies a calendar day. It does not specify a time or which place's calendar applies.
 
 A **timestamp** includes date and time information. An **instant** is one exact point on the time line.
 
-`2026-10-23T17:00:00Z` identifies an instant. The `T` separates the date and time; `Z` means UTC, the common reference time called Coordinated Universal Time.
+The timestamp `2026-10-23T17:00:00Z` identifies an instant. The T separates date and time; Z means **UTC**, Coordinated Universal Time, the common reference time.
 
-An **offset** states how far a local clock reading is ahead of or behind UTC. For example, `+05:30` means five hours and thirty minutes ahead.
+An **offset** states how far a local clock reading is ahead of or behind UTC. The offset `+05:30` means five hours and thirty minutes ahead.
 
-These two timestamp representations identify the same instant:
+Consequently, these representations identify the same instant:
 
 - `2026-10-23T17:00:00Z`
 - `2026-10-23T22:30:00+05:30`
 
-The clock readings differ; the moment does not.
+Subtract five hours and thirty minutes from the second clock reading and you get 17:00 UTC. A different clock reading does not necessarily mean a later deadline.
 
-Now consider `2026-10-23T17:00:00` without an offset. Which instant is that? You need the agreed time-zone context. Neither the reader's location nor the administrator's browser should silently decide the business meaning.
+By contrast, `2026-10-23T17:00:00` has no offset. To identify its instant, you need an agreed time-zone context. The reader's location or administrator's browser must not silently supply the deadline's business meaning.
 
-A **time zone**, such as `America/Chicago`, contains rules for interpreting local times, including changes of offset. An offset alone describes one displacement from UTC; it does not supply a location's future clock-change rules.
+For the main calculation, the agreement is complete: the supplied time and zero offset identify 17:00 UTC.
 
-**Daylight-saving time** is a seasonal clock adjustment used by certain locations. Where clocks move forward, local times can be skipped. Where clocks move backward, the same local time can occur twice.
-
-For a deadline expressed in local time, the agreement must resolve those cases. Do not attach a fixed offset to every date merely because that offset is correct for one example.
-
-If HR supplied only October 23, you would need to ask: start of that day, end of that day, or a particular working-hour cutoff? In which time zone? Does the person remain eligible exactly at the boundary?
-
-Our main example avoids that missing agreement. HR has already approved and supplied the exact UTC instant.
-
-## Find the actual field before interpreting its text
+## Establish which field contains that deadline
 
 An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a connected system. An **attribute** is a named field on a record.
 
-The **AssignmentLedger Production source** is ISC's configured representation of HR assignment data. It is authoritative for this example's employee population: its worker accounts establish identities through the Employees **identity profile**.
+A **source** represents a system or collection of account data in ISC. In this hypothetical configuration, **HR-Primary** contains worker records and the assignment-end field.
 
-The profile is shared configuration governing those identities, including how their identity fields receive values.
+The existing identity is governed by the **Employees identity profile**, shared configuration including how identity attributes obtain their values. HR-Primary is its **authoritative source**: worker accounts establish identities through that profile.
 
-Devi already has one correctly associated AssignmentLedger account, `al-86006`, on her identity. We'll label the identity `I-86006`; this is a teaching label, not an actual ISC object ID.
+**Account aggregation** has already read the record into ISC. **Account correlation** has associated it with the correct identity. There is exactly one associated HR-Primary account, and `assignmentEnd` contains the single text value from the opening. Other required identity attributes are valid.
 
-**Account aggregation** reads account data into ISC. The assignmentEnd field has already been collected as the single text value shown in the opening.
+An **identity attribute mapping** supplies instructions for obtaining an identity field. Our destination is **Assignment Boundary Review**, technical name `assignmentBoundaryReview`, a **custom identity attribute** defined by the organization.
 
-Other required identity attributes are valid. There is no competing account, missing worker identity or proposed employment termination in this example.
+The field contains a review-only label. It does not end employment, grant or remove access, or perform a target account action. The assignment boundary is not an employment-termination instruction.
 
-The organization has added a custom identity field named **Assignment Boundary Review**, with internal name `assignmentBoundaryReview`. It is a review-only label. It does not control access, employment status or a target account action.
+A correct date calculation still needs the right record. Reading and interpreting a different account's deadline accurately would not make it the intended deadline.
 
-An **identity attribute mapping** defines how an identity field receives its value. This mapping will use a date comparison to supply one of the approved labels.
-
-Keeping the input field, its meaning and its destination separate helps you investigate the right problem. A correctly parsed date from the wrong account is still the wrong deadline.
-
-## Formatting begins by reading the original representation
+## Read the original text before changing its appearance
 
 A **transform** is a configurable ISC object that retrieves or manipulates data and returns a result. Its **input** is the supplied value; its **output** is the returned result.
 
-ISC's `dateFormat` operation reads a date using an input pattern, then writes it using an output format.
+The `dateFormat` operation reads date text according to an input pattern, then writes it using an output format.
 
-**Parsing** means interpreting text as date and time components. **Formatting** means representing the interpreted value as text.
+**Parsing** means interpreting text as date and time components. **Formatting** means representing the interpreted value as text. For this requirement, the representation can change while the instant must stay the same.
 
-For `"10/23/2026 17:00:00 +0000"`, the agreed input pattern is `MM/dd/yyyy HH:mm:ss Z`.
+The input `"10/23/2026 17:00:00 +0000"` uses the pattern `MM/dd/yyyy HH:mm:ss Z`.
 
-Pattern letters are instructions, not labels you can freely capitalize:
+These are instructions for reading the components:
 
-| Pattern fragment | What it means here |
+| Pattern fragment | Meaning here |
 |---|---|
-| `MM` | Month, such as 10 |
-| `dd` | Day of month, such as 23 |
-| `yyyy` | Calendar year, such as 2026 |
-| `HH` | Hour using a 24-hour clock, such as 17 |
-| `mm` | Minutes, such as 00; lowercase m is not month |
+| `MM` | Month, 10 |
+| `dd` | Day of month, 23 |
+| `yyyy` | Calendar year, 2026 |
+| `HH` | Hour on a 24-hour clock, 17 |
+| `mm` | Minutes, 00; lowercase m is not month |
 | `ss` | Seconds |
-| `SSS` | Milliseconds, thousandths of a second, when included |
-| `Z` | Numeric offset in the SimpleDateFormat pattern, such as +0000 |
+| `SSS` | Milliseconds, thousandths of a second, when present |
+| `Z` | Numeric offset in this pattern notation, such as +0000 |
 
-These patterns use Java's **SimpleDateFormat** syntax, the date-pattern notation used by this ISC operation. Uppercase `YYYY` is a week-based year, not an interchangeable spelling of calendar year `yyyy`. Uppercase `DD` means day of year, not day of month.
+This operation uses Java's **SimpleDateFormat** pattern syntax. Capitalization changes meaning: `YYYY` is a week-based year, which can differ from the calendar year near a year boundary. `DD` is day of year, not day of month.
 
-You do not need a catalog of every pattern to review this definition. You do need to identify each part of the actual producer's value.
+The pattern must describe the producer's actual value. Replacing letters because they look similar changes the interpretation.
 
-Offset notation is part of that agreement. Our input uses +0000 without a colon. A producer using +05:30 needs a matching pattern, such as the SimpleDateFormat offset pattern `XXX`; do not assume every offset spelling fits the same input pattern.
+The Z at the end of an earlier timestamp example is a character in the data meaning UTC. The unquoted Z in this input pattern is an instruction to read a numeric offset, here +0000. Keep the data and the pattern that reads it separate.
 
-**ISO 8601** is a standard for date and time representations. ISC's named `ISO8601` format is a supported format choice; it is not permission to assume every date-looking string has the same precision or time-zone meaning.
+**ISO 8601** is a standard for date and time representations. ISC provides the named format `ISO8601` for a supported representation containing date, time, milliseconds and offset. That name does not make every date-looking string compatible with every receiving operation.
 
-The following complete illustrative definition uses **JSON**, a structured text format. Its quoted values are strings. Braces group named properties into objects.
+The illustrative definition below uses **JSON**, a text format for structured data. Braces group named properties and settings; quoted values are strings. Unquoted `true` is a **boolean**, a yes/no setting.
 
-The nested `accountAttribute` operation retrieves assignmentEnd from an associated account on the named source.
+The `accountAttribute` operation inside dateFormat retrieves a named field from an account associated with the identity being evaluated, on the specified source. Putting one transform inside another is called **nesting**; the inner operation's returned value supplies the containing calculation.
 
 ```json
 {
@@ -104,7 +90,7 @@ The nested `accountAttribute` operation retrieves assignmentEnd from an associat
     "input": {
       "type": "accountAttribute",
       "attributes": {
-        "sourceName": "AssignmentLedger Production",
+        "sourceName": "HR-Primary",
         "attributeName": "assignmentEnd",
         "accountReturnFirstLink": true
       }
@@ -113,39 +99,32 @@ The nested `accountAttribute` operation retrieves assignmentEnd from an associat
 }
 ```
 
-The root `type` chooses dateFormat. The root `name` identifies this proposed transform; it does not select the identity field to update.
+The outer, or **root**, type selects dateFormat. Its `attributes` object contains the formats and explicit input retrieval. The name identifies the transform; the mapping determines its use.
 
-The `attributes` object contains the operation settings. The explicit input supplies the account field, rather than leaving the input to be inferred only from a mapping's source selector.
+**Null** represents no value. The retrieval setting `accountReturnFirstLink: true` returns the field from the first selected account even when it is null. This flag does not fill a missing date or suppress a failed read. Our successful example supplies one account and a usable value.
 
-`accountReturnFirstLink: true` tells accountAttribute to return the first selected account's field even if it is null. The unquoted `true` is a boolean yes/no setting. It does not fill a missing date or suppress a failed retrieval.
+The retrieved text is interpreted as October 23 at 17:00 UTC. An equivalent ISO representation is `2026-10-23T17:00:00.000Z`.
 
-For the supplied value, the parsed instant is 17:00 UTC on October 23. An equivalent ISO representation is `2026-10-23T17:00:00.000Z`.
+Check the actual returned representation, including its offset. Equivalent zero-offset spellings can identify the same instant; a spelling difference alone is not a timing defect.
 
-Check the returned representation, including its offset. Equivalent zero-offset spellings can identify the same instant; do not diagnose a timing error from spelling alone.
+This definition illustrates formatting. The next definition embeds that operation directly, without requiring a separately saved intermediate identity field.
 
-This definition illustrates the formatting step. The next definition includes that step directly inside the comparison; it does not depend on a separate saved intermediate identity field.
+## Read the comparison as a complete statement
 
-Another source can supply an **epoch timestamp**, a count measured from a defined starting moment, rather than readable calendar text. ISC provides named formats for these representations. `EPOCH_TIME_JAVA` uses milliseconds from January 1, 1970; `EPOCH_TIME_WIN32` uses 100-nanosecond intervals from January 1, 1601.
+The `dateCompare` operation compares two dates and returns a configured string for a true comparison or another string for a false comparison.
 
-The starting moment and unit both matter. Do not interpret seconds as milliseconds or choose a format merely because the input contains digits. Special values that a producer uses for “never expires” also need that producer's documented meaning; they are not ordinary deadlines simply because they are numeric.
+Its dates need the supported ISO representation or the keyword `"now"`. **Now** means the date and time when the transform is evaluated. It does not mean the collection time or the time someone saved its definition.
 
-## Compare the moments, not their display text
+The comparison has a direction. `firstDate` is on the left; `secondDate` is on the right. The `operator` defines their relationship:
 
-ISC's `dateCompare` operation compares two dates and returns one configured result when the comparison is true and another when it is false.
+- `lt`: left is earlier than right.
+- `lte`: left is earlier than or equal to right.
+- `gt`: left is later than right.
+- `gte`: left is later than or equal to right.
 
-Its inputs need the supported ISO date representation, or the special keyword `"now"`. **Now** means the date and time at evaluation, not the last collection time and not the time when someone saved the JSON.
+Our statement is **now is at or after the approved end instant**. Put now on the left, the end on the right, and use gte.
 
-The comparison has a direction:
-
-- `firstDate` is the value on the left.
-- `secondDate` is the value on the right.
-- The `operator` states the relationship to test.
-
-The supported operator names are `lt`, `lte`, `gt` and `gte`: less than, less than or equal to, greater than, and greater than or equal to.
-
-Here, we ask whether **now is greater than or equal to the approved end instant**. Therefore now belongs on the left and the end instant on the right.
-
-The **positiveCondition** is the output for a true comparison. The **negativeCondition** is the output for a false comparison. These are configured strings, not automatic account actions.
+The `positiveCondition` output is Boundary reached when that statement is true. The `negativeCondition` output is Before boundary when it is false. Neither output inherently performs an account action.
 
 ```json
 {
@@ -161,7 +140,7 @@ The **positiveCondition** is the output for a true comparison. The **negativeCon
         "input": {
           "type": "accountAttribute",
           "attributes": {
-            "sourceName": "AssignmentLedger Production",
+            "sourceName": "HR-Primary",
             "attributeName": "assignmentEnd",
             "accountReturnFirstLink": true
           }
@@ -175,76 +154,131 @@ The **positiveCondition** is the output for a true comparison. The **negativeCon
 }
 ```
 
-The mapping puts this final output in assignmentBoundaryReview. The transform name does not create that destination.
+Read secondDate from the inside out: retrieve assignmentEnd, interpret its actual pattern, return the supported ISO value. DateCompare uses that result as the deadline on its right.
 
-These are illustrative definitions, not uploads or evidence of tenant execution.
+The root's returned label supplies `assignmentBoundaryReview` through the mapping. The root name does not create that destination.
 
-The nested objects describe value dependencies. First obtain and interpret the end value so the comparison has a usable date. The following arrows show those dependencies, not separate private ISC services or a guaranteed backend execution order:
+The arrows below show value dependencies, not separate private ISC services or a guaranteed backend execution order.
 
 ```text
-I-86006 / account al-86006
-assignmentEnd collected from HR
+For the selected identity:
+HR-Primary assignmentEnd
               |
 "10/23/2026 17:00:00 +0000"
               |
-Parse with MM/dd/yyyy HH:mm:ss Z
+Parse: MM/dd/yyyy HH:mm:ss Z
               |
-ISO value for 2026-10-23 17:00 UTC
+ISO value for October 23, 17:00 UTC
               |
-Compare now >= that end instant
-          /             \
-        true            false
-         |                |
- Boundary reached    Before boundary
-         \              /
-           Selected result
-                 |
-Mapping supplies assignmentBoundaryReview
+Compare now >= approved end instant
+          /                 \
+        true                false
+         |                    |
+Boundary reached       Before boundary
+         \                  /
+              Returned label
+                    |
+Mapping: assignmentBoundaryReview
 
+Arrows show value dependencies.
 Errors are not ordinary false results.
 ```
 
-At 16:59 UTC, now is earlier, so the comparison is false. At 17:00 UTC, the instants are equal, so gte is true.
+For the supplied October 23 evaluations:
 
-Using `gt` would make equality false. Swapping the two dates while keeping gte would ask whether the deadline is at or after now, which is a different question.
-
-| Evaluation time on October 23, 2026 | Main definition's result |
+| Evaluation time in UTC | Main result |
 |---|---|
-| 16:59:00 UTC | Before boundary |
-| 17:00:00 UTC | Boundary reached, because equality is included |
-| 17:01:00 UTC | Boundary reached |
+| 16:59:00 | Before boundary |
+| 17:00:00 | Boundary reached, including equality |
+| 17:01:00 | Boundary reached |
 
-Comparing display strings alphabetically does not replace this calculation. A month-first date string can sort incorrectly across years. Different offsets can also make clock text look ordered differently from the actual instants.
+Using gt would make equality false. Swapping the dates while keeping gte would ask whether the deadline is at or after now, which is a different statement.
 
-For example, `2026-10-23T17:00:00+02:00` is 15:00 UTC, earlier than `2026-10-23T16:00:00Z`. Looking only at 17 versus 16 would reverse the answer.
+## Follow the calculation to the applied field
 
-## Changing the format must not change the deadline
+The identity-profile **Preview** evaluates mappings for a selected identity using available data. Preview before and after 17:00 can return different labels even when the collected assignmentEnd is unchanged. The changing input is now.
 
-Suppose someone replaces the full output with only `yyyy-MM-dd`.
+**Identity processing** reevaluates identity information and applicable decisions. The stored identity field is an applied result, not a continuously running display of the expression.
 
-That can be suitable for a date-only display. It removes the time and offset information needed to represent this exact assignment boundary.
+Review the shared mapping's affected population and uses before applying a change. For this hypothetical continuation, the intended configuration is saved and checked, and the calculation is evaluated during authorized processing at 17:03 UTC. Current identity evidence then confirms `assignmentBoundaryReview = "Boundary reached"`.
 
-Reading that reduced value back as midnight would create a different boundary. The change would no longer be “just formatting” for this consumer.
+The timeline distinguishes supplied evaluations from the passing of the business boundary. The 17:03 observation is example evidence, not a timing promise.
 
-A **consumer** is a configuration or system that uses the value. A display showing “October 23” and a calculation deciding whether 17:00 UTC has passed need different information.
+```text
+October 23, 2026 / UTC
 
-Likewise, appending the literal letter Z to a local clock reading does not convert the clock reading to UTC. It asserts that the displayed time is UTC.
+16:59  Relevant evaluation
+       now < 17:00
+       Result: Before boundary
+              |
+17:00  Approved boundary passes
+       No exact-time run established
+              |
+17:03  Supplied processing evaluation
+       now >= 17:00
+       Result: Boundary reached
+              |
+       Current identity value verified
 
-In a SimpleDateFormat pattern, quoting `'Z'` makes Z literal text. An offset pattern and a quoted letter do different jobs. Use actual time-zone interpretation and conversion, not a label pasted onto an unconverted local time.
+17:03 is supplied example evidence.
+Boundary passage is not a target write.
+```
 
-Ambiguous input is another risk. The value `03/04/2026` can mean March 4 under month/day/year, or April 3 under day/month/year. Both dates exist. A calculation can parse successfully while following the wrong agreement.
+The collected HR text remains unchanged. Processing the label did not move the deadline, end employment or alter an account.
 
-Confirm the producer's format and business meaning. Do not choose whichever interpretation makes the example look reasonable.
+A **consumer** is a configuration or system that uses a value. **Provisioning** performs account or access changes in a connected system. A review label and confirmed loss of target access are different outcomes requiring their own evidence.
 
-## Date arithmetic changes the moment on purpose
+No target action is supplied here. The two definitions describe the calculation, not a schedule guaranteeing execution at 17:00.
 
-A reminder requirement says: prepare a review point **24 hours before** the approved end instant.
+## Shorter text can lose the information a consumer needs
 
-Formatting cannot perform that subtraction. ISC's `dateMath` operation adds, subtracts or rounds date and time components according to an expression.
+Replacing the full value with `yyyy-MM-dd` can suit a date-only display. It removes time and offset information needed to represent this exact boundary.
 
-The expression `-24h` subtracts 24 hours. The unit letters matter: in dateMath, `M` means month and `m` means minute. A month is not a fixed number of days.
+If a later design treats `2026-10-23` as 00:00 UTC, it has introduced a deadline seventeen hours earlier than the approved one. That is a different moment, not an equivalent representation.
 
-Here is a separate fixed-input illustration. The `static` operation supplies literal text, rather than retrieving each worker's date.
+Ambiguous text can be wrong without causing a parsing error. Under month/day/year, `03/04/2026` means March 4. Under day/month/year, it means April 3.
+
+Both dates exist. Successful parsing alone cannot establish which was approved. Confirm the producer's agreement and use its matching pattern.
+
+Offset spelling matters too. The main input uses +0000 without a colon. An input using +05:30 needs a matching pattern, such as SimpleDateFormat's `XXX`. Do not assume all offset spellings fit one input pattern.
+
+In that notation, quoting `'Z'` makes the letter literal text. Appending Z to an unconverted local clock reading does not convert it to UTC; it asserts that the reading already is UTC.
+
+Interpret the time and zone correctly, then format the resulting instant. Do not substitute a label for a conversion.
+
+## A time zone supplies rules that an offset does not
+
+A **time zone**, such as `America/Chicago`, supplies rules for interpreting local clock readings, including offset changes. A fixed offset describes one displacement from UTC; it does not contain a location's clock-change rules.
+
+**Daylight-saving time** is a seasonal clock adjustment used by certain locations. Where clocks move forward, local times can be skipped. Where clocks move backward, one local clock reading can occur twice.
+
+A local deadline needs an agreement for those cases. An offset that is correct on one date is not automatically correct for every deadline in that zone.
+
+If the producer supplies only October 23, ask whether the boundary is the start of the day, the end of it or a working-hour cutoff. Establish the named zone and whether equality is included before deriving an instant.
+
+Do not compare arbitrary display strings alphabetically instead. Month-first text can sort incorrectly across years, and clock readings with different offsets can mislead.
+
+For example, `2026-10-23T17:00:00+02:00` is 15:00 UTC. It is earlier than `2026-10-23T16:00:00Z`, even though 17 looks larger than 16.
+
+## A numeric date also needs an origin and unit
+
+An **epoch timestamp** represents time as a count from a defined starting moment.
+
+ISC's named `EPOCH_TIME_JAVA` format uses milliseconds from January 1, 1970. `EPOCH_TIME_WIN32` uses 100-nanosecond intervals from January 1, 1601.
+
+Both the origin and unit matter. A number measured in seconds cannot be interpreted as milliseconds merely because it looks like another numeric timestamp.
+
+A producer may also reserve a special numeric value for “never expires.” Establish that producer's documented meaning before treating it as an ordinary deadline. Formatting cannot decide the business meaning of a reserved value.
+
+## Arithmetic deliberately derives another moment
+
+Suppose a review point must be **24 hours before** the approved end instant. Formatting does not subtract that time.
+
+The `dateMath` operation adds, subtracts or rounds date and time components according to an expression. The expression `-24h` subtracts 24 hours.
+
+Its unit letters matter: `M` means month and `m` means minute. A month is not a fixed number of days.
+
+This separate fixed-input illustration uses `static` to supply literal text:
 
 ```json
 {
@@ -262,167 +296,108 @@ Here is a separate fixed-input illustration. The `static` operation supplies lit
 }
 ```
 
-The arithmetic point is October 22 at 17:00 UTC. This is not a replacement for dynamic per-person retrieval and does not schedule a reminder.
+The arithmetic point is October 22 at 17:00 UTC. The fixed input illustrates the operation; it does not retrieve each person's deadline or schedule a reminder.
 
-DateMath expects its input in the documented ISO representation in UTC. Its documented output pattern is `yyyy-MM-dd'T'HH:mm`, which omits seconds and an offset.
+DateMath requires its documented ISO input in UTC. Its documented output pattern is `yyyy-MM-dd'T'HH:mm`, omitting seconds and offset.
 
-For this illustration the output is `2026-10-22T17:00`. That text is not the same output contract as dateCompare's required ISO input. Before composing the result into dateCompare, use dateFormat with the matching input pattern and supported ISO output, verifying that the UTC interpretation is retained.
+For this example, the returned text is `2026-10-22T17:00`. That is a different output contract from the supported ISO representation dateCompare needs.
 
-Do not add a Z and call the integration verified. The input context and the returned instant must agree.
+Before composing it into dateCompare, use dateFormat with the actual input pattern and supported ISO output. Because the short text has no offset, verify that its interpretation retains the known UTC context. Also check whether omitted seconds matter to the required precision.
 
-A **rounding** expression changes precision or moves a value to a unit boundary. For example, `now/d` with `roundUp: false` truncates to the day boundary in the operation's context. It does not automatically mean “the end of the worker's local business day.”
+A correct subtraction is not sufficient proof of compatible input for the next operation. Adding a Z to the text is not a substitute for verifying its time interpretation.
 
-Rounding before comparison can deliberately discard hours. If you need the exact 17:00 boundary, rounding it to a day is not harmless cleanup.
+A **rounding** expression moves a value to a unit boundary or changes its precision. For example, `now/d` with `roundUp: false` truncates to the day boundary in the operation's context. It does not automatically mean the end of a person's local business day.
 
-DateMath can use now in its expression. If now is specified there, it takes precedence over a supplied input date. An expression based on now is therefore not a disguised subtraction from HR's assignmentEnd.
+Rounding the 17:00 deadline to a day deliberately discards its hours. It is not harmless cleanup for an exact-time comparison.
 
-DateFormat itself does not accept now as its input keyword. The operations have different contracts even though they all work with dates.
+DateMath can use now in its expression. If now is specified there, it takes precedence over an input date. Such an expression is based on evaluation time, not secretly on HR's assignmentEnd.
 
-## A missing date is not a false comparison
+DateFormat, in contrast, does not support now as an input keyword. Operations that work with dates still have different contracts.
 
-**Null** means no value. An empty string is text with zero characters. Whitespace-only text contains spaces, even if it looks blank on screen.
+## A missing or malformed date is not a false comparison
 
-A malformed value does not meet the expected representation. A business-invalid value can look perfectly formatted but still represent the wrong event or wrong deadline.
+An **empty string** contains no characters. Whitespace-only text contains characters even when it looks blank. Null means no value.
 
-Do not treat any of these as proof that the boundary is in the future or has passed.
+A **malformed value** does not meet the expected representation. A **business-invalid value** can look well formatted while describing the wrong deadline or event.
 
-The negativeCondition handles a successfully evaluated false comparison. It is not a general error handler for a failed read, unsuccessful date interpretation or invalid configuration.
+None of these establishes that the boundary is in the future or has passed.
 
-Check actual evaluation results and errors. Do not assume every malformed calendar date is strictly rejected merely because an input pattern exists; parsing and business validation are separate responsibilities.
+The negativeCondition handles a successfully evaluated false comparison. It does not catch a failed retrieval, unsuccessful date interpretation or invalid configuration.
 
-A date such as February 30 must not be accepted as an approved deadline because a formatter returned something. Verify the actual parser behavior, detect unsuitable inputs and correct the responsible producer or supported preparation logic.
+Inspect the actual inputs and evaluation. An input pattern is not proof of strict calendar validation. Do not assume every impossible date, such as February 30, is rejected in a particular way.
 
-A fallback also changes policy. Replacing an unavailable end date with now can classify the record as reached. Replacing it with a distant future date can conceal a missing deadline for years.
+If a formatter returns something for such input, that does not approve it as a deadline. Verify actual parser behavior, detect unsuitable data, and correct the responsible producer or supported preparation logic.
 
-Ask what absence means. No scheduled end, not yet recorded and a failed retrieval are different conditions. A nonempty substitute does not settle that question.
+A fallback also changes policy. If a substitute makes the comparison deadline equal to the evaluation instant, gte returns Boundary reached. A distant-future substitute can conceal missing information for years. Either replacement needs an approved meaning and a supported input representation.
 
-## The clock passing does not apply a new result by itself
+Establish what absence means: no scheduled end, not yet recorded and failed retrieval are different situations. A nonempty substitute does not resolve that distinction.
 
-The profile's **Preview** evaluates mappings for a selected identity using available data. Preview at 16:59 and Preview at 17:01 can legitimately return different labels with the same collected deadline.
+## A changing clock needs a reevaluation design
 
-The changing input is now.
+A time-dependent calculation needs a way to run again. Neither mentioning now nor computing a reminder point automatically creates that behavior.
 
-**Identity processing** reevaluates identity data and related decisions against applicable configuration. A saved identity field shows an applied result from processing; it is not a continuously running display of the expression.
+ISC has scheduled processing for eligible identities. Tenant configuration, eligibility and queued execution affect when work occurs; a queued run can be delayed.
 
-A time-dependent calculation therefore needs an appropriate reevaluation design. ISC supports scheduled processing for eligible identities and a documented periodic-refresh option for time-dependent attributes. Eligibility, tenant scheduling and queued execution matter.
+The transform option `requiresPeriodicRefresh` requests periodic reevaluation through the documented processing behavior. It does not create a second-by-second timer or guarantee a run at an arbitrary business cutoff. Our definitions do not configure that option or a schedule.
 
-The `requiresPeriodicRefresh` option requests periodic reevaluation. It does not create a second-by-second timer or guarantee processing exactly at an arbitrary business cutoff. The example definitions above do not configure a schedule.
+For a deliberate future processing point, **Next Processing Date**, technical name `nextProcessing`, identifies when an identity should next undergo time-based processing.
 
-For a deliberate future processing point, ISC also provides the **Next Processing Date** identity attribute, `nextProcessing`. It identifies when the identity should next undergo time-based processing. It must be mapped per profile and meet the documented future-time requirements, including being at least an hour after that attribute was updated.
+It is separate per-profile mapping configuration. The value must use the documented future ISO representation and be at least an hour after the nextProcessing attribute was updated. Calculating a date without configuring and applying that mapping does not set the processing point.
 
-That is separate configuration, not behavior automatically created by mentioning now or calculating a reminder date. Exact delivery of a target action needs further evidence.
+These options support reevaluation, not proof that a target action completed exactly at the deadline. Verify the intended processing and its actual outcome. Full processing configuration still needs the population's requirements and documented eligibility.
 
-This is a conceptual time-and-evidence sequence. The 17:03 processing observation is supplied fictional evidence, not a timing promise:
+When investigating a stale label, connect the screen to its identity field, mapping and definition; the selected account/date text; the approved format, offset and boundary policy; the evaluation time; processing evidence; and current applied value.
 
-```text
-October 23, 2026 / UTC
+Investigate a required target change through its own consumer and delivery evidence.
 
-16:59  Relevant evaluation
-       now < 17:00
-       Result: Before boundary
-         |
-17:00  Business boundary passes
-       No exact-time run is established
-         |
-17:03  Supplied authorized processing
-       now >= 17:00
-       Result: Boundary reached
-         |
-       Current identity value verified
+## Work through the changed facts
 
-A crossed boundary is not a completed write.
-```
+1. A separate feed supplies `03/04/2026` under an approved day/month/year agreement. A proposed pattern is `MM/dd/yyyy`. Does successful parsing establish the correct date?
 
-In this fictional continuation, the team reviews shared impact and completes authorized processing at 17:03 UTC. Current identity evidence then shows assignmentBoundaryReview `"Boundary reached"`.
+2. Evaluation and deadline are both exactly 17:00 UTC. The approved reached rule includes equality, but a proposed definition uses now gt end. What result follows?
 
-The collected HR text remains unchanged. The calculation did not move the deadline, end Devi's employment or alter an account.
+3. Now is 16:59 UTC and the deadline is 17:00 UTC. A proposal places the deadline in firstDate, now in secondDate, and uses gte with positive output Boundary reached. Does it preserve the main meaning?
 
-**Provisioning** makes account or access changes in a connected system. A comparison result does not establish that such a change was configured, attempted or completed.
+4. One timestamp is `2026-10-23T17:00:00Z`; another is `2026-10-23T22:30:00+05:30`. Is the second deadline five and a half hours later?
 
-For an unexpected outcome, connect the screen to the record behind it: exact identity field, mapping and definition; selected account and date text; approved format, offset and boundary policy; evaluation time; processing evidence; and current applied value.
+5. The approved cutoff is October 23 at 17:00 UTC. An intermediate value keeps only `2026-10-23`, and a later design treats it as 00:00 UTC. Is that equivalent?
 
-If a target change is required, investigate that consumer separately. A review label and confirmed loss of target access answer different questions.
+6. The fixed dateMath example subtracts 24 hours and returns `2026-10-22T17:00`. A proposed dateCompare consumes it directly. What needs checking?
 
-## Work through the boundary with changed facts
+7. A screen shows no visible end date. Actual retrieval might be null, empty, spaces or an error; no one has checked. Someone proposes a distant-future constant. Does that close the investigation?
 
-### 1. The producer changes its date order
+8. At 16:59 the applied label was Before boundary. At 17:01 the same stored label is visible. No later processing result has been checked. Does this prove dateCompare failed?
 
-**Facts:** A separate feed supplies 03/04/2026 under an approved day/month/year agreement. A proposed mapping interprets it with MM/dd/yyyy.
+### Compare your reasoning
 
-Can successful parsing establish the correct date?
+**1.** No. The approved date is April 3, while that pattern interprets March 4. Correct the configuration to match the agreement and verify the interpreted date. No parsing error is required for a wrong result.
 
-**Reasoning:** No. The approved date is April 3; that pattern interprets March 4. Correct the format agreement in configuration and verify the interpreted date. No parsing error is needed for a wrong result.
+**2.** Strict greater-than is false at equality, so that proposal returns Before boundary. The main gte returns Boundary reached. A mathematically equivalent reversed lte can also express the policy if its operands are placed correctly.
 
-### 2. Equality belongs on the reached side
+**3.** No. It asks whether 17:00 is at or after 16:59, which is true and returns reached too early. Correct the full left-to-right statement, including operator and outputs.
 
-**Facts:** Evaluation is exactly 17:00 UTC. The end instant is exactly 17:00 UTC. The approved policy includes equality, but a proposed version uses now gt end.
+**4.** No. Subtract the positive offset from 22:30 to obtain 17:00 UTC. Both representations identify the same instant.
 
-What happens?
+**5.** No. The later design introduces midnight, seventeen hours earlier. A separate date-only display can be suitable while the full instant is preserved for this comparison.
 
-**Reasoning:** Strict greater-than is false at equality, so that version returns Before boundary. The main gte definition returns Boundary reached. The operator must express the approved cutoff.
+**6.** The arithmetic point is correct, but the short output lacks dateCompare's required representation. Use a supported formatting step with the actual input pattern, verified UTC interpretation and necessary precision. Do not substitute cosmetic Z text for that check.
 
-### 3. The dates were swapped
+**7.** No. Establish the actual input/evaluation and the approved meaning of absence. The constant can hide missing data and change classification without authority. It does not repair collection or retrieval.
 
-**Facts:** Now is 16:59 UTC. The deadline is 17:00 UTC. A proposed definition uses firstDate as the deadline, secondDate as now, operator gte and positive output Boundary reached.
+**8.** No. The field can show an earlier applied result. Check reevaluation time, eligibility, relevant processing result and current value. A passed cutoff is not processing evidence.
 
-Does it preserve the main meaning?
+## Interpret a local inclusive end date
 
-**Reasoning:** No. It asks whether 17:00 is at or after 16:59, which is true, and returns Boundary reached too early. Read the whole statement in left-to-right order before trusting the output label.
+A partner supplies `2026-11-01` as the last permitted calendar day. The agreement says eligibility continues throughout that day in the partner's named local time zone.
 
-### 4. The clock readings differ
+A proposal appends T00:00:00Z and subtracts 24 hours for a warning. What must be resolved before accepting it?
 
-**Facts:** One value is 2026-10-23T17:00:00Z. Another is 2026-10-23T22:30:00+05:30.
+“Throughout November 1” puts the first excluded boundary at the start of November 2 in the agreed local zone, subject to that zone's rules. It does not mean the start of November 1 in UTC.
 
-Is the second deadline five and a half hours later?
+Obtain the actual named-zone context and resolve the relevant local-time rules before deriving the instant. Do not guess a fixed offset or treat every date as a universally applicable midnight.
 
-**Reasoning:** No. Subtract its positive offset to express it in UTC; it is 17:00 UTC too. They identify the same instant. Preserve the offset when interpreting the text.
+Then establish whether the warning means 24 elapsed hours before that instant or the same local clock time on the previous calendar day. Across a clock change, those can differ.
 
-### 5. Formatting removed the time
+Verify the supported representations, arithmetic, reevaluation, application and any separately configured delivery. An accurate formula needs to run and have its result applied before a dependent process can use it.
 
-**Facts:** The approved cutoff is October 23 at 17:00 UTC. An intermediate value keeps only 2026-10-23. A later design treats that date as 00:00 UTC.
-
-Is that an equivalent representation?
-
-**Reasoning:** No. It introduces a midnight boundary seventeen hours earlier. Date-only display can be valid for a display consumer but is insufficient to preserve this exact cutoff.
-
-### 6. The reminder arithmetic returned text
-
-**Facts:** The fixed UTC dateMath example subtracts 24 hours. Its returned text is 2026-10-22T17:00. A proposed dateCompare consumes it directly without adapting the output contract.
-
-What needs attention?
-
-**Reasoning:** The arithmetic point is correct, but dateMath's documented output lacks the full representation expected by dateCompare. Add the supported formatting step with the actual input pattern and verified UTC interpretation. Syntax, arithmetic and compatibility are separate checks.
-
-### 7. The end field looks blank
-
-**Facts:** The screen shows no visible date. No one has checked whether retrieval returned null, empty text, spaces or an error. Someone proposes a distant-future constant.
-
-Can that close the investigation?
-
-**Reasoning:** No. Establish the actual input and evaluation first, then the approved meaning of absence. A future constant can hide missing information and change the classification without authority. It does not repair collection or retrieval.
-
-### 8. The cutoff passed without a checked reevaluation
-
-**Facts:** At 16:59 the applied label was Before boundary. At 17:01 the same stored label is visible. No later processing result has been checked.
-
-Does that prove dateCompare cannot compare the dates?
-
-**Reasoning:** No. The field can still show an earlier applied result. Check when the calculation was reevaluated, whether the identity was eligible for the intended processing and whether its new result was applied. A passed cutoff alone is not processing evidence.
-
-## Apply the reasoning to a local end date
-
-A partner sends `2026-11-01` as the last permitted calendar day. The agreement says the person remains eligible throughout that day in the partner's named local time zone.
-
-An engineer proposes appending T00:00:00Z to the date and subtracting 24 hours for a warning.
-
-Before accepting that design, what do you need to resolve?
-
-First establish the approved boundary. “Throughout November 1” points to the start of November 2 in the agreed local zone as the first excluded moment, not the start of November 1 in UTC.
-
-Use that zone's rules for the relevant date to derive the instant. Do not invent an offset or assume the date has a universally applicable midnight.
-
-Then clarify whether the warning means 24 elapsed hours before that instant or the same local clock time on the previous calendar day. Those are not interchangeable across a clock change.
-
-Finally, verify the supported representation, calculation, reevaluation and any separately configured delivery. An accurate date formula still needs to be evaluated and applied before another process can use its result.
-
-The question to keep asking is: are we preserving an agreed moment, deliberately deriving another one, or accidentally inventing one?
+For each change, establish whether you are preserving an agreed moment, deliberately deriving another one or introducing a moment the agreement never supplied.

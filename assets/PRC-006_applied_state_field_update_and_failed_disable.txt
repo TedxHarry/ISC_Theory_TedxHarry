@@ -1,0 +1,14 @@
+15:00 employed / Active
+      target enabled; workerCode EMP
+
+15:12 leave / Inactive (short-term)
+      workerCode LEAVE; target enabled
+
+16:03 retained / Inactive (long-term)
+      identity employmentCode EXIT
+
+16:04 final workerCode EXIT sync succeeds
+      account-disable attempt fails
+
+16:05 fresh directory check
+      target enabled; workerCode EXIT

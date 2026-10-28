@@ -1,0 +1,18 @@
+Collected HR account
+costCenter 0042 / legacy 0088
+                |
+saved mapping selects costCenter
+                |
+       +--------+---------+
+       |                  |
+selected Preview   relevant processing
+       |                  |
+proposed 0042      check current 0042
+                          |
+                  check role assignment
+                          |
+                  group-add provisioning
+                          |
+                  check target FT-BASE
+
+Preview does not perform that write.

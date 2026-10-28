@@ -1,0 +1,16 @@
+For the selected identity:
+HR-Primary departmentCode = " fin "
+                 |
+         trim returns "fin"
+                 |
+         upper returns "FIN"
+                 |
+       lookup returns "Finance"
+                 |
+"Department: " + returned "Finance"
+                 |
+        "Department: Finance"
+                 |
+Mapping -> departmentReviewLabel
+
+Arrows carry returned values.

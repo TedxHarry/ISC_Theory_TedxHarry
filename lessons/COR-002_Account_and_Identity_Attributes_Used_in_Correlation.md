@@ -1,345 +1,341 @@
 # Which account field is ISC comparing with which identity field?
 
-Devi is employee `0072002`. Her employee identity already exists in SailPoint Identity Security Cloud (ISC), and a project-management application has an account intended for her.
+Suppose a project account contains workerRef text "0072002". The intended person's identity contains identificationNumber text "0072002".
 
-The application's account contains `workerRef = "0072002"`. Devi's identity contains `identificationNumber = "0072002"`.
+The values agree. Does that establish a match?
 
-The values agree. But that agreement only helps if ISC's correlation configuration actually compares those two fields.
+Only if those are the fields the configured comparison actually uses. A correct value in an unselected field doesn't enter the comparison.
 
-Let's put the configuration beside the records. A field that happens to contain the right value is not necessarily the field ISC is using.
+Let's put the selected fields beside their records and trace where both values came from.
 
-## There are two objects on the comparison
+## Identify the two sides before interpreting Equals
 
-An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a connected system. Devi's employee identity and her application account are different objects.
+In SailPoint Identity Security Cloud (ISC), an **identity** represents a person or another managed entity. An **account** is a record in a connected system.
 
-An **attribute** is a named piece of information on an object. `workerRef` is an account attribute in this application; `identificationNumber` is an identity attribute in this example.
+An **attribute** is a named piece of information on an object. Here workerRef belongs to the project account, while identificationNumber belongs to the identity.
 
-**Account correlation** matches and associates source accounts with identities. A **correlation criterion** pairs an account attribute with an identity attribute and specifies the comparison between their values.
+**Account correlation** matches and associates source accounts with identities. A **correlation criterion** pairs an account attribute with an identity attribute for comparison.
 
-The standard correlation form uses the **Equals** operation. It asks whether the selected account value matches the selected identity value, subject to the applicable comparison settings. The Operation field is fixed at Equals in this form; it is not a place to enter a contains or substring expression.
+The standard correlation form uses a fixed **Equals** operation. It compares the selected values under the applicable settings; that Operation field isn't a place to enter contains or substring logic.
 
-It does not ask whether the two fields have similar names.
+Equals doesn't ask whether field names resemble each other.
 
-A **source** is ISC's configured representation of a system or account-data collection.
+A **source** is ISC's configured representation of a system or account-data collection. Its **connector** provides supported integration behavior. **Account aggregation** reads account information into ISC.
 
-For this fictional project, **HarborHR Production** represents the HR worker records. It is an **authoritative source**: its accounts establish employee identities through the Employees **identity profile**. That profile is shared configuration governing those identities, including how their identity attributes receive values.
+In this hypothetical example, HR-Production represents Human Resources (HR) worker records. It is an **authoritative source**: its accounts establish identities through the Employees **identity profile**, shared configuration including how identity fields are populated.
 
-**WorkTrack Production** represents the project-management application. It is not authoritative for establishing employee identities. Its existing accounts need to be associated with the right existing people.
+Project-Production represents existing project-management accounts. It isn't authoritative for establishing employees.
 
-HarborHR account `h-72002` is already attached to Devi's identity. We'll call the identity `I-72002`, a teaching label rather than an actual ISC object ID. WorkTrack account `wt-391` is the account whose relationship we're evaluating.
+HR account hr-record already belongs to the intended employee identity. Project account project-account is the relationship being evaluated.
 
-The approved design uses the employee reference, including its leading zeros, to identify the person. It does not use the application's login or payroll reference.
+The approved reference includes the zeros in 0072002. Project login and payroll reference have different purposes.
 
-## Read the records before reading the result
+## Inspect the selected fields on the actual records
 
-Here is a compact representation of the supplied data. The labels group the teaching evidence; this is not an API request or a complete exported ISC response.
+**JSON**, JavaScript Object Notation, represents named fields and values. Quoted values below are text; the grouping labels organize teaching evidence.
 
-**JSON** represents named fields and their values. Quotation marks here mean a value is text. The zeros in `"0072002"` are part of that text.
+This is neither an upload request nor a complete ISC export:
 
 ```json
 {
-  "harborHRAccount": {
-    "accountKey": "h-72002",
+  "hrAccount": {
+    "accountKey": "hr-record",
     "personNumber": "0072002",
     "payrollRef": "PAY-884"
   },
-  "iscIdentity": {
-    "teachingId": "I-72002",
+  "identity": {
     "identificationNumber": "0072002",
     "name": "worker72002",
-    "displayName": "Devi Rao"
+    "displayName": "Worker A"
   },
-  "workTrackAccount": {
-    "accountKey": "wt-391",
-    "loginName": "drao.wt",
+  "projectAccount": {
+    "accountKey": "project-account",
+    "loginName": "project.user",
     "workerRef": "0072002",
-    "displayName": "Devi Rao"
+    "displayName": "Worker A"
   }
 }
 ```
 
-On WorkTrack, the **account schema** defines the represented account fields and their properties. It designates `accountKey` as **Account ID**, the identifier used to distinguish the source account, and `loginName` as **Account Name**, its selected naming field.
+An **account schema** defines represented account fields and their properties. Here it designates accountKey as **Account ID**, the source account identifier, and loginName as **Account Name**, its selected naming field.
 
-Neither designation means “employee number.” Here the account key is `wt-391`, the Account Name is `drao.wt`, and the employee reference is `0072002`.
+Those designations don't mean employee number. project-account, project.user and 0072002 identify different things.
 
-The identity also has a `name` value, `worker72002`, and a display name, `Devi Rao`. Those are not interchangeable just because the interface displays a readable label.
+The identity's name worker72002 also differs from its friendly displayName Worker A. Similar screen labels don't make the underlying fields interchangeable.
 
-The saved WorkTrack criterion pairs account `workerRef` with identity `identificationNumber`. Identification Number is already available for correlation in this supplied tenant configuration.
+The saved project criterion pairs workerRef with identificationNumber. Identification Number is already eligible for correlation in this supplied configuration.
 
-No other configured criterion establishes a different relationship. No identity has the name `drao.wt`, and no existing manual association, an explicitly assigned account-to-identity link, overrides this case. The approved employee reference uniquely identifies Devi among the candidate identities.
+Assume the approved person reference uniquely identifies the intended identity, no other configured criterion establishes a different relationship, and no existing explicitly assigned account-to-identity link overrides this case.
 
-These conditions matter. They let us explain this one comparison without inventing how conflicting matches would be resolved.
+**Default correlation** compares designated Account Name with identity name when configured matching cannot associate an account. No identity has name project.user here, so that path doesn't supply another match.
 
-## The identity side has its own history
+These facts let us explain this result without inventing an ambiguous-match winner.
 
-How did `0072002` reach the identity?
+## The identity value was produced before it was compared
 
-An **identity attribute mapping** specifies the input or calculation used to populate an identity attribute. Employees maps HarborHR's `personNumber` to identity `identificationNumber`.
+An **identity attribute mapping** selects or calculates a value for an identity field. Employees maps HR personNumber to identificationNumber.
 
-**Identity processing** evaluates identity data and configured requirements, including its attribute mappings. In the supplied evidence, that mapping has already been applied, so the current identity value is text `0072002`.
+**Identity processing** evaluates identity information and configured requirements, including mappings. In the supplied evidence, the mapping is already applied: the identity holds text 0072002.
 
-The WorkTrack correlation criterion does not directly compare the WorkTrack account with the HarborHR worker account. It compares WorkTrack's account value with the value on the identity.
+The project correlation criterion doesn't directly join the project account to the HR account. It compares project workerRef with the value on the identity.
 
-HarborHR matters because it supplied the identity-side value. That is an input dependency, not an extra field selection on the WorkTrack correlation form.
-
-```text
-Already linked HarborHR account h-72002:
-  personNumber = "0072002"
-    -> Employees identity attribute mapping
-    -> identity I-72002
-       identificationNumber = "0072002"
-
-Collected WorkTrack account wt-391:
-  workerRef = "0072002"
-    -> account side of saved criterion
-
-ISC compares the selected values:
-  workerRef Equals identificationNumber
-  "0072002" matches "0072002"
-    -> supplied association with I-72002
-
-Human check:
-  correct source, account, person and evidence?
-```
-
-The first arrows describe how the identity-side value was supplied. The WorkTrack arrow identifies the other comparison input. The final arrow is the supplied successful relationship after supported evaluation.
-
-This is a data-dependency map, not a separate job for every arrow or a picture of private ISC services.
-
-**Account aggregation** reads account data into ISC and can evaluate correlation as part of that work. Collecting WorkTrack data does not, by itself, prove the HarborHR-derived identity value is current. Each side has its own input and processing evidence.
-
-In the successful example, ISC associates the same WorkTrack account with the same existing employee identity. Matching did not rename `drao.wt`, replace `wt-391`, or create another employee.
-
-## “Mapping” can describe different work
-
-You will hear people say “the mapping is wrong.” Ask which mapping they mean.
-
-| Configuration or relationship | What it controls here |
-|---|---|
-| WorkTrack account schema | Which account fields ISC represents, their properties, and the selected Account ID and Account Name. |
-| Employees identity attribute mapping | How the identity's `identificationNumber` receives its value from HarborHR `personNumber`. |
-| WorkTrack account correlation criterion | Which WorkTrack account field is compared with which identity field to establish an association. |
-| Recorded account association | Which identity ISC currently links to WorkTrack `wt-391`. It is an outcome or established relationship, not the mapping definition itself. |
-
-These responsibilities connect, but changing one is not a substitute for checking the others.
-
-Suppose the correlation criterion accidentally selects WorkTrack `accountKey` instead of `workerRef`. It compares `wt-391` with `0072002`. The correct employee number is present on the account, but the chosen field doesn't supply it to that comparison.
-
-Now consider a different defect. The criterion selects `workerRef` correctly, but Employees maps identity Identification Number from HarborHR `payrollRef`. The identity holds `PAY-884` instead of `0072002`.
-
-The correlation criterion can be correct while its identity-side input is wrong for the intended meaning.
-
-Changing WorkTrack's valid login would repair neither defect. Trace the selected field on each object and then the origin of its actual value.
-
-## Matching field names are neither required nor sufficient
-
-`workerRef` and `identificationNumber` have different names. They are suitable counterparts in this project because both contain the same approved person reference.
-
-The opposite can also happen. Two fields named `employeeId` can mean different things: a global person reference in one system and a local employment-contract reference in another.
-
-A similarly named field can also identify the employee's manager rather than the account's user. Equality with a manager's employee number would be a wrong ownership match, even if the comparison technically succeeds.
-
-Before accepting a pairing, say what each value identifies. Then check the business records supporting that meaning.
-
-An **entitlement** is a represented permission or membership. A group identifier or membership list describes access, not necessarily the person using the account. The presence of an attribute in an account schema does not make it a sensible ownership reference.
-
-This is why adding a convenient field to the form is not the same as designing a valid relationship.
-
-## A visible identity attribute may not be eligible yet
-
-ISC lets you define custom identity attributes. A **custom identity attribute** is an additional identity field defined for your organization.
-
-The definition is available across identity profiles, but each profile can map it differently or leave it unused. Creating a field does not populate it for every person.
-
-There is another requirement for account correlation. Identity attributes must be configured as **searchable** for inclusion in the correlation configuration's Identity Attribute list. A subset of predefined attributes already has that setting.
-
-Here, “searchable” is a correlation eligibility setting. It is not the same as being able to use an attribute in the separate **Search** interface, where you query represented identity and access information.
-
-Finding a contractor by a custom attribute in Search is therefore not proof that the attribute is ready to use in correlation.
-
-For a new custom `externalWorkerRef`, distinguish its definition, its profile mapping, its populated values, and its searchable-for-correlation setting. After configuring a searchable identity attribute, the documented preparation requires manual processing for all identities before aggregating the source that will use it.
-
-That preparation has a wider scope than previewing one person. Review the affected profiles and processing impact before carrying it out.
-
-The standard correlation form doesn't offer an arbitrary raw field from another application's account as the Identity Attribute. The right side is an eligible identity attribute. If the needed business reference exists only on an already associated HR account, an appropriate identity mapping can make it available on the identity.
-
-Do not create extra custom fields when an existing eligible identity attribute already carries the intended reference correctly. First establish the meaning and availability of what is already there.
-
-## Equals is a comparison, not a cleanup instruction
-
-The correlation form's Equals operation is not a request to strip prefixes, remove spaces, or convert every number-looking value into the same format.
-
-Correlation is case-insensitive by default. Configured correlation supports a source/configuration-specific case setting through `ignoreCase`; inspect the actual setting when letter case affects identity.
-
-That does not mean all differences are harmless. `"0072002"` and `"72002"` are different text representations. Converting the reference to a number discards zeros. Whether that conversion is legitimate is a business-data decision, not something to assume from the word Equals.
-
-Likewise, record the difference between `"0072002"` and `"0072002 "`, including the trailing space. Do not assume an undocumented cleanup step before matching.
-
-A **transform** calculates a value from inputs. For example, **Trim** removes whitespace at the beginning and end of a string. Applying it in an identity mapping changes that mapping's output; it does not automatically rewrite the incoming WorkTrack account field.
-
-If the account side contains unwanted spaces, cleaning only the identity side doesn't establish that both actual comparison inputs are now suitable.
-
-Choose a documented, approved correction at the layer that owns the defect. Preserve the original evidence, confirm the collected result and inspect what the comparison actually receives.
-
-A **multi-valued attribute** holds a collection rather than one value. A list such as `["0072002", "0083003"]` is not the same input as the single person-reference string `"0072002"`. Check the supported field type and actual representation; don't assume Equals selects the intended person from a list or that converting the whole list to text repairs it.
-
-**Null** means no value is present. Empty text, `""`, is a present string with no characters. A missing field is another observation again. Do not assume every connector represents these conditions identically.
-
-None of them supplies the approved employee reference in this project. Filling missing references with a common value such as `UNKNOWN` may make a field non-null, but it does not identify a person.
-
-## Check where the value comes from before relying on it
-
-Consider a proposed custom identity attribute, `workTrackWorkerRef`. Its mapping reads `workerRef` from a WorkTrack account already associated with the identity.
-
-An **Account Attribute transform** can look up an account on an identity and return one of its attributes. It is not a tenant-wide search that first discovers the owner of every uncorrelated account.
-
-Suppose the proposal uses that derived identity field to correlate the person's first WorkTrack account. In the supplied variation there is no associated WorkTrack account, no other input or fallback, and no alternative matching path.
-
-The proposal needs the relationship before it can obtain the value intended to establish that relationship.
+HR matters because it independently supplied that identity-side value. There isn't an extra HR account-field selection on the project's correlation form.
 
 ```text
-Proposed first-account design:
+[Already associated HR account]
+[personNumber: "0072002"]
+                 |
+[Employees identity attribute mapping]
+                 |
+[Identity identificationNumber: "0072002"]
 
-Correlate WorkTrack account
-  needs identity workTrackWorkerRef
-    needs an associated WorkTrack account
-      needs correlation already established
+[Collected project account]
+[workerRef: "0072002"]
+                 |
+[Compare with identity value above]
+[Equals under configured settings]
+                 |
+[Supplied: same intended identity]
 
-No associated account or other input supplied:
-  the proposed input path is unavailable
-
-Independent reference design:
-
-Already linked HR account
-  -> approved identity person reference
-WorkTrack account
-  -> its person reference
-Compare those available values
-  -> evaluate intended relationship
+[Engineer verifies approved ownership]
 ```
 
-The first path shows a circular data dependency. It does not claim ISC repeatedly loops or automatically invents a fallback.
+The upper chain explains identity-side provenance. The lower chain supplies the project input and comparison with that identity value.
 
-The second path removes that dependency by using a reference already available independently of the missing application relationship. Its arrows describe value availability, not guaranteed ownership.
+Under the saved pairing and supplied conditions, both sides contain the approved text 0072002. Supported evaluation produces the supplied association with the same existing employee identity.
 
-A different approved design could use another genuinely independent input or an evidence-based exception. Merely pointing the identity mapping back to the unassociated account does not supply that independence.
+No login is renamed, no account key is replaced and no second employee identity is created by that statement.
 
-The same question applies to email matching. If the identity's work email comes only from the account you're trying to associate, check what value is actually available before that association. Do not substitute a placeholder email and call it verified ownership.
+The arrows describe input availability and the comparison, not private services or a mandatory job for every arrow. Aggregation can read the project account and evaluate correlation in the same run.
 
-## The saved criterion is not the whole investigation
+Reading project data doesn't prove that the independently supplied HR-to-identity value is current. Each side needs its own evidence.
 
-A **preset correlation configuration** is initial source-type configuration containing attribute pairings. Inspect the saved configuration; don't assume the preset is still present or suitable for the organization's data.
+## Decide which configuration could explain a mismatch
 
-ISC also documents **default correlation** when the source's configured correlation cannot associate an account. That default compares the account's designated Account Name with the identity's `name`, case-insensitively. The default is not configurable.
+“The mapping is wrong” can refer to different work:
 
-For our WorkTrack example, that means `drao.wt` versus an identity name, not the account's friendly `displayName` versus a person's full name. The supplied candidate identity name is `worker72002`, and no identity has the name `drao.wt`.
-
-A failed preferred employee-reference comparison would therefore have no default match in this example. Another source's values could produce a default match. State those facts before concluding that an account must be **uncorrelated**, meaning it is not associated with an authoritative identity.
-
-Existing relationships need their own evidence. **Manual correlation** creates a persistent explicit link. Later value changes and an aggregation with optimization disabled do not, by themselves, clear that link. Accounts created through ISC can also have manual-correlation treatment.
-
-**Optimization** skips unchanged accounts for relevant processing. After changing correlation configuration, the documented approach uses an unoptimized aggregation so unchanged accounts can be reexamined. An ordinary successful read is not proof that every unchanged account used the new pairing.
-
-These boundaries explain why a screenshot of today's criterion is not historical proof of how an existing link was established.
-
-## Put the comparison evidence together
-
-| Evidence to inspect | Question it helps answer |
+| Configuration or relationship | What it controls |
 |---|---|
-| Exact source and account key | Are we investigating WorkTrack Production `wt-391`, rather than another environment or another account? |
-| Account schema and current collected fields | Which fields are designated Account ID/Name, and what does the selected correlation field actually contain? |
-| Saved correlation configuration | Which account and identity attributes are paired, with what operation, order and case settings? |
-| Current identity and governing profile | Does the candidate identity exist, and which applied mapping supplied the selected identity value? |
-| Eligibility and preparation | Is the identity attribute available for correlation, with required processing completed? |
-| Observation times and association history | Are both inputs current for the investigation, and is the relationship new, automatic or persistent manual? |
-| Result and approved ownership records | Which identity is actually associated, and does that person legitimately own this account? |
+| Project account schema | Represented fields, properties and designated Account ID/Name. |
+| Employees identity mapping | How identificationNumber receives its input from HR personNumber. |
+| Project correlation criterion | Which account value is compared with which eligible identity value. |
+| Recorded association | Which identity currently owns project-account in ISC; the relationship is an outcome, not the criterion definition. |
 
-**Preview** evaluates a profile mapping for a selected identity. It helps explain a proposed identity-side value. It does not prove that all identities hold that value, that WorkTrack was reevaluated, or that the recorded relationship is correct.
+Consider two independent defects.
 
-The Accounts view supplies collected account evidence; the identity's details and associated accounts supply person-level evidence. Search and reports support investigation, but record their observation times rather than assuming every view updates simultaneously.
+First, the criterion selects accountKey instead of workerRef. The comparison receives project-account, not 0072002. The correct reference is present elsewhere on the account but isn't selected.
 
-**Provisioning** attempts supported account or access changes in an external system. Correlation establishes an association; it is not itself proof of successful provisioning.
+Second, the criterion correctly selects workerRef, but Employees maps Identification Number from HR payrollRef. The applied identity value is PAY-884.
 
-**Attribute synchronization** is a configured identity-to-account write path for existing correlated accounts. Mapping or association corrections can affect such consumers, so inspect them before a real change.
+The first defect is the account-side selection. The second is the origin and meaning of the identity-side value.
 
-Our fictional successful pairing includes no synchronization write or requested access change. The result established is that WorkTrack `wt-391` is associated with the intended identity `I-72002`.
+Changing a valid login or account key repairs neither. Find the selected field on each object, then trace how its actual value was produced.
+
+## Choose fields by meaning, not similar names
+
+workerRef and identificationNumber have different names but contain the same approved person reference here. Renaming them isn't required.
+
+Two fields both called employeeId can instead represent different facts: a global person reference and a local employment-contract reference.
+
+A field can even contain the manager's employee number rather than the account user's reference. Matching that number could associate the account with the manager instead of its user.
+
+An **entitlement** is a represented permission or membership. A group identifier or membership list describes access; being present in the schema doesn't make it an appropriate account-owner reference.
+
+Before accepting a pairing, explain what each value identifies and verify that meaning against approved records.
+
+## Make the identity field available for correlation
+
+A **custom identity attribute** is an additional identity field defined for the organization's ISC environment.
+
+Its definition is available across profiles, but each profile can map it differently or leave it unused. Defining externalWorkerRef doesn't populate it for every identity.
+
+Account correlation adds an eligibility requirement. Identity attributes must be configured as **searchable** to appear in the correlation form's Identity Attribute list. A subset of predefined fields already has that setting.
+
+This correlation setting differs from the separate **Search** interface, where you query represented identity and access information.
+
+Finding a value in Search therefore doesn't prove the field is ready to use on the identity side of correlation.
+
+For a new externalWorkerRef, distinguish definition, profile mapping, actual populated values and correlation-searchable configuration.
+
+After configuring that searchable identity attribute, the documented preparation requires manual processing for all identities before aggregating the source that will use it.
+
+That isn't a single-person Preview. Review the affected profiles and wider processing impact through the approved change process.
+
+The form's right side is an eligible identity attribute, not an arbitrary raw account field from another application. If the needed reference exists on an already associated HR account, an appropriate identity mapping can make it independently available on the identity.
+
+Check existing suitable fields first. Don't add custom definitions when an already eligible attribute correctly carries the intended reference.
+
+## Equals doesn't repair the input
+
+Correlation is case-insensitive by default. Configured correlation supports a per-source/configuration case setting through ignoreCase; inspect the actual setting when letter case distinguishes people.
+
+That doesn't establish cleanup for every other difference.
+
+Text "0072002" and "72002" have different representations. Numeric conversion discards the zeros. Whether such a conversion is legitimate is a business-data decision, not a consequence of Equals.
+
+Likewise, "0072002 " includes a trailing space. Don't assume an undocumented trim before comparison.
+
+A **transform** calculates a value from inputs. **Trim** removes whitespace from the beginning and end of text.
+
+Applying Trim in an identity mapping changes that mapping's output. It doesn't automatically rewrite the incoming project's workerRef. Cleaning one side doesn't prove the actual values on both sides now meet the requirement.
+
+Correct the layer responsible for the defect, preserve its original evidence and inspect the newly collected or applied result.
+
+A **multi-valued attribute** holds several values. A list such as ["0072002", "0083003"] isn't the same input as one person-reference string. Don't assume Equals picks the intended person from a list or that converting the whole list to text solves ownership.
+
+**Null** means no value. An **empty string** is present text with zero characters; an omitted field is another observation. Connector representation can differ, so inspect the actual data.
+
+None supplies the approved reference under this project's requirement. A shared placeholder UNKNOWN can be non-null while identifying nobody reliably.
+
+## The first account can't depend only on its missing relationship
+
+Suppose a proposed identity field, projectWorkerRef, reads workerRef from a project account already associated with the identity.
+
+The **Account Attribute transform**, technical operation accountAttribute, looks up an account on an identity and returns a selected field. It doesn't search all uncorrelated accounts to discover their owners.
+
+Now suppose that field is used to correlate the person's first project account. There is no associated project account, no independent input or **fallback**, meaning an approved alternative under a configured condition, and no other matching path.
+
+The value needed to establish the relationship requires that relationship to exist first.
+
+```text
+First-account proposal:
+[Correlation needs projectWorkerRef]
+                 |
+[Mapping needs linked project account]
+                 |
+[That association doesn't exist yet]
+
+Independent input:
+[Linked HR -> identity person reference]
+[Project account -> worker reference]
+                 |
+[Compare independently available values]
+```
+
+The upper path is a circular data dependency under these stated conditions. It doesn't describe an endless ISC retry loop or an automatic fallback.
+
+The lower path uses a reference already available from independently associated HR data. It removes that missing-input dependency, although approved meaning and ownership still need verification.
+
+Another design can use a genuinely independent input or an evidence-based exception. Merely reading back from the unassociated account doesn't supply independence.
+
+Apply the same check to email: if the identity's email can only come from the account being associated, establish what is available beforehand. A placeholder address isn't verified owner evidence.
+
+## Account history and other matching paths still matter
+
+A **preset correlation configuration** supplies initial pairings for a source type. Inspect what is actually saved rather than assuming the preset remains or suits the data.
+
+**Default correlation** is another documented path when configured matching cannot associate the account. It compares designated Account Name with identity name case-insensitively and isn't configurable.
+
+In the main example, this would compare project.user with identity name, not friendly Worker A with another displayed full name. No identity has name project.user.
+
+If the preferred reference criterion failed, there would be no default match under these supplied facts. Other values can produce another outcome.
+
+An **uncorrelated account** isn't linked to an authoritative identity. Establish applicable paths before predicting that result.
+
+**Manual correlation** creates a persistent explicit association. Later value changes and an unoptimized aggregation don't automatically clear that link. Accounts created through ISC can also receive manual-correlation treatment.
+
+**Optimization** avoids relevant reevaluation for unchanged accounts. After changing correlation configuration, the documented unoptimized aggregation approach lets unchanged accounts be reexamined.
+
+Read success isn't proof that all records used the revised pairing. Nor is today's criterion a complete history of how an existing association was established.
+
+## Assemble evidence from both sides and the result
+
+| Evidence | What it helps establish |
+|---|---|
+| Exact source/account key | The intended project-account and environment, rather than a similar record. |
+| Schema and collected fields | Designated ID/Name and the actual selected account value/type. |
+| Saved correlation settings | Paired fields, operation, order and case behavior. |
+| Current identity/profile | Candidate existence and applied mapping that supplies the identity-side value. |
+| Eligibility and preparation | Availability for correlation and completion of required processing. |
+| Time and association history | Current inputs and whether the relationship came from new evaluation or a persistent manual link. |
+| Recorded result and business evidence | Actual linked identity and whether that person legitimately owns the account. |
+
+**Preview** evaluates a profile mapping for selected identity data. It can explain proposed identity input, but doesn't establish application across identities, project correlation reevaluation or correct ownership.
+
+Use Accounts for collected evidence and identity details/associated accounts for person-level evidence. Record Search/report times rather than assuming every view updates simultaneously.
+
+**Provisioning** performs supported external account or access changes. **Attribute synchronization** is a configured identity-to-account writer for existing correlated accounts.
+
+Review real consumers before changing a mapping or association. Correct correlation isn't proof of successful external delivery.
+
+The main supplied result includes no sync write or requested access change. It establishes project-account on the same intended employee identity.
 
 ## Try changing one part of the comparison
 
-### 1. Different names, same person reference
+### 1. Different names carry the same reference
 
-**Facts:** WorkTrack `workerRef` and identity `identificationNumber` both contain text `0072002`. They are the saved pairing, eligible and evaluated; the approved reference uniquely identifies Devi.
+Saved, eligible and evaluated workerRef and identificationNumber both contain text 0072002, uniquely identifying the approved person.
 
-Must the account field be renamed to `identificationNumber`?
+Must the account field be renamed?
 
-**Reasoning:** No. The configured pairing relates differently named fields with the same intended meaning and value. Renaming a valid schema field adds risk without repairing a defect.
+**Worked reasoning:** No. Selected fields can have different names while carrying the same intended reference. Renaming a valid field doesn't repair a defect.
 
-### 2. The right value is in the unselected field
+### 2. The matching value isn't selected
 
-**Facts:** The saved criterion selects WorkTrack `accountKey`, containing `wt-391`. The same account's unselected `workerRef` contains `0072002`.
+The criterion reads accountKey project-account. Unselected workerRef on that account contains 0072002.
 
-Does the matching employee number make this criterion successful?
+Does that reference make the criterion match?
 
-**Reasoning:** No. This comparison receives `wt-391`, not `0072002`. Inspect and correct the selected pairing through the approved change process, then verify supported reevaluation. Do not change the valid account key to imitate an employee number.
+**Worked reasoning:** No. The comparison receives project-account. Correct the proven selection through approved review and verify reevaluation; don't alter a valid account key to imitate the person reference.
 
 ### 3. The identity copied a payroll reference
 
-**Facts:** WorkTrack `workerRef` is correct. The selected identity attribute currently contains `PAY-884` because its applied mapping reads HarborHR `payrollRef`.
+Project workerRef is correct, but applied identificationNumber is PAY-884 from HR payrollRef.
 
 Which side needs investigation?
 
-**Reasoning:** The identity-side mapping and meaning. The application account already contains the approved person reference. Correct the proven input selection, check the resulting identity value and then the relationship; do not overwrite correct application data merely to match the wrong identity value.
+**Worked reasoning:** The identity mapping and value meaning. Correct that input, verify the applied identity value and then evaluate the relationship. Don't overwrite correct project data to match the wrong identity value.
 
-### 4. Search finds the custom field
+### 4. Search finds a custom field
 
-**Facts:** A custom reference is populated and usable in Search, but is not configured as searchable for correlation and is absent from the correlation attribute list.
+The reference is populated and searchable in Search, but lacks correlation-searchable configuration and isn't offered in the correlation list.
 
-Has Search proved correlation readiness?
+Is correlation readiness established?
 
-**Reasoning:** No. These are different capabilities. Verify the identity attribute's correlation eligibility and the documented all-identity processing preparation before source aggregation. One search result or Preview is not that preparation.
+**Worked reasoning:** No. Verify eligibility and documented all-identity processing preparation before source aggregation. A search result or single Preview isn't that preparation.
 
-### 5. The source silently lost the zeros
+### 5. Feed conversion lost the zeros
 
-**Facts:** The approved reference is text `0072002`. A file-producing integration converted it to a number and supplied `72002`.
+Approved text 0072002 was converted to numeric 72002.
 
-Should you remove the zeros from every identity to clear the mismatch?
+Should all identity references lose their zeros too?
 
-**Reasoning:** No. The supplied defect is a representation change in the feed. Preserve the approved reference, correct its production and confirm the collected comparison input. Broad identity changes could affect other consumers and conceal the actual cause.
+**Worked reasoning:** No. Repair the feed's proven representation defect and confirm the collected input. Broad identity changes can conceal the cause and affect other consumers.
 
-### 6. Letter case carries meaning
+### 6. Letter case distinguishes people
 
-**Facts:** A legacy system treats `abc7` and `ABC7` as references for different people. The correlation configuration uses case-insensitive comparison.
+A legacy system assigns abc7 and ABC7 to different people. Correlation is case-insensitive.
 
-Is a matching-looking result enough?
+Is an apparent match enough?
 
-**Reasoning:** No. The comparison policy conflicts with the reference's business meaning. Review the supported case setting and the candidate population before accepting results. Do not invent which person ISC would choose when the supplied information is ambiguous.
+**Worked reasoning:** No. The comparison policy conflicts with the business reference. Review the supported setting and candidate population. Don't invent a winning identity from ambiguous evidence.
 
 ### 7. The first account must supply its own matching value
 
-**Facts:** The selected identity field can only read an already associated WorkTrack account. No such account, independent input or other matching path exists.
+The identity field can only read an already associated project account. No such account, independent input or other path exists.
 
-Will repeating aggregation supply the missing identity value by itself?
+Will another aggregation supply that missing identity reference by itself?
 
-**Reasoning:** The proposed data path cannot supply it under these facts. Establish a suitable independent reference or approved exception. Another read doesn't make an unassociated account available through a lookup requiring an existing association.
+**Worked reasoning:** Not under the stated data path. Establish an independent reference or approved exception. A lookup requiring association can't use an absent association as its starting evidence.
 
-### 8. Preview is correct, but the link is unchanged
+### 8. Preview changed, but the recorded link didn't
 
-**Facts:** A revised mapping previews `0072002`. There is no evidence that the new identity value was applied, that the account was reevaluated, or how its existing association was established.
+Revised mapping previews 0072002. No applied identity result, account reevaluation or existing association history has been supplied.
 
-Can you conclude correlation ignored the corrected value?
+Has correlation been proved to ignore the corrected value?
 
-**Reasoning:** No. Check the actual identity value, supported evaluation and association history. A Preview is not applied-state evidence; an unchanged account can require reexamination, and a manual link can persist. Identify the missing evidence before naming a product defect.
+**Worked reasoning:** No. Check current applied input, supported evaluation and manual history. Preview isn't deployment, unchanged data can need reexamination and explicit manual links can persist.
 
-## Apply the comparison to a contractor application
+## Apply the pairing to contractor accounts
 
-A team wants to correlate contractor accounts using a field called `workerId`. On investigation, that field contains the sponsor employee's number. A different account field, `externalPersonRef`, identifies the contractor.
+A contractor application's workerId contains the sponsor employee's number. Another account field, externalPersonRef, identifies the contractor.
 
-The contractor profile has a custom `contractorRef` populated from an independent, already associated contractor registry account. The values agree with `externalPersonRef`, but correlation eligibility and required processing have not yet been established.
+The profile has custom contractorRef populated from an independently associated contractor registry account. Its values agree with externalPersonRef, but eligibility and processing preparation haven't been established.
 
-Which proposal would you take forward, and what remains to verify?
+Which proposal should proceed, and what remains to verify?
 
-Use the contractor reference pairing as the candidate design, not the misleading `workerId` field. Confirm actual account and identity values, approved person ownership, representation and candidate uniqueness. Check the custom attribute's eligibility and preparation, the saved criteria and default path, and any existing manual association.
+**Worked reasoning:** Treat externalPersonRef to contractorRef as the candidate design, after validating actual values and approved meaning. workerId would identify the sponsor, not the account's user.
 
-Then verify supported evaluation and the resulting account-to-person relationship. Review configured downstream effects separately.
+Confirm ownership, representation, candidate uniqueness, custom eligibility and preparation, saved criteria/default path and existing manual relationships. Then verify supported evaluation and actual association.
 
-A useful explanation names both objects and both fields: “This application's external person reference is compared with the independently populated contractor identity reference.” That describes the mechanism. “We mapped workerId because it sounded right” does not.
+Review downstream effects separately. A defensible explanation names both objects and fields: the application's external person reference is compared with the independently populated contractor identity reference.

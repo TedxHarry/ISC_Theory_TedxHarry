@@ -1,289 +1,277 @@
 # The identity changed. Which results should change with it?
 
-Devi moves from Support into Engineering and becomes a regular employee after a prehire period. Her manager changes too.
+The collected worker record now has department Engineering, a new manager reference and a new employment-stage code. You open the person's identity in ISC and see Engineering.
 
-SailPoint Identity Security Cloud (ISC) now has the updated worker record. You open Devi's identity and see Engineering. Does that mean her new manager is linked, her employee access is assigned, her Support role is gone, and the Engineering group is present in the directory?
+Does that also establish the new manager relationship, the right lifecycle access, removal of the old department role and delivery of the new group memberships?
 
-Engineering answers only the department question.
+The department field answers the department question. To explain the whole change, we need the inputs and configuration behind each result.
 
-**Identity processing** reevaluates identity information and applicable access requirements using the relevant data and configuration. Its responsibilities include identity values, manager relationships, lifecycle-driven access and automatic role assignments. Each responsibility has its own inputs and result.
+## Start with the records that supply the decisions
 
-Let's put those results beside the records that explain them.
+In SailPoint Identity Security Cloud, or ISC, an **identity** is the record representing a person across their accounts. An **account** is the person's record in a particular system. An **attribute** is a named field on either record.
 
-## Establish what Devi already has
+The person already has a valid identity and a correctly associated account on HR-Primary. A **source** is ISC's configured representation of a system's account data. HR-Primary is **authoritative** for this employee population: its worker records participate in establishing and maintaining their identities.
 
-Devi's employee number is 95005. Her ISC **identity** is the record representing her as a person. We will call it I-95005; this is a teaching label, not an actual ISC object ID.
+The Employees **identity profile** supplies shared configuration, including instructions for identity fields. A **mapping** specifies where an identity field gets its value. A **transform** calculates or prepares that value when direct copying isn't enough.
 
-Her worker account `wl-95005` on WorkforceLedger Production is correctly associated with that identity. A **source** is ISC's configured representation of a system's account data. WorkforceLedger is authoritative for this employee population: its records establish and maintain their identities.
+These are the relevant collected account values:
 
-The Employees **identity profile** holds the shared instructions for these identities, including attribute mappings and lifecycle configuration.
+| Field | Before the change | After collection of the update |
+|---|---|---|
+| department | Support | Engineering |
+| workerCategory | Employee | Employee |
+| managerReference | M-OLD | M-NEW |
+| workerStage | PRE | EMP |
 
-An **account attribute** is a field on a source account. An **identity attribute** is a field on the person record. A **mapping** tells ISC where an identity value comes from. A **transform** calculates or prepares a value when direct copying is not enough.
+workerCategory is a business classification. In this example, it remains Employee through prehire and regular employment. workerStage records that separate business stage. These are approved example values, not universal ISC codes.
 
-The approved configuration is:
+Department and workerCategory map directly to corresponding identity fields. The unchanged category gives us a useful check: processing should preserve Employee rather than change every value merely because another field changed.
 
-- Identity department reads WorkforceLedger `department` directly.
-- Identity identificationNumber reads WorkforceLedger `workerNumber` directly.
-- The Manager Name mapping reads WorkforceLedger `managerNumber`. Source manager correlation matches that account field against managers' identificationNumber identity field.
-- The Lifecycle State mapping translates workerStage `PRE` to technical state name `prehire`, and `EMP` to `active`. The business has approved those exact translations; neither is inferred from Devi's department.
+**Account aggregation** collects account data into ISC. The update in the table is already available there. Identity processing can't supply an uncollected HR edit by itself.
 
-Manager identities already exist. The previous manager has identificationNumber 95090; the new manager has 95091. Each number identifies exactly one intended manager. Both managers' relevant identity values are already applied, not merely present in uncollected HR records.
+For this supplied example, the aggregation has modified the identity and initiated relevant **identity processing**: evaluation of identity information and applicable access requirements against the configuration.
 
-Only this source/profile supplies Devi's manager in this example. We are not choosing between competing authoritative sources.
+That gives us a reason for reevaluation, not evidence that every expected result has finished.
 
-Both lifecycle states are enabled and configured with ISC identity state **Active**. Identity state controls participation in ISC features and processing; it is not the same field as the lifecycle state describing a business stage. Here, lifecycle prehire does not mean an Inactive identity.
+The records, configurations and observations below are hypothetical. No actual tenant results or external changes are claimed.
 
-Devi already has one correctly associated account, `wd-95005`, on WorkDirectory. The source supports the relevant group additions and removals, and provisioning is enabled. No account creation, deletion, enable/disable action or identity-field synchronization is configured in this example.
+## A manager reference needs to resolve to a person
 
-These records, configurations and outcomes are fictional. No real tenant or account is changed.
+The department mapping has a direct input: Engineering. Its expected result is Engineering.
 
-## Read the inputs before predicting the results
+A manager relationship needs another step. The account's M-NEW value is a reference identifying someone else; it isn't itself a link to that person's ISC identity.
 
-Before the update, the collected WorkforceLedger account contains department Support, managerNumber 95090 and workerStage PRE. Devi's applied identity department is Support, her resolved manager is identity 95090, and her assigned lifecycle state is prehire.
+**Manager correlation** resolves the reference to the manager identity. It is different from account correlation, which associates the worker's own account with the worker's identity.
 
-After the update has been collected into ISC, the same account contains:
+Here, the profile's **Manager Name** mapping reads managerReference from HR-Primary. The source's manager-correlation configuration compares that account field with identificationNumber on candidate manager identities.
+
+The previous manager already has identificationNumber M-OLD. The intended new manager already has M-NEW. Each reference matches exactly one intended existing identity, and those candidate values are already applied in ISC.
+
+Only this profile/source supplies the worker's manager in this example.
+
+Before the update, the worker is linked to the M-OLD manager. With M-NEW selected and the unique candidate available, the intended result is a link to the M-NEW manager identity.
+
+Keep two checks separate:
+
+- Did the mapping select the intended account reference?
+- Did correlation resolve the intended manager identity?
+
+A **Preview** evaluates mappings for a selected identity. Seeing M-NEW in an input or Preview doesn't establish the applied manager relationship. The label Manager Name also doesn't mean ISC must compare display names. The configured account and identity fields determine the comparison.
+
+A corrected current manager doesn't, by itself, establish that an approval already created for the previous manager was rerouted. That approval has its own recorded recipient and handling.
+
+## The lifecycle value selects a set of requirements
+
+A **lifecycle state** represents a business stage and connects it to configured access or account actions. Its technical name is the value used to select the state.
+
+Our Lifecycle State mapping uses a transform that independently reads the account's workerStage and applies these business-approved translations:
+
+- PRE returns the technical value `prehire`.
+- EMP returns the technical value `active`.
+
+The mapping doesn't infer employment stage from department. Engineering and EMP are separate source facts.
+
+Both lifecycle states are enabled. Both assign ISC **identity state** Active, the participation setting for features and processing. A lifecycle state named prehire therefore doesn't imply an Inactive identity in this configuration.
+
+The enabled prehire state grants Worker Portal. The enabled active state grants Worker Portal and Employee Base.
+
+An **access profile** bundles entitlements from one source. An **entitlement** is ISC's governed representation of a source-specific permission, such as membership in a directory group.
+
+Worker Portal contains ordinary membership `PORTAL`. Employee Base contains ordinary membership `STAFF-BASE`. The ISC access object represents that permission; actual membership exists on the external account.
+
+Before the change, the assigned lifecycle is prehire. Translating EMP to active introduces the Employee Base requirement, so STAFF-BASE becomes required.
+
+PORTAL stays required because the same Worker Portal profile belongs to both states. A changed lifecycle label doesn't require removing and readding access that continues through the new state.
+
+No lifecycle account actions or **Remove all access** setting are configured here. Moving to active isn't an instruction to enable every account or erase every access item not listed by that state.
+
+The assigned state and its enabled configuration explain what should be required. They aren't a receipt proving that a directory operation succeeded.
+
+## Roles evaluate another set of conditions
+
+A **role** groups access requirements. Automatic role assignment uses configured membership criteria to determine which identities should receive it.
+
+Three enabled roles apply to this example:
+
+- Company Core tests identity workerCategory equal to Employee. Its enabled Company Common profile requires `COMMON`.
+- Support Tools tests identity department equal to Support. Its enabled Support Bundle requires `SUPPORT-BASE` and `COMMON`.
+- Engineering Tools tests identity department equal to Engineering. Its enabled Engineering Bundle requires `ENG-BASE`.
+
+The assignments in this example come from these automatic criteria. All profiles use the person's one existing, correctly associated Directory-Primary account. The memberships are ordinary ongoing access, with no separate activation step.
+
+**Provisioning** delivers required account or access changes through supported automatic or manual paths. Directory-Primary supports the needed additions and removals, with provisioning enabled. Each operation still needs the appropriate execution permission.
+
+Before the update, Company Core and Support Tools are assigned. The account has PORTAL, COMMON and SUPPORT-BASE. It lacks STAFF-BASE and ENG-BASE.
+
+Now apply the new identity facts to the conditions. Engineering stops matching Support Tools and matches Engineering Tools instead. Employee still matches Company Core.
+
+What happens to COMMON when Support Tools is removed?
+
+Company Core still requires it. The Support-only requirement can end while the shared requirement continues. Don't count two entitlements in the old role and conclude that two memberships must be removed.
+
+SUPPORT-BASE has no continuing requirement in this supplied example, so its removal is expected. COMMON remains required through the retained role.
+
+This is a change in automatic assignment caused by identity data. It isn't deletion or disabling of a role, or editing the access inside its definition; those are different operations with their own behavior.
+
+Losing the Support role also doesn't mean deleting the directory account. It must remain to hold the continuing and newly required memberships.
+
+## Combine the results before checking delivery
+
+The configuration gives us these expected results:
+
+| Responsibility | Intended result |
+|---|---|
+| Identity mappings | Department Engineering; workerCategory remains Employee; workerStage EMP translates to lifecycle technical value active. |
+| Manager relationship | The selected M-NEW reference resolves to the intended existing manager identity. |
+| Lifecycle-driven access | active requires Worker Portal and Employee Base: PORTAL continues, STAFF-BASE becomes required. |
+| Automatic role assignment | Company Core remains; Support Tools ends; Engineering Tools applies. COMMON continues, SUPPORT-BASE loses its requirement, ENG-BASE becomes required. |
+
+A **dependency** means a result relies on particular information or configuration. The table explains dependencies. It doesn't promise that every field and relationship finishes together in a fixed sequence before all access work begins.
 
 ```text
-WorkforceLedger account wl-95005
-  workerNumber: 95005  (unchanged)
-  department: Engineering
-  managerNumber: 95091
-  workerStage: EMP
+Collected HR account
+department: Engineering
+workerCategory: Employee
+managerReference: M-NEW
+workerStage: EMP
+                |
+Employees mappings and configuration
+                |
+check each applicable result:
+  mapped identity values
+  resolved manager identity
+  assigned lifecycle and access
+  automatic role assignments
+                |
+required external membership changes
+                |
+provisioning results + target checks
 
-Employees profile instructions
-  department -> identity department
-  managerNumber -> manager lookup
-  EMP -> lifecycle state active
-
-Relevant identity processing
-  -> verify each applicable result
-  -> verify required delivery separately
+These are dependencies and checks,
+not a fixed sequence of private jobs.
 ```
 
-The arrows show configured dependencies and verification boundaries. They do not describe separate private services, parallel jobs or a guaranteed execution sequence.
+A role can legitimately use the identity department in its criteria. That doesn't mean another identity-field calculation can safely read a freshly calculated peer department because its row appears earlier on the mapping screen.
 
-The input is already in ISC. **Aggregation**, the collection of account data from a source, supplied it. Identity processing does not make an uncollected HR edit available by itself.
+The `identityAttribute` transform reads an identity field, but it isn't intended inside another identity-profile attribute calculation. Identity-field calculations can overlap; they don't guarantee that a peer field is current or even available.
 
-For this example, relevant event-based processing has been initiated by the identity modification during aggregation. That gives us a reason for reevaluation, not proof that every expected result has finished.
+Our lifecycle calculation reads workerStage from the account independently. The manager candidates are already established. We aren't depending on a newly calculated peer field to become ready first.
 
-If you were investigating a real case, check the exact account, collected values and relevant processing evidence. “HR changed the record” and “this identity was reevaluated using those values” are different observations.
+Use supported independent inputs and suitable composed calculations where needed. A correct Preview once, or repeatedly processing until a result looks right, doesn't establish that an unsupported field-order assumption is safe.
 
-## A copied value and a resolved relationship are different results
+## Required memberships still need actual changes
 
-The department mapping has a straightforward dependency: the selected account's department is Engineering, so that mapping should produce Engineering.
+The target work concerns memberships on the existing account. No account creation, deletion, enable/disable action or ongoing copying of identity fields to the directory is configured here.
 
-The unchanged workerNumber should still produce identificationNumber 95005. An unchanged result is correct when the relevant input and instructions still call for it.
-
-Manager correlation answers a different question: **which existing identity is Devi's manager?** It establishes a relationship between two identities. It does not associate Devi's own account with her identity; that association already exists.
-
-The account supplies 95091 as a reference to another person. The source's manager-correlation configuration says to compare it with candidate managers' identificationNumber values. A unique match to the prepared manager identity supports the new relationship.
-
-There are therefore two useful checks: did ISC select the intended manager-reference value, and did it resolve the intended manager identity?
-
-A visible 95091 value alone cannot answer both. Neither can the name “Manager Name” be taken to mean that display-name matching is always involved. Inspect the configured fields.
-
-If the relevant account manager value changes to null, the documented behavior clears the manager relationship. If it changes to a non-null value that cannot be correlated to a new manager, the existing manager relationship is retained.
-
-That distinction matters during investigation. Seeing the previous manager after a change does not, by itself, prove that processing never ran. The new reference might be unmatched. Check the selected input, candidate identity and actual result before deciding which defect to repair.
-
-A corrected current relationship also does not prove that an approval already created for the previous manager has been rerouted. That approval is a separate piece of work with its own recorded recipient and handling.
-
-## The lifecycle value selects configured requirements
-
-A **lifecycle state** represents a business stage and connects it to configured access or account actions. The technical name is the value that selects the state; a friendly display label is not a substitute.
-
-In this configuration, PRE maps to prehire and EMP maps to active. Both states grant the enabled Worker Portal **access profile**. An access profile bundles entitlements from one source. Here Worker Portal contains the ordinary, ongoing WorkDirectory group membership `PORTAL`.
-
-An **entitlement** is a governed access item, such as that group membership. The account's actual group membership and the ISC access object representing it are related records, not the same object.
-
-The active state additionally grants enabled Employee Base, containing ordinary membership `STAFF-BASE`. The prehire state does not grant it.
-
-Devi's state change therefore introduces a new STAFF-BASE requirement. PORTAL remains required because both states grant the same Worker Portal profile. We should not predict a remove-and-readd of PORTAL merely because the lifecycle label changed.
-
-There are no lifecycle account actions or Remove all access configuration in this example. Moving to active is not a command to enable every account or remove every access item that active does not list.
-
-The main question is: given the actual selected state and its enabled configuration, what access should now be required?
-
-If the identity displays a state value you expected but a group is absent, inspect that state's access configuration and the specific delivery evidence. The state name is not a receipt from WorkDirectory.
-
-## Roles apply a separate condition
-
-A **role** groups access requirements. An automatically assigned role uses configured membership criteria to decide which identities should receive it.
-
-Three enabled roles are relevant here:
-
-- Company Core tests identificationNumber equals 95005 in this small teaching example. It contains Company Common, an enabled profile requiring `COMMON`.
-- Support Tools tests identity department equals Support. Its Support Bundle requires `SUPPORT-BASE` and `COMMON`.
-- Engineering Tools tests identity department equals Engineering. Its Engineering Bundle requires `ENG-BASE`.
-
-All these profiles are enabled and contain standing access, with no separate activation step. They use Devi's existing WorkDirectory account.
-
-Company Core's deliberately narrow criterion lets us examine retention without adding another employee population. It is not a recommended design for a real company-wide role.
-
-Before the change, Devi has Company Core and Support Tools. Engineering Tools is not assigned. WorkDirectory wd-95005 contains PORTAL, COMMON and SUPPORT-BASE, but not STAFF-BASE or ENG-BASE.
-
-With identity department Engineering, Support Tools no longer matches and Engineering Tools does. Company Core still matches because identificationNumber remains 95005.
-
-The Support role's removal does not make COMMON unnecessary. Company Core still requires that entitlement. Removing the Support-only requirement and preserving the shared requirement are compatible outcomes.
-
-Do not count the role's two entitlements and conclude that two memberships must be removed. Determine which requirements survive.
-
-Losing a role also does not mean deleting its source account. In this example the account must remain, with retained and newly required memberships.
-
-## Bring the decisions together without inventing an engine order
-
-We can now predict the intended applied results.
-
-| Responsibility | Expected result with this configuration |
-|---|---|
-| Identity mappings | Department Engineering; identificationNumber remains 95005; workerStage EMP translates to lifecycle technical value active. |
-| Manager resolution | Reference 95091 resolves to the existing intended manager identity. |
-| Lifecycle-driven access | Assigned active state requires Worker Portal and Employee Base; PORTAL remains required and STAFF-BASE becomes required. |
-| Automatic role assignment | Support Tools removed, Engineering Tools added, Company Core retained; COMMON remains required. |
-
-The table groups responsibilities so you can inspect them. It does not assert that every field is calculated first, then every manager is resolved, then lifecycle work finishes, then all roles run, as one atomic transaction.
-
-A **dependency** means an outcome relies on particular information or configuration. It does not automatically give you control over the product's execution order.
-
-For example, Engineering Tools depends on the identity department used in its criteria. That does not justify building another identity attribute by reading “the freshly calculated department” and assuming a particular mapping runs first. The identityAttribute transform is not intended for use inside another identity-profile attribute calculation; such calculations do not guarantee that a peer field is current or even available.
-
-Use supported independent input retrieval and suitable composed calculations where needed. Verify the applied results. Do not repair an assumed ordering problem by repeatedly running processing until an unsupported cross-field design happens to appear correct.
-
-Our lifecycle mapping reads workerStage from the account; it does not read a newly calculated peer identity field. The manager candidates are already established. These assumptions remove two avoidable ambiguities from the example.
-
-You can reason that the configured inputs call for Engineering, manager 95091, active and the stated assignments. You cannot infer an undocumented backend schedule from that reasoning.
-
-## Required memberships are not completed memberships
-
-Combine the continuing and new requirements for wd-95005:
+Combining the continuing and new requirements gives us:
 
 ```text
-Before: observed WorkDirectory memberships
-  PORTAL + COMMON + SUPPORT-BASE
+Initial observed memberships
+PORTAL + COMMON + SUPPORT-BASE
 
-After: intended memberships
-  PORTAL + COMMON + STAFF-BASE + ENG-BASE
+Intended memberships after the change
+PORTAL + COMMON + STAFF-BASE + ENG-BASE
 
 Retain: PORTAL and COMMON
 Remove requirement: SUPPORT-BASE
-Add requirements: STAFF-BASE and ENG-BASE
+Add requirements: STAFF-BASE, ENG-BASE
 
-Provisioning and target evidence
-  STAFF-BASE add: confirmed
-  SUPPORT-BASE removal: confirmed
-  ENG-BASE add: failed; still absent
-  PORTAL and COMMON: confirmed retained
+Supplied delivery and fresh target check
+STAFF-BASE add: confirmed present
+SUPPORT-BASE remove: confirmed absent
+ENG-BASE add: failed, absent at 14:07
+PORTAL and COMMON: confirmed retained
 ```
 
-**Provisioning** performs the required changes to a connected system, or uses the applicable manual fulfillment path. Here we have a supported direct connection, so the example concerns actual WorkDirectory group changes.
+The first part compares initial observed and intended memberships. The final part supplies delivery results. Neither is an instruction that ISC must issue those operations in the displayed order.
 
-The first two parts of the diagram compare observed initial state with intended state. The last part supplies fictional delivery results. It is not a sequence in which ISC must issue those operations.
+Here is the supplied evidence on October 23, 2026. UTC means Coordinated Universal Time.
 
-Suppose an investigation verifies these observations on October 23, 2026, in UTC:
+At 14:00, the updated HR account values are collected and the relevant identity modification initiates processing.
 
-At 14:00, wl-95005's updated values are collected and the relevant identity modification initiates processing. At 14:04, the applied identity department is Engineering, the resolved manager is 95091, the assigned lifecycle state is active, and the expected role assignments are verified.
+At 14:04, current department Engineering, workerCategory Employee, the resolved M-NEW manager, assigned lifecycle active and the expected role assignments are verified.
 
-At 14:06, the activity evidence reports STAFF-BASE addition and SUPPORT-BASE removal completed, but ENG-BASE addition failed because the connection lacks permission for that group.
+At 14:06, provisioning activity reports STAFF-BASE addition and SUPPORT-BASE removal complete. ENG-BASE addition fails because the connection lacks permission for that group.
 
-At 14:07, a fresh check of wd-95005 confirms PORTAL, COMMON and STAFF-BASE present, SUPPORT-BASE absent, and ENG-BASE absent.
+At 14:07, a fresh directory check finds PORTAL, COMMON and STAFF-BASE present. SUPPORT-BASE and ENG-BASE are absent.
 
-The identity-side results are consistent with the intended decisions. Delivery is incomplete. Devi has not received all intended access.
+The identity-side results agree with the intended decisions. Delivery remains incomplete because ENG-BASE is still missing at that check.
 
-Those supplied intervals are not processing-time promises. Neither the job status nor one completed addition establishes the other operations' outcomes.
+Identity processing doesn't validate successful access provisioning after it starts that work. One successful addition or a green job status can't establish the other operations' outcomes.
 
-Some provisioning failures have supported retry handling. Do not turn that into “every failure will fix itself” or “another identity-processing run retries every failed item.” Inspect the actual error, applicable recovery behavior, authorization and current target evidence. Correct the permission problem through the approved process, then verify the supported recovery and exact membership result.
+These intervals are supplied observations, not measured processing times or guarantees.
 
-## Read each screen as evidence of a particular record
+Some failures have supported retry handling. That doesn't mean every error will fix itself, or another identity-processing run retries every failed item. Inspect the particular error and supported recovery behavior, correct the approved permission problem and verify the actual membership outcome.
 
-When you open the identity's attributes, you are looking for applied person-level information, not a live view of every target account.
+## Read each view as evidence of its own record
 
-When you inspect its resolved manager, verify the intended manager identity, not merely a plausible display name.
+The identity's department field establishes applied person-level information. It doesn't establish the manager, lifecycle or roles merely because they concern the same person.
 
-When you inspect lifecycle configuration, you see instructions for a state. When you inspect Devi's assigned lifecycle state, you see which state currently applies. Neither view alone establishes every target action.
+For the resolved manager, check the intended identity rather than a plausible display name.
 
-Role membership tells you about the assignment. Provisioning activity tells you about work to deliver or remove access. Current source-account data in ISC shows the collected account representation; a target observation establishes the target's state at the time checked.
+Lifecycle configuration shows instructions; the assigned lifecycle shows the current selected stage. Neither alone proves all target actions.
 
-Keep the claim as specific as its evidence:
+Role assignment records a requirement. Provisioning activity describes work to deliver or remove access. Collected account data describes what ISC read; a fresh target observation establishes external state at that observation time.
 
-| Observation | What it establishes, and what is still missing |
-|---|---|
-| Identity department is Engineering | Applied department agrees with the new input. Manager, lifecycle, roles and memberships need their own checks. |
-| Company Core remains assigned | The continuing role requirement is recorded. Check COMMON membership if actual delivery or retention is in question. |
-| ENG-BASE add reports failure | That attempt failed. A later current-state claim still needs later evidence. |
-| Fresh target check shows ENG-BASE absent at 14:07 | Membership is absent at that observation time. It does not prove permanent absence or that a later recovery failed. |
+For example, the ENG-BASE error establishes failure of that attempt. The 14:07 target check establishes absence at 14:07. Neither proves permanent absence or the outcome of a later recovery.
 
-If no activity appears where you first look, treat that as missing evidence, not immediate proof of a failed operation. Confirm identity, account, source, requested change, time range and the view's coverage.
+If an expected activity isn't visible where you first look, confirm identity, source, account, requested change, time range and the view's coverage. Missing evidence isn't immediate proof that the operation failed.
 
-Likewise, do not “fix” the source department back to Support just because Engineering delivery failed. Engineering is the approved business fact. The failed group operation has a different cause.
+Don't change the approved department back to Support because Engineering access failed. The business fact is correct; the group operation has a separate permission problem.
 
-## Work through the changed conditions
+## What changes when the input is missing or only one fact changes?
 
-Treat the following variations independently. Each changes only the facts stated.
+The following questions are independent variations on the initial setup. Each changes only the stated facts.
 
-### 1. Only the department changed
+For the manager variations, **null** means no value. With this one supplying source/profile and no competing manager input, a change to null clears the manager relationship.
 
-**Facts:** The collected department changes to Engineering, but workerStage remains PRE and managerNumber remains 95090. The existing enabled configurations are unchanged.
+A changed non-null reference with no matching manager has different documented behavior: the existing manager relationship is retained. Seeing the old manager therefore doesn't prove processing never occurred.
 
-**Reasoning:** Engineering Tools should qualify and Support Tools should stop qualifying when the relevant identity department is applied. Lifecycle remains prehire, so this case does not introduce Employee Base through active. Manager 95090 remains the intended match. A department change does not logically require every other result to change.
+Inspect the selected reference and candidate identity data. An unmatched reference can mean an incorrect code or missing manager data; don't fabricate a manager identity to make a guessed match succeed.
 
-### 2. The manager reference has no match
+### Questions
 
-**Facts:** Instead of 95091, the collected managerNumber becomes non-null 95999. No candidate identity has identificationNumber 95999. Devi already has resolved manager 95090.
+1. Only department changes to Engineering. workerStage remains PRE and managerReference remains M-OLD. Which results should change, and which should remain?
+2. The account's managerReference becomes non-null M-MISSING. No candidate has that identificationNumber; the existing resolved manager is M-OLD. Does M-MISSING become the new manager, or is the relationship cleared?
+3. In a separate variation, the selected managerReference changes to null. What differs from question 2?
+4. The person was already in active with both lifecycle-granted profiles before a later department-only update. Must a new lifecycle transition or duplicate membership write occur?
+5. Support Tools loses its assignment, but Company Core still requires COMMON. Should both entitlements from Support Tools be removed?
+6. Current Engineering and Engineering Tools are verified. The 14:07 target check finds no ENG-BASE, and the add reports insufficient permission. Which responsibility remains unresolved?
+7. An enabled lifecycle state has display label Active Employee and technical name active. A proposed mapping returns `Active Employee`. Is the familiar display text sufficient?
+8. A designer proposes calculating department first, then reading that newly calculated identity field inside Lifecycle State's mapping. No supported ordering contract is supplied. Is one successful Preview enough to justify it?
 
-**Reasoning:** The documented unmatched non-null behavior retains the existing relationship. Do not report 95999 as a resolved new manager or assume the relationship was cleared. Investigate whether the reference is wrong or the intended manager's identity data is missing. Do not invent a manager to satisfy a guessed match.
+### Work through the reasoning
 
-### 3. The manager value becomes null
+**1. Follow each independent input.** Department can make Engineering Tools apply and Support Tools stop applying. PRE still selects prehire, so Employee Base isn't introduced through active in this variation. M-OLD remains the intended manager match. Verify actual application and delivery separately.
 
-**Facts:** In a separate variation, the relevant account managerNumber changes to null rather than 95999.
+**2. The unmatched non-null reference retains the existing relationship.** It doesn't create a resolved M-MISSING manager or clear M-OLD. Check whether the reference is wrong or the intended candidate's identity data is missing.
 
-**Reasoning:** The documented null-change behavior clears the manager relationship. That differs from case 2. Verify the actual selected value and relationship; “missing manager” is not precise enough to distinguish a null input, an unmatched reference and an uncollected change.
+**3. A selected null clears the relationship under these supplied conditions.** It isn't the unmatched non-null case. Check the exact selected account value and current manager, rather than grouping every symptom as "missing manager."
 
-### 4. The lifecycle state did not change
+**4. Correct lifecycle requirements can continue.** No new prehire-to-active transition is supplied. Existing active access stays relevant, while department-driven role results can change. A duplicate write isn't a required sign of reevaluation.
 
-**Facts:** Devi already has lifecycle active and both state-granted profiles before a later department-only update.
+**5. Keep the continuing requirement.** COMMON remains required through Company Core. SUPPORT-BASE has no continuing requirement here. Role-assignment removal isn't blanket deletion of every mentioned entitlement or the source account.
 
-**Reasoning:** There is no new prehire-to-active transition in this variation. The continuing active access requirements remain relevant, but a new transition or duplicate group write is not required to prove reevaluation. Role criteria can change their result while lifecycle remains correct.
+**6. Delivery remains unresolved.** The evidence identifies the group operation's permission failure, not a bad department condition. Verify source, account and group, correct the authorized cause and confirm recovery. Don't rewrite a correct business fact to hide the failure.
 
-### 5. COMMON belongs to the old role too
+**7. Use the approved technical selection value.** The mapping needs `active` for this state. Verify actual assignment and its access outcomes; don't invent fallback behavior for the unrecognized display text.
 
-**Facts:** Support Tools loses its assignment. Company Core remains assigned and still requires COMMON.
+**8. The peer-field dependency is unsupported by that evidence.** Use suitable independent underlying inputs and a supported calculation. One correct Preview doesn't provide an execution-order guarantee for other identities or runs.
 
-**Reasoning:** COMMON is retained for the continuing role. SUPPORT-BASE has no continuing requirement in this example, so its removal is the expected change. Role removal is not a command to erase every entitlement mentioned in the old role.
+## Try the reasoning with a location change
 
-### 6. The identity and role are right, but the group is absent
+A worker moves from Leeds to Bristol. The identity's location mapping has the correct collected input. The unchanged manager reference still resolves uniquely.
 
-**Facts:** At 14:07, Engineering is applied, Engineering Tools is assigned and a fresh target check finds no ENG-BASE. The add activity records insufficient permission.
+The assigned enabled active lifecycle grants Staff Portal. An enabled Bristol Tools role requires both identity location Bristol **and** lifecycle technical value active. Its profile requires ordinary BR-TOOLS membership on an existing correctly associated account. Staff Portal uses a different group.
 
-**Reasoning:** The supplied evidence points to delivery failure, not an incorrect department condition. Verify the exact source, account and group, correct the approved connection permission and confirm recovery. Rewriting the role to match Support would hide the business requirement rather than fulfill it.
+Preview returns Bristol, but the current applied location is still Leeds. No current Bristol Tools assignment or BR-TOOLS delivery result is supplied.
 
-### 7. The display label looks right
+Would you report the move complete? Which facts are established, and what should be checked next?
 
-**Facts:** An enabled lifecycle state displays as Active Employee, with technical name active. A proposed mapping returns the text Active Employee instead.
+Preview establishes a selected result, not applied Bristol. The continuing manager and lifecycle don't fill that gap.
 
-**Reasoning:** The display text is not the technical selection value required here. Correct the mapping to the approved technical name and verify actual assignment and access outcomes. A familiar-looking label is insufficient; do not assert an undocumented fallback for an unrecognized value.
+Verify relevant identity processing and current location, then actual role assignment against both conditions. If lifecycle isn't actually active, investigate that second condition rather than reducing the role to location alone.
 
-### 8. The proposed design depends on peer-field timing
+Follow the required provisioning activity and fresh target membership evidence. Preserve the continuing Staff Portal requirement.
 
-**Facts:** A designer proposes calculating department first and reading that newly calculated identity attribute inside the Lifecycle State mapping. No supported execution-order contract is supplied.
-
-**Reasoning:** The design relies on an order it cannot assume. Inspect the underlying account inputs and business decision, then use a supported calculation that does not depend on a freshly calculated peer field. A correct Preview once is not evidence that the dependency is safe for every identity or later run.
-
-## Try the same reasoning with another set of records
-
-An employee moves from Leeds to Bristol. Their identity's location mapping reads the correct collected location. The existing manager reference is unchanged and still resolves uniquely.
-
-The employee remains in an enabled active lifecycle state granting Staff Portal. Their enabled Bristol Tools role requires both identity location Bristol **and** lifecycle technical value active. Its profile requires ordinary group BR-TOOLS on an existing, correctly associated account. Staff Portal uses a different group.
-
-The supplied evidence shows a correct Preview for Bristol, but the applied identity still says Leeds. No current role evaluation or BR-TOOLS delivery result is supplied.
-
-Would you report the move as complete? Which conditions can you establish, and where would you look next?
-
-A reasoned answer separates the proposed value from the applied one. Preview does not establish that location Bristol has been applied. The continuing manager and lifecycle facts do not fill that gap.
-
-Verify the relevant identity processing and applied location, then the actual Bristol Tools assignment against both conditions. Follow the resulting provisioning activity and fresh target membership evidence. Preserve the continuing Staff Portal requirement.
-
-If applied location becomes Bristol but BR-TOOLS is still absent, the investigation has moved to a different boundary. If lifecycle is not actually active, the role's second condition needs investigation. Do not reduce the condition to location alone.
-
-When you explain the original Devi example to someone else, connect each claim to its input and configuration: Engineering comes from the selected department mapping; manager 95091 comes from resolving the reference; active comes from the worker-stage translation; access requirements come from that state and the matching roles. Then explain which actual memberships are confirmed.
-
-That is how you can say exactly what is correct, what remains incomplete, and why.
+Once applied location becomes Bristol, an absent BR-TOOLS membership would be a different boundary to investigate. Completion needs evidence for the applied value, the qualifying role and the actual membership.

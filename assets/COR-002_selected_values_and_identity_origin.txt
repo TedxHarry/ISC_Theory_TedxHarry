@@ -1,0 +1,16 @@
+[Already associated HR account]
+[personNumber: "0072002"]
+                 |
+[Employees identity attribute mapping]
+                 |
+[Identity identificationNumber: "0072002"]
+
+[Collected project account]
+[workerRef: "0072002"]
+                 |
+[Compare with identity value above]
+[Equals under configured settings]
+                 |
+[Supplied: same intended identity]
+
+[Engineer verifies approved ownership]

@@ -1,0 +1,12 @@
+Independent current-role variation
+  Queue analyst still requires Readers
+  Revoked Case review: Readers + Notes
+                 |
+                 | fulfilled revocation
+                 v
+  Readers retained; Notes removed
+  Export remains on account
+                 |
+                 v
+  Evidence export stays complete
+  North export works; notes denied

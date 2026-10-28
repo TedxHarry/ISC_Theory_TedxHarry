@@ -1,80 +1,68 @@
 # What does each operation pass to the next one?
 
-Devi, employee `87007`, works in Finance. HR stores her department code as `" fin "`, with one ordinary space before the letters and one after them.
+The collected department code is `" fin "`, with one ordinary space at each end. The required review label is `"Department: Finance"`.
 
-The organization wants SailPoint Identity Security Cloud (ISC) to produce a review label reading `"Department: Finance"`.
+To produce it, the calculation must remove surrounding spaces, uppercase the code, translate FIN to Finance and add the prefix.
 
-Getting there takes more than changing letter case. We need to remove the surrounding spaces, produce the agreed uppercase code, translate that code and add the label text.
+Those are different jobs. Upper returns FIN; it does not discover the department name. Lookup returns Finance; it does not add Department:. Concat assembles the text it receives.
 
-Each operation receives a particular value. If we lose track of that value, a definition can look reasonable while doing the wrong work.
+Following those returned values is how we explain the result and locate a defect.
 
-Let's follow what actually passes between the operations.
+## Establish which input and changes are approved
 
-## Agree on the result before assembling the calculation
+An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a connected system. An **attribute** is a named field on a record.
 
-An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a connected system. An **attribute** is a named field on one of those records.
+A **source** represents a system or collection of account data in ISC. In this hypothetical configuration, **HR-Primary** represents worker records. The existing identity is governed by the **Employees identity profile**, shared configuration including how identity fields obtain their values.
 
-The **PeopleCore Production source** is SailPoint Identity Security Cloud's configured representation of HR worker records. It is authoritative for this employee population: its accounts establish identities through the Employees **identity profile**.
+HR-Primary is its **authoritative source**: worker accounts establish identities through that profile. **Account aggregation** has already read the account into ISC. **Account correlation** has associated it with the correct identity.
 
-The profile is shared configuration governing those identities, including how their identity fields receive values.
+There is exactly one associated HR-Primary account. Its `departmentCode` contains the single string `" fin "`. A **string** is text; the spaces inside its quoted boundaries are characters in that text. Other required identity fields are valid.
 
-Devi already has one correctly associated PeopleCore account, `pc-87007`, on her identity. We'll label the identity `I-87007`; that is a teaching label, not an actual ISC object ID.
+HR approves surrounding-space and case normalization for these department codes: FIN means Finance, ENG means Engineering and OPS means Operations. That agreement does not authorize uppercasing people's names or removing meaningful identifier characters.
 
-**Account aggregation** reads account data into ISC. The relevant account and its departmentCode value have already been collected. There is no competing PeopleCore account in this example.
+The organization has defined a **custom identity attribute**, **Department Review Label**, technical name `departmentReviewLabel`. “Custom” means the organization added the field; its name does not create built-in behavior.
 
-HR has approved this input agreement: surrounding ordinary spaces and letter-case differences do not change these department codes. FIN means Finance, ENG means Engineering and OPS means Operations.
+An **identity attribute mapping** establishes how that field receives its value. The calculation supplies the label, while the mapping determines its destination.
 
-That permission applies to this code field. It is not permission to uppercase people's names or remove meaningful characters from identifiers.
+The field is review-only. **Null** means no value; a non-null result is different from null. An unrecognized non-null code may produce the approved marker `"Department: UNMAPPED"`. The marker is not a department and does not assign access, change status or establish account ownership.
 
-The organization has added a custom identity field called **Department Review Label**, with internal name `departmentReviewLabel`. “Custom” means the organization defined the field; its name does not create special ISC behavior.
+## Give each operation one clear part of the work
 
-The owner approves a visible `"Department: UNMAPPED"` marker for an unrecognized non-null code. This field is review-only. It does not assign access, change employment status or establish account ownership.
+A **transform** is a configurable ISC object that retrieves or manipulates data and returns a result. **Composition** connects operations so one returned result supplies another operation.
 
-Other required identity fields are already valid.
+An operation's **input** is the value it receives; its **output** is the result it returns. An **intermediate value** is an output used inside the larger calculation before its final result.
 
-An **identity attribute mapping** defines how the custom field receives its value. The calculation supplies the label; the mapping supplies its destination.
+Here are the participating operations:
 
-## Give every operation a small, explicit job
-
-A **transform** is a configurable ISC object that retrieves or manipulates attribute data and returns a result. **Composition** means combining operations so that a returned result supplies another operation.
-
-The value supplied to an operation is its **input**. The result it returns is its **output**. An **intermediate value** is an output used inside the larger calculation before its final result is returned.
-
-A **string** is text. Our main input, cleaned code, translated department and completed label are all strings, but they have different meanings.
-
-The participating operations have these jobs:
-
-- `accountAttribute` retrieves departmentCode from Devi's associated account on the named source.
-- `trim` removes surrounding whitespace.
+- `accountAttribute` retrieves a named field from an associated account on the specified source.
+- `trim` removes whitespace from the beginning and end of a string.
 - `upper` converts letters to uppercase.
-- `lookup` compares a string with configured keys and returns the paired output, or a configured default when no key matches.
-- `concat` joins configured string parts in their listed order. It inserts no separator that you did not supply.
+- `lookup` recognizes an input key and returns its configured paired value, or an unmatched default.
+- `concat` joins string parts in their configured order, without inventing separators.
 
-A lookup **key** is the code to recognize, such as FIN. Its paired **value** is the output to return, such as Finance. The **default** here is UNMAPPED, the approved review marker, not a real department.
+A lookup **key** is an input to recognize, such as FIN. Its paired **value** is the output, such as Finance. Our **default** is UNMAPPED, an approved response to an unrecognized string rather than a real department.
 
-For the supplied record, the value trace is:
+Trace the main input:
 
 | Operation or composition point | Returned value and meaning |
 |---|---|
-| accountAttribute | `" fin "`, the collected HR code text |
-| trim | `"fin"`, surrounding spaces removed |
+| accountAttribute | `" fin "`, the collected code |
+| trim | `"fin"`, with surrounding spaces removed |
 | upper | `"FIN"`, the approved code representation |
-| lookup | `"Finance"`, the approved label for that code |
-| concat with literal `"Department: "` first | `"Department: Finance"`, the final review label |
+| lookup | `"Finance"`, the translation of that code |
+| concat with `"Department: "` first | `"Department: Finance"`, the completed label |
 
-Notice that upper does not know Finance is the department name. It returns FIN. Lookup performs that translation.
+All these values are strings, but their meanings differ. A prepared code and a department label are not interchangeable inputs simply because both contain letters.
 
-Likewise, concat does not discover a person's department. It assembles the parts it receives.
+The prefix is a **literal**, fixed text supplied in the definition. Its colon and exactly one trailing space are part of the result.
 
-A **literal** is fixed text written into the definition. The literal Department prefix includes the colon and exactly one trailing space. Those characters are data, not formatting around the JSON.
+## Read inward for the input, then outward for the values
 
-## Read the nesting by asking what value is needed
+The definition uses **JSON**, a text format for structured data. Braces group named properties and settings. Square brackets contain an **array**, an ordered list. The unquoted true flag is a **boolean**, a yes/no setting.
 
-The complete illustrative definition below uses **JSON**, a structured text format. Braces group named properties into objects. Square brackets contain an **array**, an ordered list.
+The outermost, or **root**, operation is concat because the final job is assembling the label.
 
-The root, or outermost, operation is concat because the final job is assembling the label.
-
-Its second list item is a lookup instruction. Lookup's input is an upper instruction. Upper's input is trim, whose input retrieves the source field.
+Its second array item contains a lookup object. Lookup's input contains upper; upper's input contains trim; trim's input contains the account retrieval. Putting transform instructions inside one another is **nesting**.
 
 ```json
 {
@@ -95,7 +83,7 @@ Its second list item is a lookup instruction. Lookup's input is an upper instruc
                   "input": {
                     "type": "accountAttribute",
                     "attributes": {
-                      "sourceName": "PeopleCore Production",
+                      "sourceName": "HR-Primary",
                       "attributeName": "departmentCode",
                       "accountReturnFirstLink": true
                     }
@@ -117,92 +105,98 @@ Its second list item is a lookup instruction. Lookup's input is an upper instruc
 }
 ```
 
-This is an illustrative definition, not a tenant upload or an observed execution.
+This is an illustrative definition. Only the root has a name. The nested objects provide types and settings directly; they are not separately named definitions that must each exist first.
 
-The root name identifies the transform. Nested operations have type and configuration; they are not separate named objects that must each be saved first.
+The retrieval's `accountReturnFirstLink: true` returns the field from the first selected account even if null. It does not manufacture a missing code or suppress errors. Our main facts supply one account and a successfully retrieved non-null string.
 
-`accountReturnFirstLink: true` tells accountAttribute to return the first selected account's field even if it is null. The unquoted true is a **boolean**, a yes/no setting. It does not manufacture a missing code.
+Look inside the expression to find that input. Then follow the results outward: retrieval returns `" fin "`; trim returns `"fin"`; upper returns `"FIN"`; lookup returns `"Finance"`.
 
-Here, one account supplies a successful non-null string result.
+Concat receives the literal prefix and the returned Finance string. It does not receive an unevaluated lookup object as department data.
 
-Read inward to find the source of the data, then follow the returned values outward. The outer instruction cannot assemble the intended label from an unevaluated lookup definition. It needs the lookup's returned text.
-
-The arrows below show those value dependencies, not private ISC services, separate jobs or a guaranteed low-level execution schedule:
+The arrows show value dependencies, and the plus sign means assemble the text parts. They do not represent private services, separate jobs or a guaranteed low-level schedule.
 
 ```text
-PeopleCore Production / pc-87007
-departmentCode = " fin "
-                |
+For the selected identity:
+HR-Primary departmentCode = " fin "
+                 |
          trim returns "fin"
-                |
+                 |
          upper returns "FIN"
-                |
+                 |
        lookup returns "Finance"
-                |
+                 |
 "Department: " + returned "Finance"
-                |
+                 |
         "Department: Finance"
-                |
+                 |
 Mapping -> departmentReviewLabel
 
-Each arrow carries a returned value.
+Arrows carry returned values.
 ```
 
-The conceptual sequence explains why the result follows. It does not claim that ISC exposes a stored trace row for each arrow or runs unrelated calculations in this diagram's order.
+Writing the intermediate values makes the explanation inspectable. It does not mean ISC creates identity fields named fin, FIN and Finance, or exposes a stored trace row for every arrow.
 
-Reordering name, type and attributes as JSON properties does not reverse the value dependencies. Moving an operation to a different nesting position can.
+JSON object properties and the values array have different ordering roles. Moving name before type in the same object does not reverse operations. Moving a nested operation changes what receives its result.
 
-The values array has a different role: its order determines where the joined parts appear. Swapping its two items would produce `"FinanceDepartment: "`, including the final space.
+Reversing the two concat array items changes assembly: Finance comes before the prefix and produces `"FinanceDepartment: "`, including the final space.
 
-## The location of an operation changes what it can affect
+## Complete the normal path to the identity field
 
-Suppose upper is moved outside the completed concat expression.
+The identity-profile **Preview** evaluates mappings for a selected identity using available data. For the main account and inline definition, the expected result is `"Department: Finance"`.
 
-It would receive `"Department: Finance"` and return `"DEPARTMENT: FINANCE"`. The uppercase operation would affect the prefix and translated label, not only the original code.
+A local value trace is a reasoning check. Preview supplies evaluation evidence for its selected identity and configuration; it does not automatically provide a historical trace of every intermediate value.
 
-That is a valid text calculation, but it does not meet our approved output requirement.
+**Identity processing** reevaluates identity information and applicable decisions. Applying a profile mapping change affects identities associated with that profile, so review the shared population and uses.
 
-Similarly, trimming only the completed label is different from trimming the code before translation. A final trim cannot go backward and change which code lookup received.
+For the successful continuation here, assume representative inputs are checked, the intended definition and mapping are saved, Preview gives the expected label, shared impact is reviewed and authorized relevant processing completes. Current identity evidence then confirms `departmentReviewLabel = "Department: Finance"`.
 
-If an earlier lookup selected UNMAPPED, trimming the final label does not turn it into Finance. Correct the relevant input preparation or translation, rather than expecting a later cosmetic operation to repair an earlier decision.
+The collected HR code remains `" fin "`. The nested calculations have not rewritten HR or created separate intermediate identity attributes.
 
-Do not assume that every pair of operations can be exchanged. For this supplied code, trim followed by upper and upper followed by trim both produce FIN. That one equivalence does not establish that all operation orders are interchangeable.
+A **consumer** is a configuration or system that uses a value. **Provisioning** performs account or access changes in a connected system. The applied review label establishes no HR write, access assignment or target-application change. A required consumer outcome needs its own evidence.
 
-Ask a narrower question: what exact value will the moved operation receive, and what will its parent receive afterward?
+## Moving an operation changes what it receives
 
-## Check meaning and data kind at every connection
+Suppose upper is applied to the complete `"Department: Finance"` result. It returns `"DEPARTMENT: FINANCE"`.
 
-An **input/output contract** states what an operation expects and what its caller can rely on receiving. It includes the value's meaning and its data kind, not only whether the text looks readable.
+Upper has worked, but now affects the prefix and translated department rather than only the code. The result violates the approved label.
 
-In the main trace, lookup receives a single normalized code string. It does not receive an account object, a list of codes or the JSON instructions themselves.
+A final trim also cannot go backward and change the code that lookup received. If lookup already returned UNMAPPED, trimming the assembled label does not turn that result into Finance.
 
-A **list** contains multiple values. If a changed source representation contains both FIN and ENG, the business requirement now needs to say which department should supply this label, or whether a different multi-department representation is needed.
+Check where the earliest disagreement appears. A later cosmetic operation does not repair an earlier selection or translation.
 
-Do not let accidental first-item selection or text conversion make that decision. Verify actual mapping and operation behavior for the supplied representation before reusing the single-string design.
+For this ordinary-space input, trim then upper and upper then trim both produce FIN. That specific equivalence does not make arbitrary operation orders interchangeable.
 
-A **null** result means no value. An empty string is text with zero characters. Whitespace-only text contains characters even if it appears blank.
+Ask what the moved operation will actually receive, and what its containing operation will receive afterward.
 
-Trimming ordinary spaces can produce empty text. That does not automatically turn the result into null, make it a known department code or establish an approved missing-data policy.
+## Check meaning and data kind at each connection
 
-An **evaluation error** means an operation could not produce its normal result. A failed source retrieval is not a successfully retrieved unknown code.
+An **input/output contract** describes what an operation expects and what the operation using its result can rely on receiving. It includes meaning and data kind, not merely whether text is readable.
 
-Our lookup's default handles an unmatched string. It is not a general error handler for every nested operation. No final label is established by the main success trace when an essential input evaluation fails.
+Lookup here expects one normalized department-code string. It does not receive an account object, a list of codes or the JSON instructions themselves.
 
-A deeper chain does not add missing-data handling by itself. Define it deliberately, and keep error handling separate from a normal unknown-code result.
+A **list** contains multiple values. If the source starts supplying FIN and ENG, the requirement must say which department supplies the label, or whether a different multi-department representation is needed.
 
-## Reuse instructions without pretending they are saved results
+Do not let accidental first-item selection or text conversion decide that meaning. Verify the actual mapping and operation behavior before reusing a single-string design for a list.
 
-Suppose another mapping also needs the cleaned uppercase PeopleCore department code.
+An **empty string** has zero characters. Whitespace-only text contains characters that can disappear when trimmed. Trimming ordinary spaces to empty text does not turn it into null, a recognized code or an approved missing-data response.
 
-Copying the retrieval, trim and upper configuration into both definitions can work, but later corrections would have two places to maintain.
+An **evaluation error** means an operation could not produce its normal result. A failed retrieval is different from a successfully retrieved but unrecognized code.
 
-ISC's `reference` operation lets one transform use an existing named transform's logic. It returns the referenced transform's evaluated result as part of the current calculation. A **caller** is the calculation using that shared definition.
+Lookup's default handles an unmatched string. It is not a general error handler for every nested operation. A failed essential input does not have an established final label merely because the successful FIN trace does.
 
-Here is a proposed shared definition containing the source-bound code preparation:
+More nesting adds no missing-data policy by itself. Define that policy and error handling deliberately.
+
+## Reuse the instructions when their contract is the same
+
+Suppose another mapping needs the prepared uppercase HR department code. Copying retrieval, trim and upper into both definitions can work, but a correction then has multiple copies to maintain.
+
+ISC's `reference` operation lets a transform use an existing named transform's logic. A **caller** is the calculation using that shared definition.
+
+Here is a proposed shared definition:
 
 ```json
 {
-  "name": "Workforce department code",
+  "name": "HR department code",
   "type": "upper",
   "attributes": {
     "input": {
@@ -211,7 +205,7 @@ Here is a proposed shared definition containing the source-bound code preparatio
         "input": {
           "type": "accountAttribute",
           "attributes": {
-            "sourceName": "PeopleCore Production",
+            "sourceName": "HR-Primary",
             "attributeName": "departmentCode",
             "accountReturnFirstLink": true
           }
@@ -222,13 +216,15 @@ Here is a proposed shared definition containing the source-bound code preparatio
 }
 ```
 
-It returns FIN for Devi's supplied account. It does not return Finance or Department: Finance.
+Its contract is precise: retrieve the current identity's HR-Primary departmentCode, remove surrounding whitespace and uppercase it.
 
-The shared definition has a precise contract: it retrieves this identity's PeopleCore departmentCode, removes surrounding whitespace and uppercases it.
+For the main input, it returns FIN. It does not return Finance or the completed Department label.
 
-It is source-bound, meaning its instructions choose PeopleCore. Its name alone does not make it a general-purpose normalizer for arbitrary callers.
+This helper is **source-bound**: its instructions choose HR-Primary. Its name does not make it a general-purpose normalizer for arbitrary data supplied by callers.
 
-The following alternative label definition uses that shared calculation. Assume the named shared definition already exists for this illustration.
+The next alternative label definition uses reference in place of the inline preparation. Assume the shared named definition already exists for this illustration.
+
+Reference's `attributes.id` must contain the **name** of that existing transform. Despite the property's spelling, this is not a generated object identifier.
 
 ```json
 {
@@ -243,7 +239,7 @@ The following alternative label definition uses that shared calculation. Assume 
           "input": {
             "type": "reference",
             "attributes": {
-              "id": "Workforce department code"
+              "id": "HR department code"
             }
           },
           "table": {
@@ -259,171 +255,129 @@ The following alternative label definition uses that shared calculation. Assume 
 }
 ```
 
-For reference, `attributes.id` contains the **name** of the existing transform to use. Despite the property's spelling, this example does not place a generated object identifier there.
+Reference returns the shared definition's evaluated result, as if that logic were included in the current calculation. Here lookup receives FIN, returns Finance, and concat assembles `"Department: Finance"`, just as in the inline version.
 
-If that name is wrong or the referenced definition is unavailable, investigate the configuration dependency. It is not an unknown HR code that the lookup's default automatically handles. If the name resolves to the wrong existing definition, inspect that definition's actual inputs and output rather than trusting its presence alone.
+Reference is not a request to read a previously stored identity attribute called HR department code. Nor does it capture one permanent FIN value for everyone.
 
-Lookup receives the result returned through reference, FIN, then returns Finance. Concat builds the same approved label as the inline version.
+Another identity's correctly associated HR account can supply ENG, and the shared instructions can return ENG in that evaluation context.
 
-A reference is not a request to read a previously saved identity attribute called Workforce department code. Nor does it capture a permanent copy of FIN for every person.
-
-The same instructions operate in the context of the identity being evaluated. Another identity with a correctly associated PeopleCore code ENG can receive ENG from the shared definition.
-
-These arrows show which definitions depend on the shared one. They do not mean two callers share a single cached result or are evaluated together:
+The diagram shows two callers depending on the shared definition. The second code mapping is proposed, not an additional configured mapping supplied by this example. The arrows represent dependencies; they do not imply a single cached value or simultaneous evaluation.
 
 ```text
-Review label            Proposed code mapping
-     |                            |
-     +----- references name ------+
-                    |
-       Workforce department code
-                    |
-      PeopleCore read -> trim -> upper
+Review label       Proposed code mapping
+     |                       |
+     +-- references name ----+
+                  |
+         HR department code
+                  |
+HR-Primary read -> trim -> upper
 
-Shared definition, not a saved code.
-Each use needs its own evaluation context.
+Shared instructions, not a saved code.
+Each use has its own identity context.
 ```
 
-Reference reduces duplicated instructions. It also creates a shared change dependency. Review every caller before changing the shared definition's input, meaning or returned kind.
+A wrong or unavailable reference name is a configuration dependency problem, rather than an unknown HR code automatically handled by lookup's default. If the name resolves to the wrong existing definition, inspect that definition's actual source and result.
 
-If it begins returning Finance instead of FIN, the label caller's code-key lookup no longer receives the value its contract expected.
+Keep references free of cycles. A definition must not refer to itself directly, or through a chain such as `A -> B -> A`. That dependency needs its own unfinished result instead of an independently obtainable input. Keep a clear path from source data to the final result rather than inventing an order to resolve the circle.
 
-Avoid direct or indirect self-reference. A definition that needs its own unfinished result does not provide an independently obtainable input. Keep a clear path from source data to final result rather than relying on an invented circular evaluation order.
+## A shared edit changes the review scope
 
-## Follow explicit inputs through the referenced definition
+Reference reduces duplicated instructions, but creates a shared dependency. Review every caller before changing the shared definition's source, meaning or returned kind.
 
-An **implicit input** is supplied by the surrounding mapping or calculation context when an operation does not specify its own input. An **explicit input** is an instruction inside the definition that chooses what value to use.
+Suppose an approved proposal changes the helper to return Finance instead of FIN. The unchanged label caller still has code keys FIN, ENG and OPS.
 
-Our code-preparation definition explicitly retrieves PeopleCore departmentCode. A different visible source selector on the mapping does not rewrite that nested instruction.
+Its received string Finance matches none of those keys. The default supplies UNMAPPED, and concat returns `"Department: UNMAPPED"`.
 
-For a separate comparison, suppose Devi also has a correctly associated DirectoryRoster account `dr-87007` with department `"Legal"`. Changing a mapping's selector to that field does not by itself turn our explicit PeopleCore retrieval into a DirectoryRoster retrieval.
+The shared edit may be approved for a new purpose, yet incompatible with an existing caller. Coordinate the caller's design and verify the final result.
 
-Open the actual definition, including references, before deciding where its data came from.
-
-The reference operation can accept an explicit input, and reusable operations can be designed around caller-supplied data. That is a different contract from the source-bound definition shown here.
-
-Do not assume an added outer input replaces every explicit retrieval deeper in the referenced logic. Verify the called definition and actual use context.
-
-| Proposed change | What needs checking |
+| Proposed arrangement or change | What needs checking |
 |---|---|
-| Copy the shared code-preparation instructions inline | Copies have their own configuration; later shared edits do not automatically edit those copies |
-| Reference the named shared definition | Every caller depends on its maintained meaning, input source and returned value |
-| Change the mapping's visible source selector | Inspect explicit nested retrievals and references; selector text alone does not establish provenance |
-| Change the shared output from code FIN to label Finance | Find callers that still expect codes and verify their translations and outputs |
-| Add a new mapping that needs the same business value | Verify the same authority, identity/account context, data kind and error policy actually apply |
+| Copy preparation logic inline | Each copy has its own settings; shared edits do not automatically edit copies |
+| Reference the shared definition | Every caller relies on its maintained input and output contract |
+| Change a visible mapping source selector | Follow explicit retrievals and references before identifying the input |
+| Change shared output from FIN to Finance | Review callers that still expect codes, including translations and final labels |
+| Add a mapping needing similar data | Verify authority, identity/account context, data kind and error policy |
 
-Do not remove an operation merely because it appears elsewhere in another mapping. An intermediate result inside one expression is not automatically a stored field available to another.
+An intermediate result in one expression is not automatically a stored field available to another mapping. Do not remove an operation merely because a similar calculation appears elsewhere.
 
-## Investigate the earliest disagreement, then prove the final result
+Saving a shared definition also does not prove every affected identity has a newly applied value. Review callers and representative records, then verify relevant processing and current results. Check required external outcomes separately.
 
-Suppose a review label shows Department: UNMAPPED for someone whose approved department is Finance.
+## Follow input references all the way to the source
 
-Work backward through the actual definition to identify the inputs, then trace those inputs forward. Is the selected account correct? What exact text was returned? What should trim and upper return under the agreement? Does the active lookup contain the approved code?
+An **implicit input** comes from the surrounding mapping or calculation when the operation does not specify its own input. An **explicit input** is chosen by instructions within the definition.
 
-If a supplied intermediate already differs from the expected value, that gives you a narrower cause to investigate.
+The shown helper explicitly retrieves HR-Primary departmentCode. Changing the mapping screen's source selector does not rewrite that instruction.
 
-You do not need to blame the final concat for a wrong source code. Equally, a correct FIN intermediate does not prove the lookup's table or literal prefix is correct.
+For a separate comparison, suppose the same identity has a correctly associated **Directory-Primary** account whose department is Legal. Selecting that field in the mapping does not turn the helper's HR retrieval into a directory retrieval.
 
-Use source records, saved definitions and available evaluation results as evidence. Do not assume the UI stores or exposes every intermediate result. A local step-by-step calculation is a reasoning check, not proof that the tenant executed the same definition against the same record.
+Inspect the actual saved reference and the target definition. A selector alone cannot establish provenance.
 
-A well-placed **fallback**, an approved alternative when a defined condition occurs, can be part of a design. But a broad fallback around the whole expression can hide whether retrieval, normalization, translation or assembly failed.
+Reference supports an explicit input, and an **input-driven helper** can be designed to process data supplied by its caller. That is a different contract from the source-bound helper here.
 
-An operation called `firstValid` chooses the first configured non-null result. Returning a plausible constant through such a selector would not prove that the underlying chain was correct. Its error policy also needs an explicit decision.
+Do not assume an added outer input overrides every explicit retrieval deeper inside the called definition. Verify what the called logic actually uses in that context.
 
-Keep the reason for a substitute visible through verified operational evidence rather than assuming a friendly output closes the defect.
+## Find the earliest disagreement, then verify the whole result
 
-The profile's **Preview** evaluates mappings for a selected identity using available data. It can support the expected final result, but it does not automatically establish every employee's result or a historical intermediate trace.
+If the label shows Department: UNMAPPED despite independent evidence that Finance is correct, inspect the selected account and exact text first. Then trace the intended trim, upper, lookup and concat results through the active definition.
 
-**Identity processing** reevaluates identity data and related decisions against applicable configuration. Saving a referenced definition does not prove that every affected identity now has a newly applied result.
+A wrong source code does not make concat the cause. A correct FIN intermediate does not prove the lookup table or literal prefix is correct.
 
-In the fictional continuation, the team checks representative inputs and callers, previews the chosen label design, reviews shared impact and completes authorized processing. Current identity evidence then shows `I-87007.departmentReviewLabel = "Department: Finance"`.
+Use source records, saved definitions and available evaluation results. Do not claim a tenant executed the same inputs and definition merely because a local calculation looks right.
 
-The collected PeopleCore code remains `" fin "`. No separate fin, FIN or Finance identity attributes were created by these nested steps.
+A **fallback** is an approved alternative used under a defined condition. A broad fallback around an entire chain can conceal whether retrieval, preparation, translation or assembly failed.
 
-**Provisioning** makes account or access changes in a connected system. This applied review label does not establish a write to HR, an access assignment or a change in a target application.
+The `firstValid` operation selects the first configured non-null result, with a separate error-continuation policy. A plausible constant returned through that selector does not prove the nested chain is correct.
 
-A **consumer** is a configuration or system that uses a value. If a consumer uses this field, verify its configuration and actual outcome separately.
+Agree on the condition and error policy, and preserve the reason for a substitute through verified operational evidence. A friendly output does not close the original defect.
 
-## Change the connection and predict the result
+## Change a connection and predict the result
 
-### 1. The nested definition is mistaken for data
+1. Lookup's input contains upper, containing trim and accountAttribute. The retrieved text is `" fin "`. Does lookup receive a JSON object to translate?
 
-**Facts:** The lookup input contains an upper instruction, which contains trim and accountAttribute. The supplied raw value is `" fin "`.
+2. Lookup returns Finance. Concat's original parts are `"Department: "` then that result. A proposal reverses the two array items. What exact text follows?
 
-Does lookup receive a JSON object to translate?
+3. A proposal uppercases the whole correctly assembled `"Department: Finance"` instead of only preparing the code. Does it preserve the approved label?
 
-**Reasoning:** No. Those objects describe the nested calculations. Under the supplied successful evaluations, lookup receives their returned string FIN. It can then return Finance.
+4. Collected text is `" zzz "`; trim and upper return ZZZ. The table has no ZZZ key and retains the UNMAPPED default. What does the expression return?
 
-### 2. The composition list is reversed
+5. Retrieval reports an evaluation error. No separate error-handling composition exists; lookup still has the UNMAPPED default. Does that establish a normal final label?
 
-**Facts:** Lookup returns Finance. Concat's original parts are `"Department: "` followed by that result. A proposed version reverses the two items without adding any separator.
+6. A shared-output proposal returns Finance instead of FIN. The caller still has FIN/ENG/OPS keys and UNMAPPED default. What should caller review reveal?
 
-What changes?
+7. The visible selector is Directory-Primary department Legal. The referenced helper still explicitly retrieves HR-Primary departmentCode `" fin "`. Which input does that shown code-preparation logic use?
 
-**Reasoning:** The result becomes `"FinanceDepartment: "`, with a trailing space. Array order determines assembly, and concat inserts no corrective punctuation. Rearranging unrelated JSON object properties would not have this effect.
+8. The shared definition is saved and Preview for the selected identity returns Department: Finance. No affected-population application or target result is checked. Does this establish all callers' stored and external outcomes?
 
-### 3. Upper receives the finished label
+### Compare your reasoning
 
-**Facts:** A proposed version uppercases the entire correctly assembled string Department: Finance instead of only preparing the HR code.
+**1.** No. The objects describe instructions. Under the supplied successful evaluations, retrieval returns `" fin "`, trim returns fin and upper returns FIN. Lookup receives that string and can return Finance.
 
-Does it preserve the required label?
+**2.** `"FinanceDepartment: "`, including the trailing space. Array order controls assembly; concat does not insert corrective punctuation. Reordering unrelated object properties would not have this effect.
 
-**Reasoning:** No. It returns DEPARTMENT: FINANCE. Moving an operation changes its input and the part of the result it can affect.
+**3.** No. It returns `"DEPARTMENT: FINANCE"`. Moving upper changes its input and the scope of the characters it affects.
 
-### 4. An unknown code survives cleanup
+**4.** `"Department: UNMAPPED"`. Preparation, default selection and assembly can all complete while the code remains unrecognized. The marker is not a real department.
 
-**Facts:** The collected string is `" zzz "`. Approved trim and upper return ZZZ. The table has no ZZZ entry and retains the UNMAPPED default.
+**5.** No. A failed read and an unmatched successfully supplied string are different paths. Investigate the actual evaluation and approved handling; the normal success trace establishes no result for that failure.
 
-What does the main expression return?
+**6.** The helper no longer meets the code-key contract. Finance misses those keys, so the caller returns `"Department: UNMAPPED"`. Coordinate caller changes and evaluation even when the shared proposal is approved.
 
-**Reasoning:** Department: UNMAPPED. Cleanup succeeded, translation selected the configured marker and assembly succeeded. The result does not identify a real department; the unrecognized code still needs investigation.
+**7.** HR-Primary departmentCode. The explicit retrieval remains inside the helper. Confirm the actual saved reference and target definition before extending this conclusion to a real observation.
 
-### 5. Retrieval fails before a usable code exists
-
-**Facts:** The departmentCode retrieval reports an evaluation error. No separate error-handling composition is configured. The lookup still has its UNMAPPED default.
-
-Does that default prove the final label can be returned normally?
-
-**Reasoning:** No. An unmatched successfully supplied string and a failed retrieval are different paths. Investigate the actual evaluation error and approved handling. The normal FIN-to-label trace does not establish a result for this failed input.
-
-### 6. The referenced output contract changes
-
-**Facts:** The shared definition is changed through an approved proposal to return Finance, not FIN. The caller still has code keys FIN, ENG and OPS, plus the UNMAPPED default.
-
-What should the caller review reveal?
-
-**Reasoning:** Its input no longer meets the code contract. Finance matches none of those code keys, so the caller selects UNMAPPED and assembles Department: UNMAPPED. An approved shared change still requires coordinated caller changes and evaluation.
-
-### 7. A source selector changes, but nested retrieval does not
-
-**Facts:** The mapping's visible selection is DirectoryRoster department Legal. The referenced definition still explicitly retrieves PeopleCore departmentCode `" fin "`.
-
-Which source does the shown logic use for code preparation?
-
-**Reasoning:** PeopleCore. The explicit retrieval remains inside the shared definition. Inspecting only the visible selector would misidentify the input. Confirm the actual saved reference and its target definition before applying this conclusion to a real observation.
-
-### 8. Preview succeeds after a shared edit
-
-**Facts:** The referenced definition is saved. Preview for Devi returns Department: Finance. No affected-population application or target-system outcome has been checked.
-
-Can you report that every caller's stored results and external systems are updated?
-
-**Reasoning:** No. The selected Preview result supports that evaluated context. Review other callers and representative records, verify relevant processing and current values, and investigate any separately configured target delivery. A shared dependency expands review scope; it does not supply completion evidence.
+**8.** No. The selected Preview supports that evaluation context. Review callers and representative records, verify relevant processing and current values, and check any separate external delivery. Shared reuse expands review scope, not completion evidence.
 
 ## Trace a different composition without borrowing its meaning
 
-A facilities feed supplies site code `" lon "`. Its owner approves surrounding-space removal and uppercase normalization; the translation table says LON means London.
+A facilities feed supplies site code `" lon "`. The owner approves surrounding-space removal and uppercase normalization. Its table pairs LON with London, and the required display is `"Office: London"`.
 
-A display needs `"Office: London"`.
+The trace is collected `" lon "`, trimmed lon, normalized LON, translated London, then assembled `"Office: London"`.
 
-Trace the values: collected text `" lon "`, trimmed `"lon"`, normalized `"LON"`, translated `"London"`, then assembled `"Office: London"`.
+Would reference to HR department code solve that requirement?
 
-Would referencing Workforce department code solve that job?
+No. That helper explicitly retrieves HR-Primary departmentCode. Similar cleanup operations do not make its source or meaning suitable for site data.
 
-No. That shared definition explicitly retrieves PeopleCore departmentCode. Similar-looking cleanup does not make its source or business meaning suitable for site data.
+Use the approved facilities input. A separate site definition or a genuinely input-driven helper can be suitable after its input context and error contract are verified.
 
-Design the site calculation around the approved facilities input. Reuse a genuinely input-driven helper only after verifying that its input contract and error behavior suit the caller.
+Then check unknown-code handling, retrieval failure and the effect of uppercasing the final display instead of only the code. Verify the calculation and applied result separately.
 
-Then ask what happens if LON is unknown, retrieval fails, or someone uppercases the final display instead of the site code. Check calculation and application separately.
-
-When you explain a composed transform, do not stop at “it uses trim, upper and lookup.” Explain what each receives, what it returns, why the next operation can use that result and what evidence connects the final string to the intended record.
+When explaining a composition, identify what each operation receives, what it returns, why the next can use it, and the evidence connecting the final value to the intended record.

@@ -1,0 +1,14 @@
+[HR workerState: active]
+              |
+[Employees maps cloudLifecycleState]
+[Value: active]
+              |
+[Matches enabled active state]
+[Requires Benefits Self-Service]
+              |
+[Identity processing evaluates access]
+              |
+[Supported provisioning]
+[Target: benefits-user]
+
+[Engineer checks result + membership]

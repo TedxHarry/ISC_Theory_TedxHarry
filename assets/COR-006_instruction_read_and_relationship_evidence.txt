@@ -1,0 +1,15 @@
+Saved comparison changed
+  personRef Equals identificationNumber
+                |
+                v
+Optimized read; account data unchanged
+  app-31 -> correlation skipped
+  app-32 -> correlation skipped
+  old relationship states remain
+
+Included unoptimized evaluation
+  app-31 -> same intended person
+  app-32 -> now linked to that person
+
+Human verification, separately:
+Check each recorded link and its owner.

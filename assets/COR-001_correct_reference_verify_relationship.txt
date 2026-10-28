@@ -1,0 +1,12 @@
+[Same payroll account pay-account]
+[employeeRef: null -> "W-107"]
+                  |
+[Corrected input published and collected]
+                  |
+[Correlation reevaluated]
+[Unique approved identity match]
+                  |
+[Same identity now has pay-account]
+
+[Account key and login unchanged]
+[No access change supplied]

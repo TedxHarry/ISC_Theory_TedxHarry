@@ -1,0 +1,15 @@
+[Project account project-account]
+[ownerPersonRef: P-73003]
+                 |
+[Same intended identity]
+
+[Project account project-admin]
+[ownerPersonRef: P-73003]
+                 |
+[Same intended identity]
+[identificationNumber: P-73003]
+
+[Different identities with P-73003?]
+[Investigate duplicate references]
+
+[Verify each account and its access]

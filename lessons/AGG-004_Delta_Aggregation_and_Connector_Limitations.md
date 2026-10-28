@@ -1,122 +1,125 @@
 # Only the changed accounts arrived. What does that tell us?
 
-Devi, employee number `54004`, coordinates service work. Her existing WorkQueue account is `wq-54004`.
+An application has thousands of accounts, but only a few changed since the previous collection. Reading all of them again would repeat a lot of work. If the application can reliably identify the changes, why not collect those instead?
 
-The application's department value changes from OPS to FIN. SailPoint Identity Security Cloud (ISC) still has the earlier account value, so the next collection needs to bring in that change.
+That's the idea behind delta aggregation.
 
-Two other things happen in WorkQueue: account wq-54007 is created, and account wq-54006 is deleted. Another existing account, wq-54005, doesn't change.
+But a changes-only result has a different meaning from a complete account list. If an unchanged account doesn't appear, its absence tells you nothing by itself about whether the account still exists.
 
-The next read reports the three changes. It doesn't return wq-54005.
+Let's follow how the changes reach SailPoint Identity Security Cloud (ISC), starting with the information a changes-only read needs.
 
-Should ISC treat that omitted account as deleted?
+## What is being collected?
 
-No. First establish what kind of read was performed. A changes-only result isn't a complete list of accounts that still exist.
+An **account** is a record in an external system. An **identity** is ISC's representation of a person or another entity. ISC associates accounts with identities so that it can connect account information and access with their owners.
 
-WorkQueue, its data and the outcomes below are fictional. The example assumes a completed initial population read, continuous correct change capture, supported account identification and deletion handling, and a verified existing association between Devi's account and her ISC identity. No database, permission, tracking state or real account is changed.
+A **source** is ISC's configured representation of a system or collection of account data. Its **connector** provides the supported integration with that system.
 
-## What “delta” means here
+**Account aggregation** collects source accounts and their information into ISC. Each named piece of information is an **attribute**, such as department.
 
-An **account** is a record in an external system. An **identity** is ISC's representation of a person or another entity, connecting information, accounts and access.
+A **full aggregation** reads the configured account population. A **delta aggregation** uses a supported mechanism to collect relevant changes since an established starting point.
 
-A **source** is ISC's configured representation of a system or collection of account data. Our source is WorkQueue Production. Its **connector** supplies the supported integration behavior.
+“Delta” means a difference. The source needs a way to identify what changed, and the connector needs a supported way to obtain and handle that information.
 
-**Account aggregation** collects source accounts and their attributes into ISC. An **attribute** is a named piece of information, such as department.
+This isn't a full account list with fewer columns. It isn't a list restricted to active accounts either. A disabled account can change, and an active account can remain unchanged.
 
-A **full aggregation** reads the configured account population. A **delta aggregation** uses a supported changes-only mechanism to collect relevant changes since an established starting point.
+Both kinds of read have a **scope**, the records and information intended for collection. A **filter** selects or excludes records under supported conditions. A full read and a delta read can therefore both be limited to a configured population.
 
-Delta describes a difference. It doesn't mean “a full list with fewer columns” or “read only active accounts.”
+The saving comes from avoiding repeated collection of that whole population when the supported change mechanism can identify the required work. That can reduce collection time and load. It doesn't promise a fixed duration or coverage of every kind of application change.
 
-A changes-only collection still needs a supported trigger, such as a manual start or configured schedule. Delta doesn't, by itself, promise that every application event immediately starts an ISC read.
+There must still be a supported event that starts collection, such as a manual start or a configured schedule. Change information becoming available doesn't, by itself, mean every application event immediately starts an ISC aggregation.
 
-**Scope** identifies the records and information intended for collection. A **filter** selects or excludes records under supported conditions. Both full and delta reads still have scope.
+## Changes need a starting point
 
-The benefit comes from avoiding repeated collection of the whole population when the supported change mechanism can identify the required work. That can reduce collection time and load. It doesn't guarantee a fixed duration or complete coverage of every kind of change.
+Suppose ISC already represents three accounts: acct-a, acct-b and acct-c.
 
-## Start with something the differences can update
+That established starting representation is a **baseline**. Later changes can update it. Without it, a changes-only read can miss accounts that existed before the change interval and haven't changed since.
 
-A **baseline** is an established starting representation against which later changes can be understood. For our example, a completed full read has represented these accounts:
+For example, if acct-b has existed for a year without a recent change, an empty ISC account list followed by today's changes-only read won't automatically discover it. Nothing in that read necessarily identifies acct-b for collection.
 
-wq-54004, wq-54005 and wq-54006.
+There is also a starting reference for the change mechanism: where should this read begin looking?
 
-The relevant starting point for subsequent collection must also be established through the connector's supported mechanism.
+A connector can use a saved position in a change sequence, a time boundary or a database table that records changes. The supported mechanism determines what must be initialized and kept valid. There isn't one universal ISC field called lastAggregation that works identically for every connector.
 
-Don't assume an arbitrary date typed by an administrator is equivalent to that starting point. Don't assume every connector stores one field called lastAggregation and uses it in the same way.
+For Microsoft Active Directory, a directory service that manages accounts and groups, the documented delta setup establishes a reference through an initial full aggregation. The database change-table mechanism we'll follow also starts with a full aggregation and its required capture configuration.
 
-A connector can use a saved reference to a position in a change sequence, a time boundary, or a database change table. The actual mechanism determines what has to remain valid.
+Don't replace that supported initialization with an arbitrary date. A date someone types isn't automatically equivalent to the reference the connector needs.
 
-An empty ISC account list followed by a changes-only read doesn't automatically establish every unchanged account that already exists externally.
+The transition deserves attention too. If a change occurs after the initial read but before reliable capture begins, don't assume a later successful delta will contain it. Establish how the approved design covers the handoff. Two successful jobs don't, by themselves, prove that no changes fell into a gap between them.
 
-For Microsoft Active Directory, a directory service managing accounts and groups, the documented setup establishes a reference point through a full aggregation before collecting subsequent changes. The database change-table approach below also begins with a full aggregation and its required capture configuration.
+## How can a database tell the connector what changed?
 
-In a project, review the transition between initial collection and ongoing capture. A change that happens in a gap between them must not be assumed to appear in a later read merely because both jobs eventually show success.
+**JDBC**, Java Database Connectivity, is a standard way for software to work with databases. **SaaS**, software as a service, identifies the cloud-based connector variant in the JDBC SaaS documentation.
 
-## Follow the change information, not just the current table
+We'll use that connector's documented change-table mechanism to make the information flow concrete. This isn't the mechanism for every source.
 
-**JDBC**, Java Database Connectivity, is a standard way for software to work with databases. **SaaS**, software as a service, identifies the cloud-based connector variant here.
+Our neutral source is Service-Production. A **database table** stores records as rows with named columns. Its illustrative account table, SERVICE_ACCOUNTS, contains the account records.
 
-Our WorkQueue example uses the documented JDBC SaaS change-table mechanism.
+The configured **account key** identifies an external account. Here, accountKey contains acct-a. An employee reference, W-44, is a different field: it describes the employee associated with the account, rather than being the selected account identifier.
 
-A **database table** stores records as rows with named columns. WorkQueue's account table is WORKQUEUE_ACCOUNTS.
+A separate **change table**, SERVICE_CHANGES, records the affected account key and the action.
 
-The configured **account key** identifies each external account. Here, accountKey supplies values such as wq-54004. It isn't the same identifier as Devi's employee number.
+Suppose these changes happen in the application after the baseline:
 
-A separate **change table**, WORKQUEUE_DELTA, records which accounts changed and the action associated with each change.
+- Acct-a's department changes from OPS to FIN.
+- Acct-d is created externally.
+- Acct-c is deleted externally.
+- Acct-b doesn't change.
 
-Its selected teaching rows are:
+The relevant change information is:
 
 | accountKey | action |
 |---|---|
-| wq-54004 | Update |
-| wq-54007 | Insert |
-| wq-54006 | Delete |
+| acct-a | Update |
+| acct-d | Insert |
+| acct-c | Delete |
 
-These are illustrative column names and rows, not database creation commands or universal connector defaults.
+Update reports that account data changed. Insert identifies a newly added external account. Delete preserves the identifying reference to an account that has been removed.
 
-Update identifies an account whose data changed. Insert identifies a newly added external record. Delete preserves the identifying reference to a record that has been removed.
+That last point explains why change information is useful for deletion. The current account table no longer contains acct-c, but the change table can still tell the connector which account was deleted.
 
-The application changes happen first. These rows report them; they aren't requests for ISC to create or delete the external accounts again.
+The table and column names are illustrative. These aren't database creation commands or defaults to copy into every connector.
 
-A **database trigger** runs configured database logic in response to a specified table event. In a supported approved design, triggers record the relevant inserts, updates and deletes in the change table.
+A **database trigger** runs configured database logic when a specified table event occurs. In the supported design, approved capture logic records the relevant inserts, updates and deletes in the change table.
 
-The connector doesn't acquire a working capture mechanism merely because someone enables a delta checkbox. The table, capture logic, account identification, configured read and permissions must agree.
+Enabling a delta setting doesn't create that working capture design by itself. The account key, capture logic, change table, configured reads and permissions must agree.
 
-In this supplied successful example, each of the three changes is captured correctly.
+For this main trace, assume an initial full read completed, the required starting point and continuous capture are correct, account identification is valid, and the three changes are captured. The completed results are supplied examples, not observations from a real database or ISC tenant.
 
-## Turn a reported change into the right collected result
+## The change entry tells you where to look
 
-For an updated account, knowing the key isn't the same as knowing the new department.
+The Update entry identifies acct-a. It doesn't, by itself, tell you that the new department is FIN.
 
-A **query** asks the database for selected information. The supported query must obtain the required account data for that key.
+A **query** asks a database for selected information. The supported account query must obtain the information needed for the identified account.
 
-A **schema** defines the represented attributes and their uses. A **mapping** determines which input supplies a represented value.
+A **schema** defines represented attributes and their uses. A **mapping** determines which input supplies a represented value. The connector's supported read and the source representation need to carry the new department through to ISC.
 
-For Devi, the selected account result is written here in **JSON**, JavaScript Object Notation, which uses named properties inside curly braces:
+Here is the selected account data in **JSON**, JavaScript Object Notation, which writes named properties and values inside curly braces:
 
 ```json
 {
-  "accountKey": "wq-54004",
-  "employeeRef": "54004",
+  "accountKey": "acct-a",
+  "employeeRef": "W-44",
   "department": "FIN"
 }
 ```
 
-This is selected teaching data, not a complete ISC API response or runnable query. An **API**, application programming interface, lets software interact with a system.
+This is a teaching fragment, not a complete ISC **API** response. An API, application programming interface, lets software interact with a system. The fragment isn't a runnable database query either.
 
-The Update row identifies wq-54004. The supported read and mapping supply FIN. ISC's collected account representation now reflects FIN under the supplied completed result.
+Follow the connection: the change entry selects acct-a, the supported read supplies FIN, and the mapping places FIN on the represented account department. In the supplied completed result, ISC's account record now reflects the changed value.
 
-The change row, returned account data and final represented record aren't interchangeable formats. Establish what the supported response contains before interpreting an omitted attribute as an instruction to clear its value.
+The change entry and the account data have different jobs. Don't treat a key/action row as though it contained every account attribute. Equally, don't assume that a response omitting a field universally instructs ISC to clear that field. Establish the supported response format and handling.
 
-**Account correlation** matches and assigns a source account to its owning identity under configured comparisons. Devi's existing correct association is supplied, not inferred from equal-looking digits in an account name.
+**Account correlation** matches and assigns a source account to its owning identity using the applicable comparison logic. Acct-a already has a verified correct association in this example. It isn't inferred from characters in the account name or from collection success.
 
-For wq-54007, the external account already exists when the read discovers it. ISC represents it; collection hasn't created another application account.
+For acct-d, the connector discovers an account already created in the application. ISC represents that account; aggregation hasn't created a second external account.
 
-For wq-54006, the explicit Delete information identifies the already-deleted external record. In the supplied verified result, the connector's supported deletion handling removes its ISC account representation under the reviewed configuration.
+For acct-c, the explicit Delete information identifies the account already removed externally. Under the supplied supported deletion handling and reviewed configuration, its account representation is removed from ISC.
 
-That outcome isn't inferred from an empty response. It also isn't a universal instruction to delete an employee identity or every related account on other systems.
+That deletion outcome requires the supported mechanism and resulting record evidence. It isn't inferred from an empty read, and it isn't a universal instruction to delete a person's identity or their accounts on every other system.
 
-Disabling an account is different again. It changes an account's status; the external record can still exist. Don't equate a reported status update with a Delete action, or infer that one application-account deletion establishes a person's employment status.
+Disabling an account is different again. Its status changes, but the external account can still exist. A status update isn't automatically a Delete action. One application-account deletion also doesn't establish the person's employment status.
 
-The main information responsibilities look like this:
+Here are the information responsibilities:
 
 ```text
 [Database captures account changes]
@@ -128,250 +131,252 @@ The main information responsibilities look like this:
 [Engineer checks resulting records]
 ```
 
-The connected lines show logical dependencies in collection. They aren't private transaction stages or a guarantee that every connector uses the same internal order.
+The connected lines show logical dependencies: the database captures change information, the connector obtains it through the supported read, and ISC handles the reported account changes.
 
-The separate final line is human verification, not an automatic success stage. The engineer checks the resulting records against the intended changes.
+These aren't private transaction stages or a universal internal order for every connector. The separated engineer line is a human check of the resulting records, not an automatic stage that guarantees success.
 
-## Keep the unchanged account in the picture
+## Why does the unchanged account stay?
 
-Our supplied before-and-after account inventory is:
+Now compare the representations:
 
 ```text
-ISC before: wq-54004, wq-54005, wq-54006
-Observed:   Update wq-54004
-            Insert wq-54007
-            Delete wq-54006
-ISC after:  wq-54004, wq-54005, wq-54007
+ISC before: acct-a, acct-b, acct-c
+Changes:    Update acct-a
+            Insert acct-d
+            Delete acct-c
+ISC after:  acct-a, acct-b, acct-d
 ```
 
-The account sets describe ISC's representations before and after the supplied successful handling. The observed actions describe changes that already occurred in WorkQueue.
+Acct-a remains represented with department FIN. Acct-d is newly represented. Acct-c's representation is removed through the supplied supported deletion result.
 
-The unchanged wq-54005 remains represented. Its absence from this delta result doesn't establish deletion.
+And acct-b? It remains represented too. It didn't need a change entry because it didn't change.
 
-The final account count is still three: three before, plus one newly represented external account, minus one removed representation.
+Its absence from this changes-only result doesn't establish deletion. The result reports relevant changes; it doesn't claim to list all accounts that still exist.
 
-But the contents changed, and Devi's department value changed. Equal before-and-after totals don't establish that nothing happened.
+The account count is three before and three after: start with three, add one representation and remove one. The total stayed the same, but the account set changed, and acct-a's department changed.
 
-The three change rows aren't three newly created accounts, three full account objects or the whole current population. Two refer to live account records; one is deletion information about a removed record.
+Likewise, the three change entries aren't three new accounts or three live account objects. Update and Insert refer to accounts now present externally. Delete refers to a removed account.
 
-This is why a small delta count can't be compared directly with a full-read account count without first identifying what each number describes.
+Before comparing a delta count with a full-read count, ask what each number counts. Otherwise, equal totals can hide changes, and a small change count can be mistaken for a missing population.
 
-## Change capture can fail while collection looks healthy
+## What if the capture mechanism misses a change?
 
-Consider a separate variation: WorkQueue's account row changes to FIN, but the configured trigger fails to record that update.
+Consider a separate variation. Acct-a changes to FIN, but the trigger doesn't record the update.
 
-The account query can be correct, and the integration can reach the database. Yet a delta run that depends on the change table doesn't know to fetch wq-54004.
+The account query could return FIN if asked for acct-a. The connector could reach the database successfully. Yet the delta read depends on the change table to identify which account to fetch.
 
-A completed run with no applicable change entries wouldn't prove that the application had no changes.
+Without the relevant entry, that run doesn't know to select acct-a through this mechanism.
 
-Trace the producer of the change information. Was the relevant table covered? Did the approved capture logic execute? Does the recorded key identify the same account used by the account query?
+A successful empty read would therefore mean no applicable change information was returned. It wouldn't prove that the application had no changes or that ISC's account data was current.
 
-An **integration actor** is the account or application identity used to access the external system. Its authority must cover the supported delta operation, not merely an ordinary account read.
+This gives you a useful investigation order. Check the actual account row, then the production of change information: does the capture cover the relevant table and event? Did the approved logic execute? Does the key in the change entry identify the same account used by the query?
 
-The JDBC change-table design documents read/write and cleanup permissions for its tracking mechanism. It also describes re-initializing the change tracking after a delta aggregation.
+A query that can fetch the right answer and a mechanism that selects the right account are separate dependencies. You need both.
 
-That is bookkeeping for collection, not permission to perform every business change in WorkQueue.
+An **integration actor** is the account or application identity used to access the external system. Its authority must cover the supported change-tracking operation, not merely an ordinary account read.
 
-Don't assume every collection integration needs only read permission, or grant unrestricted database access to avoid investigating the documented requirement. Have the authorized database owner review the specific supported design.
+The JDBC SaaS design documents read/write and cleanup permissions for its tracking mechanism, as well as re-initializing change tracking after delta aggregation. Collection bookkeeping can therefore require more than an ordinary read permission.
 
-Don't manually empty the change table to make an incident disappear. Removing unread change information can remove the evidence needed to catch up.
+That doesn't mean the integration should receive unrestricted authority to change business data. Have the authorized database owner check the specific supported capture and cleanup requirements.
 
-## One connector's delta isn't another's
+Don't manually empty unread tracking information to make a failed run look clean. Those entries can be the information needed to catch up. The documented reset or re-initialization behavior isn't permission to invent your own cleanup timing or recovery procedure.
 
-An **entitlement** represents an access right. An **entitlement aggregation** collects information about access objects themselves, such as groups.
+## Account changes don't always happen in the account table
 
-A **group** is an access object that can associate accounts with permissions. A **permission** is an allowed operation on a resource.
+Suppose the application stores account rows in one table and group memberships in another.
 
-A **membership** associates an account with an access object. Detecting a membership change and collecting the group's definition are different coverage questions.
+A **group** is an access object that can associate accounts with **permissions**, allowed operations on resources. A **membership** associates an account with an access object.
 
-**DirSync** is Active Directory's directory-change synchronization feature.
+Someone adds a membership in the second table. The account row doesn't change. If the supplied capture design watches only account-row changes, nothing establishes that the affected account key enters the change table.
 
-These documented examples illustrate why you must check the actual connector and object type:
+The account query could still be correct. If it includes membership information, it could return the new membership when asked. The missing part is selection: the delta mechanism didn't identify that account for collection.
 
-| Connector context | Documented delta mechanism or boundary | Practical implication |
+Check the supported access representation, the query and capture coverage for the relationship. A trigger watching one table doesn't automatically observe changes to every related table.
+
+An **entitlement** represents an access right. **Entitlement aggregation** collects information about access objects themselves, such as group definitions. A successful group-inventory read doesn't, by itself, refresh the account's membership information or repair missing account-change capture.
+
+That distinction also helps when comparing connectors. “Supports delta” needs an object and a change type: delta for which records, and which changes?
+
+## What changes when the connector changes?
+
+The main mechanism used JDBC SaaS change tables. Other connectors obtain change information differently.
+
+**DirSync** is Active Directory's directory-change synchronization feature. It is the documented default delta mode for that connector. Active Directory's setup and permissions therefore need to be checked as directory requirements, not copied from a database design.
+
+Okta SaaS uses different interfaces for different changes. Its users API supplies user-profile changes; its logs API supplies entitlement changes and deleted users. Reading profile information alone doesn't prove that membership or deletion changes were captured.
+
+| Connector context | Documented mechanism or limitation | What you need to establish |
 |---|---|---|
-| Active Directory | Default DirSync change tracking; initial full aggregation and additional delta permissions | An ordinary account read doesn't establish a valid starting reference or authority to read the required change/deletion information |
-| JDBC SaaS | Account change table with identifying value and Insert/Update/Delete actions; group delta isn't supported by this mechanism | Account-delta support doesn't establish group-object delta coverage |
-| Okta SaaS | User profile changes use the users API; entitlement changes and deleted users use the logs API; delta is for accounts | Profile visibility alone doesn't establish that access/deletion changes were captured |
+| Active Directory | Default DirSync mode, an initial full-reference setup and additional delta permissions | Valid starting reference and authority for the required change and deletion information |
+| JDBC SaaS | Account change table with identifying value and Insert/Update/Delete actions; group delta isn't supported by this mechanism | Correct account capture and handling; separate supported group-object collection |
+| Okta SaaS | Account delta uses profile and log information for different changes | Required interfaces, their authority, change coverage and retained information |
 
-Active Directory's documented delta permissions include Replicating Directory Changes and read access to the Deleted Objects container, where deleted directory objects are represented for the supported read.
+Active Directory's documented delta permissions include Replicating Directory Changes and read access to its Deleted Objects container. That container provides the relevant deleted-object information for the supported read. A successful connection test or ordinary account read doesn't establish those additional permissions.
 
-Don't copy a permission recipe from a database connector to a directory, or infer full delta permission from a successful connection check.
+An **organizational unit (OU)** is an Active Directory container used to organize objects. ISC's account-loading guidance warns that OU moves aren't supported through delta handling and require full account aggregations to avoid unexpected results, including duplicates.
 
-In Active Directory, an **organizational unit**, or **OU**, is a directory container used to organize objects. ISC's account-loading guidance warns that OU moves aren't supported through delta handling and require full account aggregations to avoid unexpected results, including duplicate accounts.
+So moving an object between containers isn't automatically equivalent to changing an ordinary department attribute. Check the documented handling for the kind of change that occurred.
 
-An organizational move isn't automatically equivalent to an ordinary department attribute edit.
+Okta's documented log-retention boundary is 90 days. Required change information outside that retained window isn't recovered by repeatedly requesting another delta. The documented recovery requires full account aggregation for current state.
 
-Okta's documented log retention excludes data older than 90 days. A gap extending beyond the retained change information can require full account aggregation; repeated delta runs don't recover logs that are no longer available.
+Recovering current account state and recovering historical events are different goals. A full read can rebuild the current representation under supported handling; it doesn't recreate an expired event trail.
 
-The separate Okta interfaces matter because a user's profile and their access relationships aren't one set of change evidence. Check the required interface's authority, coverage and completed results rather than treating a successful profile read as proof of collected membership changes.
+These examples don't establish one universal permission set, token lifetime, deletion model or account/group capability. They explain why the connector documentation belongs in the design decision.
 
-The supported change mechanism and limitations belong to the particular connector. They aren't one universal deletion model, token lifetime or account/group capability.
+## A page position isn't the same as a change position
 
-## Progress through a run isn't proof that every change was applied
+**Pagination** divides a read into pages. A continuation reference helps the connector request the remaining portions of that result.
 
-**Pagination** divides a result into pages. A page-continuation reference helps obtain further results in a supported read.
+A starting reference across executions has another purpose: it establishes where to begin looking for changes.
 
-A starting reference for changes across executions answers a different question: which changes should this run ask for?
+Both can look like technical progress values, but they answer different questions. Don't interchange them or assume they have the same lifetime. A tracking-table design may use neither in the form you expect.
 
-Don't assume the two references are interchangeable or that they have the same lifetime. Some sources use tracking tables instead of tokens.
+A **checkpoint** here means a recorded progress reference in a supported mechanism. It isn't the name of a universal ISC property or a promise about private transaction timing.
 
-A **checkpoint** here means a recorded progress reference used by a supported mechanism. It isn't a universal ISC property name or a claim about when a private transaction commits.
+Suppose a paged read stops before all relevant results are handled. Some changes could already have affected the represented records. From interruption alone, you can't conclude that everything rolled back, everything finished or the next run will replay exactly the same entries once.
 
-If a read stops after processing part of the available information, inspect both the execution and the actual account results. Don't assume all earlier work rolled back, every change was applied, or a later run will replay exactly the same records once.
+Inspect the execution and actual account results. Then use the connector's documented recovery, including the availability of retained change information. A job's start time isn't proof of the last safely completed boundary.
 
-The connector's documented recovery and change-retention behavior matter. A job's start time doesn't establish the last safely completed collection boundary.
+Don't invent a later timestamp, clear a tracking reference or manually replay a table without establishing the supported path and current results.
 
-Don't invent a new timestamp, clear a tracking reference or replay a change table manually without understanding the supported recovery path and existing results.
+If recovery needs a full aggregation, review the intended scope and existing-record/deletion consequences. A wider read doesn't justify bypassing safeguards.
 
-If a supported recovery uses a full aggregation, review its scope and existing-record/deletion consequences first. A larger read isn't a reason to disable safeguards.
+## “Since the last run” still needs a precise meaning
 
-## Time and scope are part of the meaning
+For a time-based mechanism, establish which time value drives change detection.
 
-For a time-based mechanism, establish which time value drives detection. A record's last-modified time and a business event's effective date describe different things.
+A last-modified time describes when a record was changed. A business effective date describes when a business change is meant to take effect. Those aren't interchangeable.
 
-An employee change recorded today but effective next month isn't necessarily found by searching only for records whose effective date is today.
+An employee update recorded today but effective next month isn't necessarily found by selecting only changes whose effective date is today. The connector's documented detection field, format, time zone and boundary behavior determine the relevant read.
 
-Use the connector's documented field, format, time zone and boundary behavior. Don't invent an inclusive or exclusive comparison from the phrase “since the last run.”
+Don't guess whether a boundary is inclusive or exclusive from the phrase “since the last run.” For a tracking-table design, ask instead whether every relevant operation produced the identifying entry. A recent schedule time doesn't establish complete capture.
 
-For a tracking-table design, the equivalent question is whether every relevant operation produces the identifying change information. A recent schedule time doesn't prove it did.
+Scope changes raise a related issue. Suppose a filter is widened to include a second region. If its existing accounts haven't changed, the next changes-only read doesn't necessarily identify them. A broader saved scope isn't evidence of a newly collected population.
 
-Scope changes deserve their own review. If a filter is widened to include accounts that haven't changed, don't assume the next changes-only result will establish all newly included accounts.
+Changing an ISC mapping also doesn't, by itself, change an external account or create an application change event.
 
-Likewise, changing a mapping in ISC doesn't, by itself, change an external record or create a native change event.
+## Could reprocessing make an omitted account appear?
 
-An **optimized aggregation** can read the full configured account population while skipping further processing of existing unchanged data. An **unoptimized aggregation** re-evaluates account correlation for unchanged records too. These describe processing choices, not proof that a changes-only mechanism delivered a particular account.
+An **optimized aggregation** can read the full configured population while skipping further processing of existing unchanged account data. An **unoptimized aggregation** re-evaluates account and manager correlation even for unchanged records.
 
-A **single-account aggregation** reads one specified account. A delta mechanism instead selects records through its supported change information; it isn't another name for a person manually choosing an account to refresh.
+These describe processing choices. Delta describes selection through supported change information.
 
-Plan the supported population refresh and any required re-evaluation rather than treating the next scheduled delta as a universal repair.
+If an unchanged account wasn't delivered by the selected changes-only mechanism, disabling the unchanged-record shortcut doesn't, by itself, establish delivery. First choose a supported read that includes the record; then establish whether it needs repeated processing.
 
-## A group change can expose a different gap
+A **single-account aggregation** reads a specified account. A delta mechanism selects accounts through its change information. Delta isn't another name for an administrator choosing one account to refresh.
 
-Suppose a database-backed application stores account rows in one table and group memberships in another.
+For a changed filter, mapping or ownership comparison, plan the supported population refresh and any required re-evaluation. Don't treat the next scheduled delta as a universal repair.
 
-A membership is added in the second table. The application account row isn't updated, and the supplied capture design watches only account-row changes.
+## What does the updated account tell us about the identity?
 
-Nothing supplied establishes that the affected account key enters the delta change table.
+An **identity attribute** belongs to the identity rather than to an individual application account. Whether acct-a's account department supplies the identity's department depends on the configured mapping.
 
-The account query might return correct membership values if asked for that account. The problem is that the change mechanism didn't identify it for collection.
+**Provisioning** performs supported changes to external accounts or access. Reading FIN from this source is different from writing FIN to another system.
 
-Establish the connector's supported access representation, query and change-capture coverage for the affected accounts. Don't assume a trigger on one table observes changes to every related table.
+**Identity processing** evaluates identity information and relevant access configuration. When aggregation or provisioning modifies an identity, that event initiates identity processing. Collecting a delta row isn't a guarantee that every identity calculation ran or that every identity value changed.
 
-Collecting a complete group inventory is a separate task. It doesn't, by itself, repair a missing account-membership update.
+Our main result establishes the updated account department, its preserved correct association, the newly represented external account and the supported removal of the already-deleted account representation. It doesn't establish completed changes in every connected application.
 
-## Delta collection doesn't finish every downstream job
+Collected information can feed configured decisions that lead to separate access changes. Check those operations and their results separately. A workflow beginning with collection isn't automatically free of later access consequences.
 
-An **identity attribute** is a value on the identity rather than on one application account. Whether Devi's account department supplies her identity department depends on the configured mapping.
+## Match the evidence to the question
 
-**Provisioning** performs supported external account or access changes. Reading FIN from WorkQueue is different from writing FIN to another system.
+The source's aggregation configuration shows intended behavior. It doesn't prove that an execution used the expected scope and starting information, or that the required change entries existed.
 
-**Identity processing** evaluates identity information and relevant access configuration. When aggregation or provisioning modifies an identity, that event initiates identity processing.
+**Aggregation History** and account-aggregation details provide execution information, including status, timing, counts and relevant warnings or errors.
 
-The main supplied result updates the WorkQueue account representation, preserves its correct ownership and handles the stated new/deleted account representations. It doesn't establish that every identity value or downstream application has changed.
+The source's **Accounts** view and account details show represented records and associations. Inspect the correct source and account. A person-name search alone doesn't identify which source record or observation you are judging.
 
-Collected data can feed configured decisions that lead to separate access-changing work. Observe those outcomes separately; don't label an entire connected workflow harmless merely because its first operation collects information.
-
-## Choose evidence for the question you're asking
-
-The source's aggregation configuration describes intended behavior. It doesn't prove that a particular execution actually used the expected starting information and scope.
-
-**Aggregation History** and account-aggregation details describe executions, including status, timing, counts and relevant warnings or errors.
-
-The source's **Accounts** view and account details show represented records and associations. Inspect WorkQueue Production and wq-54004 rather than relying on a person-name search alone.
-
-Use the relevant comparison:
-
-| Question | Evidence that helps | What it doesn't establish alone |
+| Question | Evidence to compare | What it doesn't establish alone |
 |---|---|---|
-| Was FIN available for collection? | Identified current account row and the actual query result | That change capture selected the account |
-| Did the delta identify it? | Applicable change entry or supported change-response evidence, with scope and progress context | That all resulting values were represented correctly |
-| Did ISC update the account? | Identified account, department and applicable completed execution | That every identity attribute uses this value |
-| Was an account deleted? | Supported deletion information, target context and resulting ISC record state | That an omitted unchanged account was deleted |
-| Did an external change complete? | Separate change-operation outcome and resulting target state | That aggregation success proves provisioning |
+| Was FIN available to the read? | Current identified account row and actual account query result | That change capture selected acct-a |
+| Did delta identify the account? | Relevant change entry or supported change-response evidence, with scope and progress context | That every resulting value was represented correctly |
+| Did ISC update the account? | Identified account's department and applicable completed execution | That all identity attributes use that value |
+| Was the account deleted? | Supported deletion information, external context and resulting ISC record state | That omission of an unchanged account means deletion |
+| Did an external change finish? | Separate provisioning outcome and resulting target state | That aggregation success proves target delivery |
 
-ISC Search can have indexing delays separate from collection. If one view looks old, compare the actual identified account, execution evidence and view freshness before repeating work.
+ISC Search can have its own indexing delay. If a view looks old, compare the actual identified record, execution evidence and view freshness before repeating work.
 
-## Test what a delta result lets you conclude
+## Test what the result lets you conclude
 
 ### 1. One account is omitted
 
-wq-54005 is in the completed baseline and hasn't changed. It doesn't appear in the supplied delta rows.
+Acct-b is present in the completed baseline and hasn't changed. It doesn't appear in the delta entries.
 
-Should it be removed from ISC because it wasn't returned?
+Should ISC remove it because it wasn't returned?
 
-**Worked reasoning:** No. This is a changes-only result, not a complete current population. Preserve the distinction between omission and explicit supported deletion information.
+**Worked reasoning:** No. The result describes changes, not the whole current population. Acct-b remains represented in the supplied result. Explicit supported deletion information is different from omission of an unchanged account.
 
 ### 2. The run reports no changes
 
-The application row changed, but the supplied trigger failed to record it. The next change-table read has no corresponding entry.
+The account row changes, but the supplied trigger fails to record it. A subsequent change-table read has no relevant entry.
 
-Does a successful empty read establish current account data?
+Does successful completion establish that ISC's data is current?
 
-**Worked reasoning:** No. Inspect capture coverage and the actual row/query, then choose supported recovery and verify the resulting account. Repeating a read of the same incomplete change information doesn't manufacture the missing entry.
+**Worked reasoning:** No. Inspect capture coverage and the actual row/query, then follow supported recovery and verify the account result. Repeating a read of the same incomplete change information doesn't manufacture the missing entry.
 
-### 3. Three change rows arrive
+### 3. Three change entries arrive
 
-The baseline contains three accounts. The supplied rows contain one Update, one Insert and one Delete, as above.
+The baseline contains acct-a, acct-b and acct-c. The entries report Update acct-a, Insert acct-d and Delete acct-c.
 
-How many account representations remain after the verified successful handling?
+How many representations remain after the supplied verified successful handling?
 
-**Worked reasoning:** Three: retain wq-54004 and unchanged wq-54005, represent externally created wq-54007, and remove the representation of already-deleted wq-54006. Equal totals don't mean unchanged contents or attributes.
+**Worked reasoning:** Three. Retain acct-a with its changed value and retain unchanged acct-b. Represent the already-created acct-d and remove the representation of already-deleted acct-c. Three plus one minus one is three, but the account set and department information changed.
 
-### 4. A read stops after its first page
+### 4. The read stops after its first page
 
-Only part of a supported change response has been processed. No completed recovery or final record comparison is supplied.
+Only part of the supported change response has been processed. No completed recovery or final record comparison is supplied.
 
-Can the team safely advance a progress timestamp to the current time?
+Can the team safely advance the progress timestamp to the current time?
 
-**Worked reasoning:** Not from those facts. Preserve execution/change evidence, inspect actual results and follow the connector's documented recovery path. Don't infer rollback, complete application or exactly-once replay from an interrupted read.
+**Worked reasoning:** Those facts don't establish that it is safe. Preserve execution and change evidence, inspect actual outcomes and follow connector-specific recovery. Don't infer rollback, complete application or exactly-once replay from interruption.
 
 ### 5. The account filter is widened
 
-A source now includes another region, but the newly included accounts have no reported changes in the selected interval.
+A source now includes another region. Its newly included accounts have no reported changes in the selected interval.
 
-Does the new scope prove the next delta establishes the expanded population?
+Does the saved filter prove the next delta establishes the expanded population?
 
-**Worked reasoning:** No. Establish the supported full-population or reinitialization approach for that configuration change, with safe existing-record review. A filter change isn't evidence that all newly included accounts were returned.
+**Worked reasoning:** No. Establish the supported population refresh or re-initialization for the changed configuration, with scope and existing-record consequences reviewed. A broader filter doesn't prove that unchanged newly included records were delivered.
 
 ### 6. Only the membership table changes
 
-The capture design records account-table modifications. A new membership changes a separate table but doesn't record the affected account key.
+The capture design records account-table modifications. A membership is added elsewhere, without recording the affected account key.
 
-What should you investigate first?
+What would you investigate first?
 
-**Worked reasoning:** The supported query and change-capture coverage for that relationship. A correct query is insufficient if the account is never selected. Don't substitute group-object inventory for account-membership evidence.
+**Worked reasoning:** The supported query and capture coverage for that relationship. A query can be correct while selection is incomplete. Establish how the affected account is identified; group-object inventory doesn't substitute for collected account-membership evidence.
 
-### 7. The required logs are outside retention
+### 7. The required logs have expired
 
-A separate Okta SaaS investigation needs change information older than the documented 90-day log-retention window.
+An independent Okta SaaS investigation needs change information older than its documented 90-day log-retention window.
 
-Will another delta run recover that missing history?
+Will another delta run recover those events?
 
-**Worked reasoning:** No. Follow the supported full account-aggregation recovery for current state, with the proper scope and review. Rebuilding a current representation doesn't reconstruct a complete historical event trail from expired logs.
+**Worked reasoning:** No. Follow the supported full account-aggregation recovery for current state, with the appropriate scope and safeguards. Don't claim that a current-state read reconstructs expired historical events.
 
-### 8. Only ISC's comparison changes
+### 8. Only ISC's ownership comparison changes
 
-An account's external data hasn't changed. ISC's ownership comparison is corrected, and the next delta doesn't return that account.
+External account data hasn't changed. ISC's comparison is corrected, but the next delta doesn't return the account.
 
-Does disabling unchanged-record optimization prove the account will be re-evaluated?
+Does disabling optimization prove the account will be re-evaluated?
 
-**Worked reasoning:** No. First establish a supported read that includes the required record. Then establish the appropriate unchanged-record re-evaluation. Read coverage and processing choice are separate responsibilities.
+**Worked reasoning:** No. Establish a supported read that includes the account, then the appropriate unchanged-record re-evaluation. Delivery and processing are separate questions; an ISC configuration change isn't automatically an external change event.
 
-## Review a different application's proposal
+## Review another application's proposal
 
-A project stores employees in STAFF and their group memberships in STAFF_GROUPS. Its delta capture watches only STAFF inserts and updates, not deletes or STAFF_GROUPS changes.
+A project stores employees in STAFF and group memberships in STAFF_GROUPS. Its delta capture watches only STAFF inserts and updates. It doesn't capture deletes or STAFF_GROUPS changes.
 
-The proposal says, “The connection test passes, so delta covers all access changes. We'll clear the tracking table after any failed run and treat every missing employee as deleted.”
+The proposal says, “The connection test passes, so delta covers all access changes. We'll clear the tracking table after failed runs and treat every missing employee as deleted.”
 
 What would you challenge?
 
-**Worked reasoning:** A connection test doesn't establish complete capture, deletion information, membership coverage or correct account representation.
+**Worked reasoning:** The connection test doesn't establish complete change capture, deletion information, membership coverage or correct account representation.
 
-Identify the supported account key, account query, access mappings, baseline and capture responsibilities. Verify how account deletions and membership changes select the affected account under the approved supported design. Check required tracking-table permissions without granting unrestricted business-data writes.
+Identify the supported account key, query, access mappings and baseline. Establish how the approved capture design identifies affected accounts for deletes and membership changes. Check tracking permissions with the authorized owner, without treating collection bookkeeping as a reason for unrestricted business-data writes.
 
-Reject deletion by absence from a changes-only result. Don't clear unread change evidence after failure. Establish documented recovery, inspect actual results and review the scope and safeguards of any required full read.
+Reject deletion by absence from a changes-only result. Preserve unread change evidence after failure. Establish the documented recovery, inspect existing results and review scope and deletion safeguards before a required full read.
 
-If current state can be recovered, verify it. Don't claim that recovery recreates every lost historical event or proves completion of separate target changes.
+Verify recovered current state. If historical change information was lost, don't claim it has been recreated. Any separate target change also needs its own result evidence.
 
-Explain the plan to the application owner: “Delta can save repeated reading only when its change information is complete for the job. We need a valid starting point, supported coverage of the changes we care about, and evidence that the resulting records are correct.”
+You can explain the requirement to the application owner this way: “Delta saves repeated reading when its change information covers the job. We need a valid starting point, a supported way to identify the relevant changes, and evidence that ISC's resulting records are correct.”

@@ -1,324 +1,323 @@
 # What access does this responsibility actually require?
 
-Devi, employee `120101`, has started handling customer-request intake. She needs to read incoming requests, prepare an intake draft and consult published support instructions.
+An employee starts customer-request intake. They need to read incoming requests, prepare intake drafts and consult published support instructions. They do not approve refunds, publish instructions or administer either application.
 
-She does not approve refunds, publish instructions or administer either application.
+Someone proposes copying an experienced support specialist's access.
 
-Someone asks the identity team to “give Devi the same access as another support specialist.”
+That colleague may approve refunds, cover another queue or retain rights from an earlier job. Their access is useful evidence to investigate, but it does not define the new employee's responsibility.
 
-Before copying anything, ask what that other person actually does. They may approve refunds, cover a second queue or retain permissions from an earlier job. Their current access is evidence to investigate, not the definition of Devi's responsibility.
+Start with the authorized work: which actions, on which information, and with which exclusions?
 
-The better starting point is the work: what must Devi be able to do, on which information, and what must stay outside her authority?
+In SailPoint Identity Security Cloud (ISC), a **role** groups related access for a business responsibility. It can cover one source or several. It gives the organization a maintained requirement to assign and investigate; a job title alone does not become an application permission.
 
-In SailPoint Identity Security Cloud, or ISC, we can represent the resulting access requirement with a **role**: an access-model object grouping related access for a business responsibility. A role can cover one system or several.
+**Provisioning** carries out account or access changes. The tenant needs the Provisioning capability to use ISC roles; that prerequisite does not establish that every individual source operation succeeds.
 
-That gives the identity team a maintained requirement to assign, review and investigate. It does not turn a job title into an application permission.
+The records, rules, configurations and observations below are hypothetical. We assume authorized administration, that required capability, and supported integrations. The selected accounts already exist.
 
-All people, systems, identifiers, business rules, configurations and observations here are fictional. The example assumes the tenant has the Provisioning capability needed for roles, an authorized administrator and supported integrations. It uses a standard role and standing access, without separate Just-In-Time activation.
+## Make the responsibility specific enough to verify
 
-## Make the work specific enough to test
+“Customer support access” does not tell an engineer what to deliver.
 
-“Customer support access” is too broad to decide what should be granted.
+The approved responsibility here is to read assigned-queue requests, create and edit intake drafts in that queue, and read published support instructions.
 
-For this responsibility, the approved work is:
+Refund approval, bulk customer export, instruction publishing and administration stay outside it.
 
-- Read customer requests in the employee's assigned queue.
-- Create and edit an intake draft in that queue.
-- Read published support instructions.
+The business owner confirms the work. The application contacts explain which native rights permit it. The identity engineer connects those requirements to the exact objects ISC can manage.
 
-The exclusions are equally concrete: no refund approval, no bulk customer export, no instruction publishing and no application administration.
+A business owner can know that drafting is required without knowing a group's identifying value. An integration engineer can know that a group is writable without knowing whether every support employee should hold it. Bring those kinds of evidence together.
 
-The business owner confirms the responsibility. The application teams explain how their systems authorize those actions. The identity engineer connects those approved needs to the exact access objects ISC can manage.
+A **permission** allows an action on a resource. **Native** means belonging to the external application itself. A **group** collects members, such as accounts; the application can use membership to grant permissions.
 
-These are different kinds of knowledge. A business owner can confirm that draft intake is needed without knowing the native group key. An integration team can identify a writable group without knowing whether every support employee should hold it.
+The employee has an existing account in each of two systems: Requests Production and Knowledge Production. An **account** is the external record through which a person or another entity uses a system.
 
-Let's name the two systems:
+Both accounts are enabled and sign-in succeeds. The Requests account's assigned queue is North.
 
-**RequestDesk Production** handles incoming requests and intake drafts.
+An **identity** is ISC's representation of a person or another entity. **Account correlation** matches and associates source accounts with that identity. Both accounts here are correctly associated and are the person's only accounts on their respective sources.
 
-**KnowledgeShelf Production** stores the published instructions.
+The required memberships are initially absent. No role assignment or other grant supplies them. This example therefore concerns access changes on existing accounts, not account creation.
 
-Devi already has one account in each: `rd-120101` and `ks-120101`. Both accounts are enabled and sign-in works. Her RequestDesk account is assigned to queue North.
+## Map the work to actual access
 
-An ISC **identity** represents the person. An **account** is the system's login record. **Account correlation** associates each source account with the correct identity. Both accounts are correctly correlated to Devi.
+A **source** is ISC's configured representation of a system or collection of account data. Its **connector** supplies the supported integration for reading information and, where supported and configured, changing it.
 
-The application accounts exist, but the three required memberships are initially absent. Devi has no assignment to this role yet, and no other grant supplies these rights. Account creation is therefore not part of this example's delivery.
+There is one source for each application here. Both integrations support account reads and the membership changes used below.
 
-## Translate each action into verified native access
+An **entitlement** represents source access, such as a group membership. The application contacts verify this mapping:
 
-A **source** represents a connected system or account-data collection in ISC. A **connector** provides the integration that reads data and, where supported and configured, makes changes.
-
-Here there is one source for each application. Their supplied integrations support reading accounts and adding or removing the memberships used below.
-
-An **entitlement** represents an access right, such as membership in a group. “Native” access means the membership and its effect in the application itself.
-
-The application teams verify this mapping:
-
-| Approved work | Verified native access requirement |
+| Approved action | Native requirement |
 |---|---|
-| Read requests in the assigned queue | RequestDesk `RD-8101`, Queue Readers. |
-| Create and edit intake drafts in that queue | RequestDesk `RD-8102`, Intake Drafts, together with Queue Readers on the same account. |
-| Read published support instructions | KnowledgeShelf `KS-8101`, Published Guide Readers. No publishing permission. |
+| Read requests within the assigned queue | Requests Production: Queue Readers |
+| Create and edit intake drafts within that queue | Requests Production: Intake Drafts and Queue Readers on the same account |
+| Read published support instructions | Knowledge Production: Published Guide Readers; no publishing permission |
 
-Notice the dependency in the second row. Intake Drafts alone is not enough for the intended action. The role needs the full justified combination, not merely the entitlement whose name sounds closest to “create draft.”
+Drafts alone is insufficient. The application requires the reading right too, so the design needs the complete justified combination.
 
-Also notice what the table does not promise. Queue Readers does not grant every queue. RequestDesk separately enforces the account's assigned-queue setting. Devi must be able to work in North, not in an unrelated queue.
+The groups also do not erase queue scope. Requests Production checks its account's assigned queue separately. North work should succeed; access to an unrelated queue is not part of the requirement.
 
-These are fictional application rules supplied for this example. Another system can use different groups, licenses, native roles or resource conditions.
+Verify native identifiers, actual capabilities and dependencies with the responsible application contact. A familiar name cannot establish those facts.
 
-Do not infer those meanings from labels alone. Verify actual rights, dependencies and source identifiers with the application team.
+Test-source readers cannot substitute for Production access. Nor is a Knowledge reader the same represented object as a Requests reader merely because both names contain “Readers.”
 
-A similarly named Readers group in a test environment is not interchangeable with Production. Nor is a KnowledgeShelf reader reference the same object as a RequestDesk reader reference.
-
-## Put the justified access into an ISC role
+## Represent the combination without inventing a cross-system group
 
 An **access profile** is a named bundle of related entitlements from one source.
 
-We define **RequestDesk intake**, containing the two RequestDesk entitlements. They belong together because both are needed for the same intake task in that source.
+Request intake groups Queue Readers and Intake Drafts from Requests Production. Those two belong together because the same intake task requires both.
 
-The proposed ISC role is **Customer request intake**. It contains:
+The ISC role **Customer request intake** contains that profile and the Published Guide Readers entitlement from Knowledge Production directly.
 
-- The RequestDesk intake access profile.
-- The KnowledgeShelf Published Guide Readers entitlement directly.
+A **reference** points to another record. The role can reference access profiles and entitlements across sources. Each referenced profile still keeps its single-source boundary.
 
-Roles can contain access profiles and direct entitlements. A single-source access profile is not compulsory for every entitlement in a role, and a role can combine access across sources.
+The direct entitlement does not need a compulsory one-item profile wrapper. A separate Knowledge profile could be useful if it has a maintained purpose, but the role can contain this right directly.
 
-Here the RequestDesk profile groups a meaningful two-item capability. The direct KnowledgeShelf entitlement supplies one justified right. Creating a separate KnowledgeShelf profile could also be a valid design if it has a useful maintained purpose; it is not a technical requirement just to place this right in the role.
+“Direct” here describes a reference inside the role. It does not bypass provisioning or create an unrelated grant outside that role.
 
-We will call the role `R-1201`, the RequestDesk profile `AP-8101`, and the entitlement records `E-RD-8101`, `E-RD-8102` and `E-KS-8101`. These short identifiers are teaching labels, not real ISC ID formats or an API payload.
-
-The role and profile are enabled. All included access is standing, meaning no separate activation is needed before use.
+This is a **standard role**, grouping the stated access-profile and entitlement references. All access is **standing**, delivered without a separate just-in-time activation requirement. The role and profile are enabled for supported use.
 
 ```text
 Work: customer request intake
-                |
-     role Customer request intake
-        /                  \
-  RequestDesk         KnowledgeShelf
-       |                    |
-  intake profile      direct entitlement
-  Readers + Drafts    Guide Readers
-       |                    |
-  rd-120101           ks-120101
-       |                    |
-  North read/draft    published guide read
+              |
+ISC role: Customer request intake
+|
++-- Requests Production
+|   Request intake access profile
+|   Queue Readers + Intake Drafts
+|   -> selected Requests account
+|   -> North reading and drafting
+|
++-- Knowledge Production
+    Published Guide Readers entitlement
+    -> selected Knowledge account
+    -> published guide reading
 ```
 
-Read the upper arrows as “this requirement is represented by these access references.” The account branches show the intended delivery targets and native capabilities, not a guarantee of writes or a fixed processing order.
+The upper relationship connects approved work to the ISC requirement. The branches identify source-specific references, selected accounts and intended capabilities.
 
-The role itself is an ISC object. It is not a new native group spanning both applications. RequestDesk still evaluates RequestDesk permissions; KnowledgeShelf still evaluates KnowledgeShelf permissions.
+They do not create a native group spanning both applications, guarantee writes or specify backend execution order. Each application still decides what its account can do under its own rules.
 
-If RequestDesk has a feature called Role, that native role would be a separate object. Do not confuse the application's terminology with ISC's role.
+An application feature named Role would be another native object, not this ISC role.
 
-## Decide who qualifies separately from what the role contains
+## Decide who receives the contents
 
-The contents answer “what access?”
+The contents answer what access. Assignment configuration answers who should receive it.
 
-The assignment configuration answers “for whom?”
+Neither the role's title nor a description saying “for working intake staff” creates a recipient-selection rule.
 
-Making the role's name Customer request intake does not select Devi. Writing “for working intake staff” in its description does not create a matching condition.
+An **identity attribute** is a named value on the ISC identity. A **lifecycle state** describes an identity's organizational stage and can carry configured access requirements. Here the state is an eligibility input, not a separate grant of the role's rights.
 
-For this example, the business approves automatic assignment only when all of these current identity values are present:
+The supplied business policy allows automatic assignment only when these current identity values all match:
 
-- `department = CustomerOps`.
-- `jobCode = SUP-INTAKE`.
-- Lifecycle state technical name `working`.
+- Department equals `CustomerOps`.
+- Job Code equals `SUP-INTAKE`.
+- Lifecycle State equals the technical value `working`.
 
-An **identity attribute** is a field on the ISC identity, such as department or job code. A **lifecycle state** represents a stage such as working or departed. Here it is an eligibility input, not a separate grant of this role's access.
+Working is an enabled configured state in this example. The lifecycle criterion uses the technical value, not an assumed display label.
 
-The values are compared in one criteria group using **AND**. That means every condition must be met. Using OR would allow someone to qualify by meeting just one condition and would broaden the selected population beyond this approved rule.
+**Membership criteria** are the configured conditions selecting identities for the role. These three comparisons form one group joined with **AND**, meaning every condition must be satisfied.
 
-For lifecycle-state criteria, the configured value is the state's technical name, here `working`, not an assumed display label.
+OR would instead allow any one match and broaden this supplied policy. The platform supports configuring logic; it does not decide that everyone in a particular department should do intake.
 
-These conditions are a supplied business policy, not a universal SailPoint rule for support staff. Another organization may need different reliable evidence of responsibility.
-
-Let's test the policy against a few records:
-
-| Current ISC identity values | Result under this rule |
+| Current applied identity values | Result under this AND rule |
 |---|---|
-| Devi: CustomerOps, SUP-INTAKE, working | Meets all conditions. |
-| CustomerOps, SUP-OBS, working | Does not meet the intake job-code condition, even if the job title says Support specialist. |
-| CustomerOps, SUP-INTAKE, prehire | Does not meet the working-state condition. |
-| Finance, SUP-INTAKE, working | Does not meet the department condition. |
-| CustomerOps, missing job code, working | Cannot satisfy the required job-code comparison; investigate the missing value rather than assuming eligibility. |
+| CustomerOps, SUP-INTAKE, working | All conditions match |
+| CustomerOps, SUP-OBS, working | Job Code does not match, even with a Support specialist title |
+| CustomerOps, SUP-INTAKE, prehire | Lifecycle State does not match |
+| Finance, SUP-INTAKE, working | Department does not match |
+| CustomerOps, missing Job Code, working | Required Job Code comparison cannot be satisfied; investigate the missing value |
 
-The title of the role and a person's friendly job title are not substitutes for the selected fields.
+Test intended members and nonmembers before applying a shared policy. A department-only rule can be technically valid while selecting observers who should never draft intake records.
 
-Before applying a shared rule, test expected members and expected nonmembers. A rule selecting everybody in CustomerOps could be technically valid configuration and still implement the wrong business decision.
+ISC can also use an explicitly maintained **identity list** for role assignment. It selects named identities instead of comparing these attributes. You still need a justified reason for each listed person.
 
-ISC also supports an explicitly maintained identity list for automatic role assignment. That is a different way to select recipients, not a substitute for knowing why each listed identity should qualify.
+## Check what input the rule actually reads
 
-## Make sure the rule is reading the right information
+An **identity profile** configures how a population's source information supplies identity values and how its lifecycle behavior is managed. It is different from the access profile containing the Requests entitlement pair.
 
-A correct condition can still produce an unexpected result if its input is stale, missing or wrong.
+A **mapping** specifies how information becomes an identity value. Here approved HR information supplies Department and Job Code through configured mappings; lifecycle configuration supplies the applied working-state value.
 
-An **identity profile** defines how a population's identities are created and managed. Its attribute mappings determine how source information supplies identity fields. An identity profile is different from the access profile holding the RequestDesk entitlement pair.
+**Account aggregation** reads configured account data into ISC. **Identity processing** evaluates identity information and relevant configuration, including role requirements.
 
-In this example, an approved HR record supplies Devi's department and job code through configured mappings. The lifecycle configuration supplies her current working-state value.
+An approved HR value, a collected source value and an applied identity attribute are different observations.
 
-**Account aggregation** reads configured account data into ISC. **Identity processing** evaluates identity information and applicable configuration, including role requirements.
+Suppose HR shows SUP-INTAKE while the current ISC identity still holds SUP-OBS. This rule reads the configured identity input; it does not evaluate somebody's HR screenshot or approval email.
 
-A value approved in HR, a collected source value and the currently applied identity value are different observations. They can disagree while a change is still moving through the system.
+Follow collection, mapping and relevant processing to locate the gap. Broadening the role rule to include SUP-OBS would change eligibility instead of repairing that information flow.
 
-Suppose HR already shows `SUP-INTAKE`, but Devi's current identity still has `SUP-OBS`. The role rule evaluates the configured available input, not the fact that somebody approved a change elsewhere.
+The reverse error is possible too: changing correct HR information to satisfy a bad rule. Establish whether the source record, mapping or approved policy needs correction before changing it.
 
-Do not broaden the rule to include SUP-OBS merely to make Devi match. Follow the approved value through collection, mapping and relevant processing, and correct the actual fault.
+## Follow selection through separate source outcomes
 
-Nor should you change correct HR information to satisfy a badly designed rule. Decide whether the source record, mapping or approved policy is wrong before changing it.
+**Role assignment** associates the role with an identity through an applicable route. Saving and enabling the role does not prove that this person was selected.
 
-## Follow assignment and delivery as different outcomes
+Once the configuration is applied and the supplied conditions match, the assignment establishes the required access. Provisioning must then deliver the source changes. A recorded role is not proof that every application task works.
 
-**Role assignment** associates the role with the identity through an applicable assignment route.
+An **integration credential** is the account or authorization used by a connector for its source operations.
 
-**Provisioning** carries out required account or access changes through a supported automatic or manual fulfillment path.
+Consider these supplied observations from the same day, in UTC:
 
-Automatic selection can establish the requirement without successful delivery to every source. A role is not an all-or-nothing transaction across the applications.
+- **08:00:** HR holds CustomerOps and SUP-INTAKE, but the applied ISC Job Code is still SUP-OBS.
+- **08:10:** After relevant collection and processing, current identity values are CustomerOps, SUP-INTAKE and working.
+- **08:15:** Relevant evaluation of the reviewed, enabled role configuration selects the identity and records the assignment.
+- **08:18:** Activity reports both Requests memberships added. Knowledge's reader addition is rejected because the integration lacks update permission for that account.
+- **08:25:** Native checks confirm North reading and intake drafting. Guide reading is denied. Refund approval remains denied.
 
-Here is a supplied timeline, all on one date in UTC:
+The selection was correct. Requests delivery succeeded; Knowledge delivery failed. The complete responsibility remains unsupported because its instructions are unavailable.
 
-- At 08:00, HR contains CustomerOps and SUP-INTAKE, but Devi's applied ISC job code is still SUP-OBS.
-- At 08:10, after the relevant collection and processing, her current identity shows CustomerOps, SUP-INTAKE and working.
-- At 08:15, the applied role configuration selects Devi and the role assignment is recorded.
-- At 08:18, activity reports both RequestDesk memberships added successfully. KnowledgeShelf's reader addition is rejected because the integration actor lacks the required update permission on that account.
-- At 08:25, native checks confirm Devi can read and create intake drafts in North. KnowledgeShelf guide access is denied. Refund approval remains denied.
+Removing Guide Readers from the role to make the incident look successful would alter the requirement. It would not repair the rejected account operation.
 
-We can now locate the incomplete part.
+Under an approved correction to the Knowledge integration's permissions and supported recovery, a later native check confirms Published Guide Readers. Guide reading now succeeds, publishing remains denied, and North intake still works. South drafting and refund approval remain denied. No other relevant access, account or application-policy change occurred.
 
-The rule correctly selected Devi. RequestDesk delivery succeeded. KnowledgeShelf delivery failed. The complete intake responsibility is not yet supported because she cannot consult its instructions.
-
-Removing KnowledgeShelf from the role to make the incident look successful would change the requirement, not repair the rejected operation.
+That closes the selected delivery gap. It does not establish successful changes for every employee, a fixed retry delay or an all-or-nothing transaction across sources.
 
 ```text
-Approved input and saved role
-                |
+Applied values + enabled role
+              |
       relevant identity evaluation
-                |
-     all conditions satisfied?
-          /              \
-        no               yes
-        |                 |
- no assignment       role assigned
- by this rule              |
-                required source changes
-                    /            \
-              RequestDesk   KnowledgeShelf
-                 result        result
-                    \            /
-                 verify each native task
+              |
++-- Conditions not all met
+|   No assignment by this rule
+|
++-- All conditions met
+    Role assigned
+         |
+    Required source changes
+         |
+    +-- Requests account result
+    +-- Knowledge account result
+         |
+    Verify each intended native task
 ```
 
-The branches show separate decisions and outcomes. They are not an undocumented backend sequence. “No assignment” refers only to this rule; other configured assignment routes would need their own assessment.
+The “not all met” branch means no assignment by this particular rule. Another configured route would require separate investigation.
 
-The role-assignment view answers whether the role is associated with Devi. Provisioning activity answers what account changes were attempted and reported. Current source-account data and native application checks help establish what access is actually there.
+The source-result branches show independent delivery evidence, not private backend services or a promise about which source is updated first.
 
-Use the exact identity, source, account, entitlement and observation time. Another employee's success is not evidence that Devi's operation succeeded.
+The assignment view establishes the association. Account activity establishes attempted and reported changes. Current native memberships and checked actions establish what was delivered under the selected conditions.
 
-If fulfillment is manual, inspect the work item and completed target change. Automatic role assignment does not imply that every connector performs an automated write.
+Keep identity, source, account, entitlement, result and observation time together. Another employee's success does not establish this account's success.
 
-In a supported account-creation scenario, missing accounts could require additional configuration and operations. The main example deliberately starts with existing accounts; do not infer an account-creation guarantee from its successful membership additions.
+A **manual provisioning task** asks a person to make a required source change. Automatic selection can still use a human delivery path; inspect task completion and the native result.
 
-## Do not mix automatic eligibility with a request decision
+If accounts were missing, supported creation would need its own configuration and evidence. The existing-account example does not establish a universal account-creation guarantee.
 
-An **access request** asks for specified access for an identity. A requestable role has a request route with its applicable review and fulfillment conditions.
+## Keep a request decision separate from automatic eligibility
 
-The main role is not requestable. It uses the approved automatic criteria. No separate direct-role-request approval occurs in the supplied timeline.
+An **access request** asks for an access item for a recipient. **Approval** is the decision that the request may proceed.
 
-In an independent design, a temporary cover worker might request an appropriately configured role through an authorized request route. The person does not become an automatic criteria match merely because a request is approved.
+A **requestable role** has a configured request route with its applicable controls. Our main role is not requestable; it uses the automatic criteria, without a separate role-request approval in the timeline.
 
-Conversely, marking a role requestable does not mean everybody can receive it without review or that every automatic membership criterion becomes a request-eligibility filter.
+In an independent design, a cover worker can request an appropriately configured role through an authorized route even without matching the automatic criteria.
 
-Keep the route explicit. What selected this identity: current criteria, an identity list or an approved request? That history matters when investigating why access exists and how it should end.
+Approval does not change the worker's identity attributes or prove that the automatic comparisons match. It establishes a different assignment origin: the mechanism through which the association arose.
 
-For requested roles, the applicable role-request configuration governs review; do not assume each included access profile runs its own separate approval chain.
+Conversely, allowing requests does not establish universal eligibility or approval-free access. Automatic criteria are not automatically the request route's eligibility filter.
 
-A role owner can be configured as a reviewer, but assigning an owner is not proof that every automatic assignment waited for that person's approval.
+Identify whether criteria, an identity list or a permitted request selected the identity. For a requested role, its applicable request configuration governs review; included profiles do not each add their own direct-profile approval chain.
 
-## Keep the role narrow enough to explain and maintain
+A **role owner** is responsible for the maintained role and can be configured as a reviewer. Recording an owner does not establish that every automatic assignment waited for that person's approval.
 
-A role needs an accountable owner who understands the responsibility and can review its access and recipient policy.
+## Maintain a responsibility you can explain
 
-Its description should say what work it enables and where its boundary lies. “Customer request intake: read assigned-queue requests, prepare drafts and read published guides; excludes refund approval and guide publishing” helps a reviewer understand the intended package.
+The owner should understand both the intended work and the recipient policy, and be able to obtain application evidence when permissions change.
 
-The description informs a decision. The references, assignment configuration and application permissions enforce the actual behavior.
+A useful description states the capability and exclusions: assigned-queue reading and intake drafts, plus published guide reading; no refunds or guide publishing.
 
-Do not add refund approval just because three senior intake workers need it. Decide whether approval is a different responsibility or a justified exception, with its own eligibility and review.
+That informs a decision. Exact references, configured assignment and native permission rules establish the actual behavior.
 
-Likewise, do not create a new role for every person solely because each account has a different assigned queue. First determine whether the access requirements genuinely differ or whether the application already applies the queue scope. This example uses the same two RequestDesk groups with account-specific queue authorization.
+If three senior intake workers also approve refunds, assess a separate responsibility or justified exception. Do not give everyone refunds merely because it is convenient to add one more entitlement.
 
-The role's contents also do not describe all access Devi currently holds. If she already has an unrelated export permission, assigning Customer request intake does not establish that it was removed.
+Different assigned queues do not automatically require one role per person. First establish whether access requirements differ or the application already scopes the same groups using each account's queue.
 
-**Least privilege** means limiting access to what is justified for the authorized work. Omitting a dangerous entitlement from this role is part of that design, not proof that every other assignment or old grant on the account is appropriate.
+Also inspect access outside this role. A pre-existing unrelated refund group is not removed by assigning a narrower intake role.
 
-Plan the ending too. If Devi stops performing intake, identify how the governing assignment ends and which access remains required elsewhere. Role revocation does not itself mean account deletion, and overlapping requirements can affect which entitlements are retained.
+**Least privilege** means limiting access to what is justified for authorized work. Excluding refunds from this role supports that design; it does not prove every old grant or other assignment is appropriate.
 
-Editing the shared role's contents and removing one person's assignment are different changes. Do not use one as an unexplained substitute for the other.
+Plan how the requirement ends. When intake work stops, identify the governing assignment and other continuing needs. Removing role access does not itself mean deleting the source accounts.
+
+Editing shared contents and removing one person's assignment are different actions. Their impact and retained overlaps need their own assessment.
 
 ## Work through the decisions
 
-### Case 1: The experienced colleague has refund approval
+### 1. A colleague has refund approval
 
-**Facts:** A colleague with the same job title has the three intake rights plus refund approval. Devi's approved work excludes refunds.
+A colleague with the same title holds the intake rights plus refunds. The new employee's approved work excludes refunds.
 
-**Reasoning:** Do not copy the colleague's entire access. Confirm the native rights and keep only the justified intake combination in this role. Investigate the colleague's additional responsibility separately; identical titles do not prove identical need.
+Should their entire access be copied?
 
-### Case 2: The rule selects everyone in CustomerOps
+**Reasoning:** No. Map authorized tasks to verified native rights. Keep refunds outside this role and investigate the colleague's additional responsibility separately. A matching title is not matching need.
 
-**Facts:** The proposed rule checks only department. The department also contains observers who must not create intake drafts.
+### 2. The rule selects everyone in CustomerOps
 
-**Reasoning:** The rule is broader than the supplied responsibility policy. Test the agreed job-code and working-state conditions as well. Changing the role's name will not narrow membership.
+The department contains observers who must not draft. The proposed rule checks Department only.
 
-### Case 3: HR is correct but the identity is old
+Is that sufficient for the supplied intake policy?
 
-**Facts:** HR shows SUP-INTAKE. The applied ISC identity still shows SUP-OBS. The configured criteria use identity jobCode.
+**Reasoning:** No. Test the approved Job Code and working-state conditions too. A name change cannot narrow actual membership; alternative policy needs a justified business decision.
 
-**Reasoning:** The required input has not reached the record being evaluated. Trace collection, mapping and application before changing eligibility. A correct HR screenshot alone does not prove the role's current input matches.
+### 3. HR is correct but the identity is old
 
-### Case 4: The role is saved and enabled
+HR shows SUP-INTAKE; the applied identity still shows SUP-OBS. Criteria read identity Job Code.
 
-**Facts:** The access contents are correct, but no assignment criteria, identity list or request has selected Devi.
+Should the rule be broadened to make this identity match?
 
-**Reasoning:** An enabled definition does not identify a recipient by itself. Establish an approved assignment route. Do not report a source failure before showing that a requirement for Devi was selected.
+**Reasoning:** No. Trace collection, mapping and application to the evaluated record. Correct the actual cause; HR correctness alone does not establish the current rule input.
 
-### Case 5: The reader reference is from Test
+### 4. Contents are saved and enabled
 
-**Facts:** The proposed RequestDesk profile uses the Test source and its reader/draft entitlements, not the verified Production source and references. The names look familiar.
+No criteria, identity list or request has selected the employee.
 
-**Reasoning:** Correct the source-specific package before application. A role can span sources, but that does not make Test access satisfy a Production requirement. Each access profile must still group entitlements from its own selected source.
+Does the definition establish a source delivery failure?
 
-### Case 6: The role is present but guides are unavailable
+**Reasoning:** No. First establish an approved assignment route and actual requirement. Enablement alone does not select this recipient.
 
-**Facts:** Devi matches the criteria and holds the role. RequestDesk works; KnowledgeShelf's addition reports a permission rejection.
+### 5. The package uses Test access
 
-**Reasoning:** Preserve the valid requirement and investigate KnowledgeShelf's exact account operation and authorized recovery. Verify guide reading after correction. Do not treat role presence as delivered access or remove a needed right merely to hide the failure.
+The proposed intake profile selects the Test source's reader/draft records rather than Production. Names look similar.
 
-### Case 7: A cover worker's request is approved
+Can the role's cross-source capability make that correct?
 
-**Facts:** In a separate requestable-role design, the worker receives an approved role assignment but does not match the automatic intake criteria.
+**Reasoning:** No. Correct the exact source-specific component for the Production need. A role can span sources, but its included profile must still use the intended same-source entitlements.
 
-**Reasoning:** Identify the request as the assignment origin. Approval does not rewrite identity attributes or prove an automatic match. Check the applicable request conditions, scope and delivered native rights.
+### 6. The role is present but guides are unavailable
 
-### Case 8: Refund approval already existed
+Criteria match, the role is assigned, Requests works and Knowledge's reader addition reports a permission rejection.
 
-**Facts:** Before receiving the narrow intake role, Devi's account already held a refund-approval group through an unrelated grant. No refund-removal operation occurred.
+Should Guide Readers be removed from the role?
 
-**Reasoning:** The role's exclusions do not withdraw that old membership. Investigate its origin and current justification, then plan any authorized removal with the relevant retained requirements. Do not claim least privilege from this role's definition alone.
+**Reasoning:** No. Preserve the justified requirement. Investigate Knowledge's selected account/operation, obtain an approved correction and supported recovery, then verify guide reading. Role presence is not complete delivery.
+
+### 7. A cover worker's request is approved
+
+In a separate requestable-role design, the worker receives an approved requested assignment but does not meet the automatic criteria.
+
+Has approval established an automatic match?
+
+**Reasoning:** No. Identify the request origin and inspect its conditions and native results. Approval does not rewrite the identity values or make another route's comparisons true.
+
+### 8. A refund membership already existed
+
+Before receiving the narrow role, the account held unrelated refund access. No refund-removal operation occurred.
+
+Do the role's exclusions prove refunds were withdrawn?
+
+**Reasoning:** No. Investigate the old right's origin and current justification. Any approved correction must consider retained requirements and native outcomes. Narrow contents alone do not establish least privilege across the account.
 
 ## Try the same reasoning in a laboratory
 
-A laboratory sample-intake responsibility requires reading assigned-lab sample records, creating draft intake records and reading published handling instructions.
+Sample intake needs assigned-laboratory reading, draft intake creation and published handling instructions. Releasing results is a separate responsibility.
 
-Releasing test results is a separate responsibility. A senior colleague already has result release, and a vendor demonstration shows a convenient “all laboratory staff” group.
+A senior colleague has result release. A vendor offers a broad all-laboratory-staff group, but its exact permissions are unverified. Draft creation also requires a named-user license; available capacity is unknown.
 
-The laboratory system also requires a named-user license before draft creation can work. License capacity and the exact rights of the broad group have not yet been verified.
+A **license** gives an account the right to use a product or feature set under the native licensing model.
 
-What can you approve now, and what is still missing before an engineer can define a complete role and promise delivery?
+What can be agreed now, and what is missing before defining complete access and promising delivery?
 
-The responsibility and exclusions are clear enough to guide discovery. They are not yet a verified entitlement list.
+**Reasoning:** The responsibility and exclusions guide discovery, but they are not a verified entitlement list.
 
-Confirm the exact reader, draft and instruction rights, the license dependency, native resource scope and intended recipients. Do not copy result release or choose the broad group just because it is convenient.
+Confirm exact reader, draft and instruction rights, same-account dependencies, native laboratory scope, license requirement and intended recipients. Do not copy result release or accept the broad group merely because it is convenient.
 
-A role may combine the justified references across sources. Its assignment rule needs reliable evidence of the sample-intake responsibility, not the fact that someone works somewhere in the laboratory.
+A role can combine justified references across sources. Its selection needs reliable evidence of sample-intake responsibility, not merely laboratory employment. Different coherent packaging is possible if the rights and source boundaries remain correct.
 
-Unknown license capacity prevents a delivery promise even after the reference is included. Establish the required configuration, then verify each account's fulfillment and the actual draft-creation action.
+Unknown capacity prevents a delivery promise even after adding the license reference. Establish supported configuration, then verify each account's fulfillment and actual draft action.
 
-You now have a defensible chain: the work explains the access; the policy explains the recipients; the configured role represents that requirement; separate account evidence establishes what was delivered. If one link is missing, you can name what still needs to be established instead of treating “the role is there” as the whole answer.
+Connect the work to access, the policy to recipients and the role to those configured requirements. Use separate account evidence to establish delivery; when a link is missing, identify the information or operation still needed.

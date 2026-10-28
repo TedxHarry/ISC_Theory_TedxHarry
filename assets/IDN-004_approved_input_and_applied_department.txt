@@ -1,0 +1,11 @@
+[HR-approved current department]
+[HR-Production homeDepartment: ENG]
+                 |
+[Employees mapping selects this input]
+                 |
+[Applied identity Department: ENG]
+
+Other collected values:
+[Directory department: OPS]
+[Project department: PRJ-17]
+[Neither is selected for this output]

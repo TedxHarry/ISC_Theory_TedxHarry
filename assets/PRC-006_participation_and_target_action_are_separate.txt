@@ -1,0 +1,13 @@
+Applied lifecycle state
+             |
+     +-------+--------+
+     |                |
+Identity State    Account action
+     |                |
+participation     provisioning
+rules             result
+     |                |
+check inclusion   check target status
+
+A participation change doesn't prove
+that the target account was disabled.

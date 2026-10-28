@@ -1,0 +1,13 @@
+Before:
+[Directory Engineering -> old mapping]
+[Identity Department Engineering]
+
+Separate successful-write variation:
+[HR ENG -> identity ENG -> directory ENG]
+[Changed directory value collected]
+
+Old mapping restored:
+[Directory now ENG -> old mapping]
+[Identity Department ENG]
+
+[Recovery needs more than old config]

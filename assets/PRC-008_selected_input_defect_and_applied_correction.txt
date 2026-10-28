@@ -1,0 +1,15 @@
+Collected HR account
+currentOffice: Bristol  (approved)
+legacyOffice: Leeds     (historical)
+                |
+saved location mapping reads legacyOffice
+                |
+current identity location: Leeds
+
+Approved correction reads currentOffice
+                |
+Preview Bristol / current still Leeds
+                |
+supported selected processing
+                |
+verify current Bristol and workerType EMP

@@ -1,0 +1,12 @@
+[ISC: approved Buyer assignment]
+                |
+                v
+[Target: create buyer-user account]
+                |
+                v
+[Target: add buyer-user to buyers]
+                |
+       later supported account read
+                |
+                v
+[ISC: account and membership collected]

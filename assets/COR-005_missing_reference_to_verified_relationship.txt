@@ -1,0 +1,19 @@
+Approved owner reference: P-204
+
+Application feed
+  ownerRef: null -> P-204
+          |
+          v
+Same collected account: app-17
+  ownerRef = P-204
+          |
+          v
+Configured comparison evaluated
+  ownerRef Equals identificationNumber
+          |
+          v
+Identity identificationNumber = P-204
+  unique intended match -> associated
+
+Human verification, separately:
+Same account? Right person? Any writes?

@@ -1,356 +1,344 @@
 # The aggregation ended. What did it actually establish?
 
-Devi, employee number `58008`, coordinates warehouse dispatches. Her WarehouseFlow account is `wf-58008`.
+An application account's site changes from EAST to CENTRAL. SailPoint Identity Security Cloud (ISC) still shows EAST.
 
-The application has changed that account's operating site from `EAST` to `CENTRAL`. SailPoint Identity Security Cloud, or ISC, still represents the earlier value.
+The next collection ends with an error. It reports 60 accounts scanned against an expected population of 100. Yet ISC's account inventory still contains 100 records.
 
-An account collection ends with an error. Its history shows 60 accounts scanned, while the agreed population contains 100. Yet ISC's account inventory still contains 100 records.
+Does that inventory count prove that every account was read? Does the error prove that nothing changed?
 
-Has the inventory count proved that the read was complete? Did the error mean that nothing changed?
+Neither conclusion follows. The execution result describes the run. The input evidence describes what it obtained. The inventory describes what ISC currently holds, including information collected earlier.
 
-Neither conclusion follows. The task result, the records read, and the records currently stored answer different questions.
+Let's follow those separately.
 
-## First, identify the work that produced the result
+## Identify the operation before interpreting its result
 
-**Aggregation** reads supported account or access-object data and represents it in ISC. A **source** is ISC's configured representation of the system or data it manages. A **connector** supplies the integration operations that perform the supported reads.
+**Aggregation** reads supported account or access-object data and represents it in ISC. A **source** is ISC's configured representation of a system or collection of data. Its **connector** provides the supported integration operations.
 
-An **account** is an external system's record, with its own identifying key and attributes. ISC stores a representation of it. An **identity** is ISC's person record, which can connect accounts belonging to the same person.
+An **account** is a record in an external system, with an identifying key and **attributes**, named pieces of information such as site. ISC holds its own representation of that account.
 
-Our source is **WarehouseFlow Production**. It uses the Web Services SaaS connector to read the application's account interface. “SaaS” means software as a service; this connector runs in SailPoint's cloud. ISC already associates `wf-58008` correctly with Devi.
+An **identity** is ISC's representation of a person or another entity. It can connect accounts belonging to the same owner.
 
-This run is intended to read the complete agreed population of 100 accounts, not only changed accounts. All 100 already have ISC representations. No account is created or deleted in this example, and the expected identifiers do not change between the two runs below.
+Our neutral source, Dispatch-Production, uses a supported Web Services SaaS account read. **SaaS**, software as a service, identifies the cloud-run connector variant here.
 
-The application's interface uses **pagination**: it returns the account population in portions called pages. The supplied configuration obtains pages of 30 records, except for the final page of ten.
+The account dispatch-user is already correctly associated with an existing identity. Its external site has changed to CENTRAL; the earlier ISC value is EAST.
 
-These facts, error details, counts and outcomes are fictional teaching evidence. They are not measurements or screenshots from a live tenant.
+A **mapping** determines which input supplies a represented value. We need to establish whether this run obtained the account before deciding whether its site mapping failed.
 
-Before interpreting a result in daily work, establish the source and environment, account versus entitlement collection, full versus changes-only scope, and the particular execution. “The latest aggregation” can point to the wrong source, object type, or later rerun.
+The intended population contains 100 specific existing accounts, all already represented in ISC. No account is created or deleted, and the expected keys don't change between the two runs below.
 
-We will call the two executions Run A and Run B. Those are teaching labels, not real task identifiers. Their times use UTC, a common reference clock, on the same day. No other operation changes the ISC account values between Run A and its post-run checks.
+The application uses **pagination**, returning records in portions called pages. In the supplied configuration, the expected pages contain 30, 30, 30 and 10 accounts. Those sizes are example configuration, not a universal connector default.
 
-## Follow Run A until the read stops
+We'll call the executions Run A and Run B. These are teaching labels, not actual task identifiers. All times use UTC, Coordinated Universal Time, on one day.
 
-Run A starts at 09:00. The first page returns 30 accounts and the second returns another 30.
+The records, counts, errors and results are supplied examples, not live tenant measurements. No other operation changes the ISC account values between Run A and its post-run checks.
 
-The third page fails with a connection-reset error. The operation does not obtain the remaining required pages, and the task ends at 09:08 with an error.
+In daily work, also establish the source and environment, the object being collected, the intended population and the exact execution. “The latest aggregation” can refer to a different source, an object read instead of an account read, or a later rerun.
+
+## Follow Run A to the point where collection stops
+
+Run A starts at 09:00. Page 1 returns 30 accounts. Page 2 returns another 30 different accounts.
+
+Page 3 fails with a connection-reset error, meaning the connection is interrupted while the request is being handled. The remaining required records aren't obtained. Run A ends at 09:08 with Error.
 
 Here is the supplied evidence:
 
-| Evidence | What it says |
+| Evidence | What it establishes |
 |---|---|
-| Intended population | 100 specific existing accounts. |
-| Successful page responses | Page 1: 30 unique accounts. Page 2: 30 different accounts. |
-| Later response | Page 3 fails; no complete remaining population is obtained. |
-| Task result | Error; 60 accounts scanned in this example. |
-| Comparison of the 60 received inputs | 50 match their earlier values; ten contain changed values. |
-| Devi's account | Among the 40 unread accounts; ISC still represents `EAST`. |
-| Another received account, `wf-58009` | A separate post-run check confirms its new `CENTRAL` site is represented. |
-| Post-run inventory | Still contains the same 100 account identifiers, including older representations of unread accounts. |
+| Intended population | 100 specific existing accounts |
+| Successful responses | Page 1 has 30 unique accounts; page 2 has 30 different accounts |
+| Later response | Page 3 fails; the remaining required population isn't obtained |
+| Execution result | Error, with 60 accounts scanned in this trace |
+| Comparison of received inputs | 50 match earlier values; 10 differ |
+| Dispatch-user | Among the 40 unread accounts; ISC still has EAST |
+| Another received account, received-user | A separate post-run check confirms its new CENTRAL site is represented |
+| Post-run inventory | The same 100 expected identifiers remain, including older records for unread accounts |
 
-The ten changed inputs are not a claim that all ten resulting account updates have been verified. We have separately checked one, `wf-58009`.
+The 10 changed inputs describe information received. They don't establish that all 10 corresponding output updates were verified. One represented update, received-user, has been separately checked.
 
-The numbers describe different sets:
+The arithmetic has a clear subject at each step. Page 1 plus page 2 gives 60 unique accounts read. Within that received input, 50 same plus 10 different equals 60. The 60 read plus 40 unread accounts explains the expected population of 100.
 
-60 accounts were read. Of those received inputs, 50 were unchanged and ten differed. Another 40 expected accounts were not read.
-
-So 50 plus ten explains the 60 received accounts. Adding the 40 unread accounts explains the intended population of 100.
-
-The inventory still has 100 because already represented records do not become freshly read just by remaining in ISC. An old record can remain visible while this execution fails to obtain its current source values.
-
-Trace the supplied read:
+The inventory count is another quantity. Those 100 records existed in ISC before Run A. Keeping a stored record doesn't make its values a fresh observation from this execution.
 
 ```text
-[Expected population: 100 accounts]
+[Expected: 100 existing accounts]
                  |
-                 v
 [Page 1: 30] + [Page 2: 30]
                  |
-                 v
 [60 read: 50 same, 10 different]
                  |
-                 v
-[Page 3 fails: task ends in error]
-[40 unread, including wf-58008]
+[Page 3 fails; task ends in error]
+[40 unread, including dispatch-user]
 
 [Engineer checks actual ISC values]
-[wf-58009 new; wf-58008 still old]
+[received-user now CENTRAL]
+[dispatch-user still EAST]
 ```
 
-The connector obtains the page responses. ISC reports the task outcome and represents data obtained through the integration. The arrow order is the supplied trace for this fictional connection, not a universal statement about every connector's request or persistence order.
+The connector obtains the page responses. The connected lines trace this supplied read through its failure. They don't describe a private transaction sequence or how every connector persists partial results.
 
-The separate engineer checks are evidence collected after the task. They establish one represented update and one stale value. They are not an automatic success stage.
+The separate engineer checks establish one updated account value and one still-old value after the task. They aren't an automatic success stage.
 
-## An error describes a problem, not a universal rollback
+## Why can an update remain after an error?
 
-The error tells us that Run A did not complete its intended read. The later record check tells us that an earlier received account's new value is already represented.
+The run didn't finish the intended collection. Separately, received-user now has its new site value in ISC.
 
-Those facts can coexist.
+Those observations can coexist. The task's Error status doesn't establish that every earlier update was reversed.
 
-Do not infer that every aggregation is one indivisible transaction that either updates everything or restores every previous value. Nor should you assume that every failed aggregation always preserves all earlier work in the same way.
+It would also be wrong to turn this example into a universal promise that every failed run preserves all earlier work. Inspect actual records under the relevant connector and operation.
 
-Inspect the actual result for the operation, connector and affected records.
+Dispatch-user has a specific problem here: its current source data wasn't obtained. EAST remaining on that record isn't evidence that the mapping rejected CENTRAL.
 
-Devi's unchanged `EAST` value has a specific explanation in this example: her account was not read. It is not evidence that the operating-site mapping rejected `CENTRAL`.
+Likewise, received-user being correct doesn't establish that the other changed inputs or the remaining unread accounts are correct.
 
-Conversely, `wf-58009` showing its new value does not prove that the remaining 39 unread accounts or all other changed inputs are correct. One successful record cannot certify an incomplete population.
+A useful incident note makes the limits clear:
 
-A useful incident statement is therefore:
+“Run A failed while retrieving page 3. Its supplied trace contains 60 unique accounts out of 100 expected. Received-user has its new site value, while dispatch-user wasn't obtained and remains stale. The unread population and other changed-record outcomes still need verification.”
 
-“Run A ended with an error while retrieving page 3. The supplied trace contains 60 unique accounts out of 100 expected. Account `wf-58009` has its new site value, but `wf-58008` was not obtained and remains stale. The remaining population and other changed-record outcomes require verification.”
+That explains both the observed success and the unfinished work without inventing a rollback rule.
 
-That statement separates observed facts from work still needed.
+## What is each number counting?
 
-## A count needs a subject and a meaning
+A count needs an object, a scope and a stage.
 
-When you read a number, ask what was counted and where.
+The external population, returned rows, distinct account keys, records entering processing, stored account inventory and identities are different quantities.
 
-The source application's population, responses received by the connector, records entering ISC processing, current account inventory, and number of identities are not interchangeable quantities.
-
-| Number or label | Question it can help answer | What it does not establish alone |
+| Number or label | Question it can help answer | What it doesn't establish alone |
 |---|---|---|
-| Accounts scanned | How much account input this execution reports scanning. | That every intended account was included or every output value is correct. |
-| Unchanged accounts | How many inputs were classified as unchanged in this result. | That the accounts were never read or that all matching logic was reevaluated. |
-| Processed records | What work the specific result defines as processed. | A universal count of unique people, successful external changes, or completed identity updates. |
-| Added, updated or removed representations | What changes the particular result reports for ISC records. | Matching external create, update or delete operations. |
-| Current source account inventory | What account representations exist in ISC now. | How many were freshly observed in this run. |
-| Identities | How many person records exist in the stated view. | How many accounts a source read should return. |
+| Accounts scanned | What account input this execution reports scanning | Complete required coverage or correct resulting values |
+| Unchanged accounts | Which inputs this result classified as unchanged | That they weren't read or that all matching logic ran again |
+| Processed records | What the particular operation defines as processed | Unique people, successful target writes or completed identity updates |
+| Added, updated or removed representations | Which ISC record changes the result reports | Corresponding external create, update or delete operations |
+| Current account inventory | Which account representations ISC holds now | Which were freshly observed during this run |
+| Identities | Identity records in the stated view | Accounts that one source should return |
 
-Use the actual field definitions and scope for the screen or API result you are inspecting. An **API** is an interface through which software requests operations or retrieves data. Its response fields are not automatically identical to a screen's summary labels.
+An **API**, application programming interface, lets software request operations or retrieve data. API result fields aren't automatically identical to a screen's labels. Read the actual definitions for the result in front of you.
 
-The 50-same/ten-different breakdown in Run A is our supplied comparison of received inputs. It is not an invented universal ISC counter schema.
+Run A's 50-same/10-different breakdown is a supplied comparison of received input. It isn't a universal set of ISC counter fields.
 
-Do not force every result into “scanned = updated + errors + unchanged.” Counts can refer to different stages, objects or categories, and categories can overlap. An error event can also prevent a whole later page from arriving.
+Don't force every result into “scanned equals updated plus errors plus unchanged.” Categories can refer to different stages or overlap. A single error can also prevent a later page from arriving.
 
-A single connection failure in our trace leaves 40 expected accounts unread. “One error” would not mean “only one account needs attention.”
+In our trace, one connection failure leaves 40 required accounts unread. Error events and affected accounts aren't the same unit.
 
-## Why can many scanned accounts be unchanged?
+## What does a large unchanged count tell you?
 
-**Optimization** avoids further work for existing account records when no input changes are detected.
+**Optimization** avoids further processing for existing account records whose input hasn't changed. The documented optimized read obtains records and checks for changes; it can then skip repeated processing for unchanged accounts.
 
-The documented optimized aggregation reads records and evaluates whether their data changed. For an existing unchanged record, it can skip further processing, including account correlation and manager correlation.
+The skipped work includes **account correlation**, matching and associating a source account with its owning identity, and **manager correlation**, establishing an employee identity's relationship to its manager's identity.
 
-**Account correlation** associates a source account with the person it belongs to. **Manager correlation** establishes an identity's manager relationship. These are different matching responsibilities, even though both can depend on collected data.
+A high unchanged count can therefore be consistent with a successfully read, stable population. It doesn't mean the records were absent from the read.
 
-Therefore, a high unchanged count can be consistent with a successful read of a stable population. It does not mean those records were absent from the read.
+But if matching configuration was corrected, that count doesn't prove the new logic was applied to unchanged records. An appropriately supported **unoptimized aggregation** re-evaluates those records instead of taking the unchanged shortcut.
 
-It also does not prove that a recently corrected correlation configuration was applied to unchanged records. That task can require an appropriately supported unoptimized aggregation, which reevaluates unchanged accounts rather than taking the shortcut.
+Choose re-evaluation because the required logic needs to run again. A large unchanged count alone isn't a defect.
 
-Choose that operation because the required logic needs re-evaluation, not because a large unchanged count looks suspicious.
+An unoptimized run still needs the required input. Disabling optimization wouldn't recover the pages Run A failed to obtain.
 
-An unoptimized run still cannot process account data it never obtained. Disabling optimization would not repair Run A's failed page retrieval.
+## Read the status together with its explanation
 
-## Read the status together with its details
+ISC distinguishes success, warning, error and terminated tasks in aggregation history. The status identifies an execution outcome; its details help explain the meaning and extent.
 
-ISC's aggregation history distinguishes success, warning, error and terminated tasks. Treat the status as the beginning of the investigation, not the whole explanation.
+**Success** reports that the task completed its work successfully. Required business coverage still needs evidence. An unintentionally narrow filter can select 90 accounts when the requirement covers 100, and that configured read can succeed.
 
-**Success** means the task reported a successful outcome for the work it performed. To establish business completeness, also check the intended population, operation scope and output evidence.
+A **filter** selects or excludes records under supported conditions. Repeating the same successful selection doesn't make excluded accounts current.
 
-A connector can successfully read an unintentionally narrow filter. If only 90 of 100 required accounts are selected, repeating that successful read does not make the other ten current.
+**Warning** needs its actual message. Account-deletion safeguards, for example, can cancel a run with a warning when removal volume meets the applicable limit behavior. “It wasn't an error” doesn't establish that no action is needed.
 
-**Warning** calls for the warning details. For example, source account-deletion safeguards can cancel a run and generate a warning when the proposed deletion volume reaches the applicable limit behavior. It would be unsafe to dismiss that as “not an error, so no action is needed.”
+**Error** identifies unsuccessful execution. Establish the failing stage and affected population. No response at all, a failed later page and a record-conversion problem don't imply identical consequences.
 
-**Error** identifies an unsuccessful aspect of execution. Determine the affected stage, records and breadth. A connection failure before any response, a later-page failure after partial progress, and a record-conversion problem require different evidence.
+**Terminated** identifies work that was stopped. History can identify the administrator who terminated it. **Authentication** establishes the caller's identity. A deliberate stop doesn't establish failed authentication or reversal of earlier changes.
 
-**Terminated** means the execution was stopped. The history can identify the administrator who terminated it. A deliberate stop is not proof that the connector could not authenticate, and it does not prove that all earlier work was reversed.
+For an invalid individual record, check how that specific supported operation handled it. Don't assume every connector skips the record, stops the whole read or reports the same outcome.
 
-If work is still waiting or running, a previous completed row is not its final result. A scheduled time or accepted request is not completion evidence either.
+Work still waiting to start or running doesn't acquire a final result from a previous completed row. A scheduled time or accepted request is also not completion evidence.
 
-Do not assume one general rule for how every connector handles an invalid individual record. Establish whether that specific operation skipped a record, stopped further collection, or reported another documented outcome. Then inspect its consequences.
+## Find the evidence for this exact run
 
-## Find the result that belongs to this execution
+The cross-source **Aggregation Activity** view helps locate activity. A source's **Aggregation History** provides the context for individual account executions.
 
-The cross-source **Aggregation Activity** page helps locate activity across sources. The source's **Aggregation History** provides execution-specific account history.
+Account history can show start and stop, accounts scanned, status and optimization information. Details for terminated work can also include duration and unchanged-account information.
 
-For an account aggregation, the history can show its start and stop, accounts scanned, status and whether optimization was enabled. Details for terminated work can also include duration and unchanged-account information.
+Inspect available status-badge details for warnings, errors or termination. Where an administrator stopped the run, retain the identified actor and establish why.
 
-For warning, error or terminated entries, inspect the available information on the status badge. When an administrator terminated the task, the information identifies who did it.
+Start and stop describe the execution window, not every record's individual observation time. Scanned counts describe reported input work, not independent confirmation of the expected population.
 
-Connect each visible value to its meaning:
+Optimization information explains a processing choice. It doesn't establish correct read permissions or complete pagination.
 
-Start and stop establish this execution's time window. They do not give every account's individual observation time.
+Preserve the actual error message, relevant identifiers and the task reference or execution time. “Source broken” loses the facts needed to trace the problem.
 
-Scanned counts describe reported input work. Compare them with an independently established expected population and the identifiers actually obtained.
+Keep run identity with record evidence too. Comparing Run A's error with Run B's later account value without noting that they are different executions can produce a false diagnosis.
 
-Optimization information explains the processing mode, not whether the read had correct permissions or complete page coverage.
+When sharing diagnostics, retain useful tracing information while excluding credentials, access tokens and unnecessary personal details.
 
-Warning and error details identify reported problems. Preserve the exact message and relevant identifiers; don't replace them with a vague summary such as “source broken.”
+## A complete row count can still conceal missing accounts
 
-Keep the particular task reference or execution time with your evidence. Comparing Run A's error to Run B's account output without identifying the two runs can produce a false diagnosis.
+Run A's gap is visible: 60 distinct accounts versus 100 expected.
 
-When sharing diagnostics, retain the facts needed to trace the operation without exposing passwords, access tokens or unnecessary personal data.
+Now consider an independent result containing 100 rows but only 99 distinct account keys. One row appears twice and one expected account is absent. The row count matches the target, but the population doesn't.
 
-## A complete count can still hide incomplete coverage
+Even 100 distinct keys can be wrong if an expected account is replaced by an out-of-scope account.
 
-Run A is visibly short: 60 unique accounts versus 100 expected.
+An **account key** identifies an external account within its source context. Compare the expected and returned keys; display names needn't be unique. Check the connector's handling of duplicates without inventing one universal overwrite or rejection rule.
 
-Now imagine a separate result with 100 response rows but only 99 distinct account keys because one row is duplicated. If one expected key is absent, the raw row total is not proof of complete coverage.
+The collection mode matters too. A **full aggregation** reads the configured population, within its filters, supported operation and integration authority.
 
-Or imagine 100 distinct returned keys, with one expected account replaced by an out-of-scope account. The totals match, but the required set does not.
+A **delta aggregation** collects supported changes. Ten changes aren't a failed attempt to read every member of a 100-account population. Unchanged accounts can be omitted by design.
 
-An **account key** identifies the external account within its source context. Compare keys from the agreed population, not only display names, which need not be unique.
+A single-account read answers a question about one specified account rather than source-population coverage.
 
-Also establish which operation ran:
+An empty result also needs context. It can describe a genuinely empty agreed population, a bad filter, restricted visibility or an old or incomplete file. An unsuccessful request isn't a successful observation that the population is empty.
 
-A **full aggregation** reads the configured population. It is still bounded by filters, integration permissions and the supported operation.
+The **integration actor** is the account or application identity under which the connector reads. An administrator seeing 100 external accounts doesn't establish that this actor can see the same set.
 
-A **delta aggregation** collects supported changes. Ten returned changes cannot be compared with a 100-account population as though the other 90 were failed reads. An unchanged account can legitimately be absent.
+Before rerunning an uncertain population read, review account-deletion settings and possible effects. A correctly formatted response doesn't establish that it safely represents the intended population.
 
-A specified-account read addresses one account, not population coverage.
+## Keep entitlement and membership counts separate too
 
-An empty result needs the same care. It can reflect a genuinely empty agreed scope, a filter or actor-visibility problem, an old or incomplete file, or an unsuccessful request. A failed request is not a successful empty population.
+An **entitlement** represents an access right, such as a group membership or permission. **Entitlement aggregation** collects supported access-object information, such as group definitions. Account aggregation can collect held-access values.
 
-The **integration actor** is the external identity or credential under which the connector reads. An application's administrator seeing 100 accounts does not establish that the connector's actor can see those same 100.
+A run's discovered entitlement count can differ from total inventory. The inventory can include objects established through earlier account or entitlement collections.
 
-Review source account-deletion settings before rerunning uncertain population reads. An unexpectedly empty or narrow response must not be approved as accurate merely because it is syntactically valid.
+For example, five groups discovered by one run and eight groups currently in the source's inventory don't, by subtraction alone, prove three duplicates. Check source, object types, keys, previous collections and the count's definition.
 
-## Account counts are not entitlement counts
+Membership occurrences are another quantity. Two accounts holding one group produce two account-to-group relationships and one distinct group identifier. That doesn't add another group object.
 
-An **entitlement** is a represented access item, such as a group or permission. **Entitlement aggregation** collects supported access-object information. Account aggregation collects account data and supported held-access values.
+Don't combine account, membership, group and identity counts merely to balance a task total. Establish whether the numbers describe the same object and stage.
 
-A completed entitlement run's discovered count can differ from ISC's total entitlement inventory. That inventory can include information established through previous account or entitlement aggregations.
+## What if the requirement also includes identity or access changes?
 
-For example, a run that discovers five group objects does not, by that number alone, prove that a current inventory of eight is wrong. Check the selected source, object types, previous inventory and the meaning of that run's discovered count.
+A correct value on an ISC account isn't automatically a correct value on the person's identity.
 
-Account membership occurrences are different again. Two people holding one group produce two account-to-group relationships but only one distinct group identifier.
+An **identity profile** configures the mappings that supply identity information. **Identity processing** evaluates identity data under the relevant identity and access configuration. Required identity output needs input, mapping and processing evidence.
 
-Do not add account, membership, group and identity counts to make a task total balance. First decide whether the quantities describe the same objects and stage.
+**Provisioning** performs supported external account or access changes. Observing an existing membership isn't granting it. An account record updated inside ISC doesn't, by itself, establish an external account modification.
 
-## Keep source processing separate from identity and target results
+Identity processing can initiate provisioning, but it doesn't validate successful target delivery.
 
-A new value on an ISC account representation is not automatically a new value on the person's identity.
-
-An **identity profile** defines the source mappings used for identity values. **Identity processing** evaluates an identity under its identity and access configuration. Its output needs the relevant input, mapping and processing evidence.
-
-**Provisioning** makes supported changes to external accounts or access. Reading an existing membership is not granting that membership. A task's “updated account” result must not be casually rewritten as “the application account was changed.”
-
-Identity processing can initiate provisioning, but it does not validate that the external change was successfully delivered.
-
-For a request that extends beyond account collection, use a separate evidence check for each required result:
+When the requirement extends beyond account collection, check each required result:
 
 ```text
 [Engineer checks task outcome]
                |
-               v
 [Checks required read coverage]
                |
-               v
 [Checks selected account values]
                |
-      if identity update required
-               v
+      if identity output required
+               |
 [Checks identity value and mapping]
                |
       if external change required
-               v
+               |
 [Checks actual target outcome]
 ```
 
-These arrows show questions an engineer follows, not an automatic ISC execution pipeline. The conditional checks are needed only when the requirement includes those results. No stage borrows proof from a different stage's green status.
+The connected lines are an engineer's evidence checks, not an automated backend pipeline. Identity and external-result checks apply when those outcomes are required. They don't borrow proof from another stage's success status.
 
-ISC **Search** presents indexed information used to find records. It is not a new source read. Its synchronization can lag account or identity updates, so identify the object and view being inspected before blaming collection for an older search result.
+ISC **Search** uses indexed information for finding records. It doesn't initiate a new source read, and its synchronization can lag account or identity updates.
 
-If the agreed task is only to refresh Devi's account site, the account value is the relevant output. Do not invent a requirement that her identity site or application permissions must also change.
+If Search looks older, identify the object and view before blaming collection.
 
-## What should you check before retrying?
+Our main requirement is to confirm the selected account's site and required population coverage. No identity-site mapping or new access requirement has been supplied, so neither is invented as a condition of this recovery.
 
-A **retry** repeats supported work after an unsuccessful attempt. A later success does not erase what happened in the earlier attempt.
+## What should happen before another attempt?
 
-ISC can recognize retryable aggregation errors on supported sources. Connection-reset errors are among the documented examples, but retry support and configured behavior are connector-specific.
+A **retry** repeats supported work after an unsuccessful attempt. Later success doesn't erase the earlier execution or its effects.
 
-Do not assume every source retries, every error is temporary, or every retry resumes exactly at the failed page without repeating previous work.
+ISC recognizes retryable aggregation errors on supported sources. Connection reset is a documented example, but connector support and configured handling matter.
 
-For Run A, the task has already ended with an error. Establish the connection problem and supported recovery rather than waiting indefinitely for a hypothetical automatic continuation.
+Don't assume every source retries, every error is temporary or a retry resumes at exactly the failed page without repeating earlier work.
 
-In this fictional incident, the connection issue is resolved. The team reviews the unchanged population, source settings and consequences, then approves a new supported full aggregation.
+Run A has already ended with an error. Investigate the connection problem and supported recovery rather than waiting indefinitely for an unverified automatic continuation.
 
-Run B starts at 10:00 and ends successfully at 10:06. Its evidence shows all 100 expected unique account keys were obtained. At 10:07, a separate check confirms `wf-58008` now contains `CENTRAL`.
+In the supplied recovery, the connection issue is resolved. The team reviews the unchanged expected population, source settings and consequences, then approves a new supported full read.
 
-That gives us evidence of restored population coverage and the required account value. It does not establish that every possible identity calculation or target-access action succeeded, and none is part of this supplied recovery requirement.
+Run B starts at 10:00 and succeeds at 10:06. Evidence establishes all 100 expected distinct keys were obtained. A separate 10:07 check confirms dispatch-user now has CENTRAL.
 
-For permission errors, invalid mapping inputs, page configuration problems or producer defects, resolve the identified cause through the appropriate owner. Do not grant broad privileges, disable deletion guards or reset delta tracking merely to obtain a green result.
+Run B therefore supplies evidence for restored population coverage and the required account value. It doesn't certify every possible identity calculation or target-access change. Those aren't the stated recovery requirement.
 
-A controlled test on a smaller population can help diagnose a connector operation, but a successful diagnostic subset is not proof of full production coverage. Keep that test separate from the required population and review any scope or deletion consequences.
+A permission problem, bad input mapping, paging configuration error or producer defect needs its identified cause addressed by the appropriate owner. Don't grant broad access, disable deletion guards or reset delta tracking merely to make the result look successful.
+
+A controlled diagnostic subset can help investigate an operation. It doesn't establish coverage of the full production population. Review scope/deletion consequences and keep the diagnostic result separate from the original requirement.
 
 ## Work through these outcomes
 
 ### 1. Sixty scanned, one hundred in inventory
 
-Run A read 60 of 100 expected accounts and ended with an error. ISC still contains all 100 account identifiers.
+Run A reads 60 of 100 expected accounts and fails. All 100 identifiers remain in ISC.
 
-Can the engineer report that every account was refreshed?
+Can every account be reported as refreshed?
 
-**Worked reasoning:** No. The inventory includes previously represented records. The supplied read failed to obtain 40 expected accounts, including Devi's. Verify current values from the required population rather than treating inventory size as an execution count.
+**Worked reasoning:** No. Inventory includes earlier representations. Forty expected accounts, including dispatch-user, weren't obtained in this run. Verify the required keys and current values rather than treating stored count as fresh-read coverage.
 
 ### 2. An earlier update remains after the error
 
-After Run A, `wf-58009` contains its new site value. An engineer says this is impossible because the task failed.
+After Run A, received-user has its new site value. Someone says that is impossible because the task failed.
 
-What does the evidence establish?
+What does the record establish?
 
-**Worked reasoning:** It establishes an actual represented update despite the overall error. Do not infer universal rollback from the status. It also does not certify every other changed input; inspect those outcomes separately as needed.
+**Worked reasoning:** One represented update occurred despite the overall error. The status doesn't prove universal rollback. That one result also doesn't certify every changed input; inspect the remaining outcomes as required.
 
-### 3. Success returns only ninety accounts
+### 3. Success returns ninety accounts
 
-In an independent variation, a mistaken filter selects 90 of 100 required accounts. The task reports success for that read.
+An independent run uses an unintended filter selecting 90 of 100 required accounts. It reports success.
 
-Should the remaining ten be considered current?
+Are the other ten current?
 
-**Worked reasoning:** No. The result completed its configured read, but the supplied scope misses the business requirement. Identify the omitted keys, correct the approved scope safely, and verify complete collection. Task success and required coverage are different conclusions.
+**Worked reasoning:** That isn't established. The configured read succeeded, but its scope misses the requirement. Identify the absent keys, safely correct the approved scope and verify the required population.
 
-### 4. Most received inputs are unchanged
+### 4. Ninety-five received inputs are unchanged
 
-A complete optimized read obtains 100 accounts. The supplied comparisons find 95 unchanged inputs. The engineer recently corrected account-correlation criteria.
+A complete optimized read obtains 100 accounts. Ninety-five inputs are unchanged, but account-correlation criteria were recently corrected.
 
-Does the count prove that all 95 unchanged accounts used the corrected matching logic?
+Did all 95 necessarily use the new matching logic?
 
-**Worked reasoning:** No. Optimized processing can skip further account and manager correlation for unchanged records. Establish the appropriate supported unchanged-record re-evaluation and inspect its results. The count does not mean those 95 accounts were never read.
+**Worked reasoning:** No. Optimized processing can skip further account and manager correlation for unchanged records. Establish supported re-evaluation and inspect results when that is required. Unchanged doesn't mean unread.
 
-### 5. One page failure, many unread accounts
+### 5. One page failure leaves forty unread accounts
 
-One connection failure prevents page 3 and the remaining required pages from being obtained. Forty accounts are unread.
+A connection failure prevents page 3 and the remaining pages from being obtained.
 
-Does one reported failure mean only one account is affected?
+Does one failure mean only one account needs attention?
 
-**Worked reasoning:** No. An error event and affected accounts are different units. The expected keys and page evidence establish a 40-account coverage gap. Preserve the error context and identify the missing population instead of using event count as record count.
+**Worked reasoning:** No. Events and accounts are different units. Expected keys and page evidence establish a 40-account gap. Preserve the error context and identify the unread set.
 
-### 6. An administrator stops the run
+### 6. An administrator terminates the task
 
-A history entry is terminated, and its details identify an administrator who stopped it. No evidence of a credential failure is supplied.
+The history identifies an administrator who stopped the run. No credential failure is supplied.
 
-Must the engineer replace the integration credential?
+Must the integration credential be replaced?
 
-**Worked reasoning:** No. The supplied cause is an administrative stop, not failed authentication. Establish why it was stopped, what work occurred, and whether a supported rerun is appropriate. Do not change credentials or assume rollback without relevant evidence.
+**Worked reasoning:** No. Establish the reason for the stop, actual progress and consequences, then whether a supported rerun is appropriate. The supplied stop doesn't establish failed authentication or rollback.
 
 ### 7. Five discovered groups, eight in inventory
 
-An entitlement run reports five discovered objects. The current source entitlement view contains eight objects established across collections.
+The completed entitlement run reports five discovered objects. Its source inventory contains eight accumulated across collections.
 
-Does the mismatch alone prove three duplicates?
+Does that alone prove three duplicates?
 
-**Worked reasoning:** No. A per-run discovered count and accumulated inventory are different quantities. Check object keys, types, scope, previous collections and count meaning. Duplicates require identifier-level evidence, not subtraction alone.
+**Worked reasoning:** No. Compare object keys, types, scope, previous collections and count meaning. Per-run discovery and accumulated inventory differ; duplicates need identifier evidence.
 
 ### 8. One hundred rows contain ninety-nine keys
 
-A fictional response has 100 rows but only 99 distinct account keys. One expected account is absent, and another account's row is duplicated.
+A response has 100 rows, one repeated account key and one missing expected key.
 
-Can the raw total certify complete coverage?
+Does the raw total establish complete coverage?
 
-**Worked reasoning:** No. Compare the required and returned key sets. There are only 99 distinct returned keys, and the expected missing key still needs investigation. Determine how the specific connector handled the duplicate rather than inventing a universal overwrite or rejection rule.
+**Worked reasoning:** No. Compare the required and returned sets. Only 99 distinct keys arrived, and the missing account still needs investigation. Establish the connector's duplicate handling instead of assuming overwrite or rejection.
 
-## A project wants a single “healthy” indicator
+## Review a proposed healthy indicator
 
-A project proposes an operations dashboard. It will show healthy whenever the latest task has no error and its account count equals yesterday's inventory.
+An operations dashboard will show healthy whenever the latest task has no error and its account count matches yesterday's inventory.
 
-The requirement is that all in-scope worker accounts have current department information and that any required external disablement is confirmed. The project has not defined expected identifiers, freshness, identity mappings, warning handling or target verification.
+The real requirement is current department information for every in-scope worker account and confirmation of any required external disablement. Expected keys, acceptable data age, identity mappings, warning handling and target checks aren't defined.
 
-Would you approve that rule? Explain the separate evidence the indicator would need.
+Would that rule establish health? What evidence would it need?
 
-**Worked reasoning:** No. A task can complete a wrong scope, a warning can require action, a repeated total can hide different or duplicate identifiers, and stored inventory can contain old values.
+**Worked reasoning:** It wouldn't. A task can succeed with the wrong scope. A warning can require action. A repeated count can hide duplicates or different keys, and stored inventory can hold old values.
 
-Define the source/object/mode and required key population, the producer's data cutoff and acceptable age, execution outcome and warning context, and checks of the account values. Where identity department matters, establish the profile mapping and processing output.
+Define source, object, collection mode and expected keys. Establish producer cutoff and acceptable age, execution and warning context, and the account-value checks.
 
-Where external disablement is required, confirm the supported target operation and actual external state. Task success or an identity decision alone is insufficient.
+If identity department is required, verify its actual profile input and processing result. If external disablement is required, verify the supported operation and actual target state.
 
-A dashboard can combine those checks into a useful operational conclusion, but it must retain what is verified, incomplete, failed or unknown. It should not convert missing evidence into healthy just because one number is familiar.
+The dashboard can combine these into a useful conclusion while preserving verified, incomplete, failed and unknown results. Missing evidence shouldn't become healthy merely because one count looks familiar.
 
-Before saying “aggregation worked,” finish the sentence: which execution, which population, which record or outcome, and which evidence?
+Before reporting that aggregation worked, identify the execution, required population or value, and the evidence supporting that conclusion.

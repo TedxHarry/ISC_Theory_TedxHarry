@@ -1,311 +1,315 @@
 # The entitlement has an owner. Do we know what it allows?
 
-Devi, employee `100505`, uses account `pay-100505` in PayLedger Production, a fictional payroll application. Her current assignment is to compare department headcount totals. She needs summary figures, not individual salary or bank-account information.
+An employee needs department headcount totals. Their payroll application account has access displayed in SailPoint Identity Security Cloud (ISC) as Payroll Reports, with the description “Basic reporting access.”
 
-Her account belongs to group `G-9501`. In SailPoint Identity Security Cloud, or ISC, the group appears with the display name **Payroll Reports** and description **Basic reporting access**.
+The access item has an owner. Is that enough to decide whether the employee should keep it?
 
-Would you have enough information to decide whether Devi should keep it?
+The missing question is what the access actually permits. Reading a department total and exporting every employee's salary and bank details are very different capabilities, even if both appear under the word reporting.
 
-“Reporting” could mean reading a department total. It could also mean exporting every employee's payroll details. A friendly name does not settle that difference.
+For this hypothetical example, the application administrator confirms that the group permits viewing and exporting employee-level salary and bank-account details across all payroll regions. It does not permit editing those details or releasing payroll. A separate summary-only permission exists, and the employee's confirmed work requires only those summary figures.
 
-In this example, the application administrator checks the current PayLedger permission configuration. Membership in `G-9501` allows viewing and exporting employee-level salary and bank-account details across all payroll regions. It does not allow editing those details or releasing payroll. A separate summary-only permission exists.
+The records, work requirement, permission rules and outcomes below are supplied teaching examples. They are not observations from a tenant or a default connector policy.
 
-All application names, records, business requirements and observed outcomes here are fictional. They give us a specific situation to reason about, not a built-in PayLedger connector or a universal ISC access policy.
+## What is owned, and what is held?
 
-## Put the owner and the access holder on different lines
+An **entitlement** is an access right represented in ISC, such as an application group or permission. A **source** is ISC's configured representation of a system or collection of account data. Here, Payroll Production represents the payroll application, and the entitlement represents its Payroll Reports group.
 
-An **entitlement** is an access right represented in ISC, such as a source group or application permission. A **source** is ISC's representation of the connected system or account-data collection. Here, the source represents PayLedger Production, and the entitlement represents `G-9501`.
+An **account** is the external record through which a person or another entity uses a system. The employee's account is a member of that group. That **membership** is the account-to-group relationship used by the application's permission rules.
 
-Devi's **account** is the login record in PayLedger. Her ISC **identity** is the record representing her as a person. The account is correctly associated with her identity in this example. That association lets us discuss Devi's access, but the group membership belongs to her application account.
+An **identity** is ISC's representation of the person. The account is correctly associated with this employee's identity in the supplied records. This lets us discuss the person's recorded access while retaining the account that actually holds it.
 
-An **entitlement owner** is the person recorded as responsible for that access item. ISC's Primary Owner field selects an identity. It does not select the list of accounts holding the entitlement.
+The **entitlement owner** is the responsible party recorded for the access item. ISC's **Primary Owner** field selects an identity. It does not select all the accounts that hold the permission.
 
-For `G-9501`, suppose the selected owner is the identity labelled `payroll-owner-505`. This is a fictional teaching label, not a real ISC identifier. The organization has agreed that this person is accountable for explaining the permission and maintaining its governance information.
+Suppose the organization assigns a responsible payroll contact as Primary Owner. That person agrees to explain this access item's purpose, confirm its meaning with the application team and maintain its governance information.
 
-That responsibility needs an agreement behind it. Saving someone's identity in a field does not prove that they understand the application, have accepted ownership, or can answer an access question.
+That agreement matters. An identity appearing in the owner field does not prove the person understands the permission or has accepted responsibility for it.
 
-The two relationships look like this:
+**Metadata** is information describing an access item. A description explains its capability; other metadata can record an organizational assessment. These records help people make decisions, but they are separate from application membership.
 
 ```text
-PayLedger Production
+Payroll Production source
 |
-+-- G-9501: access object
++-- Payroll Reports entitlement
 |   |
-|   +-- owner reference
-|   |   -> payroll-owner-505
+|   +-- owner -> responsible identity
 |   |
 |   +-- description and metadata
-|       -> explain and classify
+|       -> explain and assess access
 |
-+-- pay-100505: Devi's account
++-- Employee's application account
     |
-    +-- member of G-9501
-        -> native access policy
+    +-- member of payroll group
+        -> application permission
+
+Ownership does not add membership.
 ```
 
-The owner-reference arrow identifies who is responsible in ISC. The membership arrow identifies an application relationship used by PayLedger's access policy. The description and metadata branch contains explanatory information. These arrows are not a processing sequence.
+The owner reference identifies responsibility in ISC. The account membership identifies a relationship used by the application. The description and metadata explain the access. These are different relationships, not processing stages.
 
-Notice what is missing: there is no arrow granting `payroll-owner-505` membership in `G-9501`. Assigning that identity as owner does not, by itself, give the person the payroll permission. Conversely, Devi can hold the permission without owning its definition.
+The owner can govern the entitlement without holding it. The employee can hold it without owning its definition. Assigning ownership also does not grant ISC administrative permissions; administrative authorization is a separate model.
 
-Nor does entitlement ownership make someone an ISC administrator. Administrative permissions are a separate question from responsibility for an access item.
+## Who can answer the question you need to resolve?
 
-## Who should answer which question?
+Different responsibilities provide different evidence.
 
-People often use “owner” without saying what is owned. That makes an investigation harder than it needs to be.
-
-| Person or responsibility | What you need from them |
+| Responsibility | Question it helps answer |
 |---|---|
-| Entitlement owner | Explain this specific access item's purpose, appropriate use and maintained meaning. |
-| Source owner | Take responsibility for the connected source; help coordinate application and integration questions within that agreed responsibility. |
-| Devi's manager | Explain Devi's current work and whether she needs the capability. |
-| Application administrator | Confirm the actual permission configuration, scope and account relationships in PayLedger. |
-| Assigned reviewer | Make the decision assigned by a particular request or certification process. |
+| Entitlement owner | What is this access item's purpose, intended use and maintained meaning? |
+| Source owner | Who coordinates responsibility for the source and its application or integration issues? |
+| Employee's manager | What work does this person currently need to perform? |
+| Application administrator | What actions, data scope and account relationships does the application currently enforce? |
+| Assigned reviewer | What decision has this particular review process assigned me to make? |
 
-One person can perform several of these jobs. The jobs still ask different questions.
+One person can perform more than one job. The jobs still require different evidence.
 
-Devi's manager knows that she only compares totals. The application administrator knows that `G-9501` permits detailed exports. The entitlement owner brings that meaning into a form other people can use. None of those facts alone establishes the final decision.
+The manager confirms the need for headcount totals. The administrator confirms the detailed export capability. The entitlement owner turns that technical meaning into information a reviewer can use. The assigned reviewer combines capability and need under the organization's decision process.
 
-A useful owner can obtain technical evidence without personally administering the application. An administrator can explain the settings without being the right person to decide a worker's business need.
+An owner need not administer the application personally, but must be able to obtain reliable evidence. An administrator's knowledge of settings does not, by itself, establish the employee's business need.
 
-ISC also supports Additional Owners, represented by identities or a governance group. A **governance group** is a group of people organized in SailPoint to carry governance responsibilities. It is not the PayLedger group `G-9501`, which grants application access. Similar words do not make those groups interchangeable.
+ISC also supports **Additional Owners**, represented by identities or a **governance group**. A governance group organizes people for governance responsibilities in SailPoint. It is different from the payroll application's group granting access.
 
-Additional owners can provide coverage, but their presence does not mean that every listed person must approve every request. The configured review process determines participation and approval rules.
+Additional owners can provide coverage. Whether they review a particular request, and how many approvals are required, depends on the configured process.
 
-## Write the description from what the permission does
+## What should the description tell a reviewer?
 
-Let's replace “Basic reporting access” with something a reviewer can actually use.
+A **display name** is a readable label. A **description** explains the capability behind it.
 
-A **display name** gives the entitlement a readable label. A **description** explains the capability behind that label. For this example, a clearer display name is **Payroll detail export, all regions**.
+“Basic reporting access” leaves out the actions, information and reach that matter to this decision. A clearer name for the supplied permission would be **Payroll detail export, all regions**.
 
-The description could say:
+A usable description could say:
 
-> Allows viewing and exporting employee-level salary and bank-account details for all payroll regions in PayLedger Production. Intended for approved payroll reconciliation work. Does not permit editing employee payment details or releasing payroll. Summary headcount reporting uses separate access.
+> Allows viewing and exporting employee-level salary and bank-account details across all payroll regions. Intended for approved payroll reconciliation work. Does not permit editing payment details or releasing payroll. Summary headcount reporting uses separate access.
 
-Each part answers a different question.
+“Viewing and exporting” states the actions. “Employee-level salary and bank-account details” identifies the information. “All payroll regions” states its **scope**, the boundary of data or resources the permission covers.
 
-“Viewing and exporting” identifies actions. “Employee-level salary and bank-account details” identifies the information. “All payroll regions” identifies scope. The exclusions prevent a reader from treating reporting access as an editing or payment-release permission.
+The exclusions distinguish reporting from editing and releasing payment. The summary alternative matters because it fits the employee's confirmed work without requiring the broader capability.
 
-The final sentence distinguishes a narrower alternative. That matters because Devi's work does not require the broader capability.
+The intended-use sentence guides a decision. It does not mean the application checks a person's work assignment every time they export. A description can explain who should receive access without enforcing that restriction.
 
-The intended use is business guidance. It is not a claim that PayLedger checks a person's work assignment whenever they export a report. A description can explain who should receive access without implementing that restriction.
+Write exclusions from evidence. If bank-detail access has not been checked, do not promise “no bank data.” Record the unanswered question, obtain the relevant configuration evidence, and then maintain the description.
 
-Avoid adding an exclusion merely because it sounds reassuring. If the application administrator has not established whether bank details are included, the description must not promise “no bank data.” Record the uncertainty, obtain the permission evidence, and then maintain the description.
+Likewise, distinguish “all regions” from “the account's assigned region.” An employee's department does not silently narrow a permission whose native rule covers every region. **Native** means information or behavior in the external system's context.
 
-Descriptions also need to say what varies. If a permission reads only the account's assigned region, say so. If it reads every region, say that instead. Do not silently substitute the employee's department for the application's actual data boundary.
+Changing the name or description in ISC does not send those edits to the source or narrow its permission. After this wording correction, the catalog explanation is better, but the account still holds the detailed payroll access.
 
-Changing the display name or description in ISC does not send those changes to the source. In our example, renaming the ISC entry leaves PayLedger's group key, membership and permission configuration unchanged.
+## Follow the explanation through to an access outcome
 
-The catalog is now clearer. Devi's access is not yet narrower.
+An **access request** asks for an access item for a recipient. A **certification** asks designated reviewers to assess selected existing access and decide whether it should remain.
 
-## Sensitive access is about possible harm, not just administration
+Both need clear permission information. They have different purposes and configurations. A **certification campaign** is a configured set of reviews. The applicable access model and campaign determine which access is included; not every collected item can be reviewed independently.
 
-**Sensitive access** means access whose use or misuse deserves special attention because of what it exposes or permits. Here, it is an organizational assessment of the capability, not the name of a universal ISC Boolean field.
+For a certification requiring **sign-off**, the reviewer must submit their decisions. Selecting Revoke and signing off are different events: an unsigned revoke decision is not applied. Submission initiates the separate removal work; it does not prove that the application change succeeded.
 
-Consider two permissions:
+Our example concerns an existing holding. The approved review combines the confirmed all-region export capability with the employee's summary-only work requirement. The organization decides to replace detailed access with the separate summary permission.
 
-- One reads a non-confidential office directory.
-- One exports individual salary and bank-account details.
-
-Neither needs to edit data to have consequences. “Read-only” describes the absence of a write action. It does not describe the sensitivity of the information or the effect of copying it outside the application.
-
-When you investigate an entitlement, ask what actions it permits, what data or resources they affect, and how broad that reach is. Also check whether it can administer other users or permissions. Someone who can grant themselves another permission may have more capability than their initial screen suggests.
-
-Use native configuration and a knowledgeable application contact to establish those facts. Names such as “Reader,” “Support,” or “Basic” are clues to investigate, not proof of limited scope.
-
-For `G-9501`, the sensitive fact is the detailed, all-region export. Devi's current headcount task does not become a justification for that export merely because her department is Finance.
-
-This reasoning is not a legal classification of payroll data. It is a practical access decision based on the supplied work requirement and permission evidence.
-
-## Where do ISC privilege levels fit?
-
-**Privilege classification** assigns a privilege level to an entitlement. The **direct privilege level** is the level assigned to that entitlement itself.
-
-Current SailPoint classification uses High, Medium and Low. Broadly, High represents the highest administrative privilege on a source, Medium represents a more limited administrative capability, and Low can represent non-administrative data access. A displayed None can also mean no classification has been assigned. It is not evidence that the entitlement permits nothing.
-
-Classification can use a configured source-wide level, recommendations or custom criteria. Automatic assignment depends on its configuration being enabled. A manual direct-privilege override takes precedence until removed.
-
-Why does the origin of the value matter? Suppose an old manual override remains while the organization changes its classification criteria. Looking only at the new criteria would not explain the displayed result. Check the override as well.
-
-Do not interpret Low as “safe for everyone.” The detailed payroll export can remain sensitive even though it is not an administrative function.
-
-**Effective privilege** is the calculated level after considering direct and inherited privilege. An entitlement hierarchy represents relationships between access objects, such as one group belonging to another. For supported, represented entitlement hierarchies, a child can inherit a higher level from a parent; the entitlement's effective level uses the higher direct or inherited level.
-
-For example, if an entitlement has direct Low and inherits High through a represented parent, effective High is not a contradiction. Inspect the relationship and its classification. Do not lower the direct label and conclude that the inherited capability disappeared.
-
-This calculation describes privilege information in SailPoint. It does not create a native group relationship or make PayLedger enforce a new permission. Missing hierarchy information is also not proof that the application has no indirect access path.
-
-Check which capabilities and fields are available in your tenant and supported integration. A generic label, a legacy privileged indicator and a current direct/effective level must not be treated as interchangeable evidence.
-
-## Keep data sensitivity separate from the privilege scale
-
-**Metadata** is descriptive information attached to an access item. ISC supports configurable access-model metadata, including custom attributes for entitlements.
-
-Suppose this organization creates a custom attribute called **Data sensitivity**, with a value **Restricted payroll**. Those names and that classification policy are invented for this example. They are not predefined ISC values.
-
-The organization assigns that value to `G-9501` after confirming its data scope. This communicates a concern that “non-administrative” alone does not capture.
-
-| Information on the entitlement | What it establishes, and what it does not |
-|---|---|
-| Primary Owner identifies `payroll-owner-505` | Records the responsible identity; does not establish membership or automatic review of every process. |
-| Description explains all-region payroll exports | Communicates the confirmed capability; does not narrow the native permission. |
-| Direct privilege is Low | Records a privilege classification; does not prove that the exported data is harmless. |
-| Custom Data sensitivity is Restricted payroll | Records this organization's sensitivity assessment; does not automatically block requests or remove access. |
-| Requestable status is disabled | Prevents availability through that direct request mechanism; does not establish removal of existing application membership. |
-
-If the organization wants a metadata value to affect a decision or workflow, it must identify and validate the process that consumes it. Storing a value does not, on its own, define that behavior.
-
-Also keep classification evidence current. A permission may gain a new export capability while retaining its old name. A previously reasonable description or assessment can then become misleading.
-
-## Follow the information into a real decision
-
-An **access request** asks for access to be granted. A **certification** asks an assigned reviewer to assess existing access and decide whether it should remain. Both need understandable permission information, but they are different processes.
-
-Our situation concerns access Devi already holds. The organization investigates whether she should keep `G-9501`.
-
-The following is a human investigation and decision flow. It is not an ISC backend execution order:
+That decision requires an access change. **Provisioning** carries out account or access changes. **Remediation** is corrective work addressing access that should not remain.
 
 ```text
-Current application evidence
-             |
-             v
+Application capability evidence
+              |
+              v
 Owner confirms action and scope
-             |
-             v
-Description and classification
-             |
-             v
-Configured review + work need
-             |
-             v
-       Access decision
-             |
-    if a change is required
-             |
-             v
-Separate delivery and checks
-             |
-             v
-Account + permission evidence
+              |
+              v
+Usable description and assessment
+              |
+              v
+Review combines access + work need
+              |
+              v
+       Authorized decision
+              |
+       if change is required
+              |
+              v
+Separate delivery to selected account
+              |
+              v
+Current membership + action checks
+
+Human responsibilities, not ISC jobs.
 ```
 
-First, current application evidence establishes the capability. The owner confirms its meaning and keeps the description and classification usable. A configured review then combines that information with the person's work requirement.
+The arrows show which evidence or decision passes to the next responsibility. They do not mean saving metadata automatically starts a review, or that a reviewer decision proves a source change succeeded.
 
-A decision requiring a change starts a separate delivery and verification responsibility. **Provisioning** is the process of changing accounts or access in a target system. **Remediation** is the corrective work needed to address access that should not remain.
+The replacement must target the correct source, account and access items. Plan both sides: deliver the required summary access and remove the unnecessary detailed access through the approved, supported path. Check the impact of the order so that the employee retains the required working capability.
 
-The arrows mean “use this evidence or result for the next responsibility.” They do not mean saving metadata automatically launches a review or that every decision provisions a change.
+For this supplied completed example, current native evidence confirms summary access present and detailed-group membership absent on the selected account. A fresh application check confirms that headcount summaries work and detailed payroll viewing and export are denied. No other detailed-data grant exists, and the underlying permission definitions and employee's work requirement have not changed during the replacement.
 
-In the supplied example, the organization confirms that Devi needs only summary figures. It decides to replace detailed payroll access with the separate summary-only permission through its approved change process. It must plan that replacement without assuming a label edit performs it.
+These observations establish the selected outcome. The summary result confirms the required capability; the detailed-access checks confirm the unwanted capability is unavailable under the checked conditions. Neither result follows merely from renaming the entitlement or recording the decision.
 
-To establish the outcome, inspect the operation for the correct source, account and entitlement. Then obtain current application evidence that the broader capability is no longer available and that the required summary capability works. A recorded decision is evidence of intent; an account change and a permission check establish different parts of the result.
+In an actual investigation, follow the relevant operation activity or manual task, then obtain current account and application evidence. If delivery evidence remains pending, record that limit instead of treating the outcome as complete or guessing where it failed.
 
-## The owner field does not choose every recipient
+## Why can read access still need close review?
 
-For entitlement access requests, reviewer selection can include owners, managers, source owners or governance groups. The relevant configuration matters, including individual entitlement settings that can supersede source or global settings.
+**Sensitive access** is access deserving special attention because of what its use or misuse can expose or permit. Here, sensitivity is an organizational assessment, not the name of a universally defined ISC setting.
 
-If the effective request approval configuration selects only Manager, saving an entitlement owner does not silently add an owner approval.
+A non-confidential office directory and a payroll export can both be read-only. That shared description does not make their consequences equal. Copying detailed salary and bank information can expose data without changing any record in the application.
 
-If it selects Primary Owner, the selected identity participates through that configured choice. If it selects All Owners, the documented rule allows any one primary or additional owner to approve. The label does not mean unanimous approval.
+Check the actions, data, scope and ability to administer other accounts or permissions. An entitlement that lets someone grant themselves further access may have a broader effect than the first screen suggests.
 
-Do not transfer those request rules to every certification campaign or manual task. Inspect the process involved and its actual assignee. For example, certification remediation has its own delivery path; a manual task is not necessarily sent to the person whose name appears on the entitlement.
+Use native configuration and a knowledgeable application contact to establish those capabilities. Reader, Support and Basic are names to investigate, not proof of limited reach.
 
-When an owner leaves, repair the ownership record through an agreed handover. Also inspect outstanding work. A new name on the entitlement is not evidence that an existing request or task changed recipient. Check its recorded assignment and use the supported reassignment process where required.
+For the original payroll holding, the employee's department alone did not justify detailed all-region exports. The work requirement supplied only a need for totals. This is a practical comparison of capability and need, not a legal classification of payroll data.
 
-The same discipline applies when an owner cannot answer. Ask for the missing application evidence and a suitable accountable contact. Assigning a convenient person's name to clear an empty field does not resolve the uncertainty.
+## What does a privilege level tell you?
 
-## What if aggregation brings back the old description?
+**Privilege classification** assigns privilege levels to entitlements. The **direct privilege level** is the level assigned to the entitlement itself.
 
-**Aggregation** reads source data into ISC. Entitlement aggregation reads the supported access-object details available from the source.
+SailPoint's classification uses High, Medium and Low. High describes the highest administrative privilege on a source; Medium describes a more limited administrative capability; Low describes access without administrative privilege.
 
-Descriptions can originate in that data or be maintained in ISC. Their origin affects later updates.
+Low does not mean that sensitive information cannot be read or exported. If the payroll item is classified Low, that field alone cannot justify giving its detailed data to someone who only needs totals. Also check whether the classification accurately describes the confirmed capability.
 
-A manually updated entitlement name or description is protected from replacement by later aggregation. This preserves deliberate enrichment, but it also means that a corrected source description does not necessarily replace an older manual ISC description.
+An unset direct level can display **None** when no manual setting or classification method has assigned a level. That is not evidence that the native permission allows nothing.
 
-Suppose PayLedger's native description is updated to mention all-region exports, while ISC still shows a manually maintained “Basic reporting access.” The difference does not, by itself, establish a failed connection.
+Classification can use a configured source-wide level, recommendations or custom criteria. Automatic assignment requires the applicable configuration to be enabled. Saving criteria while automatic classification is disabled does not apply those criteria to entitlement levels.
 
-Check the exact entitlement and source, the currently returned description, the relevant aggregation result and whether the ISC field was manually updated. Then agree which system owns the explanation and maintain it through the supported method.
+A **manual override** is an explicitly assigned direct level that takes precedence over the classification method until removed. Suppose criteria would produce Medium but a retained manual override sets High. The displayed High has an explanation: changing the criteria does not remove that override.
 
-Do not clear manual-update protection across a source simply to make one display match. That is a different change, with a wider effect on curated information.
+Check how the value was assigned before changing it. Reviewing the classification is separate from changing the native permission.
 
-## Work through the evidence
+**Effective privilege** is the calculated level after direct and inherited privilege are considered. An entitlement hierarchy represents supported relationships among access objects, such as one group belonging to another. A parent entitlement can contribute privilege to a child in a supported, represented hierarchy.
 
-### Case 1: The owner is not in the group
+For entitlements, the effective level uses the higher direct or inherited level. In a separate example, direct Low with inherited High produces effective High. Lowering the direct level does not remove the inherited contribution.
 
-**Facts:** `payroll-owner-505` owns `G-9501` in ISC. Current PayLedger membership evidence shows that this person's application account is not a member. Devi's `pay-100505` is a member.
+This calculation concerns privilege information in SailPoint. It does not create a native relationship or itself enforce a permission change. Missing hierarchy data also does not prove the application has no indirect access path.
+
+Identify which field you are reading. The default unset direct None is different from the effective-level description for an object not used for application access. Neither should replace inspection of the actual source capability. A legacy privileged indicator is also not interchangeable with current direct and effective levels.
+
+Available features and fields depend on the tenant and supported integration. Classification must be interpreted in that context.
+
+## Keep sensitivity information separate from the scale
+
+Suppose the organization creates custom entitlement metadata called **Data sensitivity**, with the value **Restricted payroll**. These are example names and an organization-defined assessment, not predefined ISC values.
+
+That value can communicate why a non-administrative export still needs careful consideration. It adds context that the administrative privilege scale does not fully express.
+
+**Requestable** means available to request under the applicable configuration. Changing requestability is different from delivering or removing access.
+
+Read the fields according to their jobs:
+
+| Entitlement information | What it establishes |
+|---|---|
+| Primary Owner | Records the responsible identity; does not establish group membership or participation in every review |
+| Accurate description | Explains the confirmed capability; does not narrow the native permission |
+| Direct Low | Records a privilege level; does not establish harmless data or a justified business need |
+| Custom Restricted payroll value | Records the organization's assessment; does not automatically block requests or revoke access |
+| Direct requestability disabled | Removes availability through that direct request mechanism; does not establish removal of existing membership |
+
+If the organization wants a metadata value to influence a review, request or workflow, it must configure and validate a process that consumes that value. Storing the value alone does not define that behavior.
+
+Keep this information current. A group can gain export capability while keeping the same name and members. A previously accurate description or assessment can then understate what it permits.
+
+## Does the owner field choose the reviewer?
+
+For entitlement requests, the effective approval configuration determines who reviews. Individual entitlement settings can supersede source and global settings.
+
+**Approval** is the decision assigned within that configured process. An owner reference supplies a possible responsible identity; it does not add an approval stage on its own.
+
+If the effective configuration selects only Manager, the entitlement owner is not silently added as another reviewer. If it selects Primary Owner, the selected owner participates through that option.
+
+Under **All Owners**, any one primary or additional owner can approve. All Owners does not mean every listed owner must approve unanimously. If separate decisions are required, the review design must express them.
+
+These are entitlement request options. A certification campaign or manual remediation task has its own assignment behavior. Inspect the actual process and assignee instead of transferring one routing rule to all work.
+
+When an owner leaves, arrange an agreed handover and update responsibility. Also inspect outstanding requests and tasks. A changed owner field does not prove that existing work changed recipients. Check its recorded assignment and use the supported reassignment process where needed.
+
+If an owner cannot explain the permission, identify the missing technical evidence and a suitable accountable contact. Filling the field with a convenient name does not resolve that gap.
+
+## Why can a corrected source description stay old in ISC?
+
+**Aggregation** reads external data into ISC. **Entitlement aggregation** reads supported access-object details, including descriptions where the integration supplies them.
+
+A description may be collected from the application or maintained in ISC. Its **provenance**, meaning its origin and maintenance history, affects how later reads update it.
+
+Manually updated entitlement names and descriptions are protected from later aggregation overwriting them. This preserves curated explanations, but can also preserve wording that has become outdated.
+
+Suppose the application now describes all-region exports, while ISC retains a manually maintained “Basic reporting access.” That mismatch alone does not prove a failed connection.
+
+Check the exact source and entitlement, current returned description, relevant collection result and manual-update state. Agree which system should maintain the explanation, then update it through the supported method. Do not clear protection across a whole source just to correct one field.
+
+A successful read, retained manual wording and unchanged membership can all coexist. They answer different questions.
+
+## Which evidence changes your conclusion?
+
+### 1. The owner is not a member
+
+The responsible identity owns the entitlement in ISC. Their application account does not hold the payroll group, while the employee's account does.
 
 Is the owner record inconsistent?
 
-**Reasoning:** No inconsistency follows. Ownership records responsibility; membership records access. The organization may intentionally choose an owner who can govern this permission without holding it. Verify that the person accepted the responsibility and can obtain the required evidence, rather than adding them to payroll access to make the fields “match.”
+**Reasoning:** No. Responsibility and membership are separate relationships. Confirm that the owner accepted the responsibility and can obtain the required evidence, rather than granting payroll access to make ownership and membership appear to match.
 
-### Case 2: The description is corrected
+### 2. The description was improved
 
-**Facts:** The ISC description now explicitly says that `G-9501` permits all-region detailed payroll exports. No membership, native permission or provisioning operation changed.
+The ISC description now states the detailed all-region exports. No native membership, permission or provisioning operation changed.
 
-Has Devi's access been reduced?
+Was the employee's access reduced?
 
-**Reasoning:** No. The explanation changed, not the application capability. Inspect `pay-100505` membership and PayLedger's permission rules for access evidence. The better description supports a better decision; the decision still needs a separate approved change if access is excessive.
+**Reasoning:** No. The explanation changed. Inspect current account membership and the application rule for capability evidence. A better description supports a decision, but does not deliver a required access change.
 
-### Case 3: Low privilege, detailed exports
+### 3. Low privilege accompanies detailed exports
 
-**Facts:** Direct privilege is Low. Current native configuration confirms salary and bank-account exports. Devi needs only headcount totals.
+Direct privilege is Low. Native evidence confirms salary and bank-detail exports. The employee needs only headcount totals.
 
-Can you approve continued detailed access because it is non-administrative?
+Does Low justify keeping the broader access?
 
-**Reasoning:** No. The level does not establish that the data is harmless or that Devi needs it. Compare the confirmed capability with her task. In this example, investigate replacement with the separate summary permission through the organization's approved process. A justified different work requirement would need its own evidence.
+**Reasoning:** No. Compare the capability with the work requirement, check classification accuracy and review the summary alternative through the approved process. A different work requirement would need evidence; the level cannot supply it.
 
-### Case 4: The owner never received the request
+### 4. A valid owner received no approval task
 
-**Facts:** A new request for `G-9501` was assigned to the requester's manager. The effective approval configuration selects Manager only. The entitlement has a valid Primary Owner.
+A new entitlement request went to the manager. Its effective approval configuration selects Manager only, and a valid Primary Owner exists.
 
-Does this prove that owner resolution failed?
+Does this establish an owner-resolution failure?
 
-**Reasoning:** No. The supplied configuration does not require owner review. The assignment is consistent with that configuration. If policy requires both business-need and permission-owner checks, correct the review design through a controlled change. Do not diagnose a broken owner reference merely from the absence of a task it was not configured to receive.
+**Reasoning:** No. The task follows the supplied configuration. If policy requires another permission-owner decision, review and correct the approval design. Do not diagnose a missing task that was never configured.
 
-### Case 5: A new criterion does not change the level
+### 5. Updated criteria do not replace High
 
-**Facts:** Automatic privilege classification is enabled. Revised criteria would classify an entitlement as Medium. Its current direct level is High because a manual override remains.
+Automatic classification is enabled. New criteria would assign Medium, but the current High direct level is a retained manual override.
 
-What explains the displayed High?
+What explains High?
 
-**Reasoning:** The manual override has precedence. Confirm its origin and justification before deciding whether to retain or remove it. Do not repeatedly change the criteria or relabel native permissions to repair a result already explained by the override. Any change to the classification still does not change native access.
+**Reasoning:** The override takes precedence. Check its origin and justification before a controlled decision to retain or remove it. Repeating criteria edits does not address that cause, and classification changes do not alter native permissions.
 
-### Case 6: Two names appear under owners
+### 6. All Owners includes two people
 
-**Facts:** An entitlement has one primary and one additional owner. Its request configuration selects All Owners. The primary owner approves; the additional owner has not approved.
+The entitlement has one primary and one additional owner. All Owners is selected. The primary owner approved, and the additional owner has not.
 
-Does the selected reviewer option require the second approval too?
+Does that option require the second approval too?
 
-**Reasoning:** No. Under the documented All Owners option, any one primary or additional owner can approve. If the organization requires separate approvals, the review configuration must express that requirement. Counting names in the ownership record is not a substitute for understanding the configured approval rule.
+**Reasoning:** No. Any one primary or additional owner can approve under this option. Separate required decisions need suitable configured stages; counting ownership names does not define the approval rule.
 
-### Case 7: The source description changed, ISC did not
+### 7. Corrected source text does not replace a manual field
 
-**Facts:** A successful, relevant entitlement aggregation returned the corrected source description for the exact group. The corresponding ISC description had previously been manually edited and retains its old wording.
+The relevant successful entitlement collection returned the new source description for the exact group. ISC retains its old description, previously edited manually.
 
-What would you check before repeating aggregation?
+What should you inspect before repeating collection?
 
-**Reasoning:** Check the manual-update provenance and the agreed maintenance authority. The protected manual field explains why collection can succeed without replacing it. Repeating the same read does not resolve the ownership of the description. Update the intended explanation through the supported method after confirming its meaning.
+**Reasoning:** Inspect the manual-update state and agreed maintenance authority. Protection explains why the read can succeed without replacing the field. Confirm the intended explanation and update it through the supported method.
 
-### Case 8: The reviewer chose revoke
+### 8. A reviewer selected revoke
 
-**Facts:** A certification records a revoke decision for Devi's `G-9501`. The supplied delivery evidence is still pending. Current PayLedger evidence still shows `pay-100505` as a member.
+An applicable certification records a revoke decision for this employee's detailed payroll access. Delivery evidence is pending, and current application evidence still shows membership.
 
-Is the broad access confirmed removed?
+Is access confirmed removed?
 
-**Reasoning:** No. The decision does not establish completed remediation. Check required sign-off, meaning the reviewer's submission of their decisions, and the resulting delivery activity or manual task, then confirm current native membership and capability. The evidence does not yet tell us whether delivery failed, has not started, or remains in progress. Do not replace that uncertainty with a guessed failure.
+**Reasoning:** No. Check required **sign-off**, the reviewer's submission of decisions, then the relevant delivery activity or manual task and current native membership and capability. The supplied evidence does not identify whether delivery failed, has not started or remains in progress. Keep that uncertainty explicit.
 
-## Try the same reasoning when the permission changes underneath the name
+## What if the permission changes while membership stays the same?
 
-A fictional document system has entitlement `ExternalReviewers`, native key `R-605`. Account `doc-605` holds it. The recorded owner is active, and its description says “Read assigned project documents; no export.”
+A document-system account holds External Reviewers. The recorded owner is active, and the manually maintained description says “Read assigned project documents; no export.”
 
-The application administrator supplies a confirmed change record: `R-605` now permits exporting all project documents. Account membership did not change. The ISC description is manually maintained and still has the old wording. A new custom metadata value, **Sensitive documents**, has been saved. No access-removal operation has occurred.
+The application administrator confirms a shared permission change: the same access object now permits exporting all project documents. Membership did not change. A custom Sensitive documents value was saved in ISC, but no access-removal operation occurred. The account holder's work requirement is not supplied.
 
-Explain what changed, what did not, and what evidence the next decision needs.
+Explain what changed and what the next decision needs.
 
-The native capability changed even though the account-to-entitlement relationship did not. The old description now understates both action and scope. A valid owner reference does not make that wording accurate.
+**Reasoning:** The capability expanded in both action and scope, even though the holding stayed the same. The description is stale, and an active owner reference does not make it accurate.
 
-Confirm the new permission and affected resources with the application contact, update the maintained explanation and reassess the classification. The custom value communicates the assessment; it does not remove export capability.
+Confirm the new permission and affected resources, maintain the description and reassess classification. The custom value communicates an assessment; it does not remove export capability.
 
-Then compare the account holder's actual work with the broader permission. The facts do not say what that person needs, so immediate approval or revocation is not justified by the supplied evidence alone. Obtain that requirement and follow the organization's decision process.
+Obtain the holder's actual work requirement before declaring the access appropriate or choosing a removal from these facts alone. Follow the organization's decision process.
 
-If the decision requires a change, identify whether the intended correction is this account's access or the shared permission definition. Those are different targets and can affect different people. Verify the chosen result in the application.
+If a change is required, distinguish removing this account's access from changing the shared permission definition. Those targets can affect different people. Verify the chosen account and capability outcome in the application.
 
-An owner gives you an accountable contact. A description gives you a usable explanation. Classification gives you another way to identify concern. You still need evidence of the real capability, a reason for the person to hold it, and a separate check that any required change actually happened.
+Responsibility, description and classification help a reviewer ask better questions. The decision still needs confirmed capability and business need, and its completion still needs evidence that any required access change happened.

@@ -1,317 +1,330 @@
 # Which source should supply this identity attribute?
 
-Devi, employee number `64004`, has moved from Operations to Engineering. Her personnel record, maintained by Human Resources (HR), now says `ENG`. Her directory account still says `OPS`, while a project application has a field called Department containing `PRJ-17`.
+Suppose Human Resources (HR) has approved a move from Operations to Engineering. The personnel record now contains department ENG. The person's directory account still contains OPS, and a project application has a Department field containing PRJ-17.
 
-SailPoint Identity Security Cloud (ISC) has collected all three records. Which value should become Department on Devi's identity?
+All three records have reached SailPoint Identity Security Cloud (ISC). Which value should appear as Department on the person's identity?
 
-“Use the newest record” sounds reasonable until you ask what each field means. “Use HR for everything” also misses the point: HR can own the employment department while another team supplies the work email.
+Before choosing, we need to know what Department is supposed to mean. If it means employment department, a current project grouping isn't an alternative department value. It answers a different question.
 
-Let's make the choice for a particular field, population and purpose.
+Then we need to know who is allowed to decide that employment fact and which input reliably carries their decision. The newest-looking record doesn't answer those questions for us.
 
-## Separate population authority from attribute authority
+## Establishing an identity and supplying a value are different responsibilities
 
-An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a particular system. An HR worker record can be an account in the integration without being an employee login.
+An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a particular system. An HR worker record can be an account in an integration even though nobody uses it to sign in.
 
-A **source** is ISC's configured representation of a system or account-data collection. Its **connector** supplies the supported integration behavior. **Account aggregation** reads account information into ISC.
+A **source** is ISC's configured representation of a system or account-data collection. Its **connector** provides the supported integration behavior. **Account aggregation** reads account information into ISC.
 
-An **attribute** is a named piece of information. An account attribute belongs to a source account; an identity attribute belongs to the ISC identity.
+An **attribute** is a named piece of information. An account attribute belongs to a source account; an identity attribute belongs to the identity in ISC.
 
-An **identity profile** is shared configuration for the identities it governs, including their identity attribute mappings. An **authoritative source** supplies the accounts used to establish identities through that profile.
+An **identity profile** supplies shared configuration, including attribute mappings, for its identities. An **authoritative source** provides the accounts used to establish identities through that profile.
 
-For this fictional example, **PersonnelHub Production** is authoritative for the employee population, and **Employees** governs Devi's identity.
+In this example, Employees is the governing profile, and HR-Production is its authoritative source. The relevant accounts from the personnel, directory, project and finance sources are already correctly associated with one identity. Each source has only the intended eligible account in the main example.
 
-That establishes where this population comes from. It does not automatically make PersonnelHub the approved supplier of every identity attribute.
+**Account correlation** is the matching and association of accounts with their intended identities. Those relationships are supplied as correct here. Choosing a preferred department value won't repair a wrongly associated account.
 
-An **identity attribute mapping** selects or calculates a value for an identity attribute. It can use account information from different sources. **Account correlation** matches and associates accounts with their intended identities.
+HR-Production establishes this employee population. That doesn't automatically make it the right supplier of every value. HR can maintain employment department while a messaging team maintains the assigned work address.
 
-Assume Devi's relevant accounts have already been correctly associated with one identity. We are deciding which information they should supply, not using a preferred-looking value to repair ownership.
+An **identity attribute mapping** is the instruction that selects or calculates an identity value. It can use account data from different sources. The governing profile's mapping determines which input is used; the collected records don't compete to become the winner.
 
-## First ask whether the fields mean the same thing
+## Follow the employment decision to its input
 
-Here is selected fictional evidence from October 21, 2026. All times use Coordinated Universal Time (UTC), so the comparisons don't mix local time zones.
+Let's inspect the candidate fields. These are hypothetical observations from October 21, with all times in Coordinated Universal Time (UTC):
 
-| Collected account | Value and meaning in this design |
+| Collected source account | Value and what it represents |
 |---|---|
-| PersonnelHub Production, `ph-64004` | `homeDepartment = ENG`. HR approved the current employment department effective at 09:00. The account was read at 09:05. |
-| Corporate Directory, `cd-64004` | `department = OPS`. A downstream copy of the previous employment department. The record was modified at 09:08 for a phone correction and read at 09:10. |
-| ProjectFlow Production, `pf-64004` | `department = PRJ-17`. A project resource group, not the employment department. The account was read at 09:11. |
-| CostLedger Production, `fc-64004` | `allocationCostCenter = 0042`. Finance's approved current cost-centre identifier, represented as text. The account was read at 08:45. |
+| HR-Production | homeDepartment = ENG. HR approved this current employment department effective at 09:00; the account was collected at 09:05. |
+| Directory-Production | department = OPS. It is a receiving copy of the previous employment department. The record was modified at 09:08 for a phone correction and collected at 09:10. |
+| Project-Production | department = PRJ-17. It identifies a project resource group, not employment department. Collected at 09:11. |
+| Finance-Production | allocationCostCenter = "0042". Finance's approved current allocation identifier, represented as text. Collected at 08:45. |
 
-The profile currently maps identity Department from Corporate Directory, so the represented identity value is `OPS`. There is no hidden competition in which ISC automatically compares all three department-like fields and chooses the best one.
+The current Employees mapping reads directory department. The identity therefore contains OPS. Having collected HR's ENG doesn't replace that mapping.
 
-The **business data owner** decides the approved meaning and business value. The **integration owner** implements and maintains the supported path carrying that value into ISC. Those responsibilities can belong to different teams.
+The **business data owner** approves a field's business meaning and value. The **integration owner** maintains the supported path carrying it into ISC. These responsibilities can belong to different teams.
 
-For employment Department in this design, HR owns the decision and PersonnelHub `homeDepartment` supplies it. The directory is a receiving copy, and ProjectFlow's similarly named field describes something else.
+For employment Department, the supplied agreement names HR as the business owner and HR-Production homeDepartment as the approved input. The directory receives a copy. The project field describes a separate grouping.
 
-Selecting `PRJ-17` because it was read last would replace an employment fact with a project grouping. Selecting `OPS` because the directory record was modified most recently would mistake a phone correction for a new department decision.
+That agreement explains why ENG is the appropriate input. We aren't selecting it merely because Engineering looks more plausible than Operations.
 
-Even two fields containing `ENG` are not necessarily interchangeable. One could mean an employment department, another a project assignment. Agreement in one example is not evidence that their meanings stay aligned.
+Now look at the times. The directory was read later, but still supplied the old copy. Its 09:08 modification concerned a phone number. Neither observation establishes a new department decision.
 
-The same question applies to legal names versus preferred names, a contractual work location versus today's project site, or a manager of employment versus a project lead. Start with the intended meaning, not the nearest familiar label.
+The project record was read last. Selecting PRJ-17 would put a project grouping into an attribute intended to represent employment department.
 
-## Choose the input for each field
+Even matching values wouldn't establish matching meanings. Two fields might both contain ENG today while one means employment department and the other means project assignment. They can diverge tomorrow without either system being wrong.
 
-A useful source decision identifies the field's approved supplier and why that supplier can meet the requirement.
+You can apply the same reasoning to legal versus preferred name, contractual work location versus today's project site, or employment manager versus project lead. Establish the intended fact before choosing its supplier.
 
-For Employees, suppose the owners agree:
+## Apply the approved choice and check the result
 
-| Identity attribute | Approved input and reason |
-|---|---|
-| Identification Number, `identificationNumber` | PersonnelHub `workerNumber`, text `64004`. It is the approved person reference for this population. |
-| User Name, `uid` | PersonnelHub `iscUserName`, `employee64004`. The design supplies a unique, stable ISC username before directory account creation. |
-| Last Name, `lastname` | PersonnelHub `familyName`, `Rao`. HR maintains the surname required by this identity design. |
-| Department, `department` | PersonnelHub `homeDepartment`, `ENG`. It represents the approved current employment department. |
-| Work Email, `email` | Corporate Directory `mail`, `devi64004@example.com`. The messaging team maintains the assigned work address; initial availability needs a separate onboarding design. |
-| Cost Center, `costCenter` | CostLedger `allocationCostCenter`, text `0042`. Finance maintains the approved allocation, rather than a stale copy in another system. |
+A **direct mapping** uses the selected account attribute without an additional conversion in that mapping. HR-Production already supplies the approved code ENG, so this correction needs no code conversion.
 
-PersonnelHub in the table means PersonnelHub Production; CostLedger means CostLedger Production. These are selected fictional mappings, not mandatory SailPoint source names or a complete profile template.
+A **transform** performs a configured calculation or conversion. It could translate an approved code if that were required, but it wouldn't decide who owns Department.
 
-The choice is field-specific. A non-authoritative source can supply an approved identity value without becoming the origin of employee identities.
+For this example, assume the shared mapping correction has been approved, saved and checked against representative employees. Employees now selects HR-Production homeDepartment for identity Department.
 
-An ISC source records a **Source Owner** for responsibilities such as completing manual fulfillment tasks or reviewing access. That assignment is different from business ownership of each field. It does not, by itself, document who may approve an employment department, an email address or a financial allocation.
-
-For a source decision you can defend, establish:
-
-- **Meaning:** What exactly does this field represent? What codes, formats and effective dates are allowed?
-- **Coverage:** Does the input exist for every relevant person and account case, including contractors, pre-hires and people with more than one account?
-- **Availability:** Is the value present when the consuming process needs it, or only after a later account-creation step?
-- **Freshness:** How soon is an approved business change published, collected and applied?
-- **Correction:** Which owner fixes a wrong or missing value, and what evidence proves the repair?
-- **Direction:** Is this the origin of the value, an approved calculated value or merely a copy receiving updates?
-
-These questions are design criteria. They are not a product feature that ISC automatically checks before accepting a mapping.
-
-## A later timestamp does not create authority
-
-A **producer** is the system or process that publishes the integration data. An **effective time** says when a business fact should apply. A **publication time** says when the producer made it available to the integration. A **collection time** says when ISC read it. These times answer different questions.
-
-In Devi's case, the department change is effective at 09:00, and the approved value has reached the PersonnelHub account read at 09:05. The later directory read at 09:10 still contains `OPS`.
-
-That later read establishes a newer observation of an older copy. It does not approve a new employment department.
-
-Likewise, a record-level modification time may concern another field. You cannot infer a field's approved revision merely from the account's latest modification timestamp.
-
-A source can also publish future changes in advance. If a transfer is approved for November 1, a field describing the next department is not automatically today's department. Establish how the producer exposes current and future values and how the mapping should respect the business date and time zone.
-
-A direct mapping copies the selected value. It does not infer every effective-date rule just because another field contains a date.
-
-If HR is the agreed owner but its export is late, that is a delivery problem to investigate. Switching to a stale downstream copy can conceal the problem without meeting the requirement.
-
-## Make the approved path explicit
-
-For identity Department, the approved correction is to select PersonnelHub `homeDepartment`, not to copy whichever candidate is available first.
-
-A **transform** performs configured calculations or conversions on input values. A direct mapping needs no additional conversion when the supplied value already meets the requirement. A transform may help with an approved code conversion, but it doesn't decide business ownership for you.
-
-**Identity processing** evaluates identity information against configuration, including its profile mappings and applicable access requirements.
-
-Assume the shared mapping change has been approved, saved, checked against representative employees and applied through the relevant identity processing. In the supplied outcome, Devi's identity Department becomes `ENG`.
+**Identity processing** evaluates identity information against configuration, including mappings and applicable access requirements. Once the approved correction is applied through that processing, the supplied observed identity Department is ENG.
 
 ```text
-HR-approved current department
-PersonnelHub homeDepartment: ENG
-               |
-               | Employees Department mapping
-               | selects this agreed input
-               v
-ISC identity Department: ENG
+[HR-approved current department]
+[HR-Production homeDepartment: ENG]
+                 |
+[Employees mapping selects this input]
+                 |
+[Applied identity Department: ENG]
 
 Other collected values:
-Directory department: OPS
-ProjectFlow department: PRJ-17
-
-They do not vote on Department.
+[Directory department: OPS]
+[Project department: PRJ-17]
+[Neither is selected for this output]
 ```
 
-The arrow shows the configured value dependency when the mapping is evaluated and applied. It is not a private execution sequence or a claim that every employee's data has been verified by checking Devi.
+The connected lines show the selected input and applied identity result. The separate rows show other collected values that aren't selected for this output. This is a value dependency, not a private backend sequence or a claim that checking one employee verifies the whole profile.
 
-The directory still contains `OPS` in this supplied outcome. No directory Department synchronization write is configured in this primary example.
+The directory still contains OPS in this supplied outcome. Nothing is configured to write identity Department back to it.
 
-**Provisioning** carries out supported account or access changes. **Attribute synchronization** is separately configured behavior that writes selected identity values to existing correlated source accounts through provisioning.
+**Provisioning** performs supported external account or access changes. **Attribute synchronization** is separately configured behavior that can write selected identity values to existing correlated accounts through provisioning.
 
-If the design also requires the directory copy to become `ENG`, review that separate write path and verify its operation and target result. A correct identity Department does not prove that a directory update occurred.
+If the requirement includes updating the directory copy, review that write path and verify its operation and actual target result. Correct identity ENG doesn't, by itself, establish that directory OPS changed.
 
-The selected source can affect access too. A **role** can package access and use identity attributes as membership criteria. A **lifecycle state** describes a business stage, such as active employment or termination, and can drive configured access changes.
+The value can also influence access decisions. A **role** groups access and can use identity attributes as membership criteria. A **lifecycle state** represents a business stage that can drive configured access changes.
 
-Review those consumers before changing a shared mapping. Source selection can alter decisions that use the value, even when you didn't edit their definitions.
+A Department correction can therefore change which access requirements an identity meets without anyone editing the role definition. A **consumer** is a process or configuration that uses this value. Review the relevant consumers before changing the shared mapping; then verify each required outcome separately.
 
-## Plan for the time before downstream data exists
+## Make a separate choice for each attribute
 
-Work Email is different from employment Department. Its approved long-term supplier may be the directory or messaging system that assigns the address.
+Here is an illustrative agreement for Employees. The same person can receive identity values from different approved suppliers:
 
-For a new hire, that account might not exist yet. User Name `uid`, Work Email `email` and Last Name `lastname` are required identity attributes and cannot be null, meaning no value is present. User Name must also be unique across identities from all profiles.
+| Identity attribute | Approved input and why it is selected |
+|---|---|
+| Identification Number, identificationNumber | HR-Production workerNumber, text W-104. It is the approved person reference for this population. |
+| User Name, uid | HR-Production iscUserName, user-w104. The design supplies a stable, unique ISC username before directory creation. |
+| Last Name, lastname | HR-Production familyName, Worker. HR maintains the surname required by this design. |
+| Department, department | HR-Production homeDepartment, ENG. It represents the current approved employment department. |
+| Work Email, email | Directory-Production mail, user-w104@example.invalid. The messaging team maintains the assigned address; initial availability is a separate requirement. |
+| Cost Center, costCenter | Finance-Production allocationCostCenter, text "0042". Finance maintains the approved allocation, rather than a stale receiving copy. |
 
-Now suppose this project's directory-account creation process requires an established identity with its required information, but Work Email is mapped only from that future account. No initial alternative is supplied.
+These are selected example mappings, not required source names or a complete profile template. The email string is illustrative, not evidence of a real mailbox.
+
+The directory and finance sources can supply these values without becoming authoritative sources for establishing employees.
+
+ISC also records a **Source Owner**. That person can receive manual fulfillment tasks or be asked to review access. Manual fulfillment means a person carries out a requested account or access change.
+
+Assigning that Source Owner doesn't automatically appoint them to approve every business field on the source. An application access reviewer and the owner of a financial allocation can be different people.
+
+To defend a source choice, work through the requirement:
+
+- **Meaning:** Which fact is needed, and which codes, formats and effective dates express it?
+- **Coverage:** Which people and account cases must it support, including contractors, pre-hires and multiple accounts?
+- **Availability:** Will the input exist when needed, or only after a later account-creation step?
+- **Freshness:** How soon does an approved change become available, get collected and reach the identity?
+- **Correction:** Who fixes a missing or incorrect value, and what evidence confirms the repair?
+- **Direction:** Is the selected field the origin, an approved calculation or a copy receiving updates?
+
+These are decisions you establish with the responsible owners. ISC doesn't automatically validate the whole agreement when you select a field.
+
+## Ask what each timestamp actually tells you
+
+A **producer** is the system or process publishing data for the integration. **Effective time** says when a business fact should apply. **Publication time** says when that fact became available to the integration. **Collection time** says when ISC read it.
+
+For the main Department correction, ENG is effective at 09:00 and is available in the HR account collected at 09:05. We aren't given its exact publication time. We do know it was available by that read.
+
+The 09:10 directory observation is newer, but the observed department is older. A later observation isn't necessarily a later business fact.
+
+Future changes need the same care. Suppose a producer exposes current Department OPS and next Department ENG, effective November 1. During October 21, today's department is still OPS under that agreement.
+
+A direct mapping from the next-department field would select ENG. It wouldn't infer the intended date rule merely because another field contains November 1.
+
+Establish how current and future values are exposed, which business date and time zone apply, and which supported calculation and processing will make a time-dependent change take effect. Reading a future fact early doesn't authorize applying it early.
+
+If HR owns the field but its export is late, investigate the publication and delivery path. Switching to a stale receiving copy can hide the missing update while leaving the requirement unmet.
+
+## What if the selected value doesn't exist yet?
+
+The main example already has a directory account and mail. A new hire can be different.
+
+Identity User Name (uid), Work Email (email) and Last Name (lastname) must be mapped and must have non-null values. **Null** means no value is present. User Name must also be unique across identities from all profiles.
+
+Now suppose a project's directory-account creation path requires an established identity with its required information. Work Email is mapped only from that future directory account, and no initial alternative is supplied.
 
 ```text
-Identity needs required Work Email
-              |
-              | selected input requires
-              v
-Directory account with mail
-              |
-              | this project's creation path
-              | requires the identity first
-              v
-Identity needs required Work Email
+[Identity needs required Work Email]
+                 |
+      selected input depends on
+                 v
+[Future directory account with mail]
+                 |
+      this project's path needs
+                 v
+[Established identity with email]
+
+[No initial alternative is supplied]
 ```
 
-The arrows mean “depends on.” This is a circular dependency in the stated project design, not a universal description of every ISC deployment or an internal retry loop.
+Read the arrows as “depends on.” The identity needs email from the future account, while this project's account-creation path needs the established identity first.
 
-Waiting for the same unchanged inputs cannot supply the missing starting value. Decide how the dependency will be broken before treating the setup as complete.
+Nothing in that unchanged dependency provides the starting value. This is a circular dependency in the stated project design, not a universal ISC architecture or an internal retry loop.
 
-An approved design can supply a real initial address from an upstream process, establish the directory account through another authorized onboarding path, or deliberately use an initial technical value with controlled consumers. Each option needs its own verified requirements.
+The owners need an approved starting path. Possibilities include a real initial address supplied upstream, a separate authorized path establishing the directory account, or a deliberate technical initial value with controlled consumers. Each option needs its own requirements and verification.
 
-The distinction about a technical value matters. Work Email's required-value check does not validate email format. A supported transform can return a static `none` value when directory mail is not yet available.
+A technical initial value needs particular care. Work Email's required-value check doesn't validate email format. A supported calculation can return static text none while directory mail is unavailable.
 
-That can supply a non-null string; it does not create a mailbox, a contact address or proof that the person can receive an invitation. If a project deliberately uses such a placeholder, it must define when it is allowed, prevent unsuitable use by affected consumers, replace it under the approved design and verify the transition.
+That supplies a non-null string. It doesn't establish an address, mailbox or ability to receive mail.
 
-An **invitation** asks a person to register for ISC. Registration invitations use Work Email, and invitation behavior has more than one trigger. Setting a profile's ordinary invitations to manual is not proof that every possible email consumer has been controlled.
+If a design deliberately uses a placeholder, agree when it is allowed, which consumers must be prevented from using it, how it will be replaced, and how the transition will be verified. Don't invent an address or reuse another person's address to fill a required field.
 
-Don't invent an address, reuse another person's address or assume a placeholder is safe merely because it clears a required-field problem. “The value exists” and “the value is fit for this use” are different claims.
+An **invitation** asks someone to register for ISC. Registration email uses Work Email. A **certification** is a review of whether existing access should be retained. Profile settings, lifecycle changes and being invited to perform such an access review can trigger registration invitations.
 
-## A fallback needs a business rule as well as a transform
+Setting ordinary profile invitations to manual doesn't control every trigger; a certification invitation can still cause registration mail. Review the actual consumers rather than treating one setting as complete protection.
+
+The input must be fit for the process using it. Non-null email and readiness to receive registration mail are separate conclusions.
+
+## A fallback implements a policy you have already chosen
 
 A **fallback** supplies an alternative input or result under a configured condition.
 
-ISC's **First Valid transform**, technical operation `firstValid`, evaluates an ordered list and returns the first result that is not null. Put the preferred candidate first when that is the approved policy.
+The **First Valid transform**, technical operation firstValid, evaluates an ordered list and returns the first result that isn't null. Preferred candidates belong earlier when that order expresses the approved policy.
 
-“Valid” here describes the transform's non-null selection condition. It does not mean the chosen value is current, approved, uniquely owned or suitable as an email address.
+Suppose the approved email policy prefers the assigned directory address, then an approved initial-address field from the personnel process.
 
-Suppose an approved policy says to prefer the assigned directory address, then an approved initial-address field from the personnel process. If both are non-null, their order determines the selected result. The transform does not choose the one with the newest timestamp unless appropriate selection logic is deliberately included.
+If the directory input returns null and the approved initial input returns an address, First Valid selects the latter. If both return non-null addresses, the earlier directory candidate wins. It doesn't compare timestamps to decide which is newest.
 
-An empty string contains zero characters but is still a string; it is different from null. A space is also a character. Don't assume that a first-non-null test performs the business validation needed for these values.
+Here, “valid” means meeting that non-null selection condition. It doesn't certify approval, freshness, unique ownership or suitability as an email address.
 
-Errors are another condition. First Valid's `ignoreErrors` option controls whether evaluation proceeds after an input error; its default is false. An error is not automatically the same thing as a null input. Don't suppress errors merely to hide a broken source or calculation.
+An **empty string** has zero characters but is still a string. A space is a character. Neither is automatically null. If the first candidate returns empty text and nothing rejects or converts it, first-non-null selection doesn't skip it to find a usable address.
 
-For each fallback, specify the trigger, acceptable alternate supplier, relevant population, duration and transition back to the preferred input. Ask what happens if the preferred value returns after the alternate has already been used.
+An input error is another condition. First Valid's ignoreErrors option controls whether evaluation proceeds after an input error; the documented default is false. A failing calculation isn't automatically a successful null result.
 
-A changing User Name deserves particular care. Preferring a directory login over an initial personnel-based username can change the identity's `uid` when that directory input becomes available. Review sign-in, matching and other consumers before approving that behavior; don't treat it as an invisible implementation detail.
+Don't enable error suppression just to hide a broken input. Establish which failures may use an alternative and which need investigation.
 
-Fallback can express an approved policy. It cannot replace one.
+A complete fallback policy names its trigger, approved alternate supplier, population, permitted duration and transition back. Check what happens when the preferred input returns after the alternate has been used.
 
-## Check that the same source choice works for the population
+That transition matters for User Name too. A calculation preferring directory login over an initial personnel-based username can change identity uid when the directory input becomes available. Review sign-in, matching and other consumers before approving that change.
 
-Devi has all the accounts in our main example. A contractor or pre-hire may not.
+## The right source still needs the right account and value shape
 
-If CostLedger has employee allocations but no contractor records, that input cannot meet a requirement covering every contractor merely because it works for Devi.
+A source choice must work beyond a person whose records happen to be complete.
 
-The governing identity profile can have its own mappings, so different populations can use deliberately different input policies. That does not require every population to use every available source. Establish the correct scope before changing shared configuration.
+If Finance-Production holds employee allocations but has no contractor accounts, it can't supply every contractor's Cost Center under the same requirement. A good employee preview doesn't establish contractor coverage.
 
-Within a source, one person can also have an ordinary account and an administrator account. The source's name alone doesn't tell the mapping which account is the approved supplier.
+Different governing profiles can have different mappings and deliberate population-specific input policies. Every population doesn't have to use every source. Establish the affected scope before changing shared configuration.
 
-A supported **Account Attribute transform** can select an attribute from associated accounts on a chosen source, with account filtering and sorting options. Account filtering narrows which accounts may supply the value; sorting orders the remaining candidates. This input-selection filter is separate from a connector's collection filter.
+Even within one source, an identity can have an ordinary account, an administrative account or a former contractor account. Selecting the source doesn't establish which one should supply the field.
 
-Check the intended account, not simply the first non-null result. A former contractor account or an administrator account can contain a perfectly well-formed but unsuitable value.
+The **Account Attribute transform**, technical operation accountAttribute, obtains a field from an associated account on a chosen source. Account filtering narrows the eligible accounts; sorting orders the remaining candidates.
 
-A **data type** describes what kind of value is represented, such as text or a number. Keep the format and number of values consistent with the requirement too. Finance's identifier `0042` must remain text if its leading zeros are meaningful. A list of office locations is not automatically one primary office.
+These selection filters operate on the identity's source accounts for the calculation. They differ from connector collection filters, which determine which external records are read.
 
-## Don't feed a receiving copy back as the authority
+A well-formed address on an administrative or former account isn't necessarily the approved current address. Check eligibility, not just whether some account produces non-null text.
 
-Suppose identity Department is supposed to come from PersonnelHub and then be synchronized to the directory. That is a directional design: approved personnel fact, identity representation, receiving account copy.
+Also check the **data type**, meaning the kind of value, and **cardinality**, meaning whether it holds one value or several. Cost-centre identifier "0042" must remain text when its zeros matter. A list of office locations doesn't, by itself, identify one primary office.
 
-If you instead map Department from the directory merely because that copy is convenient, the identity can preserve the outdated `OPS`. A configured write of that same value back to the directory would not repair the missing `ENG` decision.
+## Keep the direction of updates consistent with ownership
 
-Conflicting writers or incompatible conversions can also create repeated resynchronization attempts. ISC documents synchronization safeguards, so don't assume every bidirectional design enters an endless loop. The engineering task is still to define the intended owner and compatible direction of updates.
+Suppose the intended path is approved HR department, identity Department, then a synchronized directory copy.
 
-Ask who may change the receiving copy independently, whether such a change should be retained or corrected, and how the source and identity values will converge under the approved policy.
+Mapping identity Department from directory OPS instead feeds that receiving copy into the identity. Writing the resulting OPS back to the directory doesn't introduce the missing HR decision ENG.
 
-The value displayed in a target application is evidence of current target state. It is not automatically the authority for what that state should be.
+Choose the approved origin first, then design any receiving updates.
 
-## Review the choice before applying it
+Conflicting writers or incompatible conversions can also cause repeated resynchronization attempts. ISC has synchronization safeguards, so this isn't a claim that every two-way design runs forever.
 
-**Preview** evaluates identity mappings for selected data and shows proposed results. It does not prove coverage across the population or completed changes to identities and applications.
+The design still needs answers: who may edit the receiving copy, whether that edit should be retained or corrected, and how values should converge under the approved policy.
 
-**Apply Changes** on the profile initiates identity processing for its associated identities. Processing can reevaluate access as well as update mapped values, so review the affected consumers and representative cases before initiating an approved change.
+A target application's displayed value is evidence of its state. It doesn't automatically establish who was authorized to decide that state.
 
-For Department, inspect an existing employee, a recent transfer, a future-dated change and a missing input. For Work Email, include someone with no directory account, one with multiple accounts and the transition from the initial input to the assigned address.
+## Verify the decision as well as the calculation
 
-You also need a correction route. If PersonnelHub publishes the wrong approved department, involve its business owner. If it publishes `ENG` but the connector represents a different field, investigate extraction. If the source account is correct but the profile selects the directory, investigate the identity mapping.
+**Preview** evaluates proposed mappings for selected identity data. It helps you check the intended output. It doesn't prove population coverage, a stored identity change or target delivery.
 
-After the approved correction, check the actual identity result. Verify required provisioning separately; identity processing does not validate that started provisioning has succeeded.
+**Apply Changes** on the profile initiates identity processing for its associated identities. That processing can reevaluate access as well as mapped values, which is why shared changes need consumer review.
 
-A useful source-decision record therefore states the attribute's meaning, population, approved owner and field, account-selection rule, effective-time and freshness requirements, fallback behavior, consumers and evidence of acceptance.
+For Department, include an existing employee, a recent transfer, future-dated change and missing input. For Work Email, include no directory account, multiple accounts and the transition from initial input to assigned address.
 
-These are the facts behind the mapping. A dropdown selection alone doesn't contain the whole decision.
+If the output is wrong, locate the failing responsibility. A wrong approved department belongs with its business owner. Correct HR data represented as the wrong field points toward extraction. Correct collected HR data with a directory-based mapping points toward input selection.
+
+After an approved correction, inspect the actual identity value. Check any required provisioning and target state independently; identity processing doesn't validate successful delivery merely by initiating provisioning.
+
+Record the attribute's meaning, population, approved owner and field, account-selection rule, timing/freshness requirements, fallback policy, consumers and acceptance evidence. Those facts explain the dropdown choice and make a later investigation possible.
 
 ## Work through these source choices
 
-Each case is fictional and supplies its own relevant facts.
+### 1. A later read contains an older copy
 
-### 1. The latest read contains the older copy
+HR owns employment Department. Approved ENG is effective at 09:00 and collected at 09:05. A later directory read at 09:10 still contains old OPS.
 
-**Facts:** HR approved `ENG`, effective at 09:00. PersonnelHub was read at 09:05 with `ENG`. Corporate Directory was read at 09:10 with old `OPS`. HR owns employment Department.
+Should the directory value win because it was read later?
 
-**Question:** Should the later directory read win?
+**Worked reasoning:** No. Its observation is newer, not its approved department fact. Verify the agreed HR field and mapping; investigate any required receiving-copy update separately.
 
-**Reasoning:** No. It establishes a later observation, not a later approved department. Verify the agreed PersonnelHub field and mapping. Investigate the receiving copy separately if it also needs updating.
+### 2. The labels match, but the meanings don't
 
-### 2. Two fields share a label but not a meaning
+Project-Production department contains resource group PRJ-17. Identity Department means employment department owned by HR.
 
-**Facts:** ProjectFlow's Department field contains resource group `PRJ-17`. Identity Department is defined as employment department, owned by HR.
+Can that project field supply the identity value?
 
-**Question:** Can ProjectFlow supply Department because its field has the same label?
+**Worked reasoning:** No. It represents another fact. Keep a needed project grouping separate; matching labels don't establish equivalent business meanings.
 
-**Reasoning:** No. The meanings differ. Keep a project grouping separate if it is needed; don't substitute it for employment Department. An identical label does not establish the agreed meaning of an input.
+### 3. The preview covers employees, but the requirement includes contractors
 
-### 3. One good employee doesn't establish contractor coverage
+Finance-Production employee records are complete. Contractors have no accounts there, and no alternate policy is approved.
 
-**Facts:** A proposed Cost Center mapping reads CostLedger. Its employee records are complete, but the contractor population has no accounts there. No alternate policy is approved.
+Does one successful employee preview approve contractor mapping?
 
-**Question:** Does a successful preview for Devi approve the mapping for contractors?
+**Worked reasoning:** No. Establish contractor coverage and an approved input or exception policy. An arbitrary non-null alternative doesn't solve ownership or availability.
 
-**Reasoning:** No. Establish population coverage and an approved contractor input or exception policy. Do not select an unowned alternate value simply to make the output non-null.
+### 4. The preferred result is empty text
 
-### 4. The preferred result is an empty string
+First Valid receives an empty string first and an address second. No logic rejects the empty string or converts it to null.
 
-**Facts:** A First Valid calculation receives an empty string from its first candidate and a real address from its second candidate. No logic converts the empty string to null or otherwise rejects it.
+Will first-non-null selection skip to the address?
 
-**Question:** Does the documented first-non-null rule skip that first result?
+**Worked reasoning:** No. The first result is non-null. The transform's selection condition doesn't implement usable-email validation; establish the intended missing-value handling.
 
-**Reasoning:** No. Empty text is not null. The selection condition alone does not implement a usable-email check. Establish the approved input validation and missing-value handling rather than assuming the transform's name guarantees them.
+### 5. The first input calculation errors
 
-### 5. The preferred input errors
+The first input fails. First Valid uses default ignoreErrors=false, and a later candidate would be non-null.
 
-**Facts:** The first input calculation fails with an error. First Valid has its default `ignoreErrors = false`. A later candidate would be non-null.
+Is successful fallback guaranteed?
 
-**Question:** Is a successful fallback guaranteed?
+**Worked reasoning:** No. That error isn't ignored merely because a later value exists. Investigate the input and approved error policy. Suppression changes behavior without repairing the defect or approving the alternative.
 
-**Reasoning:** No. With `ignoreErrors = false`, the input error is not ignored just because a later candidate exists. An error is not simply a null result that must be skipped. Investigate the failing input and approved error policy. Setting error suppression changes behavior; it doesn't repair the original defect or approve the alternate value.
+### 6. Required Work Email contains none
 
-### 6. The required field contains a placeholder
+A deliberate initial mapping supplies none and satisfies the non-null check. No usable address, consumer safeguards or delivery evidence is supplied.
 
-**Facts:** A deliberate initial Work Email mapping produces `none`. The required-value check is satisfied. No consumer safeguards, usable address or invitation-delivery evidence is supplied.
+Is registration-mail readiness established?
 
-**Question:** Is the person ready to receive ISC registration mail?
+**Worked reasoning:** No. Text population doesn't establish a mailbox. Verify the approved initial policy, all relevant consumers and transition to the assigned address.
 
-**Reasoning:** The supplied evidence doesn't establish that. A non-null string isn't an address or a mailbox. Review the approved initial-value policy, all relevant consumers and the verified transition to the assigned address before treating email-dependent tasks as ready.
+### 7. The receiving copy supplies its own write-back value
 
-### 7. The receiving copy supplies the write-back value
+HR's approved Department is ENG. Identity Department reads directory OPS, and a proposed synchronization writes that identity value back to the directory.
 
-**Facts:** Approved department is PersonnelHub `ENG`. Identity Department instead reads directory `OPS`, and a proposed synchronization would write identity Department back to that directory field.
+Would this path apply the HR change?
 
-**Question:** Would that path, by itself, apply the approved HR change?
+**Worked reasoning:** No. It feeds the copy back through the identity. Review and restore the approved input design, then verify the identity and any required target write separately.
 
-**Reasoning:** No. It feeds the receiving copy back into itself through the identity. Restore the approved input design through normal review, then verify the identity and any required target write separately. Don't assume configuring synchronization identifies the correct owner.
+### 8. A future fact is already published
 
-### 8. The future fact is published early
+On October 21, current Department is OPS. Next Department ENG is effective November 1. The requirement is today's employment department.
 
-**Facts:** A producer supplies current Department `OPS` and next Department `ENG`, effective November 1. The observation is October 21. The approved requirement is today's employment department.
+Should the newly published future value apply now?
 
-**Question:** Should `ENG` be selected because the future-change record is newly published?
+**Worked reasoning:** No. Respect the current-value meaning and effective date. Verify the selection, date and time-zone logic; publication doesn't make the future fact effective today.
 
-**Reasoning:** No. Respect the approved effective-time meaning and current-value design. Publishing a future fact is not the same as making it effective now. Verify date and time-zone handling where the change crosses a business boundary.
+## Apply the same reasoning to a contract end date
 
-## Transfer the decision to a contract end date
+A sponsor owns the approved last authorized day of a contractor's work. The current approved contract ends November 30.
 
-A contractor sponsor owns the last authorized day of work. The approved current contract ends November 30. An application contains December 31 from a proposed extension, but no approval exists for that extension. The application was read more recently than the sponsor register.
+An application contains December 31 from a proposed extension that has no approval. That application was read more recently than the sponsor register. Someone proposes using the later date to avoid interrupting access.
 
-Identity End Date is intended to represent the approved last authorized day, not the application's currently configured expiry. Someone proposes choosing the later date “to avoid an interruption.”
+Identity End Date means the approved last authorized day, rather than the application's currently configured expiry.
 
-Which source should govern this identity attribute, and what would you investigate?
+Which input should govern it, and what needs investigation?
 
-The sponsor's approved record supplies the business fact under the stated agreement. The application's later observation is not approval of an extension. Investigate how an unapproved proposed date reached the application and which corrections and access decisions the responsible owners authorize.
+**Worked reasoning:** Under the stated agreement, use the sponsor's approved fact. A newer application observation doesn't approve an extension.
 
-Also establish how the approved calendar date is interpreted by each consumer, including its time zone and whether an expiry represents the start or end of a day. Mapping the identity date and changing the target's expiry are separate outcomes.
+Investigate how the unapproved date reached the application and which corrections or access decisions the owners authorize. Don't extend access or overwrite business records simply to make the screens agree.
 
-Do not extend access or overwrite business records merely to make the screens agree. A defensible source choice preserves the agreed meaning and authority, then follows the evidence through collection, mapping, processing and any required target change.
+Establish what each consumer does with the calendar date, including its time zone and whether expiry means the start or end of that day. Mapping the identity date and changing target expiry are separate outcomes.
+
+A defensible source choice follows an agreed meaning and authority through available account data, mapping, processing and required target evidence. That is why an older observation of an approved fact can be the right input while a newer observation of another field isn't.

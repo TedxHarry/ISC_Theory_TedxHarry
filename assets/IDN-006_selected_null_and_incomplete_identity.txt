@@ -1,0 +1,10 @@
+[Collected HR account: hr-record]
+[familyName: Worker / surname: null]
+                 |
+[Employees Last Name mapping]
+[Selected field: surname]
+                 |
+[Identity lastname has no value]
+                 |
+[Observed: Incomplete Identities]
+[Evidence: missing required Last Name]

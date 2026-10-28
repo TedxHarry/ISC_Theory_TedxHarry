@@ -1,293 +1,310 @@
 # What does an identity profile actually control?
 
-Devi, employee number `62002`, is a benefits coordinator in Human Resources. Her worker record says `HR`, but her identity in SailPoint Identity Security Cloud (ISC) shows Department `FIN`.
+A Human Resources (HR) worker record says Department HR. The associated directory account says FIN, and the identity in SailPoint Identity Security Cloud (ISC) also shows FIN.
 
-Both her worker record and her directory account have already been collected and correctly associated with her identity. The directory account still says `FIN`. Her identity uses the **Employees** identity profile.
+Both source accounts have been collected and correctly associated with the identity. The identity is governed by the Employees profile.
 
-The support team asks, “Should we change the Employees profile? And would that also fix her sign-in and give her the BenefitsDesk access she needs?”
+Should changing that profile make Department HR? Would it also change the directory, repair sign-in or provide an application's required access?
 
-Let's separate those questions. A profile can influence identity values, tenant sign-in settings and lifecycle-driven access, but each responsibility has its own inputs and conditions.
+The profile connects to all of those areas, but each result depends on its own settings and operations. Let's start with why the identity currently shows FIN.
 
-## The profile is shared configuration, not Devi's personal record
+## Shared configuration governs a population
 
-An **identity** is ISC's representation of a person or another managed entity. Here, it represents Devi. An **account** is a record in a particular system, such as her directory login or HR worker record.
+An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a particular system, such as an HR worker record or directory login.
 
-A **source** is ISC's configured representation of a system or collection of account data. Its **connector** supplies the supported integration behavior, such as reading accounts or performing account changes. **Aggregation** collects account or access information into ISC.
+A **source** is ISC's configured representation of a system or collection of account data. Its **connector** provides supported integration behavior. **Aggregation** collects supported account or access information into ISC.
 
-An **identity profile** is configuration applied to identities associated with an authoritative source. An **authoritative source** supplies the accounts from which ISC establishes those identities through the profile. In this fictional design, **PeopleCore Production** supplies worker accounts, and Employees is its identity profile.
+An **identity profile** is shared configuration for identities associated with an **authoritative source**, the source supplying accounts from which ISC establishes those identities.
 
-Employees is not a separate profile created for each employee. Devi and other identities governed by it share its configuration. A change made while investigating her can therefore affect a population, not just the person whose incident brought you to the screen.
+In our neutral example, HR-Production is authoritative through Employees. The worker account is hr-record. A separate Directory-Production account, directory-user, is also correctly associated.
 
-**Account correlation** matches and associates source accounts with their intended identities. Devi's worker account `hr-62002` and directory account `cd-62002` are already correctly associated in our example. We aren't trying to repair ownership.
+**Account correlation** is matching and associating source accounts with their owners. That relationship is already correct here; the Department question isn't an ownership problem.
 
-Each identity has one governing identity profile. If the identity has accounts on more than one authoritative source, the highest-priority eligible profile applies. That rule concerns accounts already associated with the identity; priority is not an instruction to merge separately created people.
+Other identities governed by Employees share its settings. A change made during one incident can therefore affect a population, not just the identity on screen.
 
-The first check is therefore, “Which profile actually governs this identity?” A profile named Employees doesn't control someone merely because their job title sounds like an employee's.
+An identity can have only one governing profile at a time. If it has accounts on multiple authoritative sources, the highest-priority eligible profile applies. This assumes the accounts already belong to that identity; priority doesn't merge separately created identities.
 
-## It chooses how identity values are populated
+Identify the governing profile first. Its name alone doesn't assign someone to it.
 
-An **attribute** is a named value. An account attribute belongs to the collected source account. An identity attribute belongs to the ISC identity.
+All values, configuration choices and completed results below are supplied examples, not observations from a live tenant.
 
-An **identity attribute mapping** specifies how an identity attribute gets its value. A direct mapping selects a source and an account attribute. A mapping can also use a **transform**, which calculates or converts a value using configured operations, or supported **rule** logic for a requirement that needs code.
+## The mapping selects the value, even from another source
 
-A **lifecycle state**, or **LCS**, describes a person's business stage, such as pre-hire, active employment or termination. The Lifecycle State row below stores the value used to select that state.
+An **attribute** is a named piece of information. An account attribute belongs to a source account; an identity attribute belongs to the ISC identity.
 
-For Devi, these are selected fictional inputs and mappings. They aren't a complete account record or an upload template.
+An **identity attribute mapping** specifies how to obtain an identity value. A direct mapping selects a source and account attribute. A **transform** can calculate or convert values through configured operations; a supported **rule** can supply logic implemented in code.
 
-| Identity attribute | Current selected input | Devi's current result |
+A **lifecycle state (LCS)** describes a business stage, such as pre-hire, active employment or termination. The Lifecycle State mapping supplies the value used to select its configured state.
+
+Here are selected current inputs and results:
+
+| Identity attribute | Current selected input | Current result |
 |---|---|---|
-| Identification Number, `identificationNumber` | PeopleCore Production, `workerNumber` = `62002` | `62002` |
-| User Name, `uid` | PeopleCore Production, `iscUserName` = `employee62002` | `employee62002` |
-| Work Email, `email` | Corporate Directory, `mail` = `devi62002@example.com` | `devi62002@example.com` |
-| Last Name, `lastname` | PeopleCore Production, `familyName` = `Rao` | `Rao` |
-| Department, `department` | Corporate Directory, `department` = `FIN` | `FIN` |
-| Lifecycle State, `cloudLifecycleState` | PeopleCore Production, `workerState` = `active` | `active` |
+| Identification Number, identificationNumber | HR-Production: workerNumber = W-102 | W-102 |
+| User Name, uid | HR-Production: iscUserName = user-w102 | user-w102 |
+| Work Email, email | Directory-Production: mail = worker-w102@example.invalid | worker-w102@example.invalid |
+| Last Name, lastname | HR-Production: familyName = Worker | Worker |
+| Department, department | Directory-Production: department = FIN | FIN |
+| Lifecycle State, cloudLifecycleState | HR-Production: workerState = active | active |
 
-PeopleCore's `workDepartment` contains `HR`, but the current Department mapping doesn't select it. That explains why the identity shows `FIN` even though the worker source is authoritative.
+These are selected teaching values, not a complete account response or upload template. The email is illustrative; no real mailbox or delivery is claimed.
 
-Authority establishes the population. It doesn't mean every attribute from that source overrides every other input.
+HR's workDepartment contains HR, but Department currently selects the directory's department field. FIN is therefore the expected result of the saved mapping.
 
-The Work Email row also shows why a non-authoritative source can still matter. Corporate Directory is not the origin of these employee identities, but it supplies their email values. A profile can map identity attributes from accounts on different sources.
+Authority establishes the population. It doesn't make every authoritative-source field override other selected inputs.
 
-User Name, Work Email and Last Name must be mapped and have a value. They cannot be null, meaning no value is present. User Name must be unique across identities from all profiles. Missing required values or duplicate usernames can produce **identity exceptions**, which report problems with identity information. A profile's existence doesn't remove these requirements.
+The email row demonstrates the same independence. Directory-Production is non-authoritative for this population, yet its associated account can supply an identity value.
 
-The mapping belongs to the profile, but the identity attribute's definition is shared across the tenant, meaning the organization's ISC environment. If you add a custom identity attribute while editing Employees, it also appears in other profiles. Those profiles don't all have to map it.
+User Name, Work Email and Last Name must be mapped and non-null, meaning they must have values. User Name must be unique across identities from all profiles.
 
-Deleting a custom identity attribute is likewise a tenant-wide definition change, not just clearing one profile's value. Review its consumers before deletion. Don't delete a shared attribute to repair a single mapping, and don't delete default attributes.
+Missing required values or duplicate usernames can produce **identity exceptions**, reported problems with identity information. A profile existing doesn't establish that every mapped input is available or valid for its purpose.
 
-Manager information has another dependency. A profile can map the Manager Name input, but establishing the reporting relationship also needs **manager correlation**, which matches the supplied manager reference to a manager's identity under configuration on the source. A populated manager-looking string alone isn't proof that ISC has established the intended manager relationship.
+## Complete the Department change before calling it fixed
 
-## A mapping change is not a write back to the source
+Suppose the organization approves HR workDepartment as the intended Department input. The proposed mapping changes from Directory-Production department to HR-Production workDepartment.
 
-Suppose the organization confirms that PeopleCore's `workDepartment` is the approved input for identity Department. An authorized change replaces the Department mapping's input with that field.
+First review the Employees population and the decisions that consume Department. A shared mapping can affect records where the new input is missing, different or unexpected.
 
-For Devi, the proposed result changes from `FIN` to `HR`. The directory account does not automatically change just because the identity mapping changes.
+**Preview** evaluates proposed mappings using a selected identity's data. HR appearing in one preview establishes the proposed result for that record. It doesn't establish coverage of everyone governed by Employees or change any target account.
 
-**Attribute synchronization** is separately configured behavior that sends selected identity values to source account attributes through supported provisioning. Without an applicable synchronization configuration and a successful write, you cannot conclude that the directory's Department has changed.
+**Identity processing** evaluates identity information and relevant access configuration. After saved changes, the profile can show **Needs Processing**. **Apply Changes** initiates processing for identities associated with that profile.
 
-**Provisioning** carries out supported account or access changes. Reading an input, calculating a person-level value and writing that value to another account are different operations.
+Applying isn't merely refreshing the screen. Processing can update mapped values and re-evaluate configured access requirements.
 
-That distinction matters when someone says “fix the department everywhere.” First decide which records should change, who owns each value and which approved process will maintain it. One mapping edit is not evidence of all those outcomes.
+In the supplied corrected result, identity Department is checked and contains HR. Employees still governs the identity, and its source-account associations are unchanged.
 
-## It also participates in how people sign in to ISC
+The directory account still contains FIN. No attribute synchronization is configured in this example.
 
-**Authentication** verifies a sign-in. Signing in to ISC is different from ISC representing a person's accounts or granting application permissions.
+**Provisioning** performs supported external account or access changes. **Attribute synchronization** is separately configured behavior that sends selected identity values to account attributes through supported provisioning. It isn't an automatic consequence of choosing a new identity input.
 
-Identity profiles contain sign-in and security settings for their populations. The actual sign-in path also depends on the tenant's wider authentication configuration.
+So the evidence establishes an identity-value correction. A directory write would need its applicable configuration, operation and target result. Sign-in repair and application access also need separate evidence.
 
-For a tenant using its own username-and-password registration, the invitation and registration process matters. A complete identity does not itself prove that the person has received an invitation or completed registration.
+When someone asks to fix Department everywhere, establish which records should change and who owns each value. The identity's HR value and directory's FIN value don't become one shared field just because they describe departments.
 
-A profile can instead use **Directory Connection**, also called **pass-through authentication**. That means ISC uses a supported authentication source to verify the person's network password. The authentication source must support this operation, and the source and relevant accounts must have been aggregated before it is configured.
+## Profile mappings and attribute definitions have different scopes
 
-In our example, Corporate Directory is the configured, supported authentication source for Employees. Devi has the correct associated directory account. This does not make Corporate Directory the employee population's authoritative source. It has a different responsibility.
+The **tenant** is the organization's ISC environment. Identity attribute definitions are shared across that tenant, even though each profile has its own mappings.
 
-Nor does selecting it copy the network password into an identity attribute. Department and Work Email mappings aren't password-verification instructions.
+Adding a custom identity attribute while editing Employees makes its definition available in other profiles too. Those profiles don't all have to map it.
 
-**Single sign-on (SSO)** is another sign-in arrangement in which an external identity provider authenticates the user. An **identity provider** is the service that verifies that sign-in and supplies the authentication result. When SSO is configured, investigate that actual path rather than assuming a profile's local-password settings explain every sign-in.
+Deleting the definition is also tenant-wide. An empty Employees mapping doesn't prove the attribute is unused by Contractors or by access rules. Review its consumers before deletion, and don't delete default attributes.
 
-Other profile settings include **multifactor authentication (MFA)**, which requires more than one authentication factor, password-reset and unlock verification methods, and network or geographic restrictions. These are security requirements, not account-creation rules. Administrator MFA requirements still apply even if the profile's MFA checkbox is disabled.
+Manager information has another dependency. A profile can map **Manager Name**, the input reference, but establishing the reporting relationship also needs source **manager correlation**, matching the supplied reference to the manager's identity.
 
-Take the **Off Network** restriction. It relies on the tenant's configured network definition, which specifies the organization's network address ranges. Enabling it without a network definition blocks all users associated with the profile from accessing ISC. Don't interpret a population-wide sign-in failure after a security change as proof that their HR records disappeared.
+A manager-looking string alone doesn't establish that the intended reporting relationship exists.
 
-Profile settings are not the whole security model, and changing them is not a troubleshooting shortcut. In particular, changing a production pass-through authentication source can prevent users from authenticating; SailPoint directs organizations to consult Support before that change.
+## What does the profile control about signing in?
 
-## Where lifecycle-driven access enters the picture
+**Authentication** verifies a sign-in. It is different from representing an identity or granting permission in an application.
 
-Lifecycle states can drive configured access changes.
+Profiles include sign-in and security settings for their populations. The actual path also depends on the tenant's wider authentication configuration.
 
-The identity profile defines the lifecycle states available to its population and their configured behavior. It also supplies the mapping for the Lifecycle State identity attribute, `cloudLifecycleState`, used for automatic assignment.
+For local username-and-password registration, invitation and registration matter. A complete identity doesn't prove that an invitation was delivered or registration completed.
 
-With the provisioning service enabled, the profile can also configure automatic registration invitations when people enter a specified enabled lifecycle state. That is an invitation rule, not proof that the email was delivered or the user completed registration.
+**Directory Connection**, also called **pass-through authentication (PTA)**, lets ISC use a supported authentication source to verify the person's network password. The selected source and relevant accounts must have been aggregated before configuration, and that source must support the operation.
 
-Those are two connected pieces: a value that selects the state, and the state's configuration that describes what should happen.
+In this example, Directory-Production is the configured supported authentication source for Employees, with the correct associated directory account.
 
-For Employees, suppose a lifecycle state with technical name `active` is enabled. The direct mapping in the table supplies `active` from PeopleCore's `workerState`. The value must match the state's technical name exactly, including letter case. `Active` and `active` are not interchangeable for this match.
+That doesn't make it the personnel-authoritative source. It also doesn't copy a password into identity attributes. The Department and email mappings don't describe password verification.
 
-Creating a lifecycle state doesn't enable it automatically. A correctly named field and a disabled state are not a completed lifecycle setup.
+**Single sign-on (SSO)** can instead use an external **identity provider**, the service authenticating the user and supplying that result. Investigate the actual SSO path rather than assuming local-password settings explain every sign-in.
 
-An **entitlement** is an assignable access right, such as an application's group membership. An **access profile** groups entitlements from one source into a named access bundle.
+Profiles also include **multifactor authentication (MFA)**, verification using more than one authentication factor, password-reset and unlock verification methods, and network or geographic restrictions. Administrator MFA requirements still apply even if the profile's MFA checkbox is disabled.
 
-Suppose **Benefits Self-Service** is an access profile containing entitlement `benefits-selfservice` on **BenefitsDesk Production**. It gives employees access to their own benefits information, not benefits-administration permissions.
+Consider **Off Network**. It depends on the tenant's network definition, which specifies the organization's network ranges. Enabling the restriction without that definition blocks all users associated with the profile from accessing ISC.
 
-The Employees profile's enabled active lifecycle state is configured to grant Benefits Self-Service. This is how the identity profile connects a person's stage to an access bundle. The identity profile and the access profile are still different objects.
+That is a security-setting result, not evidence that their identities disappeared. Use the approved security-review process rather than recreating identities or changing credentials from that symptom.
 
-The lifecycle state can also configure account actions on selected sources, access-removal behavior and notifications. An **identity state** is a separate ISC processing and service-participation classification, such as Active or Inactive (long-term), selected in lifecycle configuration. It isn't the same thing as an application's enabled/disabled account flag.
+Production PTA-source changes need particular care: SailPoint directs organizations to consult Support because the change can prevent authentication. A profile setting isn't a generic troubleshooting switch.
 
-Don't assume a state named Terminated disables every account, or that an identity classified Active proves every application account is enabled. Inspect the actual configured actions and their results.
+## Lifecycle access needs both a value and configured behavior
 
-## Trace one lifecycle-driven assignment to the application
+The profile defines lifecycle states for its population. The cloudLifecycleState mapping supplies a value; the matching state's configuration defines its behavior.
 
-For this independent fictional variation, Devi already has one correctly associated BenefitsDesk account, `bd-62002`. It doesn't yet have `benefits-selfservice`.
+For Employees, suppose the enabled state's technical name is active. HR workerState supplies active.
 
-Assume provisioning is enabled for the organization, the relevant lifecycle configuration has been saved and applied, and Devi is automatically assigned to the enabled `active` state. BenefitsDesk's integration supports the required entitlement change, its credentials have permission, and the existing account is the unambiguous intended account. No competing assignment or removal is present.
+The match is case-sensitive. `Active` and `active` aren't interchangeable technical values. A display label that looks right doesn't fix a mismatched mapped value.
 
-**Identity processing** evaluates identity information and access requirements against configuration. It can be triggered by identity changes during aggregation or initiated to apply configuration changes.
+New lifecycle states are disabled by default. Creating the name doesn't establish an enabled state to which identities can be assigned.
 
-In this variation, processing evaluates the mapped state and its configured access. Provisioning performs the supported change. We then check the operation evidence and target account to establish whether the intended membership exists.
+When provisioning is enabled, the profile can also configure automatic registration invitations at a specified enabled lifecycle state. That is an invitation rule, not proof of delivery or registration.
+
+An **entitlement** represents an access right, such as application group membership. An **access profile** bundles entitlements from one source into a named access package.
+
+Our independent lifecycle variation uses Benefits Self-Service, an access profile on Benefits-Production containing benefits-selfservice. It provides employee self-service, not benefits-administration rights.
+
+Employees' enabled active state requires that access profile. The identity profile defines when the bundle is required; the access profile defines the bundled access. They aren't the same object.
+
+Lifecycle configuration can also specify account actions on selected sources, access removal and notifications.
+
+An **identity state** is a separate ISC processing and service-participation classification, such as Active or Inactive (long-term). Lifecycle configuration can select it, but it isn't an application's enabled or disabled account flag.
+
+A state label such as Terminated doesn't, by itself, prove every account was disabled. An Active identity also doesn't prove all its application accounts are enabled. Inspect actual configured actions and their results.
+
+## Follow the access requirement to the target
+
+In this variation, benefits-user already exists and is correctly associated with the identity. It lacks benefits-selfservice.
+
+Assume provisioning is enabled, the lifecycle configuration is saved and applied, and automatic assignment places the identity in the enabled active state.
+
+The integration supports the entitlement change, its credentials have the required permission, and the existing account is the unambiguous target. No competing assignment or removal applies.
+
+Identity processing evaluates the mapped state and its configured access requirement. Provisioning performs the supported operation. The engineer then checks operation evidence and actual membership.
 
 ```text
-PeopleCore workerState: active
+[HR workerState: active]
               |
-              | Employees profile mapping
-              v
-Lifecycle State value: active
+[Employees maps cloudLifecycleState]
+[Value: active]
               |
-              | matches enabled state
-              v
-Active state's configured access
-Benefits Self-Service access profile
+[Matches enabled active state]
+[Requires Benefits Self-Service]
               |
-              | identity processing
-              | evaluates required access
-              v
-Supported provisioning operation
-BenefitsDesk account bd-62002
+[Identity processing evaluates access]
               |
-              | verify operation and target
-              v
-Does benefits-selfservice exist?
+[Supported provisioning]
+[Target: benefits-user]
+
+[Engineer checks result + membership]
 ```
 
-The arrows show dependencies between input, configured decisions and an external result. They don't promise private execution stages, a fixed duration or successful delivery. The final check is human verification, not another automatic grant.
+The connected lines show dependencies between the input, enabled-state requirement, evaluation and supported write. They don't guarantee delivery or specify private transaction stages or duration.
 
-In the supplied successful outcome, the provisioning evidence reports success and the application account is confirmed to have `benefits-selfservice`. Those observations support this access change. They don't prove Devi can pass every application sign-in requirement or use unrelated benefits-administration functions.
+The separated engineer line is human verification. In the supplied successful result, the operation reports success and benefits-user is independently confirmed to have benefits-selfservice.
 
-If the operation fails, a correct state value does not repair connector permissions. Identity processing does not validate that access was successfully provisioned after initiating provisioning.
+That establishes this membership change. It doesn't establish every sign-in requirement or unrelated administrative permission.
 
-Lifecycle account actions, such as enable or disable, are also not a permanent monitoring loop that continually repairs account state. Error handling has its own supported behavior; don't promise that a state label guarantees endless retries until every target agrees.
+If the target denies the operation, a correct state value doesn't supply missing connector permission. Identity processing doesn't validate successful provisioning after initiating it.
 
-Access profiles assigned by the current lifecycle state are enforced while the identity remains in that state. When someone leaves a state, access profiles granted by it are revoked unless the new state also assigns them. Other assignment paths and configured removal behavior still need examination before predicting all effective access.
+Configured lifecycle account actions also aren't evidence of a permanent monitoring loop that continuously repairs every account state. Inspect actual execution and supported retry behavior; don't promise endless retries from a state label.
 
-## Keep the profile's branches separate
+Access profiles assigned through the current lifecycle state are enforced while the identity remains there. If such a profile is removed while still required by that state, it is provisioned again.
 
-By now we have followed different responsibilities attached to Employees:
+On leaving the state, its granted profiles are revoked unless the new state also assigns them. Other assignment paths and removal settings still matter before predicting all effective access.
+
+## The profile supplies inputs to other access mechanisms
+
+An **access request** asks ISC to arrange specified access for an identity. It follows applicable request policy and fulfillment. It isn't an identity profile.
+
+A **role** represents an access package or business responsibility and can use configured membership criteria. A profile can supply identity values those criteria consume.
+
+For example, a role could require identity Department HR. Correcting the mapping can affect that role's evaluation without editing the role definition. That is a dependency to review, not a promise that every Department change grants a particular role.
+
+Here is the responsibility map:
 
 ```text
-Employees identity profile
+[Employees identity profile]
   |
-  +-- Authoritative source
-  |   PeopleCore employee population
+  +-- Authoritative population
+  |   HR-Production workers
   |
   +-- Identity attribute mappings
-  |   Department input and other values
+  |   Selected input for each value
   |
   +-- ISC sign-in/security settings
-  |   Supported authentication path
+  |   Applicable authentication path
   |
   +-- Lifecycle configuration
-      State mapping and enabled states
-      Access requirements and actions
+      State mapping + enabled states
+      Access requirements + actions
 ```
 
-This is a responsibility map, not an execution sequence. ISC uses the relevant settings in their applicable processes. A Department correction doesn't itself send a registration invitation, change an authentication source or grant every access bundle.
+These branches are configuration responsibilities, not execution order. ISC uses each setting in its applicable process.
 
-An **access request** asks ISC to arrange specified access for an identity. It follows the applicable request policy and fulfillment path. It isn't an identity profile.
+A Department change doesn't, by itself, establish an authentication-source change, registration invitation or grant of every bundle. Verify the consumer and result relevant to the request.
 
-A **role** represents an access package or business responsibility and can assign access according to configured membership criteria. The profile can supply values those criteria consume, but a profile is not itself a role.
+## Use each observation for the claim it supports
 
-For example, a role could use identity Department `HR` as a membership condition. Correcting the profile's mapping can therefore affect role evaluation even when no role definition is edited. That dependency is a reason to review the change's impact, not a reason to assume every department change must assign a particular role.
-
-## Saving, previewing and applying answer different questions
-
-Let's return to Devi's Department correction. The only intended edit is to select PeopleCore `workDepartment` for identity Department.
-
-First, inspect who else uses Employees and which downstream decisions consume Department. The same mapping is shared across that population. Check representative records where the new input is present, absent or different from the old one.
-
-**Preview** evaluates identity mappings against a selected identity's data so you can inspect the proposed values. A preview showing `HR` for Devi does not prove that every employee has a valid value. It also isn't evidence that directory attributes or application permissions have changed.
-
-After saving a mapping change, the profile can show **Needs Processing**. **Apply Changes** initiates identity processing for identities associated with that profile. It is not a harmless screen refresh: processing can reevaluate access requirements as well as update mapped values.
-
-In our supplied corrected outcome, the approved change is applied and Devi's identity Department is verified as `HR`. Her identity still uses Employees, and her existing source account associations are unchanged. Corporate Directory still contains `FIN`; no synchronization write is configured in this example.
-
-That result answers the reported identity-value problem. It doesn't establish a sign-in repair, directory update or BenefitsDesk access change.
-
-**Authorization** is the application's decision about what the signed-in account may do. Observing a membership, authenticating and successfully performing an allowed action are related evidence, not interchangeable observations.
-
-Use each observation for the question it can actually answer:
+**Authorization** determines what a signed-in account may do. Authentication, observed membership and successful use of a permitted action are related but separate evidence.
 
 | Observation | What it establishes | What still needs checking |
 |---|---|---|
-| Identity shows Employees | Which profile governs this identity | Whether each relevant setting and mapping is correct |
-| Saved Department mapping selects PeopleCore | Intended input configuration | Preview results, applied processing and represented identity value |
-| Preview shows `HR` | Proposed result for that selected identity and current data | Other population cases and actual post-processing values |
-| Identity Department becomes `HR` | The represented person-level value changed | Any required account synchronization or access changes |
-| Lifecycle State shows `active` | The represented state assignment | Enabled-state configuration, applicable access and provisioning results |
-| BenefitsDesk account has the entitlement | The observed target membership | Separate authentication, authorization and other account requirements |
+| Identity shows Employees | Governing profile | Relevant mappings and settings |
+| Saved Department input selects HR | Intended configuration | Preview, applied processing and actual value |
+| Preview shows HR | Proposed result for selected data | Other population cases and represented outputs |
+| Identity Department becomes HR | Identity value changed | Required directory sync or access effects |
+| Mapped cloudLifecycleState contains active | Value available for state selection | Exact technical-name match, enabled state and actual assignment |
+| Identity's lifecycle assignment shows active | Represented state assignment | Required access configuration and target results |
+| Benefits account holds the entitlement | Observed target membership | Authentication, authorization and other account conditions |
 
-Don't delete and recreate a profile to clear a stale value. Deleting it makes its source non-authoritative and can delete identities unless they can be reassigned to other profiles. It does not itself delete or deprovision external source accounts. A population-defining configuration change is far larger than the Department repair.
+Don't delete and recreate a profile to repair one stale value. Deletion makes its source non-authoritative and can delete identities unless they can be reassigned. It doesn't itself delete or deprovision the source's external accounts.
+
+That changes population-defining configuration, not just the Department input being investigated.
 
 ## Work through these support questions
 
-Consider these fictional support cases.
+### 1. HR is current, but Department follows the directory
 
-### 1. HR changed, but the identity still follows the directory
+HR workDepartment contains HR. Directory department contains FIN. Employees still selects the directory for identity Department.
 
-**Facts:** PeopleCore `workDepartment` is `HR`. Corporate Directory `department` is `FIN`. Employees still maps identity Department from the directory.
+Would another HR aggregation establish that Department will become HR?
 
-**Question:** Is another HR aggregation sufficient evidence that Department will become `HR`?
+**Worked reasoning:** No. The selected mapping still consumes FIN. Confirm the approved value owner and mapping. Reading an unselected input doesn't change that selection.
 
-**Reasoning:** No. The selected mapping still consumes `FIN`. Confirm the approved field owner and mapping. A new read of a different, unselected field doesn't change that selection.
+### 2. One preview looks right
 
-### 2. The preview looks right
+The new Department preview shows HR. Employees still shows Needs Processing, and the stored identity value hasn't been checked.
 
-**Facts:** The new mapping's preview shows `HR` for Devi. Employees still shows Needs Processing, and the stored identity value has not been checked.
+Can the incident be closed?
 
-**Question:** Can you close the incident as fixed?
+**Worked reasoning:** No. Preview isn't completed application. Review the population, apply the approved change through identity processing and verify actual identity values and relevant downstream results.
 
-**Reasoning:** No. Preview establishes a proposed result, not completed application of the change. Review population impact, apply the approved change through identity processing, and check the represented identity value and any relevant downstream results.
+### 3. One capital letter differs
 
-### 3. The state value differs by one capital letter
+The enabled technical state is `active`, but the mapped value is `Active`. No manual alternative assignment applies.
 
-**Facts:** The enabled lifecycle state's technical name is `active`. The mapped value is `Active`; an administrator hasn't manually chosen a different lifecycle state.
+Is that an exact match?
 
-**Question:** Is that an exact state match?
+**Worked reasoning:** No. Technical-name matching is case-sensitive. Review the mapping and approved normalization, conversion into the required representation, then verify the corrected assignment. Editing display wording isn't equivalent.
 
-**Reasoning:** No. This comparison is case-sensitive. Inspect the mapping and approved normalization, meaning conversion into the required representation. Verify the corrected value and state assignment rather than merely renaming the display label.
+### 4. The bundle belongs to another profile
 
-### 4. The right bundle is in the wrong profile
+Contractors governs an identity. Only Employees' active state grants Benefits Self-Service, and no other assignment path is supplied.
 
-**Facts:** Contractors governs an identity. Benefits Self-Service is configured only on Employees' active lifecycle state. No other assignment path is supplied.
+Does an active contractor inherit it because both display labels say Active?
 
-**Question:** Does an active contractor inherit it because both states are called Active?
+**Worked reasoning:** No. State configuration is per profile. Check the governing profile and enabled state; a shared label doesn't copy another profile's access requirements.
 
-**Reasoning:** No. Lifecycle configuration is defined per profile. Inspect the governing profile and its enabled state. The same display label does not copy another profile's access requirements.
+### 5. The target denies the write
 
-### 5. The target rejects the change
+The identity is correctly active and its configured access requires benefits-selfservice. Provisioning reports insufficient target permission.
 
-**Facts:** Devi is correctly assigned to active. The configured access requires `benefits-selfservice`, but the provisioning result reports insufficient target permissions.
+Should the Lifecycle State mapping be repaired first?
 
-**Question:** Should you repair the Lifecycle State mapping first?
+**Worked reasoning:** The evidence identifies an execution problem. Review the approved integration permission and supported operation, then recover and verify target membership. Repeating processing or broadening rights without understanding the denial doesn't repair it.
 
-**Reasoning:** The supplied evidence points to the execution boundary, not an incorrect state. Investigate the integration's approved permissions and supported operation. After authorized correction and appropriate recovery, verify the result and target membership. Don't broaden permissions or repeat changes without understanding the failure.
+### 6. Employees' users can't sign in
 
-### 6. Everyone in Employees suddenly cannot sign in
+Off Network was enabled without a tenant network definition. Worker accounts and identities remain present.
 
-**Facts:** Off Network was enabled for Employees, but no tenant network definition was configured. Worker accounts and identities remain present.
+Should the identities be recreated?
 
-**Question:** Should the team recreate those identities?
+**Worked reasoning:** No. Those settings can block the profile's users from ISC. Review the security configuration through the approved process. The symptom doesn't establish missing identities or bad credentials.
 
-**Reasoning:** No. The documented restriction can block the profile's users from ISC access under these conditions. Investigate the security configuration through the approved security-change process. Do not infer identity deletion or change credentials from this sign-in symptom.
+### 7. A custom field looks unused locally
 
-### 7. A custom field seems unused in Employees
+A custom identity attribute is unmapped in Employees but used by a Contractors mapping and a role condition.
 
-**Facts:** A custom identity attribute is unmapped in Employees but used by a Contractors mapping and a role condition.
+Is deleting it local cleanup?
 
-**Question:** Is deleting it from the Employees editing screen local cleanup?
+**Worked reasoning:** No. Its definition is tenant-wide. Review other profiles and consumers; an empty local mapping doesn't establish global lack of use.
 
-**Reasoning:** No. Its definition is tenant-wide. Deletion affects other profiles and consumers. Review dependencies and the approved requirement instead of treating one profile's empty mapping as proof the attribute is unused everywhere.
+## Review a contractor email change
 
-## Explain a profile change before approving it
+A project proposes moving contractor Work Email from a register's emailAddress to a directory account's mail. Some contractors have no directory account yet.
 
-A project proposes moving Work Email for a contractor population from a register's `emailAddress` to a directory account's `mail`. Some contractors don't yet have directory accounts. The profile's local-registration invitations use Work Email, and email is a required identity attribute. No fallback input or complete directory-coverage evidence is supplied.
+Email is required, and local-registration invitations use it. No fallback or complete directory-coverage evidence is supplied.
 
-The proposal says, “It's only one mapping. Preview one person and apply it.”
+The proposal says, “Preview one person and apply it. It's only one mapping.”
 
-What would you need to know before agreeing?
+What must be established first?
 
-A sound review starts with the affected population, existing account associations and availability of `mail` for every required case. One successful preview doesn't cover contractors without directory accounts. Trace the proposed email value for those people and check required-value exceptions, invitation dependencies and any other consumers.
+**Worked reasoning:** Identify the affected population, correct account associations and availability of mail for every required case. A successful preview doesn't cover people without the supplying account.
 
-Also establish how the directory account becomes available. Don't assume a downstream account will supply the very value needed earlier in onboarding. The field's owner, initial-value design and approved correction path must be clear.
+Trace their proposed output, required-value exceptions, invitation dependency and other consumers. Establish how the directory account becomes available rather than assuming it supplies a value needed earlier in onboarding.
 
-Review representative cases and expected effects before applying the change. Then verify actual identity values and the applicable downstream outcomes. If the supplied evidence can't establish complete coverage, say what is missing; don't replace that uncertainty with a successful sample.
+Agree the field owner, initial-value design and correction path. Review representative cases before applying, then verify actual identity outputs and applicable downstream results.
 
-A profile change is ready to reason about when you can say which identities it governs, which input or setting changes, which processes consume that change and what observations will prove the intended result. “The profile was saved” answers only one part of that explanation.
+If coverage isn't established, state the missing evidence. One good sample doesn't resolve it.
+
+A profile change can be explained when you can identify its governed identities, changed input or setting, consuming processes and the evidence for the required outcome. Saving answers only the configuration part.

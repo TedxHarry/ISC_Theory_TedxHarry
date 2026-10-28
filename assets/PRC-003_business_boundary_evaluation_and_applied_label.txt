@@ -1,0 +1,14 @@
+Collected reviewAt: 16:00 UTC
+              |
+compare evaluation time with reviewAt
+              |
+    +---------+---------+
+    |                   |
+  before             at/after
+    |                   |
+Before review        Review due
+
+The comparison determines the answer.
+Processing must run the calculation.
+A current check establishes the
+applied identity result.

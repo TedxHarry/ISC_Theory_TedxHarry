@@ -1,344 +1,349 @@
 # The mapping is correct. What else will change?
 
-Devi, employee number `67007`, works in Engineering. Her Human Resources (HR) record uses department code `ENG`. Her directory account uses the label `Engineering`.
+Suppose an identity's Department currently contains Engineering, read from a directory account. Human Resources (HR) supplies ENG for the same employment department, and the team wants SailPoint Identity Security Cloud (ISC) to use that approved code instead.
 
-SailPoint Identity Security Cloud (ISC) currently takes Department from the directory. The team wants to use HR's approved code instead.
+**Preview** calculates proposed mapping results for selected identity data. Here it shows ENG, the intended new value.
 
-A preview shows `ENG`. That is the desired new identity value.
+But a role still expects Engineering, and the directory is configured to receive Department updates from ISC. The new value has readers and a writer beyond the field you just changed.
 
-But an automatic access condition still expects `Engineering`, and the directory is configured to receive Department updates from ISC. Changing one mapping can therefore affect access decisions and the very account that supplied the old value.
+The person's job hasn't changed. The representation has, and the processes using it need to understand that representation.
 
-Let's follow those dependencies before treating the preview as a completed change.
+## Establish the input, identity and receiving account
 
-## Identify what is being changed
+An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a connected system.
 
-An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a particular connected system.
+A **source** is ISC's configured representation of a system or account-data collection. Its **connector** provides supported integration behavior. **Account aggregation** reads account information into ISC.
 
-A **source** is ISC's configured representation of a system or account-data collection. Its **connector** provides the supported integration behavior. **Account aggregation** reads account information into ISC.
+An **attribute** is a named piece of information. Account department and identity Department belong to different objects.
 
-An **attribute** is a named piece of information. An account attribute belongs to a source account; an identity attribute belongs to the ISC identity.
+An **identity profile** supplies shared configuration, including mappings, for its identities. An **authoritative source** provides accounts used to establish identities through that profile.
 
-An **identity profile** is shared configuration governing a population of identities, including their identity attribute mappings. An **authoritative source** supplies accounts used to establish identities through that profile.
+An **identity attribute mapping** selects or calculates an identity value. Editing it changes how ISC derives that value; it doesn't directly edit HR.
 
-An **identity attribute mapping** selects or calculates the value for an identity field. Editing it changes how ISC derives that value. It does not edit the HR record directly.
+In this hypothetical example, HR-Production is authoritative for Employees. HR account hr-record and Directory-Production account directory-user are correctly attached to the same identity.
 
-In this fictional example, **WorkforceHub Production** is authoritative for Employees. Devi's worker account is `wf-67007`. Her Corporate Directory account is `cd-67007`.
+**Account correlation** is the matching and association of accounts with their intended identities. That relationship and the governing profile are already correct here.
 
-Both accounts are already correctly associated with Devi's one ISC identity. **Account correlation** establishes that ownership relationship using configured account-to-identity comparisons. We are changing an attribute input, not repairing account ownership or moving Devi to another identity profile.
-
-Here are the selected inputs and configuration:
+The main identity has the required information, and there is only the intended ordinary directory account in the main case. Additional accounts are a later variation.
 
 | Item | Supplied current state or proposal |
 |---|---|
-| WorkforceHub account `wf-67007` | `departmentCode = ENG`, the approved employment department code. |
-| Corporate Directory account `cd-67007` | `department = Engineering`, the existing descriptive label. |
-| Employees' current Department mapping | Reads Corporate Directory `department`; the applied identity value is `Engineering`. |
-| Proposed Department mapping | Reads WorkforceHub `departmentCode`; expected identity output is `ENG`. |
-| Engineering Worker role | Automatically assigned when identity Department equals `Engineering`. |
-| Corporate Directory attribute synchronization | Enabled for account `department`, directly mapped from identity Department in its Create Account definition. |
+| HR account hr-record | departmentCode ENG, the approved employment code. |
+| Directory account directory-user | department Engineering, the existing descriptive label. |
+| Current Employees mapping | Reads directory department; applied identity Department is Engineering. |
+| Proposed mapping | Reads HR departmentCode; proposed identity output is ENG. |
+| Enabled Engineering Worker role | Automatic membership requires identity Department equal to Engineering; no other condition provides a match in the risk example. |
+| Directory attribute synchronization | Enabled for department, directly mapped from identity Department in its Create Account definition; provisioning and the update operation are supported. |
 
-Engineering and `ENG` mean the same department under this example's business agreement. They are not the same text value.
+ENG and Engineering represent the same department under the example agreement. They aren't the same text.
 
-The intended new representation must be agreed with the owners of the processes that use it. “HR approved the code” does not establish that every existing comparison, report and receiving system understands that code.
+Approval of the HR code doesn't establish that every existing comparison, report or receiving system can use it. Agree the new representation with the owners of those consumers too.
 
-## Find the readers and the writers
+## Follow each use of Department
 
-A **consumer** is a process or system using a value. A **dependency** means that its result relies on that value or on the configuration producing it.
+A **consumer** is a process or system using a value. A **dependency** means its result relies on that value or the configuration producing it.
 
-A **role** groups access requirements and can be assigned through configured membership criteria. An **access profile** bundles entitlements on one source; an **entitlement** is a represented permission or membership. Roles can include access profiles and direct entitlements.
+A **role** groups access requirements and can assign them through membership criteria. An **access profile** bundles **entitlements**, represented permissions or memberships, on one source. A role can contain access profiles and direct entitlements.
 
-**Provisioning** attempts supported account or access changes in connected systems. The **target system** is the external system receiving the attempted change.
+When an automatically assigned role no longer meets its criteria, ISC reevaluates the assignment and associated access. That doesn't establish that every corresponding target permission has already changed.
 
-When an automatically assigned role no longer matches its criteria, ISC reevaluates that assignment and its associated access. The resulting provisioning work and actual target outcome must be checked separately.
+**Provisioning** performs supported account or access changes. The **target system** is the external recipient of an attempted change.
 
-**Attribute synchronization** is a configured identity-to-account write path. It keeps selected account attributes aligned with mapped identity values. It is not account aggregation in reverse for every field, and it is not automatically enabled just because two fields have the same name.
+**Attribute synchronization** is a configured identity-to-account write path. It keeps selected account fields aligned with mapped identity values. It isn't automatically enabled because fields have similar names.
 
-For the selected directory field, the example explicitly supplies the required direct mapping in the source's Create Account definition and an existing correlated account. A **Create Account definition** specifies how account fields are populated when an account is created; attribute sync uses eligible direct identity mappings from that definition for ongoing synchronization.
+A **Create Account definition** specifies how source account fields are populated during creation. Attribute sync uses eligible direct identity mappings in that definition for ongoing updates to existing correlated accounts.
 
-This creates two separate paths from Department:
+That direct Department mapping and existing account are supplied conditions in our example. They explain why changing identity Department can cause a directory write.
+
+Now consider the risk of applying ENG while leaving the old role criterion unchanged:
 
 ```text
-Proposed identity Department = ENG
-  |
-  +-> Engineering Worker role condition
-  |     still expects Engineering
-  |       -> criterion no longer matches
-  |       -> reassess role/access assignment
-  |
-  +-> configured directory attribute sync
-        identity Department -> department
-          -> attempt target value ENG
+[Proposed identity Department: ENG]
+     |
+     +--> [Role expects Engineering]
+     |    [Condition no longer matches]
+     |    [Reevaluate role / access]
+     |
+     +--> [Configured directory sync]
+          [Attempt to write ENG]
+          [Verify target result]
 
-Human checks:
-  intended role membership and access?
-  approved directory format and result?
+[Engineer checks each required outcome]
 ```
 
-This map shows the risk if the proposed mapping is used while the role condition remains unchanged. It does not show a completed rollout or a fixed order between role processing and synchronization.
+The role branch compares ENG with Engineering. The strings differ, so that condition no longer matches even though the person's employment department is unchanged.
 
-The role and sync branches are separate consumers. One can succeed while another fails. The diagram's human checks do not run as automatic extra processing stages.
+The sync branch attempts to deliver the new identity value to the directory. Whether that operation succeeds is another result to inspect.
 
-A change in representation can remove a match even when the person's actual job did not change. The role's condition compares the configured value; it doesn't infer that `ENG` is another name for Engineering.
+These are separate consumers, not a fixed sequence between role evaluation and synchronization. One outcome can succeed while another fails. The final engineer line is human verification, not an automated backend stage.
 
-## Look beyond the field you opened
+This diagram describes an uncoordinated risk. It isn't the completed change we intend to approve.
 
-The Department change affects all identities governed by Employees whose evaluated output changes, not just the identity selected for preview. Establish the actual governing profile and account associations when determining that population.
+## Coordinate the value and its consumers
 
-Also inspect calculations that reuse Department. A **transform** is a configured calculation or lookup used to produce a value. One transform may use another through a **Reference transform**, which reuses an existing transform's logic.
+For the main proposal, suppose the owners approve code ENG for both identity Department and the receiving directory field. They also approve changing Engineering Worker's condition from Engineering to ENG.
 
-If you modify reused logic rather than one profile's input selection, the impact can extend to other fields and profiles using that reference. Inspect the saved definitions and actual references; matching display names do not prove that two mappings share the same executable definition.
+The business requirement is to preserve the intended engineering membership while changing the representation. It isn't permission to replace directory labels with codes in every project.
 
-Changing a mapping, removing a mapping and deleting an attribute definition are different operations. A custom identity attribute is an additional field defined for the tenant; its definition is shared across profiles. Deleting that definition is not a safe way to stop one profile from using it.
+A **transform** is a configured calculation or lookup. No conversion is needed in this main mapping because HR already provides the approved code. Other mappings may need approved translation logic.
 
-For each changed input or output, establish:
+A **manager relationship** connects an employee identity to its manager's identity. A **lifecycle state (LCS)** is a business stage, such as active employment or termination, with configured access and account actions.
 
-- Which identities and associated accounts supply the data.
-- Which mapping or reused calculation changes.
-- Which calculated identity fields read the result.
-- Which role conditions, lifecycle logic, manager relationships or external writers depend on those fields.
-- Which reports, integrations or notifications interpret the value.
+**Identity processing** evaluates identity information and configured access requirements. It can update mapped fields, evaluate manager relationships, lifecycle requirements and role membership.
 
-This is a dependency review, not a claim that every mapping change triggers every item in the list.
+After coordinated approved configuration and appropriate processing, the expected identity output is ENG and the revised role condition matches ENG. A supported directory write can then deliver ENG, subject to its own execution result.
 
-If Department has no role dependency in another project, don't invent one. If it has an external writer that isn't visible on the profile screen, don't ignore it.
+Here is the supplied outcome for this example:
 
-## Manager and lifecycle changes need their own reasoning
+- Current identity Department is ENG.
+- Engineering Worker's revised ENG condition is applied, and the role assignment remains correct.
+- The manager relationship and active lifecycle result remain unchanged.
+- A directory write of department ENG was attempted and denied by the target.
+- Direct target evidence still shows Engineering on directory-user.
 
-**Manager correlation** links an employee's identity to the identity of their manager. It uses configured source-account and identity information to establish that relationship.
+The identity and role observations establish successful identity-side results. The directory operation failed at a different boundary.
 
-A proposed mapping might show a manager identifier or name while the resulting relationship still needs separate checking. Manager correlation requires the relevant profile mapping and source correlation configuration; a new-looking display value is not proof that approvals will reach the intended manager.
+Investigate the operation's permissions and target response. Reapplying the same mapping doesn't grant the connector permission to update the directory.
 
-If a manager input changes, compare its meaning with the field used to identify the manager. An employee number and a directory account identifier are not interchangeable merely because both identify someone.
+Don't change correct HR data to Engineering merely to hide the receiving mismatch. Repair the approved write path, use supported recovery for the affected work and verify the target result.
 
-**Null** means no value is present. Do not assume an unmatchable new manager input always clears the previous manager. The documented behavior can retain the existing manager when a changed non-null account value cannot correlate; a value changing to null has a different outcome. Inspect the actual relationship.
+No universal retry or harmless broad reprocessing is assumed. The failed operation needs its own evidence and appropriate recovery.
 
-A **lifecycle state (LCS)** describes a stage such as active employment or termination, with configured access and account actions in the identity profile. The mapped lifecycle value uses the state's technical name, and the relevant state must be enabled.
+## Establish the full scope before saving shared logic
 
-Changing the input used to calculate a start date, end date or lifecycle value can change which actions are required. A date-format error is therefore more than a display defect when it feeds that calculation.
+Employees' mapping is shared configuration. Any governed identity whose evaluated output changes can be affected, not only the identity selected for preview.
 
-In Devi's main example, the supplied lifecycle result remains `active`, and her manager relationship is unchanged. We are not claiming that a Department edit automatically changes either of them.
+Inspect the actual governing profile, attached accounts and selected input when identifying that population.
 
-The point is to identify actual dependencies and verify expected unchanged results as well as expected changes.
+Reused calculations can extend scope further. A **Reference transform** reuses an existing transform's logic inside another transform. If Employees and Contractors reference the same calculation, changing that calculation can affect both.
 
-## Preview checks a calculation, not the whole change
+Inspect saved definitions and actual references. Similar display names don't prove shared executable logic, and an independent copy doesn't automatically change with the original.
 
-**Preview** evaluates mapping results for a selected identity. It helps you inspect whether Employees would produce `ENG` from Devi's collected WorkforceHub account.
+Editing a mapping, removing a mapping and deleting a field definition are also different actions. A **custom identity attribute** is an additional field defined for the tenant, meaning the organization's ISC environment. Its definition is shared across profiles.
 
-It does not prove that:
+Deleting that definition isn't a local way to stop one profile using it. Review every dependent use before such a separate change.
 
-- Every employee has a usable `departmentCode`.
-- The selected account is correct for someone with multiple accounts.
-- The Engineering Worker role still matches.
-- The directory accepted a write.
-- A manager relationship, lifecycle action or external report is correct.
+Follow the relevant inputs and outputs:
 
-Check the inputs behind the preview. If WorkforceHub has not published a transfer yet, or ISC has not collected it, a successful calculation can still use old data.
+- Which identities and source accounts supply the input?
+- Which mapping or referenced calculation changes?
+- Which other identity calculations read its output?
+- Which access rules, manager relationships or business-stage calculations depend on it?
+- Which reports, integrations, notifications and external writers interpret it?
 
-For multiple-account cases, inspect the lookup's account selection and null handling rather than assuming the newest or most familiar account supplies the value.
+This is a review of actual dependencies. Don't invent a role dependency where none exists, or overlook a writer simply because the profile screen doesn't display it.
 
-An empty string or a literal `unknown` is different from null and does not become an approved department because a preview displays something.
+## Check manager and lifecycle outcomes as relationships and decisions
 
-Include those changed conditions in the test set. A sample should test the assumptions that can fail, not just repeat the easiest successful employee.
+**Manager correlation** links an employee identity to its manager's identity. It needs the profile's Manager Name mapping and source manager-correlation configuration.
 
-For this proposal, useful sample cases include:
+A previewed manager identifier or name isn't proof that the correct relationship was established. Compare the source reference with the identity attribute used to identify the manager. Employee number and directory account identifier aren't interchangeable.
 
-| Sample condition | Expected reasoning or check |
+Manager correlation has its own documented profile/source resolution. Inspect the configuration actually used rather than assuming every manager lookup is just another field from the governing profile.
+
+**Null** means no value is present. A changed non-null manager account value that cannot correlate can leave the previous manager relationship in place. A value changing to null has a different documented outcome: the manager correlation changes to null.
+
+A retained old manager therefore doesn't prove that no new input was evaluated or that the new reference matched successfully. Inspect the actual relationship.
+
+For lifecycle assignment, the mapped value must match the state's technical name, and the state must be enabled.
+
+Changing a start-date, end-date or lifecycle input can change those decisions. A date-format mistake matters when it feeds an account action, even if the date looks like a minor display field.
+
+The main example supplies an unchanged manager and active lifecycle result. Department doesn't automatically change them. Check expected unchanged outcomes as well as intended changes.
+
+## Use Preview to test the assumptions
+
+**Preview** evaluates proposed mappings for selected identity data. It shows whether this input produces ENG. It doesn't establish that all people have suitable inputs, the role remains correct or the directory accepted a write.
+
+Check input freshness too. If HR hasn't published a transfer, or ISC hasn't collected it, a successful calculation can use old information.
+
+For multiple-account cases, inspect account selection and null handling. Don't assume the newest or most familiar account supplies the value.
+
+An empty string or literal unknown differs from null. A preview showing text doesn't approve its business meaning.
+
+Useful cases for this change include:
+
+| Sample condition | What needs to be established |
 |---|---|
-| Engineering employee with current HR code `ENG` | Preview produces `ENG`; intended Engineering access remains after the coordinated consumer change. |
-| Operations employee with HR code `OPS` | Must not gain Engineering access under the revised condition. |
-| Missing or future-dated HR department | Identify the intended current value and approved missing-value behavior; do not silently treat a future fact as current. |
-| Employee with multiple relevant source accounts | Confirm the intended account actually supplies the code. |
-| Identity governed by another profile | Establish whether its mapping and any reused logic are affected; don't assume it belongs to Employees' processing scope. |
-| Employee with an admin directory account as well | Inspect all correlated directory accounts that attribute sync can update, not just the ordinary account shown in one preview. |
+| Engineering employee with HR code ENG | Proposed ENG and retained intended engineering access under coordinated consumer logic. |
+| Operations employee with code OPS | No unintended Engineering membership under the revised condition. |
+| Missing or future-dated department | Approved current value and missing-value policy; future publication isn't current effectivity. |
+| Multiple relevant supplying accounts | The intended account actually provides the code. |
+| Identity governed by another profile | Whether its own mapping or referenced logic is affected, and its required processing scope. |
+| Ordinary and administrative directory accounts | Every correlated account that attribute sync can update, not only the account visible in one preview. |
 
-The conditions in this table are a test design, not a built-in ISC test mode or a claim that these people were tested in a tenant.
+This table designs representative checks. It doesn't claim tenant testing or describe a built-in ISC test mode.
 
-## Coordinate the change before broad processing
+Preserve the exact previous mapping and consumer definitions, affected population, expected outputs and relevant current target state. A screenshot of a field name isn't enough to reconstruct its complete calculation or references.
 
-For the main proposal, suppose the owners approve codes for identity Department and for the receiving directory field. They also approve changing the Engineering Worker condition to use `ENG`.
+User Name (uid), Work Email (email) and Last Name (lastname) still need mapped non-null values. UID must remain unique across identities. Presence alone doesn't establish all business validity.
 
-That is a coordinated change to input agreements, mappings and consumers where needed. It is not permission to replace a directory label with a code in every organization.
+## A limited processing request doesn't isolate the saved mapping
 
-Compare the previous and intended configurations, record the affected population and capture the expected changes. Preserve the exact old mapping and relevant consumer definitions, not just a screenshot showing the field's name.
+Choose an approved validation environment or supported controlled rollout scope.
 
-Check existing and expected role membership, selected account values, required identity attributes and external account state. User Name, Work Email and Last Name still need valid mapped values; User Name must remain unique across identities.
+A **canary** is a deliberately limited real rollout used to observe effects before extending a change. Previewing one identity isn't such a rollout.
 
-Choose an approved validation environment or controlled scope supported by the actual configuration. Previewing one identity is not a safe canary deployment. A **canary** is a deliberately limited real rollout used to observe effects before extending a change.
+Processing selected identities can limit that processing request. It doesn't make a shared mapping private to them, suspend other processing or prevent unrelated activity using the saved configuration.
 
-**Identity processing** reevaluates identity values and configured access requirements. It can update mapped attributes, evaluate manager relationships, lifecycle-related requirements and role membership.
+Plan the transition between old and new representations. A role updated to ENG can fail to match identities still holding Engineering until their values change.
 
-Processing selected identities can limit the scope of that particular processing request. It does not make the saved shared mapping private to those identities, pause other processing or prove unrelated activity cannot use the new configuration.
+Temporarily accepting both representations is an option only with approved population meaning and testing. Leaving both accepted indefinitely can conceal defects.
 
-Plan the transition period too. If the role condition changes to `ENG` while some identities still hold `Engineering`, those identities may not meet the revised condition until their values are updated.
+Don't assume several saved edits become effective together as one indivisible change. Arrange mapping, consumer updates, processing and verification as a coordinated design, including the period when only part has taken effect.
 
-A temporary condition accepting both representations is a design option only if the owners approve it and tests establish the intended population. Leaving both values accepted indefinitely can conceal data defects. Don't assume several saved configuration changes take effect together as one indivisible change.
+Repeatedly processing a half-finished configuration doesn't make that transition safer.
 
-Arrange the mapping and consumer changes with the appropriate processing and verification scope. Avoid repeatedly processing a half-finished design just because each individual edit saved successfully.
+## Distinguish saved configuration, execution and observed state
 
-## Save, process and verify are different boundaries
+Saving persists configuration. It doesn't prove every affected identity now holds ENG.
 
-Saving a mapping persists configuration. It does not establish that every affected identity now holds the new value.
+**Apply Changes** on an identity profile initiates processing for associated identities. The role list's Apply Changes has a different documented scope: Active and Inactive (short-term) identities.
 
-**Apply Changes** on an identity profile initiates processing for identities associated with that profile. The role list's Apply Changes has a different documented population scope, covering Active and Inactive (short-term) identities. Those identity states affect participation in services and processing; they are not interchangeable with a source account's enabled flag.
+An **identity state** affects participation in ISC services and processing. It differs from lifecycle business meaning and from an external account's enabled flag. The main example supplies an Active identity state with its unchanged active lifecycle result.
 
-Choose processing scope based on the configurations and identities affected. Don't assume that processing only Employees also validates every other profile affected by a reused transform or a shared role edit.
+Choose processing scope from the changed configuration and affected identities. Processing only Employees doesn't validate Contractors when both use referenced logic or a shared role.
 
-Account aggregation and identity processing are different operations. Aggregation reads source data; processing evaluates the data and configuration available in ISC. Reprocessing an old account value doesn't fetch a corrected HR export.
+Aggregation reads source data; processing evaluates information and configuration already available in ISC. Processing an old account value doesn't fetch a corrected HR export.
 
-Changes during aggregation and scheduled processing can also evaluate identities. Do not treat “I haven't pressed Apply Changes yet” as proof that a saved configuration is isolated from all other activity.
+Identity changes during aggregation and scheduled processing can also cause evaluation. Not pressing Apply Changes yet isn't proof that saved configuration is isolated from all other activity.
 
-In the interface, Preview displays a selected calculation; the identity's current details show applied represented values. Active Jobs and processing audit records help establish execution. Provisioning Activity and account activity details help establish attempted external changes, results and errors.
+In the interface, Preview represents proposed selected-data calculation. Current Identity Details shows represented identity values. Active Jobs and processing audit records help establish execution.
 
-The target system and relevant application evidence establish what actually changed outside ISC. Search and reports can reflect a different observation time, so compare the exact identity, account, execution and data timestamps.
+Provisioning Activity and account activity details show attempted external changes, results and errors. Inspect the relevant operation rather than relying on a green overall indicator.
 
-There is no single green status that proves all these boundaries.
+Direct target and application evidence establishes what changed externally. Compare exact identity, account, execution and observation times when Search or reports show a different state.
 
-## A successful identity update can coexist with a failed write
+A single successful status doesn't establish every one of these boundaries.
 
-Here is a supplied fictional result after the coordinated code change, with appropriate processing completed:
+## Attribute sync has its own account and null behavior
 
-- Devi's current identity Department is `ENG`.
-- The updated Engineering Worker condition uses `ENG`, and her role assignment remains correct.
-- Her manager and `active` lifecycle result remain unchanged.
-- A directory update to `department = ENG` was attempted, but the target denied that write.
-- Direct directory evidence still shows `Engineering` on `cd-67007`.
+Attribute sync applies to existing correlated accounts. It doesn't create missing accounts or update uncorrelated records through a relationship that doesn't exist.
 
-The mapping and role observations are successful identity-side results. The directory update is a separate failed operation.
+If an identity has multiple correlated accounts on the synchronized source, attribute sync updates all of them. An ordinary-account preview isn't evidence that its administrative account is excluded.
 
-Investigate the operation's authority and target response. Reapplying the same mapping does not grant the connector permission to change the directory.
+Don't borrow another feature's account-selection behavior as protection. Review whether this writer's scope meets the actual account-class requirement.
 
-Nor should you change HR to `Engineering` just to hide the mismatch. The approved code remains correct; delivery of the configured receiving copy needs its own repair and verification.
+If a mapped identity attribute becomes null, configured attribute sync propagates that null to its account attribute. Target acceptance and operation completion still need verification.
 
-After restoring the approved write path, use the supported recovery for the affected work and verify the target result. Do not promise that every failed operation retries automatically or that repeated broad processing is harmless.
+An optional identity field isn't therefore automatically safe to clear. Distinguish a mapping returning null from an omitted input or removed mapping; don't assume they behave identically.
 
-## Attribute sync can expand the impact
+Also check data direction. Reading a receiving account into the identity and synchronizing it back can conceal the approved origin behind two matching copies.
 
-Attribute sync applies to existing correlated accounts, not to uncorrelated records or accounts that do not yet exist. It does not create missing accounts by itself.
+## Restoring the old mapping can read a changed input
 
-When an identity has multiple correlated accounts on the synchronized source, attribute sync updates all of them. That is why a sample showing only Devi's ordinary directory account cannot establish that her administration account is unaffected.
+Consider a separate variation. Here the new directory write succeeded, and its updated account value was collected.
 
-A mapping that changes an optional identity attribute to null can also matter. When a mapped identity value is set to null, attribute sync propagates that null to the configured account attribute. What the target accepts and how the operation completes still need verification.
+Before the change, the old mapping read Engineering from the directory. After successful synchronization and collection, that same selected field contains ENG.
 
-“Optional identity field” therefore does not mean “safe to clear.” Distinguish a mapping returning null from merely assuming an omitted input or removed mapping behaves identically.
-
-Also examine the direction of the data. If you derive an identity value from a receiving account and then synchronize it back, the receiving account is both input and output. The approved source of the business fact can disappear behind a seemingly consistent pair of values.
-
-## Restoring the old mapping may not restore the old state
-
-Consider a separate variation in which the new code was successfully written to the directory before a problem was noticed.
-
-Originally, the old mapping read `Engineering` from Corporate Directory. After successful sync and a read of the changed account, that same field contains `ENG`.
-
-Restoring the old mapping now reads `ENG`, not the earlier label.
+Restoring the old mapping now reads ENG.
 
 ```text
-Before the change:
-  Directory department Engineering
-    -> old mapping
-      -> identity Department Engineering
+Before:
+[Directory Engineering -> old mapping]
+[Identity Department Engineering]
 
-Variation: new mapping and sync succeed
-  HR departmentCode ENG
-    -> identity Department ENG
-      -> directory department ENG
-        -> changed account read into ISC
+Separate successful-write variation:
+[HR ENG -> identity ENG -> directory ENG]
+[Changed directory value collected]
 
-Restore the old mapping:
-  Directory department now ENG
-    -> old mapping
-      -> identity Department ENG
+Old mapping restored:
+[Directory now ENG -> old mapping]
+[Identity Department ENG]
 
-Human recovery:
-  reconcile inputs, consumers and targets
-  verify approved state after correction
+[Recovery needs more than old config]
 ```
 
-This variation is different from the denied-write example above: here the target write succeeded and its changed value was collected. The arrows show value dependencies, not an automatic rollback feature.
+The mapping definition is old; its input isn't. That is why the old identity label doesn't return.
 
-A **rollback** restores a previous configuration or state. Restoring a mapping definition is configuration rollback. It is not a guaranteed reversal of already completed external changes, role transitions, notifications or actions performed while access was different.
+This variation is separate from the main denied-write outcome. It requires both successful target change and collection of that changed value. The arrows show dependencies, not an automated rollback feature.
 
-A recovery plan may require approved compensating changes. These are new actions that correct the effects of earlier ones, rather than erasing the fact that those effects happened.
+A **rollback** restores earlier configuration or state. Restoring a mapping is configuration rollback, not guaranteed reversal of completed writes, role transitions, notifications or actions taken while access was different.
 
-Identify which operations completed, failed or remain unresolved. Preserve evidence and coordinate all writers before repairing the intended values. Don't blindly copy an old snapshot back over legitimate business updates that occurred during the incident.
+**Compensating changes** are new approved actions correcting earlier effects. They don't erase the fact those effects occurred.
 
-For an account deletion, restoring a mapping cannot recreate the deleted account with all its previous content and history. Recovery must follow the supported procedure for the actual action and target.
+Identify completed, failed and unresolved operations. Preserve evidence, coordinate writers and reconcile intended source values, consumers and targets before recovery.
+
+Don't blindly restore a snapshot over legitimate business changes made during the incident. If an account was deleted, a restored mapping cannot recover all its previous content and history; use the actual target's supported recovery procedure.
 
 ## Test the decisions against changed evidence
 
-### 1. The output is correct, but the comparison is old
+### 1. The code is correct, but the comparison is old
 
-**Facts:** Department now evaluates to `ENG`. The Engineering Worker role still requires `Engineering`. No alternate condition matches.
+Department evaluates to ENG. Engineering Worker still requires Engineering, and no other condition matches.
 
-Is the identity value alone enough to approve the change?
+Is the new value alone enough to approve the change?
 
-**Reasoning:** No. The proposed output changes the condition's result. Coordinate and test the approved representation and role logic, including a non-engineering employee. Successful calculation is not proof that existing access requirements remain correct.
+**Worked reasoning:** No. It changes that comparison's result. Coordinate the approved representation and role logic, including a negative OPS case. Correct calculation doesn't certify intended access.
 
-### 2. Only one person was previewed
+### 2. One preview is correct
 
-**Facts:** Devi's preview is correct. Other employees in Employees have missing codes and multiple source-account cases that have not been checked.
+Other Employees identities have missing codes or multiple supplying accounts that haven't been checked.
 
-Can you treat the profile-wide application as validated?
+Is profile-wide application validated?
 
-**Reasoning:** No. The preview supplies one calculation result. Inspect representative inputs, account selection, missing-value behavior and expected population effects before broad processing. A shared mapping remains shared even if only one identity was selected for preview.
+**Worked reasoning:** No. Check representative input assumptions, selection, missing-value behavior and affected population. Preview doesn't isolate the shared mapping.
 
-### 3. The administration account was overlooked
+### 3. The administrative account was overlooked
 
-**Facts:** Both `cd-67007` and administration account `cd-admin-67007` are correlated to Devi on Corporate Directory. Attribute sync is enabled for Department.
+Both directory-user and directory-admin are correlated to the identity on Directory-Production. Department sync is enabled.
 
-Can you assume only `cd-67007` receives the configured value?
+Is only directory-user affected?
 
-**Reasoning:** No. Attribute sync updates all correlated accounts on that source. Establish whether the configuration meets the approved account-class requirements; do not borrow a different feature's account-selection behavior as a safeguard.
+**Worked reasoning:** No. Attribute sync updates all correlated accounts on that source. Review the approved account-class requirements and actual writer configuration.
 
-### 4. An optional field becomes null
+### 4. An optional mapped value becomes null
 
-**Facts:** A mapped optional identity attribute now returns null. It is configured for attribute synchronization to an existing correlated account.
+An optional identity field now returns null. It is configured for sync to an existing correlated account.
 
-Does its optional status prevent an attempted account change?
+Does optional status prevent a write?
 
-**Reasoning:** No. The documented synchronization behavior propagates a mapped null to the configured account attribute. Inspect the exact operation and target outcome, and correct the cause or design before treating the empty value as harmless.
+**Worked reasoning:** No. Mapped null is propagated under configured sync. Inspect the target attempt/result and approved handling; optional doesn't mean harmless.
 
-### 5. The identity changed, but the target denied the update
+### 5. The target denied the write
 
-**Facts:** Current identity Department is `ENG`; target Department remains `Engineering`. Operation evidence records a denied write.
+Identity Department is ENG, target Department remains Engineering, and operation evidence records denial.
 
-Should you keep editing the identity mapping until the target changes?
+Should the team keep editing the mapping?
 
-**Reasoning:** No. The supplied evidence identifies an execution problem after the identity value was produced. Investigate the approved operation permissions and target response, recover supported affected work and verify the target. Do not alter correct HR data to conceal the failure.
+**Worked reasoning:** No. Investigate approved operation permissions and target response, recover supported affected work and verify delivery. Don't alter correct HR data to conceal failure.
 
-### 6. The old manager is still displayed
+### 6. The previous manager remains
 
-**Facts:** A changed non-null manager account attribute cannot be matched by manager correlation. The identity still shows its previous manager.
+A changed non-null manager input cannot correlate. The identity still has its previous manager.
 
-Does the retained manager prove no new input was evaluated?
+Does that prove the new input wasn't evaluated?
 
-**Reasoning:** No. Documented manager correlation can retain the existing manager when the changed value cannot correlate. Inspect the new input, matching configuration and actual relationship. A retained display is not proof that the new input successfully identified the intended manager.
+**Worked reasoning:** No. Documented mismatch behavior can retain the existing manager. Inspect the input, configuration and relationship; retention doesn't establish a successful new match either.
 
-### 7. A shared transform changed in another profile too
+### 7. Another profile references the same calculation
 
-**Facts:** Employees and Contractors use Reference transforms that reuse the same underlying calculation. That calculation is changed for the employee requirement.
+Employees and Contractors use Reference transforms reusing one calculation. That calculation is edited for an employee requirement.
 
-Is the change scoped only to Employees?
+Is it automatically employee-only?
 
-**Reasoning:** No. The referenced logic is reused. Identify every affected reference, expected output and processing scope. A similarly named independent copy would require different evidence, so inspect definitions rather than assuming either universal sharing or isolation.
+**Worked reasoning:** No. Identify actual references, expected outputs and processing scopes. An independent copy needs different evidence, so inspect definitions rather than assuming sharing or isolation.
 
-### 8. The old mapping is back, but the old value is not
+### 8. The old mapping returns the new value
 
-**Facts:** The directory successfully received `ENG`, and ISC collected that updated account. The administrator restores the old mapping that reads the directory.
+The directory received ENG successfully, and ISC collected it. The old directory-based mapping is restored.
 
-Why doesn't this restore `Engineering`?
+Why doesn't Engineering return?
 
-**Reasoning:** The mapping definition is old, but its input is no longer the old value. It now reads `ENG`. Reconcile the approved input, writers and consumer configuration; inspect completed external effects before planning compensating recovery.
+**Worked reasoning:** The old definition now reads changed input ENG. Reconcile approved inputs, writers, consumer definitions and completed effects before planning compensating recovery.
 
-## Apply the same review to an end-date change
+## Apply the review to a contract end date
 
-A team proposes changing a contractor end-date mapping from a current approved contract date to a field containing a proposed extension.
+A team proposes replacing an approved current contract-date input with a field containing a proposed extension.
 
 What would you establish before applying it?
 
-Confirm which field means an approved current end date and which means an unapproved proposal. Check publication timing, collected values, date format and time zone. Then identify calculations and processes using the mapped date, including lifecycle decisions and access removal.
+**Worked reasoning:** Confirm which field means approved current end date and which is an unapproved proposal. Inspect publication timing, collected input, date format and time zone.
 
-Test an approved extension, an unapproved proposal, a missing date, a future change and an already-expired contractor. A previewed date is only one observation; the expected lifecycle result and separate access actions need evidence too.
+Find the calculations and processes that use the mapped date, including lifecycle decisions and access removal. Test an approved extension, unapproved proposal, missing date, future change and already-expired contractor.
 
-Plan how to recover if an incorrect date already triggered an account action. Restoring the previous mapping may recalculate identity data, but it does not guarantee reversal of everything initiated under the wrong date.
+A previewed date is one result. Expected lifecycle decisions and separate access actions need their own evidence.
 
-Explain the change as a connected argument: the approved input produces this value, these consumers interpret it this way, this population is affected, these operations may run, and this evidence will establish the outcome. That is the difference between checking a field and engineering a change.
+Plan action-specific recovery if the wrong date already caused an account change. Restoring configuration can recalculate identity information without reversing everything initiated under it.
+
+Explain the approved input, resulting value, affected population, consumer interpretation, possible operations and evidence of completion. That makes the change reviewable beyond the field opened on the screen.

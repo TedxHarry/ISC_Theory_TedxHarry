@@ -1,0 +1,10 @@
+Review label       Proposed code mapping
+     |                       |
+     +-- references name ----+
+                  |
+         HR department code
+                  |
+HR-Primary read -> trim -> upper
+
+Shared instructions, not a saved code.
+Each use has its own identity context.

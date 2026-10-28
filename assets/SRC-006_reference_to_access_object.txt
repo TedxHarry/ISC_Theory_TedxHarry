@@ -1,0 +1,9 @@
+[Account: expense-user]
+          |
+[groups contains G-206]
+          |
+[Same source + type groups]
+          |
+[Group identified by G-206]
+          |
+[Expense Approvers + description]

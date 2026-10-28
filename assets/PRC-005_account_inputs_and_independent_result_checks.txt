@@ -1,0 +1,20 @@
+Collected HR account
+department: Engineering
+workerCategory: Employee
+managerReference: M-NEW
+workerStage: EMP
+                |
+Employees mappings and configuration
+                |
+check each applicable result:
+  mapped identity values
+  resolved manager identity
+  assigned lifecycle and access
+  automatic role assignments
+                |
+required external membership changes
+                |
+provisioning results + target checks
+
+These are dependencies and checks,
+not a fixed sequence of private jobs.

@@ -1,0 +1,16 @@
+Collected representation
+  Native account + group records
+        |
+        | supported reads and schema
+        v
+  ISC membership + hierarchy view
+
+Application authorization
+  Account + current relationships
+        |
+        | application's permission rules
+        v
+  Action on resource allowed or denied
+
+A represented link is not a new grant.
+Reading a link does not change it.

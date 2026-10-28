@@ -1,81 +1,76 @@
 # Where did this identity value come from?
 
-Devi, employee number `68008`, should have cost-centre code `0042`. Human Resources (HR) confirms that value, and the HR account already collected into SailPoint Identity Security Cloud (ISC) contains it.
+Suppose the approved cost-centre code is text 0042. The HR account already collected into SailPoint Identity Security Cloud (ISC) contains that value, but the identity shows 0900.
 
-Her ISC identity still shows `0900`.
+The mapping screen selects HR. Another HR read has completed. Why hasn't the identity value changed?
 
-The mapping screen has the HR source selected. Another HR read has completed. Neither observation explains why the identity is different.
+A selected source label isn't the whole calculation. The saved calculation can define another input. Before changing correct HR information, inspect the value that actually reaches the operation.
 
-Before changing HR, let's establish which input the saved calculation actually uses.
+## Identify the exact record and field
 
-## Name the person, the field and the disagreement
+An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a connected system.
 
-An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a particular connected system.
+A **source** is ISC's configured representation of a system or account-data collection. Its **connector** provides supported integration behavior. **Account aggregation** reads account information into ISC.
 
-A **source** is ISC's configured representation of a system or account-data collection. Its **connector** supplies supported integration behavior. **Account aggregation** reads account information into ISC.
+An **attribute** is a named piece of information. An account attribute and an identity attribute belong to different objects, even if both are labelled Cost Center.
 
-An **attribute** is a named piece of information. An account attribute belongs to a source account; an identity attribute belongs to the ISC identity. Matching labels do not make them the same field.
+An **identity profile** supplies shared configuration, including mappings, for its identities. An **authoritative source** provides accounts used to establish identities through that profile. An **identity attribute mapping** selects or calculates an identity value.
 
-An **identity profile** supplies shared configuration, including the mappings used to populate identity values. An **authoritative source** supplies accounts used to establish identities through that profile. An **identity attribute mapping** selects or calculates an identity value.
+In this hypothetical example, Human Resources (HR) supplies employee records through HR-Production, authoritative for Employees. Finance has approved the published HR cost-centre field as the current input.
 
-In this fictional environment, **StaffLedger Production** is authoritative for Employees. Employees governs Devi's identity, and Finance has approved StaffLedger's published cost-centre field as the current input.
+The disputed identity attribute is Cost Center, technical name costCenter. Expected text 0042 differs from current text 0900. The zeros are part of each identifier; we aren't comparing the numbers forty-two and nine hundred.
 
-The disputed identity attribute is Cost Center, technical name `costCenter`. Its expected value is text `0042`; its current value is text `0900`.
+Identify the exact identity reference and its governing profile. A display name doesn't uniquely identify a person, and a person can have several accounts.
 
-Those leading zeros are part of the code. We aren't comparing the numbers forty-two and nine hundred.
+**Account correlation** matches and associates source accounts with identities through configured comparisons. Here, ownership has already been verified. The intended identity has one relevant associated HR account, hr-record, and one directory account, directory-user.
 
-Identify the exact identity reference and governing profile before tracing the mapping. A display name alone is not enough: two people can share a name, and a person can have more than one account.
+These identifiers distinguish the records used in the trace. They aren't claimed actual ISC object IDs.
 
-**Account correlation** matches and associates accounts with identities using configured comparisons. In the supplied main example, account ownership has already been verified, and Devi has exactly one associated account on each relevant source.
+## Put the observations beside each other
 
-We will use `I-68008` as a short teaching label for her identity, not a real ISC object ID.
+The supplied observations use October 21, with all times in Coordinated Universal Time (UTC).
 
-## Gather evidence that can distinguish the causes
-
-The following evidence is fictional and uses October 21, 2026, with all times in Coordinated Universal Time (UTC).
-
-A **Preview** evaluates mapping results for selected identity data. It helps us compare the current calculation with the identity's already-applied value; it does not apply a change by itself.
+**Preview** evaluates proposed mappings for selected identity data. It lets you inspect today's calculation without establishing that its result has been applied to the identity.
 
 | Evidence | Supplied observation |
 |---|---|
-| Approved HR input | StaffLedger published current `costCenter = "0042"`, effective at 09:00. This is not a future proposal. |
-| Collected StaffLedger account `sl-68008` | Read at 09:05; `costCenter` is text `0042`. It belongs to `I-68008`. |
-| Collected Corporate Directory account `cd-68008` | Read at 09:08; `costCenter` is text `" 0900 "`, including surrounding spaces. It also belongs to `I-68008`. |
-| Current identity observation at 09:10 | Employees governs; identity `costCenter = "0900"`. |
-| Mapping selections inspected at 09:12 | StaffLedger Production and account field `costCenter` are selected, with the transform named `Trim Cost Center`. |
-| Current Preview at 09:13 | Evaluates to `0900`, using the currently saved definition and available account data. |
+| Approved producer input | HR-Production published costCenter text "0042", effective at 09:00; it is current, not a future proposal. |
+| Collected hr-record | Read at 09:05; costCenter is text "0042" on the intended identity's account. |
+| Collected directory-user | Read at 09:08; costCenter is text " 0900 ", including surrounding spaces, on the same identity's directory account. |
+| Current identity at 09:10 | Employees governs; costCenter is text "0900". |
+| Mapping screen at 09:12 | HR-Production and costCenter are selected, with a transform named Trim Cost Center. |
+| Current Preview at 09:13 | Produces text "0900" from the saved definition and available account data. |
 
-A **producer** is the system or process publishing integration data. Its effective time says when a business fact applies; collection time says when ISC observed it.
+A **producer** publishes integration data. **Effective time** says when a business fact applies; **collection time** says when ISC observed it.
 
-The later directory read is a newer observation of a different value. It does not make the directory the approved owner of the cost-centre decision.
+The later directory observation doesn't make that source the approved business owner. Equally, successful HR aggregation doesn't prove this identity mapping uses HR. Connect the account read to the selected calculation.
 
-Likewise, a successful HR aggregation does not prove that the identity mapping uses HR. It establishes evidence about the read, which you must connect to the selected account and calculation.
+Here, current Preview and the earlier identity observation agree on 0900. That is evidence to explain, rather than a reason to assume HR's correct 0042 needs rewriting.
 
-Let's keep competing explanations open until the evidence separates them.
+## Confirm the profile whose mapping matters
 
-## Check the governing profile before editing it
+An identity is associated with one profile at a time. **Profile priority** ranks profiles whose authoritative accounts belong to that identity. The highest-priority applicable profile governs; lower numbers mean higher priority, so 10 precedes 20.
 
-An identity is associated with one identity profile at a time. **Profile priority** is the configured ranking of profiles. ISC uses the highest-priority profile whose authoritative source has an account associated with that identity. A lower number means higher priority, so 10 takes precedence over 20.
+Profile selection doesn't choose every field's supplier. The governing profile can map values from other sources.
 
-That selection is different from choosing the input for an individual identity attribute. A governing profile can use account information from other sources.
+If Contractors governs the identity, a correct Employees mapping isn't evidence of its calculation. Inspect the actual association and authoritative accounts before editing a familiar profile.
 
-If you inspect Employees' mapping while the disputed identity is governed by Contractors, you may be analyzing configuration that doesn't produce this identity's value.
+The supplied evidence confirms Employees here. We can now inspect its Cost Center mapping. There is no implicit field-by-field fallback to another profile to explain away an unexpected value.
 
-Verify the current association and relevant authoritative accounts. Don't change profile priority merely because a familiar source appears in the story.
+## Read the calculation from its input outward
 
-For Devi, the supplied evidence confirms Employees. We can now inspect its Cost Center mapping without assuming that another profile is secretly supplying a fallback.
+A **transform** is a configured calculation or lookup. Its display name describes it to a reader; a name such as Trim Cost Center doesn't prove where its input comes from.
 
-## Read the definition, not just its name
+The **Trim transform**, technical operation trim, removes whitespace from the beginning and end of text.
 
-A **transform** is a configured calculation or lookup used to produce a value. A name such as `Trim Cost Center` describes the object to a reader; it does not prove its input.
+**Normalization** converts data into an agreed representation. Removing surrounding spaces can normalize a code. Replacing one cost-centre code with another is a different decision.
 
-The **Trim transform** removes whitespace from the beginning and end of text. **Normalization** means converting data into an agreed representation. Trimming surrounding spaces is normalization; replacing a cost-centre code with another code is a different decision.
+An **explicit input** is defined inside the calculation instead of relying on the source and attribute selected in the interface.
 
-A transform can contain an **explicit input**, meaning an input defined inside the calculation instead of relying on the source and attribute selected in the interface.
+The **Account Attribute transform**, technical operation accountAttribute, looks up a field on an identity's associated accounts for a specified source. The saved example nests that lookup inside Trim.
 
-The **Account Attribute transform** looks up an account field on the identity's associated accounts for a specified source. The definition below nests that lookup inside Trim.
+**JSON**, JavaScript Object Notation, represents named fields and values. Braces group objects, and quoted values are text. This is a definition to read, not an upload instruction.
 
-Here is the supplied saved transform definition. **JSON** represents named fields and values; braces group objects, and quoted values are text. This is a reading example, not an instruction to upload a change.
 
 ```json
 {
@@ -85,7 +80,7 @@ Here is the supplied saved transform definition. **JSON** represents named field
     "input": {
       "type": "accountAttribute",
       "attributes": {
-        "sourceName": "Corporate Directory",
+        "sourceName": "Directory-Production",
         "attributeName": "costCenter"
       }
     }
@@ -93,156 +88,152 @@ Here is the supplied saved transform definition. **JSON** represents named field
 }
 ```
 
-Read from the input outward.
+Start at attributes.input. It specifies Directory-Production and costCenter. The outer trim operation receives the result of that lookup.
 
-Here it explicitly names Corporate Directory and `costCenter`. The outer Trim transform receives that result. It does not take StaffLedger's `0042` merely because StaffLedger is selected in the mapping interface.
+For the one directory account in this example, the calculation is:
 
-For the supplied single directory account, the calculation is:
+1. Find associated directory-user on Directory-Production.
+2. Read its text " 0900 ".
+3. Remove surrounding spaces.
+4. Return text "0900".
 
-- Look up `cd-68008` on Corporate Directory.
-- Read the text `" 0900 "`.
-- Remove its surrounding spaces.
-- Return text `0900`.
-
-The calculation succeeds technically. It uses the wrong supplier for the approved business requirement.
-
-Do not describe this as “Trim converted 0042 into 0900.” StaffLedger's `0042` was not the input being trimmed.
+HR's 0042 isn't the input being trimmed. Selecting HR on the outer mapping screen doesn't replace this saved explicit lookup.
 
 ```text
-Approved field, but not the active input:
-  StaffLedger sl-68008 costCenter 0042
+Approved, but not selected:
+[HR hr-record: "0042"]
 
-Saved explicit transform input:
-  Corporate Directory cd-68008
-    -> costCenter " 0900 "
-      -> Trim removes surrounding spaces
-        -> current Preview "0900"
-          -> matches identity observation
+Saved calculation:
+[Directory directory-user: " 0900 "]
+                  |
+[Trim surrounding spaces]
+                  |
+[Current Preview: "0900"]
 
-Human conclusion:
-  current calculation uses wrong supplier
-  historical execution needs its own evidence
+[Current identity also shows "0900"]
+[Past execution needs other evidence]
 ```
 
-The arrows trace the selected data and calculation, not a private ISC service pipeline. The final match compares current evidence; it does not claim that today's Preview caused the identity value already observed at 09:10.
+The connected lines show the actual selected input and conversion. The HR row is separate because it isn't consumed by this definition.
 
-## Establish which account supplied the input
+The current identity row is also separate. It compares observations; it doesn't claim the 09:13 Preview caused the value seen at 09:10.
 
-A source can contain more than one account associated with a person. Proving that the source is correct does not prove that the selected account is correct.
+The calculation succeeds technically but uses the wrong supplier for the approved requirement. Saying “Trim converted 0042 to 0900” would misdiagnose it.
 
-The Account Attribute transform supports account filtering, ordering and null handling. **Null** means no value is present.
+## Correct that input and follow the result
 
-Its documented default ordering uses account-created date, oldest first. By default, it continues to a later account when the selected attribute value is null. Explicit configuration can change those choices.
+The approved correction changes the explicit source to HR-Production, keeping attributeName costCenter and the intended Trim operation.
 
-These defaults belong to this lookup. They are not a rule that ISC always chooses the oldest account in every operation, or that an old account is the approved business record.
+Reselecting HR in the interface while leaving the nested directory input unchanged wouldn't correct that definition.
 
-If an ordinary and an administration directory account are both associated with an identity, inspect which record survives the filter and order. Don't diagnose “HR is stale” from a value that came from the administration account instead.
+First establish where the transform is used. A **Reference transform** reuses an existing transform's logic. Follow references and saved definitions; reused logic can affect other fields or profiles.
 
-A filter inside this lookup narrows the value calculation. It does not remove accounts from ISC or change which records a connector collects.
+Preserve the earlier definition and check representative records, including missing values and multiple accounts. Trimming text 0042 should leave 0042. Losing its zeros would be another defect.
 
-In Devi's main example, there is only one relevant associated account on each source. That rules out an account-selection ambiguity for this supplied trace; it doesn't eliminate the need to check selection in another case.
+**Identity processing** evaluates mapped identity information and configured access requirements. Configuration corrections must be applied through the relevant processing; identity changes during aggregation can also initiate it.
 
-## Follow every calculation that can change the path
+**Apply Changes** on a profile initiates processing for identities associated with it. Saving a definition, seeing corrected Preview, initiating processing and observing the applied identity are separate facts.
 
-The saved definition may be nested more deeply than this example. A **Reference transform** reuses an existing transform. Follow the referenced definition as well as the mapping that invokes it.
+For this example, assume the approved correction and successful processing are supplied. The trace becomes:
 
-Also inspect constant values, conditional branches, fallback choices and conversions. A fallback can return a technically populated value while bypassing the preferred source. An error in a calculation is different from a successful result containing the wrong code.
+```text
+Before:
+[Directory " 0900 " -> Trim -> "0900"]
+[Preview and observed identity agree]
 
-Keep text, numbers, lists, missing values and empty strings distinct. If a producer supplies numeric `42`, a simple text conversion does not establish that the original business identifier was `0042`.
+Approved explicit input correction:
+[HR "0042" -> Trim -> Preview "0042"]
 
-An **account schema** defines the fields used to represent collected accounts. If the raw producer response has the right code but the represented account has another field or type, inspect extraction and schema representation before blaming the identity calculation. **Extraction** selects relevant data from the producer's response for the integration.
+After appropriate processing:
+[Same identity costCenter: "0042"]
+[Directory unchanged / no sync]
 
-If the represented account already contains the correct value but the mapping selects a different field or explicit input, correct the mapping rather than editing the producer's good data.
+[Engineer verifies required outcomes]
+```
 
-The useful question is not “Which part of ISC is broken?” It is “At which boundary does the observed information stop matching the approved path?”
+The first two groups describe calculations. The third supplies the observed identity result after processing. Preview doesn't automatically update the identity.
 
-## Compare hypotheses with the observations
+Record which definition, source account and exact input produced the corrected Preview. Then verify the same intended identity, its current costCenter 0042 and relevant processing evidence.
 
-A **hypothesis** is a proposed explanation that needs evidence.
+The directory remains unchanged because cost-centre synchronization to it isn't configured. No HR code was rewritten, no account moved to another identity, and no profile priority was changed.
 
-| Possible explanation | Evidence that supports, weakens or separates it |
+**Null** means no value is present. Keep User Name (uid), Work Email (email) and Last Name (lastname) intact: each requires a mapping and non-null value, and UID must be unique across identities from all profiles.
+
+A **consumer** is a process or system using the value. Check actual consumers before applying a shared correction and verify their required outcomes.
+
+A **role** can use identity fields as access-membership conditions. A **lifecycle state (LCS)** is a business stage with configured access or account actions. A corrected cost centre can affect such decisions if the project actually connects them.
+
+**Attribute synchronization** is a configured identity-to-account write path. **Provisioning** performs supported external account or access changes; the **target system** receives those attempted changes.
+
+Correct identity 0042 doesn't prove target delivery. An application still showing 0900 doesn't, by itself, prove the identity calculation failed. Establish its configured consumer or write path and required result separately.
+
+## The source can be right while the account choice is wrong
+
+The main example has one associated account per source. Other identities can have ordinary and administrative accounts on the same source.
+
+Account Attribute supports filtering, ordering and null handling.
+
+For this lookup, filtering narrows eligible accounts and ordering determines which are considered first. The documented default uses account created in ascending order, oldest first.
+
+If the first account's selected field is null, default handling can continue to another eligible account with a non-null value. Explicit settings can change this, including whether the first value is returned even when null.
+
+These are lookup-specific defaults, not universal ISC selection rules or business approval of the oldest record.
+
+If the older eligible account has non-null 0900 and a newer account has 0042, you can't assume the newer value wins. Compare approved account eligibility with the actual definition.
+
+A lookup filter doesn't remove accounts from ISC or change the connector's collection scope. Nor does choosing the right source prove that the intended account supplies the input.
+
+## Follow the other operations that can redirect the value
+
+A saved calculation can contain nested lookups, references, constants, conditions, fallbacks or conversions. Follow each one that affects this output.
+
+A **fallback** supplies an alternative input or result under a configured condition. It can return populated text while bypassing the preferred source. A calculation error is different from a successful result containing an unwanted code.
+
+A **data type** describes the kind of value, such as text or a number. **Cardinality** distinguishes one value from several. Keep text, numbers, lists, missing values and empty strings distinct. A producer supplying numeric 42 hasn't established that the intended identifier was text 0042. Converting the number to text doesn't recover the lost business meaning.
+
+An **account schema** defines the fields representing collected accounts. **Extraction** selects information from the producer's input for the integration.
+
+If the producer has the correct field and type but the represented account doesn't, investigate record selection, publication, collection, extraction and schema representation first.
+
+If the represented account is already right while the mapping selects another field or explicit input, correct the mapping. Don't change good producer data to fit the wrong calculation.
+
+Look for the first boundary where observed information departs from the approved path.
+
+## Compare explanations with evidence
+
+A **hypothesis** is a possible explanation to test.
+
+| Possible explanation | Evidence that separates it |
 |---|---|
-| HR has not published the correction | Check the current producer record, publication and effective time. Here the approved current code was published and collected. |
-| ISC's HR account is stale or incorrectly represented | Inspect `sl-68008`, its exact field, type and read evidence. Here it already contains text `0042`. |
-| The wrong profile or account supplies the value | Inspect profile association, account ownership and lookup selection. Here Employees and the two supplied single accounts are verified. |
-| The saved calculation reads an unexpected source | Inspect the actual explicit input. Here it names Corporate Directory and explains the current `0900` preview. |
-| A correction is saved but not applied | Compare corrected Preview with current identity and relevant processing evidence. In the initial evidence, Preview itself still produces `0900`, so unapplied correct output does not explain that result. |
-| Only a search view is old | Compare current identity details with the disputed search result and observation time. Here the current identity and current Preview both show `0900`; a stale search view alone does not explain both. |
-| An external writer changed a receiving account | Inspect the configured write path and target history. It may explain a source value's origin, but it does not change which input this saved transform reads. |
+| HR hasn't published the correction | Inspect producer publication and effective time. Here, approved current 0042 was already published and collected. |
+| The collected HR account is stale or wrong | Inspect hr-record's exact field, type and read evidence. Here it already contains text 0042. |
+| Another profile or account supplies the value | Check profile association, ownership and lookup selection. Employees and the single relevant accounts are verified in the main case. |
+| Saved logic reads an unexpected source | Inspect the explicit input. The directory lookup reproduces current Preview 0900. |
+| A correct correction wasn't applied | Compare corrected Preview and processing with current identity. Initially, Preview itself still returns 0900, so an unapplied correct result doesn't explain that Preview. |
+| Only Search is old | Compare exact current record and view time. Initial identity and current Preview both show 0900; an old Search view alone doesn't explain both. |
+| An external writer changed the directory | Inspect writer configuration and target history. It may explain the directory's value, but doesn't alter which input the saved calculation selects. |
 
-Eliminating one explanation doesn't automatically prove all details of another.
+Eliminating one explanation doesn't establish every detail of another.
 
-For example, matching current Preview and identity values makes the current mapping a strong explanation for the present result. To establish exactly what happened in an earlier execution, you also need the configuration revision, selected input and execution evidence available at that time.
+The current saved definition and current accounts reproduce 0900. That strongly explains the present calculation and is consistent with the observed identity value.
 
-Today's definition can have changed since that run. Today's account can contain a value collected after it. Reconstruct the earlier context rather than treating a current screen as a complete history.
+It doesn't establish exactly which earlier execution produced that identity value. The same output could have arisen from different earlier inputs or definitions.
 
-If that history is unavailable, state the limit: the current configuration reproduces the disputed value, but the precise earlier execution has not been established.
+Historical proof needs the configuration revision, selected input and execution evidence from that time. Today's account might contain data collected after the earlier run, or today's definition might have changed.
 
-## Separate preview, applied value and external effects
+If that evidence isn't available, state the limit: the current calculation reproduces the disputed value, but the precise earlier execution hasn't been established.
 
-Preview doesn't persist a proposed output onto every identity or prove external delivery.
+## Check the observation boundary before changing more configuration
 
-**Identity processing** reevaluates mapped identity data and configured access requirements. It can be initiated after profile configuration changes; identity changes during aggregation can also initiate processing.
+Current Identity Details shows represented identity values. Search and downloaded reports are other views and can reflect different times.
 
-**Apply Changes** on an identity profile starts processing for identities associated with that profile. Saving a mapping, starting processing and observing a completed result are separate facts.
+Compare exact identity, view scope, processing and observation time before classifying a discrepancy as failure or delayed visibility. Don't assume every difference is merely delay either.
 
-The current identity record shows represented identity values. Search and downloaded reports are other views of information and can reflect different observation times. Inspect the current record, view scope and relevant processing before classifying a discrepancy as either failure or delayed visibility.
+Preview is proposed calculation, not persistence or external delivery. Apply Changes evaluates the relevant profile identities; it isn't source aggregation.
 
-A **consumer** is a process or system using the identity value. A **role** can use identity attributes as access-membership conditions. A **lifecycle state (LCS)** describes a business stage with configured access or account actions.
+If a corrected value later changes again, inspect the next input, definition and execution that could explain it. A repeated symptom doesn't prove the first correction never applied.
 
-A corrected field can therefore affect configured decisions beyond its display. Identify those real dependencies before applying a shared correction.
-
-**Attribute synchronization** is a configured identity-to-account write path. **Provisioning** attempts supported account or access changes in a connected system, the **target system**.
-
-A correct identity value does not prove that a target received it. Conversely, a target showing an old value does not by itself establish that the identity calculation is wrong.
-
-In Devi's main example, cost-centre synchronization to Corporate Directory is not configured. The directory is not expected to change merely because the identity correction succeeds.
-
-## Correct the proven defect and verify the same identity
-
-For the supplied requirement, the approved correction changes the transform's explicit source to StaffLedger Production, keeping `attributeName = costCenter` and the intended Trim operation.
-
-That makes the actual calculation use the approved input. Simply reselecting the already-selected HR source in the interface would not remove an explicit directory lookup still saved inside the transform.
-
-Before applying the correction, establish where the transform is used. If it is reused across fields or profiles, the scope may be broader than Employees. Preserve the earlier definition and compare representative records, including missing values and multiple-account cases.
-
-Also confirm that the code remains text. Trimming `0042` should leave `0042`; dropping its leading zeros would be another defect.
-
-The following before-and-after results are supplied fictional evidence, not a tenant test:
-
-```text
-Before correction:
-  explicit input -> directory " 0900 "
-    -> Trim -> Preview "0900"
-    -> observed identity "0900"
-
-Approved definition correction:
-  explicit input -> StaffLedger "0042"
-    -> Trim -> Preview "0042"
-
-After appropriate processing completes:
-  same I-68008 identity costCenter "0042"
-  directory unchanged; no sync configured
-
-Human verification:
-  correct person, profile and input?
-  expected consumers and other fields?
-  required external outcomes checked?
-```
-
-The first two sections show calculations. The third supplies an observed applied result after processing. The arrows do not promise that a preview automatically updates the identity.
-
-For the corrected Preview, record the source account, exact input and definition used. After processing, verify `I-68008` rather than another identity with the same name, and check current `costCenter = "0042"`.
-
-Confirm relevant processing evidence and inspect any configured consumers. Keep User Name, Work Email and Last Name intact; they remain required identity values, and User Name must be unique across identities.
-
-No HR code was rewritten. No account was moved to another identity. No directory write was required by this example. A changed mapping scope, an ownership defect or a required target synchronization would need additional verification.
-
-If the corrected value later changes again, inspect the next input, definition and execution that could account for it. A repeated symptom does not automatically mean the first correction never applied.
-
-## Keep a compact trace you can hand to another engineer
-
-Use these eight evidence questions:
+## Leave a trace another engineer can follow
 
 1. **Identity and output:** Which exact identity, governing profile and technical attribute disagree with the approved value?
 2. **Configured input:** What source, field and saved calculation actually supply it, including explicit or referenced inputs?
@@ -253,86 +244,90 @@ Use these eight evidence questions:
 7. **Applied result:** What processing and current identity evidence establish the saved correction's outcome?
 8. **Consumers:** Which configured decisions or external changes depend on the value, and what evidence establishes their outcomes?
 
-This is a human investigation order, not the backend's execution sequence. Stop at the first unverified assumption and collect the evidence needed to resolve it.
+These questions guide human investigation, not the backend's execution sequence. When an assumption isn't verified, identify the missing evidence before basing a correction on it.
 
-A useful diagnosis for the main example is: “Employees' Cost Center calculation explicitly reads Corporate Directory account `cd-68008`, where `" 0900 "` trims to `0900`. StaffLedger account `sl-68008` already contains approved text `0042`. Correcting the explicit input produces `0042` in Preview, and the supplied completed processing leaves the same intended identity at `0042`. No directory sync is configured.”
+For the main example, a useful diagnosis is:
 
-That explanation names the defective relationship between configuration and input. “We refreshed it and the value changed” doesn't.
+“Employees' costCenter calculation explicitly reads directory-user on Directory-Production. Its text with surrounding spaces trims to 0900. HR account hr-record already contains approved text 0042. Correcting the explicit source produces Preview 0042, and the supplied completed processing leaves the same identity at 0042. No directory cost-centre synchronization is configured.”
+
+That names the relationship between configuration, input and output. “Another refresh made the value change” doesn't establish that relationship.
 
 ## Test the trace with changed evidence
 
-### 1. The selected source looks right
+### 1. The screen selects the desired source
 
-**Facts:** The interface selects StaffLedger, but the saved Trim definition contains explicit Corporate Directory input. Current Preview is `0900`.
+HR is selected, but saved Trim contains explicit directory input. Current Preview is 0900.
 
-Which input must you inspect first?
+Which input should you inspect?
 
-**Reasoning:** The explicit directory lookup. The transform's saved input determines what Trim receives in this example. Rereading HR or changing its correct `0042` cannot make the unchanged lookup use HR.
+**Worked reasoning:** The nested directory lookup. Its saved definition determines what Trim receives. Another HR read or an edit to correct HR data doesn't change that lookup.
 
-### 2. The profile is not the one you inspected
+### 2. Another profile governs
 
-**Facts:** An identity is governed by Contractors. An engineer inspects Employees' Cost Center mapping and finds the desired HR input.
+Contractors governs the identity. An engineer finds the desired input in Employees' Cost Center mapping.
 
-Does that mapping explain the identity's current calculation?
+Does that establish the identity's calculation?
 
-**Reasoning:** Not from these facts. Inspect Contractors' actual mapping and relevant account relationships. A correct mapping in another profile is not proof of what governs this identity, and priority is not a general field-by-field fallback.
+**Worked reasoning:** No. Inspect Contractors' actual mapping and the account relationships. Another profile's correct mapping isn't the governing configuration or an automatic fallback.
 
-### 3. The right source has two accounts
+### 3. The source has two accounts
 
-**Facts:** A lookup has no filtering or custom ordering. The identity has two associated accounts on that source. The older account contains non-null `0900`; the newer contains `0042`.
+No lookup filter or custom order is configured. The older associated account contains non-null 0900; the newer contains 0042.
 
-Can you assume the newest account supplies `0042`?
+Can you assume 0042 wins?
 
-**Reasoning:** No. The Account Attribute lookup's default is oldest-created first, with continuation after a null selected value. Here the older value is non-null. Compare the approved account-selection requirement with the actual definition rather than calling the newer value an automatic winner.
+**Worked reasoning:** No. The lookup's oldest-created default encounters non-null 0900 first. Establish the approved account-selection rule and inspect the definition; desired or newer isn't automatically selected.
 
-### 4. The producer is correct, but the account is not
+### 4. The producer and represented account disagree
 
-**Facts:** The approved producer field contains text `0042`. ISC's represented source account contains `0900`. The identity mapping directly reads that represented field.
+The approved producer field is text 0042. The collected account contains 0900, and the identity directly reads that represented field.
 
-Where does the trace first disagree with the approved path?
+Where does the trace first diverge?
 
-**Reasoning:** Between the producer evidence and represented account. Investigate publication, exact record selection, collection, extraction, type and observation time. Editing a correct identity input selection does not repair wrongly represented or stale source data.
+**Worked reasoning:** Between producer evidence and represented account. Inspect publication, record selection, collection, extraction, schema/type and time. Editing a correct identity input selection doesn't repair stale or wrong account representation.
 
-### 5. Correct Preview, old identity
+### 5. Correct Preview, old applied value
 
-**Facts:** The approved corrected definition previews `0042`. The current identity still shows `0900`. No evidence of processing after the correction has been supplied.
+The approved correction previews 0042, but the current identity is 0900. No processing after correction is evidenced.
 
-Can you conclude that the calculation ignores the correction?
+Has the new calculation been proved wrong?
 
-**Reasoning:** No. The preview and applied record describe different boundaries. Establish whether the correction was saved, which identities were processed and what the relevant execution did. Don't classify a lack of application evidence as proof that the new calculation is wrong.
+**Worked reasoning:** No. Establish the saved revision, affected processing and outcome. Proposed and applied values describe different boundaries; absent application evidence isn't proof that the calculation ignores the correction.
 
-### 6. The current identity is right, but Search is old
+### 6. Correct current details, older Search result
 
-**Facts:** Current details for the exact identity show `0042`. An earlier search view shows `0900`.
+The exact identity's current details show 0042. An earlier Search view shows 0900.
 
-Should you immediately rewrite the mapping?
+Should the mapping be rewritten immediately?
 
-**Reasoning:** No. Compare view scope, observation time and synchronization evidence. A stale or different view is a candidate explanation, not an automatic conclusion. The current correct record does not justify changing the input without new contradictory evidence.
+**Worked reasoning:** No. Compare scope, time and synchronization evidence. A stale or different view is a hypothesis to check, not an automatic conclusion or a reason to alter a currently correct mapping.
 
-### 7. Today's preview matches yesterday's result
+### 7. Today's Preview matches yesterday's report
 
-**Facts:** Today's saved configuration and current inputs preview `0900`. Yesterday's report also contains `0900`, but yesterday's configuration revision and inputs are unavailable.
+Current inputs and saved logic preview 0900. Yesterday's report also says 0900, but its configuration revision and inputs aren't available.
 
-Does this prove yesterday's exact execution path?
+Does this prove yesterday's exact path?
 
-**Reasoning:** No. It shows that today's calculation can reproduce that value. Different earlier inputs or definitions could have produced the same result. Record the missing historical evidence instead of inventing an event sequence.
+**Worked reasoning:** No. Current reproduction doesn't establish identical historical causality. Record the missing configuration/input/execution evidence instead of inventing an event sequence.
 
-### 8. The identity is fixed, but an application is not
+### 8. The application still shows the old code
 
-**Facts:** The identity now has `0042`. A receiving application's account still shows `0900`. Whether a cost-centre write is configured has not been established.
+Identity costCenter is now 0042; a receiving account shows 0900. Its cost-centre write configuration hasn't been established.
 
-What should you check before calling the mapping correction a failure?
+What needs checking?
 
-**Reasoning:** Establish the actual consumer and supported write path, then any provisioning and target evidence. The identity calculation can be correct while no write is configured or a separate write fails. The application's old value alone doesn't identify which condition applies.
+**Worked reasoning:** Establish the real consumer and supported write path, then execution and target evidence. No configured write and a failed write are different explanations; the old application value alone doesn't choose between them.
 
 ## Trace a work-email complaint the same way
 
-A user reports that a business application still displays an old email address after the identity's Work Email mapping was corrected.
+An application still displays an old email after the identity's Work Email mapping was corrected.
 
-First establish whether the complaint concerns ISC's identity value, a collected account value, a message recipient or the application's own stored contact address. Those are different observations.
+Does the complaint concern the ISC identity, a collected account, a message recipient or the application's stored contact address?
 
-Identify the exact person and account, inspect the governing mapping and any explicit inputs, and compare current Preview with the applied identity value. Then establish whether the application should receive a configured update and whether that operation completed.
+**Worked reasoning:** Identify that object first, then the exact person and account. Inspect the governing mapping and explicit inputs, compare current Preview and applied identity, and establish whether the application should receive a configured update.
 
-Include a different-person same-name case, an unavailable source account, a shared transform and an earlier report. For each, name the evidence that would change the diagnosis.
+If it should, inspect the operation and target result. If not, the identity correction alone doesn't establish an application write.
 
-The trace should let another engineer follow the result without guessing: which record supplied the value, which definition used it, which evidence is current, what was corrected and which outcome remains unverified.
+Include a different person with the same name, an unavailable source account, a shared transform and an earlier report. Name the evidence that would change each diagnosis.
+
+A useful trace tells the next engineer which record supplied the value, which definition used it, what was corrected and which outcomes remain unverified.

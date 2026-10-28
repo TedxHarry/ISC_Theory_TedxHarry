@@ -1,0 +1,20 @@
+Same-day observations, UTC
+
+09:00-09:05 verified unchanged baseline
+  Catalog: 4; membership pairs: 4
+
+10:00 approved native removal confirmed
+  First admin loses asset-approvers
+  Second employee retains it
+
+10:02 group definitions collected
+  Catalog: 4
+  Account records: still baseline
+
+10:10 account values collected/checked
+  First ordinary: asset-readers
+  First admin: asset-readers
+  Second account: asset-approvers
+  Catalog: 4; membership pairs: 3
+
+Observed sequence, not a timing promise.

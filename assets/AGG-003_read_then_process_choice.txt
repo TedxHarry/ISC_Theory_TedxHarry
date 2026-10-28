@@ -1,0 +1,7 @@
+[Account returned by the scoped read]
+                  |
+       [Existing and unchanged?]
+          no /             \ yes
+ [Process record]   [Optimization on?]
+                      yes /     \ no
+                    [Skip]   [Reprocess]

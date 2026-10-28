@@ -1,318 +1,315 @@
 # The catalog has four items. Who actually holds them?
 
-Devi, employee number `100303`, works with equipment records in AssetLedger. She has an ordinary account, `al-100303`, and a separate administrative account, `ala-100303`.
+You see four access items in SailPoint Identity Security Cloud (ISC). A report prepared from account records also contains four rows of access.
 
-In SailPoint Identity Security Cloud (ISC), the source's entitlement catalog contains four groups. A report prepared from its account records also contains four group-membership relationships.
+Can you conclude that every item has a holder?
 
-Someone concludes, “The totals match. All four catalog items must be assigned.”
+Only if you know what those rows represent. The same access item can appear on several accounts, while another item has no holders at all. Matching totals can hide that difference.
 
-Do matching totals establish that?
+## What does each list contain?
 
-Let's inspect what each total counts before deciding who holds what.
+An **account** is the external system record through which a person or another entity uses that system. A **group** collects members, such as accounts. An application can use group membership when deciding what those accounts may do.
 
-AssetLedger, its records, collection results and later changes are fictional. The example uses a bounded pilot source with exactly three accounts and four groups, supported reads, correctly linked records and verified ownership. All access shown is ordinary standing membership, meaning it remains in place until removed. No temporary activation or inherited membership is included.
+ISC represents access rights as **entitlements**. In this example, the access objects are application groups represented as entitlements.
 
-## A list of access items isn't a list of holders
+A **catalog** is an inventory of represented access items. It tells you which items ISC knows about in the selected context.
 
-An **account** is a record in an external system. A **group** collects members, such as accounts, and the application can use that membership when granting permissions.
+A **membership** is a relationship between an account and a group. It tells you that this account belongs to this group. A report containing one row for each account-to-group relationship counts memberships.
 
-An **entitlement** represents an access right in ISC. In this example, the application's groups are represented as entitlements.
+These lists have different purposes. The catalog describes the represented objects. Account records describe who holds them. A group can exist with many members, one member or no members.
 
-A **catalog** is an inventory of represented access items. It answers which items ISC knows about in the selected context. A **membership** is a relationship between an account and a group. It answers which account belongs to which group.
+A **source** is ISC's configured representation of a system or collection of account data. Let's use Equipment Production, representing a small, explicitly bounded application population. Its complete records contain exactly three accounts and four groups.
 
-Those are different kinds of information. A group can have many members, one member or no members without becoming a different kind of catalog item.
+**Scope** means the records and relationships an operation or report covers. Our conclusions concern this source's supplied population, not every application or person in an organization.
 
-A **source** is ISC's configured representation of a system or collection of account data. Our source is AssetLedger Pilot Production, covering only the supplied pilot population, not every system or employee in the company.
+These hypothetical records use supported account and group reads, correct linkage and verified account ownership. They show direct membership: the account itself is a member of the listed group. The memberships are continuously held until removed, called **standing access**. Additional access paths are excluded from the example.
 
-The catalog contains these four native group identifiers and labels:
+## Keep the group attached to the account holding it
 
-- G-7301: Asset Readers.
-- G-7302: Asset Approvers.
-- G-7303: Exception Reviewers.
-- G-7304: Export Operators.
+A **native identifier** is an identifying value used in the external integration's context. The catalog contains four group definitions, identified by these supplied native values:
 
-A **native identifier** is the identifying value used by the external integration. The labels help someone recognize the groups; they don't establish membership.
+- `asset-readers`: Asset Readers.
+- `asset-approvers`: Asset Approvers.
+- `exception-reviewers`: Exception Reviewers.
+- `export-operators`: Export Operators.
 
-For the supplied application policy, Asset Readers permits reading equipment records. Asset Approvers permits approving equipment requests. The membership must be on the account being used. These meanings come from the fictional application owner's confirmed rules, not from the group names alone.
+The names help us recognize the groups; the native values identify which group each membership references. These are example source values.
 
-## Follow the account-to-group relationships
+The application owner's supplied policy says Asset Readers permits reading equipment records. Asset Approvers permits approving equipment requests. The required membership must be on the account used for the action. We are not deriving those permission meanings from the labels.
 
-An **identity** is ISC's representation of a person or another entity. **Account correlation** associates a collected account with the appropriate identity.
+The first employee has an ordinary account and a separate administrative account. The second employee has one account.
 
-Both al-100303 and ala-100303 are correctly associated with Devi. A third account, al-20402, is correctly associated with a different employee's identity. The usernames don't prove those relationships; verified ownership and association are supplied facts.
+ISC represents a person as an **identity**. **Account correlation** matches and associates a collected account with the appropriate identity. Both of the first employee's accounts are correctly associated with that employee's identity; the remaining account is associated with the second employee's identity. Those associations are verified facts here, rather than guesses from usernames.
 
-Here are the complete account membership records for the pilot baseline:
+Here is the complete starting membership information:
 
-| Account and verified identity association | Represented group values |
+| Account and verified identity association | Collected membership values |
 |---|---|
-| al-100303, Devi's ordinary account | G-7301 |
-| ala-100303, Devi's administrative account | G-7301, G-7302 |
-| al-20402, the other employee's account | G-7302 |
+| First employee's ordinary account | `asset-readers` |
+| First employee's administrative account | `asset-readers`, `asset-approvers` |
+| Second employee's account | `asset-approvers` |
 
-Now count the relationships, one account-group pair at a time.
+Let's count each account-to-group relationship.
 
-al-100303 contributes one. ala-100303 contributes two. al-20402 contributes one. That gives us four memberships.
+The ordinary account contributes one relationship. The administrative account contributes two because it belongs to two groups. The second employee's account contributes one. The total is four memberships.
 
-How many different groups appear among those memberships?
+Now ask a different question: how many different groups appear in those memberships?
 
-Only two: G-7301 and G-7302. Repeating G-7301 on another account adds another membership, not a new group definition.
-
-G-7303 and G-7304 are present in the catalog but have no members anywhere within the supplied complete pilot population.
+Only two. Both `asset-readers` and `asset-approvers` occur twice, on different accounts. Neither `exception-reviewers` nor `export-operators` occurs.
 
 ```text
-Catalog: four group objects
-  G-7301  Asset Readers
-  G-7302  Asset Approvers
-  G-7303  Exception Reviewers
-  G-7304  Export Operators
+Catalog: four group definitions
+  asset-readers
+  asset-approvers
+  exception-reviewers
+  export-operators
 
-Represented account memberships
-  al-100303  --> G-7301
-  ala-100303 --> G-7301
-  ala-100303 --> G-7302
-  al-20402   --> G-7302
+Recorded account-group relationships
+  First: ordinary --> asset-readers
+  First: admin    --> asset-readers
+  First: admin    --> asset-approvers
+  Second: account --> asset-approvers
 
-Four arrows; two groups with holders.
-G-7303 and G-7304 have no arrows here.
+Four relationships; two held groups.
+First employee has two account holders
+of asset-readers, but is one person.
 ```
 
-Each arrow means “this account has this represented membership.” It doesn't mean create the group, grant access or run a backend job.
+Each arrow means that the account has that recorded membership. It is not an instruction to grant access, create a group or run an internal process.
 
-Devi's administrative account has two memberships. Her ordinary account has one. Seeing G-7302 associated with Devi through the administrative account doesn't establish that al-100303 can approve equipment requests.
+The four arrows connect accounts to only two group definitions. This is why four membership rows do not establish four different held entitlements.
 
-Keep the account attached to the access. A person-level view is useful, but it must not erase the difference between that person's accounts.
+There is another consequence. The first employee's administrative account can satisfy the supplied group requirement for approvals. The ordinary account cannot satisfy it. Seeing Asset Approvers associated with the person through the administrative account does not put it on the ordinary account.
 
-## Five totals can all be correct
+A person-level access view can help you find access across accounts. When investigating an action, keep the actual account attached to the membership.
 
-For the supplied baseline, compare these measurements:
+## Which total answers the question you were asked?
 
-| Measurement | Result and reasoning |
+These five measurements are all correct for the supplied starting records:
+
+| Measurement | Result and reason |
 |---|---|
-| Catalog group objects | 4: G-7301 through G-7304 |
-| Different groups held by at least one pilot account | 2: G-7301 and G-7302 |
-| Account-group memberships | 4: the four pairs in the diagram |
-| Accounts holding G-7301 | 2: Devi's ordinary and administrative accounts |
-| Distinct identities with an account holding G-7301 | 1: both accounts belong to Devi |
+| Catalog group definitions | 4: the four listed objects |
+| Different groups held by at least one account | 2: Readers and Approvers |
+| Account-to-group membership pairs | 4: one pair for each arrow |
+| Accounts holding Asset Readers | 2: the ordinary and administrative accounts |
+| Distinct identities with an account holding Asset Readers | 1: both accounts belong to the first employee |
 
-These are calculations from the supplied records, not a claim that every ISC screen displays these exact counters or computes its totals this way.
+A **pair** here means one particular account connected to one particular group. Counting pairs preserves repeated holdings on different accounts. Counting distinct groups removes repetitions of the same group. Counting distinct identities groups correctly associated accounts by their owner.
 
-An identity-oriented count and an account-oriented count can differ without either being wrong. Two accounts held by one person explain the difference here.
+That is why two account holders can correspond to one person. It does not make one of the memberships a duplicate that should be removed.
 
-Likewise, four catalog objects and four membership pairs describe different things despite the numerical coincidence. Equal totals don't establish matching contents.
+These numbers are calculations from the supplied records, not a claim that every ISC screen exposes these counters or uses these counting rules.
 
-An aggregation summary also answers a different question from the catalog total. The summary describes items discovered in that run; the catalog can include items represented through other entitlement or account aggregations. A run's total is not automatically the current inventory size or the number of holders.
+A completed aggregation's discovered-item total answers another question again. It describes the items discovered in that run. The catalog can contain entitlements represented through other entitlement or account aggregations, so the run total can differ from the inventory total.
 
-When two reports disagree, first ask what each counts. Then check their source, population, entitlement type, filters and observation times. Don't change access merely to make their totals equal.
+When reports disagree, identify what one row represents in each report. Then compare the source, population, kind of access item, filters and observation time. Changing access to make unrelated totals equal would not resolve the difference in what they measure.
 
-## How ISC learns each side
+## How does ISC learn the objects and their holders?
 
-A **connector** provides the supported integration behavior for a source. **Aggregation** collects external information into ISC.
+A **connector** supplies the supported integration for a source. **Aggregation** collects external information into ISC.
 
-In this integration, **account aggregation** reads account attributes, including the group references recorded for each account. An **attribute** is a named piece of information on a record.
+In this example, **account aggregation** reads account **attributes**, meaning named pieces of information on each account. One attribute contains the account's group references. Those references supply the recorded holder relationships.
 
-**Entitlement aggregation** reads the group objects and their supported details, such as identifiers, names and descriptions. It can collect access items that no account currently holds.
+**Entitlement aggregation** separately reads group definitions and their supported details, such as identifiers, names and descriptions. With the relevant support and scope, it can collect a group that no account holds.
 
-The processes have related purposes, but a group-definition read is not automatically a current membership read.
+Account collection can create simple entitlement representations from the membership values it encounters. Separate entitlement collection can add object details and include unheld groups. This explains how an item can enter the catalog without being discovered on an account.
 
-A **schema** describes the represented attributes and their designated uses. The pilot account schema has an attribute named groups. It is marked as entitlement information, is multi-valued so it can hold a collection, and its Type points to the supported groups entitlement type.
+ISC must also know how a collected value relates to its group details. A **schema** describes the attributes represented for a record kind and their designated uses.
 
-An **entitlement type** identifies a supported kind of access object. Here, its native name is groups. The group schema selects groupKey as its Entitlement ID attribute and label as its Entitlement Name attribute.
+For this source, the account schema has a field named `groups`. It is marked as **Entitlement** information, so its values are interpreted as represented access. It is **Multi-Valued**, so it can contain a list of group references.
 
-For G-7301, the collected account value must match the group's selected identifying value G-7301 in the appropriate source/type relationship. The comparison is not with the label Asset Readers.
+An **entitlement type** identifies a supported kind of access object. The native type here is also named `groups`. The account field's **Type** setting points to that supported entitlement type.
 
-The source and schema relationship let ISC connect a membership reference with descriptive information about the right access object.
+The group schema selects `groupKey` as the **Entitlement ID** attribute and `label` as the **Entitlement Name** attribute. The first selection chooses the source value used for identification; the second chooses the readable name.
 
-Account collection can itself create simple entitlement representations from the access values it encounters. Separate entitlement collection can add richer details and discover unused access objects.
+For example, the account's membership value `asset-readers` matches the value in the group's `groupKey` field. Within the correct source and type relationship, that agreement connects the account's membership to the group's descriptive record. Matching the friendly name alone would not establish this relationship.
 
-So neither of these statements is sound:
+Both the account attribute and native type are `groups` in this supplied configuration. Another integration may use different supported fields and read paths. Do not assume all connectors obtain memberships through the same operation.
 
-“Only entitlement aggregation can create an entitlement record in ISC.”
+These reads represent information. Collecting a group does not create it in the application, and collecting a membership does not grant it.
 
-“Everything in the catalog must have been found on someone's account.”
+## What happens when a membership is removed?
 
-The documented collection model allows both account-derived representations and separately collected access objects. Creating an ISC representation is not creating the group in AssetLedger.
+Now consider a change to the starting records. All observations below are hypothetical and occur on the same day in UTC, a shared time reference.
 
-Different connectors can obtain membership information through different supported read paths. The pilot explicitly uses account groups values; don't assume every source reads relationships through the same request or field name.
+From 09:00 to 09:05, the three accounts and four groups are verified while no changes occur. This establishes the common baseline; it does not assume that separate reads automatically form one simultaneous snapshot.
 
-## A fresh catalog can coexist with old membership data
+At 10:00, an approved change in the application removes `asset-approvers` from the first employee's administrative account. Fresh application evidence confirms the removal. The second employee keeps that membership, and both of the first employee's accounts keep `asset-readers`. No other group or membership changes occur during this observation window.
 
-Suppose the baseline accounts and groups are verified during a period with no changes, from 09:00 to 09:05 on October 24, 2026. All times below are UTC, a shared time reference.
+**Provisioning** performs supported account or access changes. The removal here was performed directly in the application under the supplied approval. We must distinguish that change from later collection that observes it.
 
-At 10:00, an approved application-side change removes G-7302 from Devi's administrative account. Fresh application evidence confirms that removal. Her ordinary account remains a member of G-7301, and al-20402 still holds G-7302.
+At 10:02, entitlement aggregation collects all four group definitions. For this integration, that particular read does not collect the account's `groups` lists. All four groups still exist, so the catalog still contains four objects.
 
-At 10:02, entitlement aggregation reads all four group definitions. In this integration, that read does not collect the account groups lists. The groups themselves still exist, so the catalog still has four items.
+ISC's latest collected account evidence remains the baseline. It still shows the removed Approvers membership on the administrative account.
 
-The latest collected account information in ISC is still the baseline. It still records G-7302 on ala-100303.
+This does not contradict the verified application removal. The account record describes an earlier observation. A fresh read of group definitions has not made that older relationship evidence current.
 
-Would another read of those same group definitions prove that Devi's account memberships are current?
-
-No. It would answer the wrong freshness question.
-
-At 10:10, a supported account collection and inspection confirms the updated groups values. Both of Devi's accounts now contain G-7301 only; al-20402 still contains G-7302.
+At 10:10, a supported account collection and inspection confirms the updated membership values for all three accounts. The first employee's two accounts contain Readers only; the second employee's account contains Approvers.
 
 ```text
-09:00-09:05 verified baseline
-  Catalog: 4 groups
-  Memberships: 4 account-group pairs
+Same-day observations, UTC
 
-10:00 native membership removed
-  ala-100303 loses G-7302
-  Other account keeps G-7302
+09:00-09:05 verified unchanged baseline
+  Catalog: 4; membership pairs: 4
+
+10:00 approved native removal confirmed
+  First admin loses asset-approvers
+  Second employee retains it
 
 10:02 group definitions collected
-  Catalog: still 4 groups
-  Account view: baseline evidence
+  Catalog: 4
+  Account records: still baseline
 
 10:10 account values collected/checked
-  ala-100303 groups: [G-7301]
-  Memberships: now 3 pairs
-  Catalog: still 4 groups
+  First ordinary: asset-readers
+  First admin: asset-readers
+  Second account: asset-approvers
+  Catalog: 4; membership pairs: 3
+
+Observed sequence, not a timing promise.
 ```
 
-This is an observed fictional sequence, not a required execution order or a latency guarantee. The recorded after-state is supplied evidence, not an instruction to wait ten minutes.
+We now have three membership pairs instead of four, but the catalog still has four definitions. Readers and Approvers are still the two groups with holders. The first employee no longer has an account holding Approvers, while the second employee still does.
 
-The removal changed one relationship. It did not delete G-7302, remove it from the other employee's account or reduce the catalog by one.
+The change removed one account-to-group relationship. It did not delete the group or remove the other employee's membership. The entitlement read did not perform the removal.
 
-**Provisioning** performs supported account or access changes. The 10:00 removal occurred directly in the application under the supplied approval; later collection observes its result. It must not be described as a removal performed by the 10:02 entitlement read.
+The times describe supplied observations, not an expected delay or an instruction to wait ten minutes. To investigate a current membership, inspect the relevant account evidence and the operation that can read it.
 
-## Does an unused item belong in the catalog?
+## Can an unheld group still belong in the catalog?
 
-Yes, if the supported collection represents an existing access object within the intended scope.
+Yes. Exception Reviewers and Export Operators have no holders in our complete starting population, but the group definitions exist.
 
-Exception Reviewers can exist with no members. That makes it unused in the supplied membership population, not necessarily stale, invalid or safe to delete.
+An access object can be retained for a valid future purpose. It might also need a separate retirement review. A zero-holder count does not decide between those possibilities.
 
-The application owner may be retaining it for a valid purpose. Or it may need a separate retirement review. The membership count alone doesn't establish the business decision.
+Account aggregation does not delete entitlement catalog records because no account holds them. Equally, an old catalog entry alone is not proof that the native object still exists. Check current object evidence when that is the disputed fact.
 
-Account aggregation does not delete entitlement catalog records merely because no account currently holds them. Lack of observed holders is not proof that an access object no longer exists.
+Also separate the inventory from access offered for requests. An **access request** asks for an access item for a recipient. A **requestable** item is available to request under the applicable configuration.
 
-Also distinguish the entitlement inventory from access offered for requests. An **access request** asks for an access item for a recipient. A **requestable** item has been made available through the applicable request configuration.
+An unused group can be requestable. A held group can be unavailable for direct requests. Collecting an item does not decide its requestability or approve a request.
 
-An existing catalog item is not automatically requestable. An unused group can be requestable, and an already-held group can be unavailable for direct requests. Discovery, existing membership and request availability answer separate questions.
+So ask the intended question precisely: does the object exist, does an account hold it, is it appropriate to retain, or can someone request it? Each needs different evidence.
 
-## What if a membership has no detailed group record?
+## What if a membership arrives without its group details?
 
-Take a separate variation. An account collection returns membership value G-7399, but the selected entitlement-definition read does not return a matching detailed group object.
+Suppose a separate account collection supplies `unmatched-group`, but the selected group-definition read returns no corresponding detailed object.
 
-Don't immediately conclude that the account has no access, or that ISC is unable to represent the membership.
+The missing details do not erase the collected value. Account data can create a simple entitlement representation without the richer description expected from a separate group read.
 
-Account collection can produce a simple entitlement representation without all the descriptive detail expected from a separate group read. Missing detail and missing membership are different problems.
+First check the source, type and exact membership value against the selected group identifier. Then check the definition-read coverage and the integration's read permissions.
 
-Check the source and type, the exact membership value and the selected group identifier. Then inspect the definition-read scope and permissions.
+A read limited to another type would not establish absence of this group. Insufficient permission to read its details could leave a different gap. The source value could also be stale or invalid. Those are explanations to test, not conclusions established by a blank description.
 
-Perhaps the read was limited to another type. Perhaps the integration actor couldn't read that group. Or the value no longer identifies a valid object. Those are possible explanations to test, not diagnoses established by the missing description.
+Find out whether the native relationship is valid and why the expected detail is missing. Supplying a friendlier name or granting membership again does not answer either question.
 
-A friendly name isn't the repair. Establish whether the source relationship is valid and why the expected object detail was not collected.
+## How much evidence supports the word “nobody”?
 
-## An empty list and an unanswered question are different
+A fresh, complete and correctly interpreted account membership list without `asset-approvers` supports absence of that represented direct membership on that account.
 
-A current, complete and correctly interpreted account groups list that contains no G-7302 supports absence of that represented direct membership on that account.
+A missing field is not automatically an empty list. An old export is not current evidence. A filter can hide rows without removing the underlying memberships.
 
-A missing field, incomplete response or old export does not automatically support the same conclusion.
+**Pagination** retrieves a collection in successive pages. If you inspect only the first page, the remaining records have not been checked. No matching rows on that page means none were found there; it does not mean none exist across the source.
 
-**Scope** is the set of records and relationships an operation or report covers. A read can exclude accounts or entitlement types intentionally. A filter can hide a result in a view without removing the underlying membership.
+To say “nobody holds Export Operators,” establish that all relevant accounts and membership data were covered with adequate freshness. The complete example supplies those conditions. A production investigation must establish them for its own population.
 
-**Pagination** means retrieving a collection in successive pages. If the read stops before the remaining pages arrive, the returned records are not evidence about every account.
+Even a verified empty direct-membership list does not necessarily prove an account cannot perform an action. Another group might grant the same permission. An **inherited relationship** can supply access indirectly, such as through a group that contains another group.
 
-Before saying “nobody holds G-7303,” establish that all relevant accounts and membership data were covered with adequate freshness. Our pilot baseline supplies that completeness. A normal production investigation must prove its own coverage.
+**Effective access** means what the account can actually do under the application's permission rules. Our main example excludes additional paths so we can count its direct relationships. A real access investigation must check the paths the application actually uses.
 
-Even a verified empty direct-membership list doesn't, by itself, establish that an account cannot perform an action. The application could allow it through another supported grant or inherited relationship. **Effective access** is what the account can actually do under the application's permission rules.
+## Find the relationship that needs attention
 
-This example excludes those extra paths to make the direct relationships clear. A real investigation must check which paths the application actually uses.
+If the question is whether the ordinary account holds Approvers now, inspect that account's membership in the correct source, with current application and collected evidence. Person-level access on another account is insufficient.
 
-## Investigate the relationship that is disputed
+If the question is what Approvers permits, inspect the application's permission rules and responsible owner's evidence. A membership list identifies the holder, not the complete permission meaning.
 
-If the question is “Does Devi's ordinary account hold Asset Approvers now?”, identify that account, the source and the G-7302 relationship. Compare current application evidence with the collected account values and their observation times.
+If the question is why the group lacks a description, inspect object collection and descriptive mappings. Regranting the membership does not repair its description.
 
-If the question is “What does Asset Approvers allow?”, inspect the group's permission meaning and application-owner evidence. A fresh membership list doesn't answer that policy question.
+If a person-level view omits a known account membership, check account ownership, correlation and view scope. An **uncorrelated account** has no established association with an identity in ISC. It can still hold native access; the missing person link does not revoke its membership.
 
-If the question is “Why isn't this group described properly?”, inspect object collection and descriptive mappings. Regranting membership doesn't repair a missing description.
+Choose a correction after identifying the mismatch. A required native change needs its approved fulfillment path and outcome check. A collection issue needs the relevant read and mapping evidence. A view issue needs inspection of the records the view actually presents.
 
-If a person-level view doesn't show a known account membership, check account correlation and the view's scope. An account can hold native access even if its association with a person is missing or wrong in ISC.
+## What do these records establish?
 
-Choose a correction only after locating the mismatch. Confirm a required native change through its approved path; confirm a collection issue through its relevant read and mapping; confirm a view issue through the actual records it displays.
+Each question supplies an independent variation. Use the complete starting population unless the question changes its facts.
 
-Don't remove an unused group, add a missing-looking membership or repeat a broad collection just to manufacture agreement between unrelated totals.
+### 1. Four catalog objects and four relationships
 
-## Work through the records
+The catalog has the four listed group definitions. The three starting accounts have the four membership pairs shown earlier.
 
-Each case changes only its supplied facts. The word absent always needs a record, relationship and scope attached to it.
+Does this establish that every catalog item has a holder?
 
-### Case 1: Four equals four
+**Reasoning:** No. Readers and Approvers account for all four pairs. Exception Reviewers and Export Operators have none in the supplied complete population. Compare the actual references and relationships, not just equal totals.
 
-**Facts:** The catalog contains G-7301 through G-7304. The three baseline accounts have the four membership pairs shown earlier.
+### 2. Two holders of Readers
 
-Does this prove that every catalog item has a holder?
+The first employee's ordinary and administrative accounts both hold Readers and are correctly associated with that employee. No other account in the population holds Readers.
 
-**Reasoning:** No. G-7301 and G-7302 account for all four pairs. G-7303 and G-7304 are unheld in this complete pilot population. Compare the actual identifiers and relationships, not just the totals.
+Are there necessarily two different people holding it?
 
-### Case 2: Two accounts, one identity
+**Reasoning:** No. There are two account memberships and one distinct identity. Keep both account relationships; a difference between account and person counts does not establish an unwanted duplicate.
 
-**Facts:** al-100303 and ala-100303 both hold G-7301 and are correctly associated with Devi. No other pilot account holds G-7301.
+### 3. Approvers is on the other account
 
-Are two different people necessarily holding that group?
+The administrative account holds Approvers; the ordinary account does not. The application requires that membership on the account used for approval.
 
-**Reasoning:** No. There are two account memberships and one distinct identity in the supplied data. Preserve both account references rather than treating one as a duplicate merely to make the account count match the identity count.
+Does the person-level association justify expecting approval through the ordinary account?
 
-### Case 3: The person has it on the other account
+**Reasoning:** No. It establishes a holding through the administrative account, not membership on every account the person owns. Establish the legitimate account-specific requirement before proposing another grant.
 
-**Facts:** Baseline ala-100303 holds G-7302. al-100303 does not. The supplied application policy requires G-7302 on the account used to approve a request.
+### 4. The definition read just completed
 
-Does the person-level association justify expecting approval through al-100303?
+The approved 10:00 application removal is confirmed. The 10:02 group-definition read finishes successfully, but the latest collected account list is still the baseline.
 
-**Reasoning:** No. The required membership is on the administrative account, not the ordinary account being used. Establish the legitimate account-specific requirement before proposing an additional grant. “Devi has it somewhere” is not evidence of delivery to every account she owns.
+Does the old membership prove removal failed?
 
-### Case 4: The group read just finished
+**Reasoning:** No. The successful read covers group definitions in this case, not refreshed account memberships. Its success does not make the older list current. Inspect the relevant fresh account evidence.
 
-**Facts:** The approved native removal at 10:00 is confirmed. Group-definition collection at 10:02 completes successfully. The latest collected account list still comes from the baseline.
+### 5. An existing group has no holders
 
-Does the fresh group-read status prove that the removal failed?
+All relevant accounts and memberships are freshly covered. Exception Reviewers has no holders, and the application owner confirms it still exists for an approved future use.
 
-**Reasoning:** No. That read's supplied scope covers definitions, not refreshed account membership. Inspect the relevant account evidence. Its age explains why it can still show the removed relationship.
+Is its catalog presence an error?
 
-### Case 5: No members, but an existing group
+**Reasoning:** Not from these facts. The catalog represents a valid existing object. Membership review and group-retirement decisions are separate; zero holders does not require deletion.
 
-**Facts:** All relevant accounts and their memberships are freshly covered. G-7303 has no holders. The application owner confirms the group still exists and is retained for an approved future use.
+### 6. A raw value has no detailed object
 
-Should its catalog presence be classified as an error?
+Account collection supplies `unmatched-group`. A separate group read returns no matching detailed object, but its permissions and type coverage have not been checked.
 
-**Reasoning:** Not from these facts. The inventory represents a valid existing object. Zero holders doesn't mean missing data or a required deletion. Membership review and group-retirement decisions are different tasks.
+Does a blank description prove no membership?
 
-### Case 6: A value arrived without the expected details
+**Reasoning:** No. Keep the collected value separate from the missing detail. Verify the intended object, schema linkage and read coverage before deciding whether the reference is valid, stale or misidentified. Another grant or a replacement label would hide the unanswered question.
 
-**Facts:** Account collection supplies G-7399. A separate group read returns no matching detailed object, but its permissions and type coverage haven't been verified.
+### 7. Only the first page was read
 
-Does a blank description prove that the account isn't a member?
+The first page of an account report has no Export Operators memberships. The response indicates more pages, which have not been inspected.
 
-**Reasoning:** No. The membership value and missing descriptive detail are separate evidence. Verify the intended object, linkage and definition-read coverage before deciding whether the value is valid, stale or misidentified. Do not substitute a label or grant the access again to hide the uncertainty.
+Can you conclude nobody holds it?
 
-### Case 7: The report covers only the first page
+**Reasoning:** No. The population is incomplete. Complete the authorized read or obtain another sufficiently complete evidence set. A negative result on one page is not a source-wide absence.
 
-**Facts:** The first page of an account report contains no G-7304 memberships. The response indicates more pages, and no further pages were inspected.
+### 8. Membership exists without a person link
 
-Can we conclude nobody holds G-7304?
-
-**Reasoning:** No. The population is incomplete. Complete the authorized read or obtain another suitably complete evidence set. A negative result within one page is not a source-wide negative result.
-
-### Case 8: The membership is present, but the person link is missing
-
-**Facts:** Fresh native and collected records both show G-7302 on one account. That account is uncorrelated in ISC, so no owning identity association has been established.
+Fresh native and collected records show Approvers on an account that is uncorrelated in ISC. No owning identity association has been established.
 
 Would editing the entitlement's name repair the person-level evidence?
 
-**Reasoning:** No. Investigate account ownership and correlation. The access relationship already exists on the account; the missing relationship is between the account and an identity. Do not guess an owner or assume a name edit changes either relationship.
+**Reasoning:** No. Investigate ownership and correlation without guessing an owner. The account-to-group relationship exists; the missing relationship connects the account to an identity. A name edit repairs neither.
 
-## Try a license inventory
+## Try the count with licenses
 
-A supported application source has three license definitions: Basic, Editor and Analytics. Two accounts both hold Basic; neither holds Editor or Analytics. Both accounts are correctly associated with the same employee.
+A **license** gives an account the right to use a product or feature set under an application's licensing model. A supported source represents three license definitions: Basic, Editor and Analytics.
 
-Complete current evidence is supplied for this source. No other account or licensing path is in scope.
+Two accounts hold Basic, and neither holds the other licenses. Both accounts are correctly associated with the same employee. Complete current coverage is supplied, with no other accounts or licensing paths in scope.
 
-Explain the catalog-item count, the number of different held license definitions, the account-license membership count and the number of distinct people holding Basic.
+Explain the catalog count, different held license definitions, account-to-license relationships and distinct people holding Basic.
 
-There are three definitions, one different held definition, two account-license relationships and one person holding Basic through two accounts. These counts differ because they measure different objects and relationships.
+**Reasoning:** There are three catalog definitions, one held definition, two account-to-license relationships and one person holding Basic. Each count answers a different question.
 
-Now the administrator removes Basic from one account under an approved change, and current account evidence confirms it. The Basic definition and the other account's holding remain.
+Now an approved change removes Basic from one account. Current evidence confirms the removal, the other account's holding and the continued existence of all three definitions.
 
-The catalog still has three definitions. There is still one held license definition and one person with Basic, but only one account-license relationship.
+Which counts change?
 
-To explain a catalog or access report clearly, name what each row represents, which population it covers and when its evidence was obtained. Then trace the holder relationship to the correct account and identity. That is how a count becomes an explanation rather than a guess.
+**Reasoning:** Account-to-license relationships fall from two to one. The catalog still has three definitions, one definition is held, and the same one person still holds Basic through the remaining account.
+
+When explaining an access report, say what each row represents, which population it covers and when the evidence was obtained. Then connect the access item to the account and its verified owner. That makes the total understandable and gives you a way to investigate an unexpected result.

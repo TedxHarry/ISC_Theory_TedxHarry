@@ -1,0 +1,7 @@
+[Raw response: value and structure]
+                 |
+[Extraction and configured conversions]
+                 |
+[Schema and collected account values]
+                 |
+[Processes using the collected values]

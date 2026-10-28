@@ -1,0 +1,16 @@
+Recurring path
+tenant time zone + eligible population
+               |
+scheduled job queued at 08:00/20:00
+               |
+actual execution and current result
+
+Additional per-identity path
+profile maps identity nextProcessing
+               |
+future ISO time + at least 1-hour lead
+               |
+relevant processing and current result
+
+Both use the applicable configuration.
+External actions need separate evidence.

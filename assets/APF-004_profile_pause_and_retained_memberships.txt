@@ -1,0 +1,13 @@
+Before disabling the profile
+  Profile enabled and held
+  Account has Readers + Editors
+  North-site update works
+             |
+             | disable, then process
+             v
+After relevant identity processing
+  Profile disabled, association removed
+  Account still has Readers + Editors
+  North-site update still works
+
+No native removal shown in this change.

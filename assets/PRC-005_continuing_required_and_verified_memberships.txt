@@ -1,0 +1,15 @@
+Initial observed memberships
+PORTAL + COMMON + SUPPORT-BASE
+
+Intended memberships after the change
+PORTAL + COMMON + STAFF-BASE + ENG-BASE
+
+Retain: PORTAL and COMMON
+Remove requirement: SUPPORT-BASE
+Add requirements: STAFF-BASE, ENG-BASE
+
+Supplied delivery and fresh target check
+STAFF-BASE add: confirmed present
+SUPPORT-BASE remove: confirmed absent
+ENG-BASE add: failed, absent at 14:07
+PORTAL and COMMON: confirmed retained

@@ -1,61 +1,51 @@
 # Are we translating a code or choosing an outcome?
 
-Devi, employee `85005`, works in Finance. Her HR record stores the department as `"FIN"` and her worker type as `"Employee"`.
+The collected account has `departmentCode = "FIN"` and `workerType = "Employee"`. A review display needs an approved department label and a worker review category.
 
-SailPoint Identity Security Cloud (ISC) needs two readable fields for an internal review screen. One should show the approved department label. The other should show which review category applies.
+“What does FIN mean?” needs a translation. “Does workerType equal Employee?” needs a comparison followed by a choice.
 
-These sound like similar calculations. Both take text and return text. But they answer different questions.
+Both calculations return text, but the reasoning is different. Keeping the distinction clear prevents an unknown department from becoming an invented department, or every worker who is not an Employee from being described as a Contractor.
 
-“What does FIN mean?” needs an agreed translation.
+## Give each result an agreed meaning
 
-“Does this worker type equal Employee?” needs a comparison and a choice.
+An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a connected system. An **attribute** is a named field on a record.
 
-Let's keep those questions separate. Otherwise, an unknown department can quietly become a real department, or a worker who is not an Employee can quietly be described as a Contractor.
+A **source** represents a system or collection of account data in ISC. In this hypothetical configuration, **HR-Primary** represents worker records. The existing identity is governed by the **Employees identity profile**, shared configuration that includes how identity fields receive their values.
 
-## Give each output a meaning before choosing the operation
+HR-Primary is its **authoritative source**: its worker accounts establish identities through that profile. **Account aggregation** has already read the account into ISC. **Account correlation** has associated it with the correct identity.
 
-An **identity** is ISC's representation of a person or another managed entity. An **account** is that person's record in a connected system. An **attribute** is a named field on one of those records.
+Exactly one associated HR-Primary account supplies the fields. The departmentCode retrieval returns `"FIN"`, and workerType returns `"Employee"`, both single **strings**, or text values. **Null** represents no value; it is different from the supplied text here. Other required identity attributes are valid.
 
-A **source** is ISC's configured representation of a system or collection of account data. Here, **PeopleMap Production** represents HR worker records.
+The organization has defined two **custom identity attributes** for its review display. “Custom” means the organization added the fields; their names do not give them built-in behavior.
 
-The Employees **identity profile** is shared configuration governing employee identities, including how their identity attributes receive values. PeopleMap is authoritative for this population: its worker accounts establish identities through that profile.
-
-Devi's account `pm-85005` has already been collected and correctly associated with her identity. We'll label that identity `I-85005`; this is a teaching label, not an actual ISC object ID. There is exactly one associated PeopleMap account in this example.
-
-**Account aggregation** reads account data into ISC. We are using the already collected record, not asking a calculation to fetch a fresh HR response.
-
-The organization has defined two custom identity attributes. “Custom” means the organization added them; their names do not create built-in ISC behavior.
-
-| Identity field and internal name | Approved meaning |
+| Identity field and technical name | Approved meaning |
 |---|---|
 | Department Review Label, `departmentReviewLabel` | Translate FIN to Finance, ENG to Engineering and OPS to Operations; use UNMAPPED for an unrecognized non-null code |
-| Worker Review Label, `workerReviewLabel` | Use Standard review when workerType equals Employee exactly; use Manual review for other non-null strings |
+| Worker Review Label, `workerReviewLabel` | Return Standard review for Employee exactly; return Manual review for other usable worker-type values, such as Contractor or Intern |
 
-HR owns the department-code agreement. The review-process owner approves the worker classification rule.
+HR owns the department-code agreement. The review-process owner approves the worker rule. Missing or blank worker types need a separate approved response; they are not part of the successful populated-input examples.
 
-`"UNMAPPED"` is a visible data-quality marker, not a department. `"Manual review"` is a category label, not evidence that a review task was created or completed.
+UNMAPPED is a visible data-quality marker, rather than a department. Manual review is a category label, rather than evidence that a task was created or completed.
 
-For this example, these fields are used only on the review screen. Neither controls access, employment status or account ownership. Other required identity attributes are already valid.
+These custom fields are used only for the organization's review display. Neither controls access, employment status or account ownership. A marker suitable for that display is not automatically suitable for a field used to decide Finance access.
 
-This restriction is deliberate. A marker that is acceptable for a review display is not automatically acceptable in a field used to decide who receives Finance access.
+## A lookup returns the value paired with a key
 
-## A lookup translates a known key into its agreed value
+A **transform** is a configurable ISC object that retrieves or manipulates attribute data and returns a result. Its **input** is the supplied data; its **output** is the returned result.
 
-A **transform** is a configurable ISC object that retrieves or manipulates data and returns a result. The supplied data is its **input**; the returned result is its **output**.
+The `lookup` operation compares an incoming string with a configured **table** of key-value pairs. A **key** is the input to recognize. Its paired **value** is the text to return.
 
-The `lookup` operation compares an incoming string against a configured **table** of key-value pairs. A **key** is the input code to recognize. Its paired **value** is the output text to return.
+Here, the key FIN is paired with Finance. The table also contains ENG/Engineering and OPS/Operations.
 
-For our department field, `"FIN"` is the key and `"Finance"` is its value.
+The table's `default` entry supplies a fallback output when a non-null input string matches none of the listed codes. Our approved default is UNMAPPED.
 
-The table also contains `default`, the configured fallback result when an input string matches none of the listed codes. Here that result is `"UNMAPPED"`.
+This table is part of the transform definition. It is not a live query to HR's reference database, a search through everyone in ISC or an account-ownership match.
 
-This is a translation table inside the definition. It is not a search through every employee, an account-ownership match, or a live query to an HR reference database.
+An **identity attribute mapping** establishes how an identity field obtains its value. The mapping will use the lookup result for `departmentReviewLabel`.
 
-An **identity attribute mapping** defines how an identity field receives its value. The mapping places this lookup's result in departmentReviewLabel.
+The definition below uses **JSON**, a text format for structured data. Braces group named properties and settings. Double quotes delimit strings. JSON booleans are unquoted true/false settings; the `true` flag below is one.
 
-The illustrative definition below uses **JSON**, a structured text format. Braces group named properties into objects. Quoted text represents strings.
-
-The `accountAttribute` operation retrieves a named field from an associated source account. It explicitly supplies departmentCode as this lookup's input.
+The `accountAttribute` operation retrieves a named field from an account associated with the identity being evaluated, on the specified source. It supplies this lookup's input explicitly:
 
 ```json
 {
@@ -65,7 +55,7 @@ The `accountAttribute` operation retrieves a named field from an associated sour
     "input": {
       "type": "accountAttribute",
       "attributes": {
-        "sourceName": "PeopleMap Production",
+        "sourceName": "HR-Primary",
         "attributeName": "departmentCode",
         "accountReturnFirstLink": true
       }
@@ -80,79 +70,53 @@ The `accountAttribute` operation retrieves a named field from an associated sour
 }
 ```
 
-This is a complete illustrative definition, not an actual tenant upload or a record of an executed calculation.
+This is an illustrative definition. Its outer, or **root**, `type` chooses lookup behavior. The `name` identifies the transform; the mapping chooses the destination identity field.
 
-The root `type` chooses lookup behavior. Its `name` identifies the transform; it does not choose the destination identity field.
+The root `attributes` object contains lookup's settings. Its `input` contains a nested retrieval, while its `table` contains the translation pairs.
 
-The `attributes` object contains the operation's settings. Inside input, sourceName and attributeName belong to accountAttribute, which obtains the data. Inside table, the keys and values describe the translation.
+Read the input as “obtain departmentCode from this identity's associated HR-Primary account.” The retrieved string is `"FIN"`. Lookup finds the FIN key and returns `"Finance"`.
 
-`accountReturnFirstLink: true` tells accountAttribute to return the first selected account's field even if it is null. Here there is only one associated account, so there is no competing-account choice. This setting does not convert a retrieval error into a value.
+The returned result is the paired string. It is not the input key, the whole table or a true/false answer saying a key matched.
 
-The main supplied retrieval returns `"FIN"`. Lookup finds the FIN entry and returns `"Finance"`. It does not return the key, the whole table or a boolean saying “matched.”
+The `accountReturnFirstLink: true` setting belongs to accountAttribute. It returns the field from the first selected account even when its value is null.
 
-A **boolean** is a true/false value. The unquoted `true` in this JSON is a setting of that type. The returned department label is a string.
+There is only one account in our main facts. This setting does not suppress a failed retrieval or turn an error into a department.
 
-These arrows show conceptual value dependencies and branches, not private ISC services or a universal processing sequence:
+The diagram begins with an already retrieved non-null string. Arrows describe value and branch dependencies, not private services or an internal validation sequence.
 
 ```text
-Identity I-85005 / account pm-85005
-Read departmentCode from PeopleMap
+For the selected identity:
+Read HR-Primary departmentCode
                  |
-      Supplied non-null string
+       Supplied non-null string
                  |
-       Match a configured key?
+        Match a table key?
           /              \
         yes               no
          |                 |
-Return paired value    Default present?
-                         /       \
-                       yes        no
-                        |          |
-                 Return default   Error
+Return paired value   Default present?
+                       /         \
+                     yes          no
+                      |            |
+                Return default   Error
 
 FIN -> Finance
 ZZZ -> UNMAPPED with this default
 ```
 
-A recognized code chooses its paired value. An unrecognized string chooses the configured default. Without a default, an unmatched input produces an error.
+For an unmatched string, the shown default produces UNMAPPED. If there is no match and no default, lookup returns an error. Null input, a failed read and malformed settings must not be assumed to follow this ordinary string-miss path.
 
-Do not add a default merely because an error looks inconvenient. Decide whether an unknown code should produce an approved marker or stop the calculation for investigation.
+## A conditional chooses a result after a comparison
 
-Also, the diagram starts with a supplied non-null string. It does not claim that null input, a failed account read or malformed configuration follows the ordinary unmatched-code path.
+A **condition** is a statement evaluated as true or false. A **branch** is the outcome selected by that decision.
 
-## A default cannot tell you why the code was unknown
+ISC's `conditional` operation compares two **operands**, the values on either side of its comparison operator. The supported operator `eq` asks whether they are equal.
 
-Suppose the retrieved departmentCode is now `"ZZZ"`. The table has no ZZZ entry, so this definition returns `"UNMAPPED"`.
+Our statement is “Does workerType equal Employee?” The first operand is the retrieved workerType value; the second is the literal text Employee.
 
-That result tells the review screen that no configured department translation was selected. It does not tell you whether HR introduced a new code, the integration read the wrong field, or the record contains an error.
+If equal, the transform returns its configured `positiveCondition` string. If unequal, it returns its configured `negativeCondition` string. These names mean true and false outcomes here; they do not inherently mean approved and denied access.
 
-Keep the original collected code available for investigation. The identity marker alone loses that detail.
-
-Now suppose HR has approved a new code, `"RND"`, meaning Research. HR's approval does not edit this JSON table. The team must update the relevant configuration through its change process, check affected uses and verify reevaluation.
-
-Until that happens, the old table still lacks RND.
-
-A **consumer** is a configuration or system that uses a value. Before changing `"Finance"` to `"Financial Services"`, find consumers that depend on that exact output. A label correction can change comparisons elsewhere even though the original HR code is unchanged.
-
-Representation needs an agreement too. If a producer starts sending `" FIN "` with surrounding spaces, inspect the actual input and test the configured operation. Do not assume lookup silently cleans it.
-
-An operation called `trim` removes surrounding whitespace. A case-conversion operation changes letter case. Neither knows whether HR considers two differently represented codes equivalent.
-
-If HR approves normalization, implement it explicitly before the translation and test the resulting code. Normalizing an unknown `"ZZZ"` still does not make it a known department.
-
-## A conditional chooses a result after testing a statement
-
-A **condition** is a statement that can evaluate to true or false. A **branch** is the outcome selected by that decision.
-
-ISC's `conditional` transform uses an expression containing two **operands**, the values being compared. The supported comparison operator `eq` asks whether they are equal.
-
-Our statement is: “Does workerType equal Employee?”
-
-The two operands are the retrieved workerType string and the literal string `Employee`. An equal comparison chooses the **positiveCondition** output. A non-equal comparison chooses the **negativeCondition** output.
-
-Positive and negative mean true and false branches here. They do not mean approved and denied access.
-
-This second illustrative definition supplies the workerType value through its own accountAttribute operation:
+This separate definition supplies workerType through its own retrieval:
 
 ```json
 {
@@ -162,7 +126,7 @@ This second illustrative definition supplies the workerType value through its ow
     "workerType": {
       "type": "accountAttribute",
       "attributes": {
-        "sourceName": "PeopleMap Production",
+        "sourceName": "HR-Primary",
         "attributeName": "workerType",
         "accountReturnFirstLink": true
       }
@@ -174,191 +138,185 @@ This second illustrative definition supplies the workerType value through its ow
 }
 ```
 
-Here, `workerType` inside attributes is a **variable**, a named value available to the expression. Its nested transform retrieves the account field. `$workerType` refers to that returned value.
+Inside conditional's `attributes`, `workerType` is a **variable**, a named value available to the expression. Its nested accountAttribute retrieves the field. `$workerType` refers to that returned value.
 
-The same spelling appears as the variable name and as the account's attributeName because we chose it that way. The variable is not automatically an identity attribute, and giving it a name does not save an intermediate identity field.
+We chose the same spelling for the variable and the account field. They are different things: the variable holds a value for the expression, while `attributeName` identifies the account field to read. Naming the variable does not create an intermediate identity attribute.
 
-The mapping places the final output in workerReviewLabel. It is a separate mapping from departmentReviewLabel. These definitions do not imply that the department calculation runs first or feeds this comparison.
+With the supplied input, the comparison is `Employee eq Employee`. It is true, so the result is `"Standard review"`.
 
-For the supplied `"Employee"` input, the expression is true and the result is `"Standard review"`.
+The expression produces a true/false decision, but the transform returns the configured branch string. Its result is not automatically the boolean true.
 
-The result is not automatically the boolean true. It is the configured string from positiveCondition. Likewise, the false branch returns `"Manual review"`, not an inherent access denial.
+A separate mapping uses this result for `workerReviewLabel`. The department and worker mappings are independent; these definitions do not imply that the lookup runs first or supplies this comparison.
 
-## “Not Employee” does not mean “Contractor”
+## Follow both normal results through to the identity
 
-Let's change only the input to `"Contractor"`. It differs from Employee, so the negative branch returns Manual review.
+The identity-profile **Preview** evaluates mappings for a selected identity using available data. For the main collected inputs and definitions, the expected results are Finance and Standard review.
 
-Now use `"Intern"`. That also differs from Employee. It takes the same branch.
+A successful Preview sample does not establish that every record has a recognized code and a usable worker type. Review representative variations as well as the main case.
 
-The expression tested equality with one value. It did not establish which other worker type applies.
+**Identity processing** reevaluates identity information and applicable decisions. Applying a profile mapping change initiates processing for identities associated with that profile, so review the shared population and the configurations using the fields.
 
-If the negative output had been `"Contractor"`, the calculation would have described Intern as Contractor. It could return that string successfully while making a false business claim.
+For the successful continuation here, assume that review is complete, both intended definitions and mappings are saved, representative Preview checks are completed, and authorized relevant processing completes. Current identity evidence then confirms `departmentReviewLabel = "Finance"` and `workerReviewLabel = "Standard review"`.
 
-This is why our owner approved “Manual review” for all other non-null strings. The label says what treatment is needed, not what worker type has been proven.
+The collected HR fields still contain FIN and Employee. Neither calculation has rewritten HR.
 
-The conditional comparison is case-sensitive. `"employee"` is different from `"Employee"`. With this exact definition, lowercase employee returns Manual review.
+A **consumer** is a configuration or system that uses a result. The review display is a consumer of these labels. **Provisioning** performs account or access changes in a connected system.
 
-A successful calculation therefore does not prove the producer followed the expected format. If lowercase employee should mean Employee, obtain that agreement and implement the intended normalization. Do not quietly broaden the meaning yourself.
+The two applied labels establish no target write or task creation. If another configured consumer uses Manual review to create a task, that separate behavior requires its own evidence. The returned words do not create the task themselves.
 
-## A false comparison is not an error handler
+## An unknown code needs a policy, not a guess
 
-**Null** means no value. It is different from the empty string `""`, which is text containing zero characters.
+Suppose departmentCode now returns `"ZZZ"`. The table has no matching key, so the shown definition returns UNMAPPED.
 
-Conditional's operands cannot be null. A null operand produces an evaluation error rather than selecting negativeCondition.
+The marker says that no configured department translation was selected. It does not identify why. HR may have introduced a code, the wrong field may have been selected, or the record may contain bad data.
 
-An **evaluation error** means the operation could not produce its normal result. No value to compare is not the same fact as two available values being unequal.
+Keep the original collected code available for investigation. The marker alone loses the detail needed to distinguish those causes.
 
-This diagram traces the comparison boundary conceptually. It does not promise a particular internal validation order:
+Now suppose HR approves RND as Research, but the saved table still contains only FIN, ENG, OPS and default. The evaluated table still lacks RND, so it returns UNMAPPED.
+
+HR's approval authorizes the meaning; it does not edit the configuration. Update the relevant table through the change process, check affected uses and verify the calculation and its application.
+
+Changing an existing output also needs consumer review. If Finance becomes Financial Services, a consumer comparing the old text may behave differently even while the HR code remains FIN.
+
+A matched code can also yield the wrong business answer. If independent evidence establishes Finance as the correct department but the selected account field incorrectly contains ENG, the valid table returns Engineering.
+
+That is a successful translation of a wrong input. Investigate data, account selection, field mapping and collection evidence. Changing ENG to mean Finance would damage the valid translation for Engineering records.
+
+## Agree on representation before translating
+
+If HR starts sending `" FIN "` with surrounding spaces, inspect the exact input. Do not assume lookup silently removes them.
+
+The `trim` operation removes surrounding whitespace. Case-conversion operations change letter case. Neither establishes whether two representations mean the same code.
+
+If HR approves treating surrounding spaces as irrelevant, an explicit trim before lookup can turn `" FIN "` into `"FIN"`. Then the configured key can provide Finance.
+
+Agree on any case normalization as well, and check the resulting input against the actual operation. Do not assume undocumented case-folding behavior.
+
+Normalizing ZZZ still does not supply an approved meaning for ZZZ. Unknown-code handling and input cleanup solve different problems.
+
+Likewise, a default should reflect an approved response to an unknown code. It should not be added simply to make an error disappear.
+
+## “Not Employee” does not establish another worker type
+
+With workerType `"Contractor"`, the comparison with Employee is false and returns Manual review. With `"Intern"`, the comparison is also false and returns Manual review.
+
+Both inputs differ from Employee. The comparison has not established that they are the same worker type.
+
+If the negative output were Contractor, the Intern input would successfully return a false classification. Our approved output avoids that claim: Manual review describes the required treatment, not a proven worker category.
+
+The comparison is case-sensitive. Lowercase `"employee"` differs from `"Employee"`, so the shown definition returns Manual review.
+
+If the owner says both representations should mean Employee, implement the approved normalization explicitly. A false comparison alone does not establish that agreement.
+
+## The false branch does not catch missing data
+
+Conditional requires non-null operands. A null operand produces an evaluation error instead of an ordinary false result.
+
+An **evaluation error** means the operation could not produce its normal result. Having no value to compare is different from having two available values that are unequal.
+
+The following diagram explains that boundary. It does not promise a particular internal validation order.
 
 ```text
-Read workerType for identity I-85005
+Read workerType for selected identity
                  |
        Are operands non-null?
           /              \
          no              yes
           |               |
-        Error     Compare with Employee
-                    /           \
-                  equal       unequal
-                    |            |
-             Standard review  Manual review
+        Error      Compare with Employee
+                    /            \
+                  equal        unequal
+                    |             |
+             Standard review Manual review
 
 Employee -> Standard review
-Intern   -> Manual review
-null     -> Error, not the false branch
+Intern -> Manual review
+null -> Error, not the false branch
 ```
 
-An empty string is different from null, but that distinction alone does not establish how a blank source field reaches and is handled by this expression. Inspect the retrieved value and verify the actual evaluation. Do not promise that every blank-looking input becomes a successful Manual review result.
+An **empty string**, `""`, contains no characters and is different from null. Whitespace-only text contains characters even though it can look blank. A blank screen does not establish which value the retrieval supplied, or whether retrieval itself failed.
 
-The owner still needs to decide how absent, empty or whitespace-only worker types should be handled. Prepare those inputs through approved, supported logic or correct the producer's data. Neither an error nor a returned label repairs missing HR information.
+Inspect the actual input and evaluation. Do not promise that every blank-looking or merely non-null string becomes a successful Manual review result.
 
-A failed account retrieval is another problem. Do not use negativeCondition as if it were a general catch for failed reads or configuration errors.
+The owner needs an approved response for absent, empty or whitespace-only worker types. Implement that response through supported preparation or selection logic, or correct the producer. NegativeCondition is not a general catch for missing data, failed reads or configuration errors.
 
-The expression is also not arbitrary programming code. This conditional operation supports `eq`; replacing it with `gt` to compare “greater than,” or writing an imagined compound expression, is not a supported extension of this definition.
+The expression is not arbitrary programming code either. This conditional operation supports `eq`; replacing it with `gt` for “greater than,” or inventing a compound expression, does not extend its supported syntax.
 
-Choose a documented operation or composition that expresses the approved requirement. A date comparison needs date-aware reasoning; string equality does not establish whether employment has expired.
+Choose a documented operation or composition for the requirement. An employment-expiry decision needs date-aware comparison; string equality does not establish whether a date has passed.
 
-| Supplied situation | Meaning of the result |
+| Supplied input and configuration | Result and boundary |
 |---|---|
-| Lookup receives FIN with the shown table | Finance is the configured translation; correctness still depends on the input and approved table |
-| Lookup receives ZZZ with the shown default | UNMAPPED is the approved review marker, not proof of any department |
-| Lookup receives ZZZ with no default | No translation exists for that input; the operation returns an error |
-| Conditional receives Employee | Equality is true; return Standard review |
-| Conditional receives Intern | Equality is false; return Manual review without claiming Contractor |
-| Conditional receives a null operand | Evaluation error; the negative branch is not selected as an ordinary false result |
+| Lookup receives FIN and the shown table | Finance, the configured translation; input and table correctness still matter |
+| Lookup receives ZZZ with UNMAPPED default | UNMAPPED, a review marker rather than a department |
+| Lookup receives ZZZ with no default | An error; no approved translation was selected |
+| Conditional receives Employee | Standard review from the true branch |
+| Conditional receives Intern | Manual review from the false branch; Contractor has not been established |
+| Conditional has a null operand | Evaluation error, not an ordinary false-branch result |
 
-## Follow the value to its destination, then check its use
+## Work backward from an unexpected label
 
-The profile's **Preview** evaluates mappings for a selected identity using available data. For Devi's main inputs, the expected results are Finance and Standard review.
+Establish the exact identity field and governing profile first. The fields `departmentReviewLabel` and `workerReviewLabel` use different mappings, even if their labels appear together.
 
-Preview answers a calculation question for the selected context. It does not prove that every employee has a recognized department or a non-null worker type.
+Inspect the mapping and saved definition: the lookup's input and table, or the conditional's variable, expression and branch strings. A source selector alone does not establish actual provenance because these definitions explicitly retrieve their own fields.
 
-**Identity processing** reevaluates identity data and related decisions against applicable configuration. Shared profile mappings can affect other identities in Employees, not only Devi.
+Then inspect the associated account, exact collected field and available value. Compare them with the configuration and evaluation context behind the observation.
 
-Saving a definition is not evidence that the intended identity field has been updated. A source selector on a screen is also not enough to prove which input a transform used: our lookup contains an explicit input, and our conditional contains an explicit variable retrieval.
+Relevant processing and the current identity field establish more than a saved definition or an old Preview. A screen's displayed value also needs current evidence; a historical observation cannot prove a later update succeeded or failed.
 
-Inspect the saved definition and the mapping together.
+These are human checks. They do not assume ISC exposes a separate history for every key comparison or branch.
 
-For an unexpected label, work backward from the field you are observing:
+If HR later supplies Contractor and the updated data is collected, the same conditional can return Manual review on relevant reevaluation. It does not continuously watch the live HR database.
 
-- Establish the exact identity field and governing profile.
-- Check the mapping and referenced definition, including its table, comparison and returned strings.
-- Inspect the associated source account and exact field used by the retrieval.
-- Compare available data and configuration with the context of the observed Preview or applied result.
-- Check relevant processing and the current identity value before concluding that a new calculation was applied.
+If Preview shows the new result while the only checked identity value is an earlier Standard review, verify application and current state. Do not infer either successful delivery or failed processing from those observations alone.
 
-These are human evidence checks, not a claim that ISC automatically exposes a separate log for every key test or conditional branch.
+## Change one fact and trace the result
 
-In the fictional continuation, the team verifies both definitions, previews representative cases, reviews shared change impact and completes authorized processing. Current identity evidence then shows departmentReviewLabel `"Finance"` and workerReviewLabel `"Standard review"` for `I-85005`.
+1. Retrieval returns FIN; the table pairs FIN with Finance; the mapping targets departmentReviewLabel. What does the lookup return, and does it rewrite HR?
 
-The collected PeopleMap account still contains FIN and Employee. These calculations did not rewrite HR.
+2. Retrieval returns RND. HR has approved Research, but the saved table still contains only FIN, ENG, OPS and default UNMAPPED. Does approval alone change the result to Research?
 
-**Provisioning** makes account or access changes in a connected system. Neither label establishes that a target write was configured, attempted or completed.
+3. Retrieval successfully returns ZZZ. There is no matching key and no default. Should lookup return ZZZ, empty text or Finance?
 
-If a consumer later uses workerReviewLabel to create a task, that is additional configured behavior with its own evidence. The words “Manual review” do not create the task themselves.
+4. Independent evidence establishes Finance as the correct department, but the selected collected field incorrectly contains ENG. The table correctly maps ENG to Engineering. Has the lookup operation failed?
 
-If HR later changes the available workerType to Contractor, the same conditional can return Manual review on relevant reevaluation. It does not watch the live HR database continuously. Collection, reevaluation and the applied result each need evidence.
+5. WorkerType returns Intern; the expression compares it with Employee; the negative output is Manual review. Does that prove a Contractor classification or a created review task?
 
-## Change one fact and follow the consequence
+6. WorkerType returns lowercase employee, with no normalization. The expression still compares it with Employee. Which result follows?
 
-### 1. The department is recognized
+7. One retrieval is confirmed to return null. For another record, a screen looks blank, but the retrieved value and evaluation result are unknown. The right operand is Employee in both. Can both be reported as taking the false branch?
 
-**Facts:** The account retrieval returns FIN. The table pairs FIN with Finance. The mapping targets departmentReviewLabel.
+8. Updated collected workerType is Contractor and Preview returns Manual review. The only checked current identity value is an earlier Standard review. Can you report that the identity and review display now show Manual review?
 
-What value does the lookup return, and what does it leave unchanged?
+### Compare your reasoning
 
-**Reasoning:** It returns Finance. The mapping supplies the destination; the transform's friendly name does not. The calculation does not change the collected FIN code or prove a write to HR.
+**1.** It returns Finance. The mapping supplies the destination. The calculation does not rewrite the collected FIN code or prove a write to HR.
 
-### 2. A new code has not reached the table
+**2.** No. The evaluated table has no RND entry, so it returns UNMAPPED. Confirm the approved meaning, update the relevant configuration through change control, then verify calculation and application. Correcting the producing code is an alternative only if the owner establishes that code was wrong; these facts do not.
 
-**Facts:** Retrieval returns RND. HR has approved Research, but the saved table still contains only FIN, ENG, OPS and the UNMAPPED default.
+**3.** None of those results follows. An unmatched lookup with no default returns an error. An approved marker or explicit error/correction policy could be a future design, not the result of the supplied definition.
 
-Will approval alone make the result Research?
+**4.** The operation can succeed and return Engineering while the business answer is wrong. Investigate the responsible input, selection, mapping or collection defect. Do not corrupt the valid ENG translation to compensate.
 
-**Reasoning:** No. The evaluated configuration has no RND translation, so it returns UNMAPPED. Confirm the approved meaning, update the relevant table through change control, then verify calculation and application. HR approval is authority for a change, not evidence that configuration already changed.
+**5.** Neither. Intern is unequal to Employee, so the configured string is returned. Classification and task creation require their own approved information and configuration.
 
-### 3. The default was removed
+**6.** Manual review, because the comparison is case-sensitive. Whether the two representations should be equivalent requires an agreement and an implemented change.
 
-**Facts:** Retrieval successfully returns ZZZ. No table key matches it, and no default is configured.
+**7.** No. The confirmed null operand causes an error. The other observation is insufficient: inspect null versus empty text, spaces or failed retrieval and check its evaluation. A visual blank does not establish a false result; missing-input handling still needs an approved implementation.
 
-Should the result be ZZZ, empty text or Finance?
+**8.** Not yet. Preview establishes the selected calculation's result. Check relevant application and the current identity field, then the display's current data. The old observation also does not prove new processing failed.
 
-**Reasoning:** None follows. An unmatched lookup without a default returns an error. Choose a justified unknown-code policy; do not invent a result to hide the gap.
+## Use the reasoning on a different code set
 
-### 4. The wrong known code arrived
+A facilities team approves NYC as New York and LON as London. A new account value SGP has no approved location meaning supplied to the team yet.
 
-**Facts:** Devi's approved department is Finance, but the selected collected field incorrectly contains ENG. The table correctly maps ENG to Engineering.
+One proposal defaults unknown codes to New York because most workers are there. Another says “if site equals NYC, return New York; otherwise return London.”
 
-Did lookup fail?
+Does either establish the correct site for SGP?
 
-**Reasoning:** The lookup can succeed and return Engineering while the business result is wrong. Check why that account field contains ENG, including selection and collection evidence, and correct the responsible data or mapping defect. Changing ENG to mean Finance would break the valid translation for Engineering workers.
+Neither. The default invents New York. The false branch invents London because “not NYC” does not establish LON.
 
-### 5. A new worker type takes the false branch
+Obtain SGP's approved meaning and agree on the response while the mapping is unresolved. A review-only unknown marker can be suitable when its consumers and correction process respect that meaning. An explicit error and correction process can also be justified. Missing or failed retrieval still needs separate handling.
 
-**Facts:** workerType returns Intern. The expression tests equality with Employee. The negative output is Manual review.
+When explaining the design, identify what each output is allowed to mean, its actual input, the matching or comparison rule, the unknown and error paths, and the evidence after application.
 
-Does this prove Intern means Contractor or that a review task exists?
-
-**Reasoning:** Neither. It proves the available strings are unequal and selects the configured label. Determining worker classification and creating a review task require their own approved information and configuration.
-
-### 6. Only the letter case changed
-
-**Facts:** workerType returns lowercase employee. The expression still compares with Employee, and no normalization is configured.
-
-Which result follows?
-
-**Reasoning:** Manual review, because the comparison is case-sensitive. Decide with the data owner whether those representations should be equivalent. A change to normalization is a design change, not a fact established by the false branch.
-
-### 7. A blank screen hides the actual input
-
-**Facts:** In one evaluation, retrieval successfully returns null. For a second worker, the screen looks blank, but no one has checked the actual retrieved value or evaluation result. The right operand is Employee in both.
-
-Can you report that both workers take the false branch?
-
-**Reasoning:** No. The confirmed null operand produces an error, not an ordinary false result. The second observation is insufficient: establish whether the input is null, empty text, spaces or a failed retrieval, then check its evaluation. Do not turn a visual blank into an assumed comparison result. The approved missing-data policy still needs implementation.
-
-### 8. Preview changed, but current state was not checked
-
-**Facts:** Updated collected data contains Contractor. Preview returns Manual review. The only checked current identity value is an earlier Standard review.
-
-Can you report that the identity field and review screen now show Manual review?
-
-**Reasoning:** Not from this evidence. Preview establishes a result in the selected calculation context. Verify relevant application and the current identity field, then the screen's displayed data. Do not treat an old observation as proof that new processing failed, either.
-
-## Try the decision on a different field
-
-A facilities team supplies site codes. Its approved table says NYC means New York and LON means London.
-
-An engineer proposes defaulting every unknown code to New York because most workers are there. Another proposes a conditional: “If site equals NYC, return New York; otherwise return London.”
-
-An account now contains the new code SGP. Its approved location has not yet been supplied to the team.
-
-Would either proposal establish the right site?
-
-Neither would. The default fabricates New York. The false branch fabricates London because “not NYC” does not mean LON.
-
-Ask for SGP's approved meaning and decide how unrecognized codes should be represented until the mapping is updated. A review-only unknown marker can be acceptable if its consumers and correction process respect that meaning. A missing or failed retrieval still needs its own handling.
-
-When you explain the design to another engineer, begin with what each output is allowed to mean. Then identify the actual input, the matching or comparison rule, the unknown and error paths, and the evidence needed after application.
-
-A returned string tells you what the configured calculation selected. Its business meaning still needs to be true.
+The configured calculation selects a string. The design must also establish that the string's business meaning is true.

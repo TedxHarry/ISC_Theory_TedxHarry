@@ -1,370 +1,297 @@
 # The data changed. Which process needs to act?
 
-HR changes Devi's department from Finance to Engineering. A support ticket says, “The HR aggregation finished, but her application is still wrong.”
+HR changes a worker's department from Finance to Engineering. Later, a ticket says, "The HR aggregation finished, but the application is still wrong."
 
-Which part is wrong?
+Before choosing an action, let's make "wrong" more specific. Does ISC still have the old HR account data? Does the person's identity still say Finance? Or does the identity already say Engineering while the application still has the old department or lacks the required access?
 
-The account data collected into ISC might still show Finance. The identity might show Finance even though the collected account shows Engineering. Or the identity might be correct while a connected application still has the old department or lacks the required group.
+Each observation points to a different piece of work. To decide what needs attention, you need to follow the value from the record that supplies it to the records and decisions that use it.
 
-Those are different observations. Repeating the same action for all of them can leave the real cause untouched.
+## Start with the account data ISC actually has
 
-In SailPoint Identity Security Cloud, or ISC, **aggregation** brings account information in, **identity processing** reevaluates identity information and applicable access decisions, and **provisioning** carries out account or access changes. **Attribute synchronization** uses configured identity-to-account mappings to keep selected account fields aligned through provisioning.
+An **account** is a person's record in a particular system. HR has an account containing the worker's employment information. An **attribute** is a named field on that record, such as department.
 
-Let's put those names against actual records and changes.
+ISC also keeps collected account information. The department visible on an HR account in ISC is information ISC has received; it isn't a live view of every edit in HR.
 
-## Keep the person and her different records separate
+**Account aggregation** is the process that reads account information into ISC. For a connected system, the configured integration reads the records. For a file-based source, ISC imports the supplied file.
 
-Devi's employee number is 91001. She already has an ISC **identity**, the record representing her as a person. We will call it I-91001; this is a teaching label, not an actual ISC object ID.
+A **source** is ISC's configured representation of a system's account data. A **connector** provides the integration used to read that data and, where supported, make changes.
 
-An **account** is her record in a particular connected system. An **attribute** is a named field on a record.
+For our department change, call the HR source HR-Primary. The person already has one correctly associated HR account. HR has saved Engineering, but ISC's collected account still says Finance.
 
-Devi has three correctly associated accounts:
+What can another process do with that old value? If its instructions say "read department from this account," it will still receive Finance. Repeating a later step cannot supply a change that hasn't reached its input.
 
-- WorkerHub Production account `wh-91001`, containing HR's worker information.
-- ProjectDirectory account `pd-91001`, used by an engineering application.
-- ArchiveDirectory account `ad-91001`, used by a separate archive system.
+We therefore need evidence that the right account and field were collected. A successful aggregation summary tells us about that operation; it doesn't establish the value of every account field. Check its scope and result, then inspect the exact collected account.
 
-A **source** is ISC's configured representation of a system's account data. A **connector** supplies the supported integration with that system. A connector can support reading without supporting every kind of write.
+For the rest of this example, suppose the relevant aggregation has brought Engineering into that account. That establishes the available input. Next, we need to understand how it becomes information about the person.
 
-WorkerHub is **authoritative** for this employee population: its worker accounts participate in establishing and maintaining the corresponding identities. The Employees **identity profile** supplies shared configuration for those identities.
+The configurations and observations in this example are hypothetical. They are supplied for reasoning, not results from a real tenant.
 
-Its department **mapping** selects how the identity department receives a value. Here it reads the associated WorkerHub account's department directly. No calculation or substitute changes the department.
+## The identity needs instructions for using that account value
 
-**Account correlation** is the matching and association of accounts with identities. It answers which person owns an account in ISC. It does not copy every account field onto the identity or send that person's data back to the application.
+An ISC **identity** is the record representing the person across their accounts. The collected HR account and the identity are separate records, so each can have its own department field.
 
-The account relationships are already correct in this example. We are investigating what changes after HR updates one field.
+**Account correlation** establishes which identity an account belongs to. Here, the HR account and an existing directory account are already correlated to the correct identity. That association tells ISC whose accounts they are. It doesn't, by itself, copy their fields onto the identity.
 
-The business requirements are specific:
+The Employees **identity profile** supplies shared configuration for this population. HR-Primary is its **authoritative source**: its worker accounts participate in establishing and maintaining the corresponding identities.
 
-- The identity department must reflect WorkerHub's approved department.
-- ProjectDirectory's department must follow the identity department through an established attribute-sync configuration.
-- An automatic role called Engineering Starter must give Engineering employees the Engineering Base access profile.
-- No ongoing department update is configured for ArchiveDirectory.
+Within the profile, a department **mapping** specifies where the identity's department comes from. Ours reads department directly from the associated HR-Primary account. It applies no calculation or substitute.
 
-A **role** can use identity conditions to determine who receives its configured access. This role tests department equal to Engineering.
+Those instructions explain the connection:
 
-An **access profile** bundles access from a source. Engineering Base contains one **entitlement**, a governed representation of a source-specific permission: membership in ProjectDirectory group `ENG-BASE`.
+- The account association identifies the worker's HR account.
+- The mapping selects that account's department as the input.
+- Relevant **identity processing** evaluates the identity information using the applicable configuration.
 
-The role and access profile are enabled. They require ordinary ongoing group membership, with no separate activation step. ProjectDirectory supports both the department update and group-add operations, and provisioning is enabled; the executing account still needs permission for each operation.
+With Engineering available in the selected account, this mapping supplies Engineering for identity department.
 
-Devi already has the required ProjectDirectory account. Before the change, its department is Finance and it does not have ENG-BASE. There is no Finance-based access assignment or removal to resolve in this example; other access stays outside this change.
+Why keep the account and identity separate? The account describes the worker in HR. The identity provides information about that person for ISC's wider decisions. A mapping makes the intended connection explicit instead of assuming that every field from every account should replace identity information.
 
-The records, configurations, activity and outcomes below are fictional. No real tenant or external account is changed.
+For this hypothetical continuation, relevant processing and a current observation of the identity both confirm department Engineering. We have established the identity result. We haven't yet established any change to the directory.
 
-## Aggregation answers “what account information did we collect?”
+## A correct identity value still needs a reason to change an account
 
-**Account aggregation** reads account records into ISC from the configured source. For a file-based source, it imports the supplied file instead of making a live connection to the external application.
+The directory has its own external account for this person. Call its ISC source Directory-Primary. That existing account still has department Finance.
 
-Its immediate subject is source-account information, not a command to set a target field.
+Updating the identity doesn't tell every application to copy every field. We need configuration that says which account field should follow which identity field.
 
-For WorkerHub, we need to know whether the configured collection included wh-91001 and captured its new department.
+That is the purpose of **attribute synchronization**, or attribute sync. It defines selected account fields that should align with corresponding identity fields. Here, an established sync configuration requires the directory account's department to follow identity department.
 
-HR saving Engineering does not prove that this data reached ISC. An aggregation marked successful does not, by itself, prove the exact account and field were included. Check the collected record as well as the operation's scope and outcome.
+Notice the direction. HR supplies identity department through the Employees mapping. Identity department then supplies the directory's department through sync. Directory-Primary is a destination for this field, not its authority for the identity mapping.
 
-If ISC's WorkerHub account still says Finance, processing a mapping that reads that value cannot be expected to invent Engineering.
+The update itself is **provisioning**: carrying out a required account or access change in the external system. Provisioning can create an account, change a field, or add or remove access. Attribute sync determines the required field alignment; provisioning delivers the resulting account update.
 
-Aggregation can also participate in association and subsequent identity updates. When a relevant aggregation change modifies an identity, it can initiate event-based identity processing. Separating the responsibilities does not mean that a person must manually launch every stage.
-
-But the word aggregation is not a promise that every record was reevaluated, every identity changed or every target write completed. Collection modes, optimization and the particular action matter.
-
-For example, the UI's **Aggregate Account** action reloads a selected account's data. Its documented scope does not synchronize those new values into identity attributes or initiate provisioning. It is not interchangeable with every full-source aggregation path.
-
-Also distinguish account aggregation from **entitlement aggregation**, which reads the access objects themselves. Collecting the ENG-BASE group object does not add Devi to it.
-
-The direction is inward: the application supplies information, and ISC records what it read. A separately triggered action can follow, but reading membership is not granting membership.
-
-## Identity processing answers “what should this identity look like now?”
-
-Identity processing evaluates identity information against the applicable configuration.
-
-For Devi, the Employees mapping needs the collected WorkerHub department. With Engineering available as the selected input, the identity's department can become Engineering.
-
-Processing can also evaluate manager relationships, lifecycle-driven access and automatic role assignments.
-
-**Manager correlation** resolves a manager reference to an identity. A **lifecycle state** represents a business stage, such as active employment, and can drive configured access. These are additional consumers of identity information, not other names for aggregation.
-
-Devi's manager and lifecycle state are unchanged here. The relevant access decision is the Engineering Starter role condition.
-
-If the current identity department meets that condition, the configured role can require Engineering Base. That establishes a reason for the access change. It does not establish that ProjectDirectory accepted it.
-
-Identity processing can start from relevant data changes. It also has scheduled, time-based and manual paths with their own configuration and eligibility rules.
-
-A saved mapping change and an upstream account change are different reasons to reevaluate. If an administrator changes identity mappings or access-model configuration, the affected identities need the supported application/processing step; saving instructions is not evidence that the population already reflects them.
-
-Nor does a processing run guarantee a changed result. If the same applicable inputs and conditions yield the same values and requirements, there may be nothing new to apply.
-
-When a display says that processing finished, ask what that completion covers. It does not validate that access was successfully provisioned after provisioning was started.
-
-## Provisioning answers “what change was carried out?”
-
-Provisioning performs account or access changes in a target system. Creating an account, changing an account field and adding or removing access are different operations.
-
-They depend on supported capabilities, configuration, permissions and the particular target.
-
-For Engineering Base, the required external change is adding pd-91001 to ENG-BASE. An account already exists, so this case does not need a new-account creation.
-
-A **Create Account** configuration defines the fields and values for a new account when one is needed. It does not make every existing account field continuously follow the identity.
-
-Provisioning is not limited to changes arising from identity processing. An approved **access request**, a request for specified access, can also initiate delivery. Reviews and other configured processes can require changes too. Their decision and delivery responsibilities remain distinct.
-
-For a direct connection, ISC can use the connector's supported operations. For a disconnected or file-based integration, a manual provisioning task can require an authorized person to make the change externally. File import alone cannot push a write to that system.
-
-“Provisioning started” therefore does not mean “the connector changed the account,” and “a manual task exists” does not mean a human has completed it.
-
-Even an overall activity status needs context. Inspect the intended account, source, operation and item-level result or error. Then confirm the required target state through an appropriate observation.
-
-A successful department update and a failed group update can both concern pd-91001. They do not have to share one outcome simply because they concern the same person and source.
-
-## Attribute synchronization answers “which account fields must follow the identity?”
-
-Attribute synchronization is a particular provisioning use, not an independent alternative to provisioning.
-
-It specifies selected account attributes that should align with mapped identity attributes. In the supported configuration, the account attribute is included in the source's Create Account definition and mapped directly from an identity attribute there.
-
-ProjectDirectory's department is mapped directly from identity department and is selected for sync. The configuration is already established for this scenario; we are not describing its initial setup or bulk application.
-
-That tells us which value should be enforced and in which direction: identity department supplies ProjectDirectory department.
-
-It does not say that ProjectDirectory owns the identity department. The Employees mapping still gets that value from WorkerHub.
-
-Configured sync can react to a changed identity value and to detected changes in the associated account value. For example, collecting a native edit to ProjectDirectory department can lead to it being set back to the identity's value.
-
-That is why “aggregation only reads” needs a careful boundary: the read operation collects data, but the detected difference can trigger a separately configured corrective write.
-
-Sync applies to existing **correlated accounts**, meaning accounts associated with an identity. It does not create an account on its own. If another process creates the account, sync can then apply.
-
-If one identity has several correlated accounts on the same source, sync updates all of them under its configuration. Do not assume it selects only the account that an access profile would choose for access delivery.
-
-Null also needs care. Null means no value. A null set by an identity-profile mapping can propagate through configured attribute sync; it is not a universal “skip this field” instruction. Review missing-data policy before enabling a write.
-
-For this one-account example, the expected department update is pd-91001 Finance to Engineering.
-
-It does not add ENG-BASE. That membership comes from the separate access requirement and corresponding provisioning operation.
-
-ArchiveDirectory's ad-91001 remains Finance because no ongoing department update is configured for it. Its different value is not, by itself, evidence of failed identity processing.
-
-## Follow the conditional paths, not an imaginary fixed pipeline
-
-Here is the data and department-field path for the supplied configuration:
+Our directory supports this field update, provisioning is enabled, and the update must execute with sufficient permission. If the update succeeds, the external account's department becomes Engineering.
 
 ```text
-WorkerHub / wh-91001
-approved department: Engineering
-                |
-        account aggregation
-                v
-ISC's WorkerHub account data
+HR account in the external system
 department: Engineering
-                |
-Employees identity mapping
-during relevant identity processing
-                v
-Identity I-91001
+               |
+      account aggregation reads
+               v
+Collected HR account in ISC
 department: Engineering
-                |
-configured ProjectDirectory
-department attribute sync
-                |
-       supported provisioning
-                v
-ProjectDirectory / pd-91001
+               |
+   Employees department mapping
+   relevant identity processing
+               v
+Current ISC identity
+department: Engineering
+               |
+    established department sync
+    requires account alignment
+               |
+    supported provisioning write
+               v
+External directory account
 department: Engineering
 IF the update succeeds
 ```
 
-The arrows show required information and configured responsibilities. They are not private service names, a mandatory sequence of separate jobs, or guaranteed successful delivery.
+Read each arrow as an information dependency or configured responsibility. The diagram doesn't prescribe separate background jobs or guarantee that the last write succeeds.
 
-For the access change, the identity value feeds another path:
+Attribute sync has eligibility rules. The account field must be included in the source's **Create Account** definition and mapped directly from an identity attribute there, then selected for synchronization. The identity profile must also map that identity attribute.
+
+Create Account defines how fields are populated when a new account is created. Its mapping alone doesn't establish ongoing updates to existing accounts. Our department sync is already configured and applied; this example doesn't describe first-time bulk setup.
+
+That distinction explains a common surprise. You can have a correct identity department and a correct new-account mapping while an existing account still keeps its old department. Without an ongoing update mechanism, those facts are compatible.
+
+Another associated account, on Archive-Primary, also starts with department Finance. No ongoing department update is configured for that source. Its remaining Finance is therefore not, by itself, evidence that identity processing failed. First establish whether that account is supposed to follow this change.
+
+## Why the department update doesn't grant the group
+
+Suppose Engineering workers also need membership in directory group `ENG-BASE`. Changing a department label and adding group membership are different external changes.
+
+ISC represents a source-specific permission, such as this group membership, as an **entitlement**. An **access profile** bundles entitlements from one source. Our enabled Engineering access profile contains ENG-BASE.
+
+A **role** groups access around a business responsibility and can use assignment conditions to determine who receives it. Our enabled Engineering role tests whether identity department equals Engineering and includes the Engineering access profile.
+
+Let's follow that condition. Before the change, department Finance doesn't meet it. After the current identity becomes Engineering, the condition matches. Relevant identity processing can assign the role and require the access represented by its access profile.
+
+That gives the group change a reason: this person now meets the configured Engineering role condition. It is separate from the reason for the department write, which comes from attribute sync.
+
+The existing directory account lacks ENG-BASE. This is ordinary ongoing membership, with no separate activation step. No previous Finance-based access assignment or removal is involved.
+
+Provisioning now needs to add ENG-BASE to that account. The source must support the operation, and its execution needs the appropriate permission. Support for updating department doesn't establish permission to change group membership.
 
 ```text
-Identity department: Engineering
-                |
-role condition matches
-Engineering Starter requires access
-                |
-Engineering Base access profile
-contains ENG-BASE entitlement
-                |
-provisioning: add group membership
-to ProjectDirectory pd-91001
-                |
-       +--------+--------+
-       |                 |
+Current identity: Engineering
+               |
+      role condition matches
+               v
+Engineering role requires
+Engineering access profile
+               |
+  profile includes ENG-BASE membership
+               v
+Provisioning: add ENG-BASE
+to the existing directory account
+               |
+      +--------+--------+
+      |                 |
    succeeds           fails
-       |                 |
-verify ENG-BASE    inspect the error
-on the account    and actual state
+      |                 |
+verify membership   inspect operation,
+on target account   error and target
 
-Department sync is a separate change.
-Neither result proves the other.
+Department sync is a separate write.
+One result does not prove the other.
 ```
 
-This branch explains why the department can be corrected while the engineering group is still absent.
+If department is updated successfully but the group add fails, the account can say Engineering while the required group is still absent. There is no contradiction: one operation delivered its change and the other didn't.
 
-It also prevents a different mistake: an access request can enter the delivery path without first repeating HR aggregation. Not every provisioning event starts at the top of the first diagram.
+Likewise, a role assignment in ISC establishes the stated access requirement, not successful membership delivery. Identity processing doesn't validate that access was successfully provisioned after starting provisioning.
 
-## Compare the processes by the change you need
+## See what the supplied observations actually establish
 
-Use this comparison against the actual objects, not as a list of four buttons to run:
+Here are the observations for our example on October 23, 2026. UTC means Coordinated Universal Time.
 
-| Process | Input, responsibility and evidence boundary |
+| Supplied observation | What you can conclude |
 |---|---|
-| Account aggregation | Reads configured account data into ISC. Check collection scope and the exact collected account/field. An operation summary is not proof of identity or target outcomes. |
-| Identity processing | Uses available identity/account information and applicable configuration to reevaluate identity data and decisions. Check the current identity and relevant requirements; completion does not prove delivered access. |
-| Provisioning | Carries out a required account or access change through a supported automatic or manual path. Check the precise operation, result and actual target state. |
-| Attribute synchronization | Uses configured identity-to-account field mappings to require alignment, then provisions eligible account-field updates. Check the mapping, account association, changed value and update result. It is not account creation or general access assignment. |
+| 10:00 UTC: HR publishes department Engineering | The producing system has changed. Collection in ISC is not yet established. |
+| 10:05 UTC: the exact collected HR-Primary account has Engineering | The required mapping input is available in ISC. |
+| 10:06 UTC: relevant processing, current identity department Engineering and Engineering role assignment are verified | The stated identity value and access requirement are established. |
+| 10:07 UTC: the department update result and a fresh directory observation confirm Engineering | The target department update succeeded. |
+| 10:08 UTC: the ENG-BASE add reports insufficient permission | That group operation failed. |
+| 10:09 UTC: a fresh directory observation confirms ENG-BASE is absent | The required membership has not been established on that account. |
 
-The first process gathers information. The second evaluates identity information and applicable requirements. Provisioning implements required changes. Sync specifies one kind of required field alignment that provisioning must deliver.
+The times establish the order of these supplied observations. They aren't processing durations, expected waiting periods or a required order between the two target writes.
 
-These responsibilities can interact. They are not four mutually exclusive categories of incident, and they are not four proof levels that automatically become true together.
+At 10:05, we can verify account collection. We don't yet have evidence of the current identity result. That missing evidence doesn't prove either successful or failed processing.
+
+At 10:09, we can be much more precise: the HR input and identity change are verified; the department update succeeded; group delivery failed with a permission problem and membership remains absent.
+
+Reaggregating HR won't grant the missing group-operation permission. Replacing the department mapping won't repair it either.
+
+The next corrective work concerns the authorized group operation and its reported failure. After resolving the cause, use the supported retry or recovery path for the affected work and verify membership on the intended target account.
+
+Before repeating a change, check its scope and which operations already succeeded. A broad rerun can involve other identities and requirements. "Try everything again" doesn't explain which cause it is expected to correct.
+
+## These responsibilities connect without one universal sequence
+
+Aggregation can lead into identity processing. Specifically, when aggregation or provisioning modifies an identity, that event initiates identity processing. You shouldn't infer that an administrator must launch each step in our diagram separately.
+
+In an optimized aggregation, ISC can skip unchanged account records. A completed source run therefore doesn't establish that every account and its dependent results were reevaluated.
+
+The opposite assumption is also misleading: not every action called aggregation has the same downstream scope.
+
+The UI **Aggregate Account** action reloads a selected account's data and status. Its documented scope excludes synchronizing that data into identity attributes and affecting provisioning. A completed account reload is useful collection evidence; it is not evidence that the identity or external access changed.
+
+Account aggregation also differs from **entitlement aggregation**, which collects information about access objects such as ENG-BASE. Reading that a group exists doesn't add a person to it.
+
+Identity processing has event-based, scheduled, time-based and manual initiation paths. Their configuration and identity eligibility matter. A mapping change may need supported application and processing even when the source data hasn't changed.
+
+**Preview** evaluates selected identity-mapping results. A correct Preview helps check a mapping; saving it and checking one identity don't establish application across the profile population. Review shared impact, use the supported application path and verify the current results.
+
+Processing can reevaluate more than department. **Manager correlation** resolves a manager reference to the corresponding manager identity. A **lifecycle state** describes a business stage, such as active employment, and can drive configured access. Alongside identity mappings, processing evaluates manager relationships, lifecycle-driven access and role assignments as applicable.
+
+Manager and lifecycle state don't change in our example. They explain why a processing action may have broader consequences than "copy this department." If applicable inputs and conditions produce the same result, processing need not create a new change merely because it ran.
+
+Provisioning has other initiators too. An **access request** asks for specified access; when approved under its configuration, it can initiate delivery. A **certification** is an access review whose decisions can require changes. These routes don't require repeating HR aggregation before every delivery.
+
+The delivery path also depends on the integration. A supported direct connection can perform changes automatically. For a flat-file source, importing a file can't push an update to the external system; a manual provisioning task can require an authorized person to make the change.
+
+A task records required work. It doesn't prove that the person has completed it. Inspect the task's account, source and required change, then the completion evidence and actual target state.
+
+## Keep this comparison beside the record you're investigating
+
+| Process | What it does and what to verify |
+|---|---|
+| Account aggregation | Collects configured account information into ISC. Verify the operation's scope and result and the exact collected account field. |
+| Identity processing | Evaluates identity information and applicable access decisions using the available data and configuration. Verify the current identity value and relevant requirement. |
+| Provisioning | Carries out required account or access changes through a supported automatic or manual path. Verify each intended operation, its result and the required target state. |
+| Attribute synchronization | Specifies selected identity-to-account field alignment and uses provisioning to deliver updates. Verify eligible mappings, account association, scope and each field update. |
+
+Aggregation supplies information that processing can use. Processing can establish an access requirement that provisioning must deliver. Attribute sync is one configured use of provisioning.
 
 <a href="../assets/PROCESSING_COMPARISON_GUIDE.txt" download>Download the processing comparison guide</a>
 
-## Read the evidence without stretching its meaning
+## What changes when the account or input is different?
 
-All of the following supplied observations occur on October 23, 2026. UTC means Coordinated Universal Time.
+Attribute sync applies to existing **correlated accounts**, accounts associated with an identity. It doesn't create an account on its own. If another operation creates an account, sync can then enforce the configured alignment.
 
-| Observation | What has been established |
-|---|---|
-| 10:00: HR publishes Engineering for employee 91001 | The producing system has changed; collection in ISC has not yet been established |
-| 10:05: wh-91001 in ISC is verified with department Engineering | The needed account value is available in ISC |
-| 10:06: relevant identity processing, current identity department Engineering and Engineering Starter assignment are verified | The mapped value and stated access requirement have been established for Devi |
-| 10:07: the department update result and a fresh ProjectDirectory observation confirm Engineering on pd-91001 | The required target field change succeeded |
-| 10:08: the ENG-BASE add operation reports insufficient permission | That membership operation failed; a corrected department does not make it successful |
-| 10:09: a fresh ProjectDirectory observation confirms ENG-BASE is absent | The required membership has not been established |
+If one identity has multiple correlated accounts on the source, attribute sync updates all of them. You can't assume it selects only the account that an access profile would choose for delivering access.
 
-The times are fictional observations, not performance guarantees or a required order between the two target changes. The writes could have different timing in another run.
+This matters when someone has a normal account and a privileged account. An access profile's account-selection conditions don't narrow the separate sync scope. Review whether the field should follow the identity on both accounts.
 
-At 10:05, the collected field is known. Without checking current identity data, we cannot conclude that identity processing has either finished or failed.
+Missing data needs its own decision too. **Null** means no value. When an identity-profile mapping sets an identity attribute to null, configured sync can propagate that null to account fields. It isn't a universal instruction to leave the old external value alone.
 
-At 10:06, we have more evidence. We still cannot conclude that group membership exists externally.
+Agree what missing data means before enabling those writes. A department mapping that unexpectedly loses its input can have consequences beyond an empty identity display.
 
-At 10:09, we can describe the incident precisely: account collection and the identity change are verified; department delivery succeeded; group delivery failed because its operation lacked permission.
+Now consider **drift**, a difference from the intended state. The current identity says Engineering, but an application administrator changes the directory account's department to Finance.
 
-Reaggregating WorkerHub would not grant that missing target permission. Replacing the department mapping would not repair it either.
+Directory aggregation can collect that native edit. Under the established sync configuration, detecting the difference can lead to separate corrective provisioning back to the identity's Engineering value.
 
-The next corrective action must address the authorized group-operation capability. After resolving the cause, retry or resume the appropriate failed work through a supported path and verify membership.
+The read collected a fact; the sync policy required a response; provisioning carries out the write. The possibility of a response doesn't turn account aggregation itself into a write operation.
 
-Do not treat “retry everything” as harmless. Shared processing can affect other identities and access. Check what is in scope and whether a previous operation already succeeded before requesting another change.
+Before enforcing the value repeatedly, establish whose value is approved. Is the application's Finance value an authorized exception, or should the account follow Engineering? Resolve that question with the responsible owners.
 
-If a manual task were involved instead, the missing action might belong to a system owner rather than a connector. Task completion evidence and a current external observation would need to support the final claim.
+Avoid conflicting directions where the directory supplies identity department while another instruction independently overwrites the directory from different HR logic. Each field needs an agreed producer, any required calculation, enforcement direction and exception policy.
 
-## Start the investigation at the first unproven requirement
+An **account schema** describes the fields represented for source accounts. A field's presence in that schema establishes neither a supported write nor permission to perform it. Reading the field, owning its business meaning and authorizing an update are separate decisions.
 
-Suppose the ticket gives only “aggregation successful.” First ask which source, which account and which field were involved.
+## Find the first requirement the evidence hasn't established
 
-If the exact account still has old data, investigate collection or selection. Do not skip directly to provisioning.
+When you investigate "the change didn't work," walk through the actual observations.
 
-If the collected input is correct but the identity is wrong, inspect the governing profile, mapping and any calculation, then relevant processing. **Preview** can test selected mapping results; it does not establish population-wide application or an external write.
+If the collected HR account still has Finance, start with collection scope, account selection and timing. Processing can't be expected to read uncollected Engineering.
 
-If the identity is correct but the target field is wrong, inspect the intended update mechanism. Is sync configured for this field and source? Is the account correlated? Is the attribute eligible? Did the supported write run and what did it report?
+If the collected input is Engineering but the identity is wrong, inspect the governing profile, mapping, any calculation and relevant processing. A correct sample Preview doesn't replace checking the current identity.
 
-If the target field is correct but access is missing, inspect the access requirement and its delivery. Syncing department is not the same change as granting ENG-BASE.
+If the identity is Engineering but the target department is wrong, inspect the intended update mechanism. For sync, check eligible configuration, the account association, the required value and the specific provisioning result.
 
-If all target values and memberships are correct but the user still cannot use the application, investigate the application separately. **Authentication** checks who is signing in; **authorization** determines what that signed-in user may do. Neither is proved solely by a correct ISC identity field or collected group name.
+If department is correct but ENG-BASE is missing, inspect the role requirement and group delivery. For the supplied failure, the group operation and target evidence identify the remaining work.
 
-A generic record-modified timestamp cannot replace this trace. It shows that a record changed, not which individual requirement was evaluated or delivered.
+If the target values and memberships are correct but the application still can't be used, investigate the application's own behavior. **Authentication** checks who is signing in. **Authorization** determines what that signed-in user may do. A correct ISC field or group name alone doesn't prove either successful sign-in or usable application permission.
 
-Also keep ISC's service-data synchronization separate from account attribute sync. Identity information being reflected into Search is a visibility concern inside the platform, not proof that ProjectDirectory was updated.
+Keep each observation attached to the right record. A collected directory account describes what a read found at that time. A fresh external observation checks the target at the time of that observation.
 
-## Check authority before correcting drift
+Likewise, a general record-modified timestamp doesn't say which field, access requirement or delivery operation changed. Inspect the relevant details rather than treating any recent date as proof.
 
-A **drift** is a difference from the intended state.
+ISC also synchronizes identity information across platform services such as Search. That is a question of where identity information is visible inside the platform. It is separate from configuring an external account's department to follow the identity.
 
-Suppose the current identity still says Engineering, but an application administrator deliberately sets pd-91001 department to Finance.
+## Work through these process choices
 
-ProjectDirectory aggregation can read that edit. Under our established sync policy, the identity remains the department authority for this account field, and detecting the difference can lead to corrective provisioning back to Engineering.
+### Questions
 
-That is the configured behavior, but is it the approved behavior for this new request?
+1. HR now says Engineering, but the associated collected HR account still says Finance. Identity department maps directly from that account. Should the investigation start by repairing the new Engineering role's provisioning?
+2. The UI Aggregate Account action reloads the HR account with Engineering. No current identity or target result is checked. Does that action itself establish an identity update and group grant?
+3. A department mapping is corrected and saved. Preview returns Engineering for one selected identity. No population application is verified. Have the profile's identities all been corrected?
+4. Relevant processing, current identity Engineering and the Engineering role assignment are verified. ENG-BASE delivery reports insufficient permission. Does that failure establish that identity processing failed?
+5. Directory department is Engineering, but ENG-BASE is absent and its add failed. Can successful department sync close the required-access incident?
+6. Another identity has department Engineering but no directory account. Department sync is configured. Will sync create the missing account?
+7. An identity has normal and privileged accounts on the same source. Both are correlated, and department sync is enabled. Can you assume only the normal account receives the field update?
+8. Identity department remains Engineering. Directory aggregation detects a native change to Finance, and established sync can require a corrective write. Does that make aggregation itself a write operation?
 
-If the application has a legitimate exception, resolve ownership and policy before repeatedly forcing a value. If it has no exception, investigate and correct the unauthorized drift through the approved mechanism.
+### Work through the reasoning
 
-Avoid a circular design where identity department is sourced from ProjectDirectory while another operation independently overwrites ProjectDirectory from conflicting HR logic. Each field needs a clear producer, transformation if required, enforcement direction and exception policy.
+**1. Establish the available input first.** The mapping still reads Finance. Confirm collection of the correct HR account and field before assuming the new identity value or role requirement. Another delivery fault can coexist, but these facts haven't established it.
 
-An **account schema** defines the fields represented for source accounts. A field being present in that schema does not automatically authorize writing it, configure sync or make the connector support updates.
+**2. An account reload establishes its narrower result.** This UI action updates account data without synchronizing identity attributes or affecting provisioning. Use the appropriate supported processing path where needed, then check current identity and target evidence separately.
 
-Read capability, data authority and write capability are different project decisions. They must agree before a repeated synchronization can be considered a correct solution.
+**3. One Preview doesn't establish population application.** It shows the selected mapping result. Review shared impact, apply the configuration through the supported path and verify current results across the required scope.
 
-## Work through the process choices
+**4. The supplied facts identify a separate delivery failure.** The current identity and stated role requirement are verified. Investigate the group operation's capability, execution permission and error, then verify membership after correction. Don't relabel that error as failed identity processing.
 
-### 1. HR changed, but the collected account did not
+**5. The required membership is still missing.** Department and group updates are separate changes. Keep the successful field result, but resolve and verify the failed membership before claiming the access requirement has been delivered.
 
-**Facts:** HR says Engineering. The associated WorkerHub account in ISC still says Finance. The identity mapping reads that account directly.
+**6. Sync needs an existing correlated account.** An approved account/access provisioning event needs the supported creation configuration to create one. Attribute sync can apply after another operation creates it; a field-alignment setting doesn't itself request creation.
 
-Should you start by repairing role provisioning?
+**7. Both accounts are in sync scope.** Attribute sync updates all correlated accounts for that identity on the source. Check whether that is approved. Access-profile account selection doesn't narrow this field-update scope.
 
-**Reasoning:** No. Establish collection of the correct worker and field first. The mapping cannot be expected to use uncollected Engineering. A target operation might also have a problem, but these facts have not established the new input or requirement.
+**8. Collection and the corrective response remain distinct.** Aggregation detects the changed account value. The established policy can then require provisioning to restore Engineering. Verify authority and exception policy as well as the required write and its outcome.
 
-### 2. The account value was reloaded individually
+## Try the same reasoning with a phone number
 
-**Facts:** The UI Aggregate Account action reloads wh-91001 with Engineering. No current identity or target outcome has been checked.
+An approved work phone changes in HR. The exact collected HR account and the current identity's workPhone field both contain the new number.
 
-Does this action itself establish an identity update and group grant?
+An existing contact-application account still has the old number. Its Create Account definition maps phone from workPhone, but ongoing phone synchronization isn't configured.
 
-**Reasoning:** No. The documented action updates account data without synchronizing identity attributes or affecting provisioning. Verify and use the appropriate supported identity-processing path when needed; do not substitute this action's completion for evidence of the other outcomes.
+Someone proposes running HR aggregation until the contact application changes. What is missing, and which evidence would establish the correction?
 
-### 3. The mapping definition changed
+Collection and the identity value are already verified. Another HR read doesn't create an ongoing update requirement for that existing account. The new-account mapping explains how phone would be populated at creation; it doesn't establish continued alignment.
 
-**Facts:** An administrator corrects Employees' department mapping and saves it. Preview is correct for Devi. No application to the profile population has been verified.
+First confirm that the contact account is supposed to follow the identity's workPhone, that it is associated with the right identity, and that a supported authorized update path exists. Attribute sync is one option if its eligibility and scope fit; another approved update mechanism can also meet the requirement.
 
-Has the population been corrected?
+Then inspect the specific phone update and verify the new number on the target. No access role or group-membership change is needed merely to make the phone field follow its approved input.
 
-**Reasoning:** Not from these facts. Saving and selected Preview establish configuration and a sample calculation. Relevant application/processing and current results need verification. Review the shared population and consumers before applying the change.
-
-### 4. Processing finished while a write failed
-
-**Facts:** Current department Engineering and Engineering Starter assignment are verified. The ENG-BASE add reports insufficient permission.
-
-Did identity processing necessarily fail?
-
-**Reasoning:** No. The stated identity and access requirement are established; delivery has a separate failure. Investigate the group operation's supported permission and result, then verify the required target membership after correction.
-
-### 5. One field was delivered successfully
-
-**Facts:** ProjectDirectory department is Engineering. ENG-BASE is absent, and its add failed.
-
-Can successful department sync close the access incident?
-
-**Reasoning:** No. A field update and a membership change are separate operations. The target needs the required group, not merely a department label that explains why access should be granted.
-
-### 6. No account exists
-
-**Facts:** Another employee has the right identity department, but no ProjectDirectory account. Attribute sync is configured for department.
-
-Will attribute sync create the account?
-
-**Reasoning:** No. It applies to existing correlated accounts. A separate approved account/access provisioning event needs the supported creation configuration. Once another operation creates the account, sync can apply; do not invent creation from a field-alignment setting.
-
-### 7. Two correlated accounts exist
-
-**Facts:** Another identity has both a normal and a privileged account on one source. Both are correlated. Department sync is enabled for that source.
-
-Can you assume only the normal account receives a department update?
-
-**Reasoning:** No. Attribute sync applies to all correlated accounts for that identity on the source. Review the suitability of the field and population. Do not reuse access-profile account-selection assumptions for sync.
-
-### 8. Collection discovers an external edit
-
-**Facts:** Identity department remains Engineering. A native ProjectDirectory edit sets Finance. Aggregation detects the edit, and established sync enforces department from the identity.
-
-Does the possibility of a corrective write mean aggregation itself is a write operation?
-
-**Reasoning:** No. Collection detects the changed account value; the configured enforcement can then require provisioning. Inspect the business authority and both operation boundaries. Reading a change and responding to it are connected but different responsibilities.
-
-## Explain the same problem for a different field
-
-An employee's approved work phone changes in HR.
-
-The phone reaches the exact collected HR account and the identity's workPhone field. The contact application still has the old number. Its Create Account definition maps a phone field from workPhone, but ongoing phone synchronization is not configured.
-
-Someone proposes running HR aggregation until the contact application changes.
-
-What is missing?
-
-Collection and the current identity value are already established. Repeating those steps does not create an ongoing target-update policy. New-account field configuration alone does not update this existing account.
-
-First confirm that the contact application is supposed to follow HR's phone, that the account is correctly associated, and that a supported authorized update path exists. If attribute sync is selected, verify eligibility and scope rather than assuming every displayed field can be synced.
-
-Then verify the actual phone update. This does not require inventing an access role or changing the employee's group memberships.
-
-The useful explanation names each responsibility: where the approved information comes from, how ISC establishes the identity value, which configuration requires an external change, and what evidence confirms that change. “Run a refresh” is not a substitute for identifying those parts.
+The remaining work is to establish the approved ongoing update mechanism for the existing account and verify that the required phone change was delivered.

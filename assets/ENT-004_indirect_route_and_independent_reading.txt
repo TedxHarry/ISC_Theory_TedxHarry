@@ -1,0 +1,23 @@
+Route A: indirect reading
+  Selected account
+      | direct member of
+      v
+  Support Team
+      | group is a member of
+      v
+  Report Readers
+      | application permits
+      v
+  Read West reports
+
+Route B: independent reading
+  Selected account
+      | direct member of
+      v
+  Exception Readers
+      | application permits
+      v
+  Read West reports
+
+Enabled + sign-in + region checks
+apply to both routes.

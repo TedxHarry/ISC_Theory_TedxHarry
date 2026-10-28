@@ -1,79 +1,65 @@
 # The read finished. Did it include the right accounts?
 
-Devi, employee number `47007`, coordinates facilities work. Her ServiceDeskFlow account, `desk-47007`, is disabled during temporary leave, but it still exists and retains its recorded group memberships.
+A source's first account collection finishes with 110 accounts. The application owner's comparable inventory has 120 accounts in the population the organization agreed to govern.
 
-The organization wants SailPoint Identity Security Cloud (ISC) to govern every human account in the application's WEST region, including disabled accounts.
+All ten missing accounts are disabled. They still exist in the application, and their memberships are still recorded there.
 
-The first collection finishes with 110 accounts. The application owner's comparable inventory contains 120 accounts in that agreed population. Devi's account is one of the missing ten.
+The integration's query includes an extra ACTIVE condition. It has successfully collected the selected active accounts, while leaving out disabled accounts the business still needs to govern.
 
-Has the connector failed? Has someone deleted the account? Or did the collection do exactly what its configuration asked?
+So there are two questions to answer: did the read carry out its configured selection, and was that selection the right one?
 
-The supplied configuration adds an active-only condition. All ten omitted accounts are disabled.
+## Define the population before judging the result
 
-Let's separate a successful read from a correct population.
+An **account** is a record in an external system. An ISC **identity** represents a person or another entity and can connect its information, accounts and access.
 
-ServiceDeskFlow, its data, counts, configuration and corrected results are fictional. The example assumes a supported filtering mechanism and comparable reads of the same source state. No real tenant execution is claimed.
+A **source** is ISC's configured representation of a system or collection of account data. Its **connector** supplies supported integration behaviour. **Aggregation** collects account or entitlement information into ISC.
 
-## Decide what belongs before deciding how to filter
+An **entitlement** represents an access right. Account membership values can identify rights such as application groups.
 
-An **account** is a record in an external system. An ISC **identity** represents a person or another entity and can connect that entity's accounts and access information.
+For our hypothetical `Service-Production` source, the agreement is to collect **every human account in WEST, including disabled accounts**.
 
-A **source** is ISC's configured representation of a system or collection of account data. Its **connector** supplies the supported integration behavior.
+The **population** is the set of records intended to be covered. **Collection scope** describes a particular read's boundary: which system, accounts, access objects, information and time range it covers.
 
-An **attribute** is a named piece of information on a record. Region, kind and status are account attributes in this example.
+Here, the population excludes accounts outside WEST and accounts classified as service accounts. That doesn't establish that they are safe or governed elsewhere. Their responsible governance process needs its own agreed coverage.
 
-Our source is ServiceDeskFlow Production. A successful connection to a test environment would tell us nothing about Devi's production account.
+A **service account** is used by software or a service rather than for a person's everyday sign-in. This example's application supplies that classification. A real integration shouldn't infer it from a username prefix without an agreed rule.
 
-**Aggregation** collects account or entitlement information into ISC. An **entitlement** represents an access right; an account's membership values identify rights such as application groups.
+An **attribute** is a named piece of information on a record. Region, kind and status are the attributes relevant to our selection:
 
-The **population** is the set of records the integration is intended to cover. **Collection scope** is the boundary of a particular read: which system, accounts, access objects, information and time range it covers.
+| Account | Region | Kind | Status | Belongs in this source's population? |
+|---|---|---|---|---|
+| west-disabled | WEST | HUMAN | DISABLED | Yes |
+| west-active | WEST | HUMAN | ACTIVE | Yes |
+| east-active | EAST | HUMAN | ACTIVE | No |
+| west-service | WEST | SERVICE | ACTIVE | No |
 
-For this source, the agreed account population is:
+These account keys make the example records distinguishable. They aren't evidence that a real application's names reliably encode region, kind or status.
 
-Human accounts in WEST, whether active or disabled.
+The counts, records, permissions, query behaviour and results in this explanation are supplied teaching conditions, rather than real tenant observations. Reads being compared cover the same intended environment and source state.
 
-That statement excludes accounts outside WEST and accounts classified as service accounts. It doesn't claim those excluded accounts are safe, unimportant or governed nowhere. Their responsible governance process needs its own coverage.
+## Translate the agreement into a selection decision
 
-A **service account** is an account used by software or a service rather than a person's everyday sign-in. The fictional application explicitly supplies the classification; don't infer it from a username prefix in a real project.
+A **filter** evaluates conditions to select or exclude records. A **predicate** is a condition evaluated against a record, such as “region equals WEST.”
 
-Here are four representative records:
+You need to know what a match does. An **inclusion filter** keeps matching records; an **exclusion filter** discards them. The existence of a setting called filter doesn't settle its direction.
 
-| Account | Region | Kind and status | In the agreed population? |
-|---|---|---|---|
-| desk-47007 | WEST | HUMAN, DISABLED | Yes |
-| desk-47008 | WEST | HUMAN, ACTIVE | Yes |
-| desk-47009 | EAST | HUMAN, ACTIVE | No |
-| desk-svc-47010 | WEST | SERVICE, ACTIVE | No |
-
-The identifiers distinguish account records. Devi's employee number isn't a count of accounts, and 120 accounts wouldn't automatically mean 120 distinct people.
-
-**Account correlation** associates a collected account with its owning ISC identity using configured matching. An account that was never collected and an account that was collected but not associated with a person are different problems.
-
-## A filter is a decision with a direction
-
-A **filter** evaluates conditions to select or exclude records. A **predicate** is a condition that evaluates a record, such as “region equals WEST.”
-
-Before writing an expression, ask what a match means.
-
-An **inclusion filter** keeps matching records. An **exclusion filter** discards matching records. The words “filter string” alone don't tell you which behavior a particular mechanism implements.
-
-Our fictional query is an inclusion mechanism. It currently asks for:
-
-Region WEST AND kind HUMAN AND status ACTIVE.
-
-This is a statement of the supplied logic, not runnable ISC syntax or a connector property to copy.
-
-**AND** requires every condition to hold. **OR** requires at least one condition to hold. **NOT** reverses a condition under the mechanism's supported evaluation rules.
-
-Devi satisfies WEST and HUMAN but not ACTIVE, so this query excludes her account. The query can be correctly implemented and still contradict the business requirement.
-
-The intended logic is:
+Our supplied mechanism is an inclusion query. The intended logic is:
 
 Region WEST AND kind HUMAN.
 
+**AND** requires every condition to hold. West-disabled passes because it is both WEST and HUMAN. Its disabled status isn't a reason for exclusion under the agreement.
+
+West-active passes too. East-active fails the region condition. West-service fails the kind condition.
+
+Now add the supplied extra condition:
+
+Region WEST AND kind HUMAN AND status ACTIVE.
+
+West-disabled still passes the first two conditions, but fails ACTIVE. The query therefore excludes it. That explains the outcome without requiring an account deletion or a broken connector.
+
 The application has 500 accounts overall. Of those, 120 are WEST human accounts: 110 active and ten disabled. The other 380 are outside the agreed population.
 
-That gives us:
+These are account counts, rather than counts of distinct people. One person can have several accounts.
 
 ```text
 [WEST human accounts: 120]
@@ -85,271 +71,277 @@ That gives us:
 [110 included]   [120 included]
 ```
 
-The branches compare two proposed inclusion conditions against the supplied inventory. They aren't two jobs running in ISC. The “No” branch still keeps WEST and HUMAN; it doesn't collect all 500 application accounts.
+The branches compare two inclusion designs against that supplied inventory. Removing ACTIVE still keeps WEST and HUMAN. It doesn't collect all 500 accounts, and the diagram doesn't represent two ISC jobs.
 
-An OR mistake changes the population differently. “WEST OR ACTIVE” would include an active EAST account as well as a disabled WEST account. It isn't another spelling of “WEST AND ACTIVE.”
+These are conceptual conditions, rather than runnable connector syntax. The actual mechanism needs its supported field names, operators and expression format.
 
-Parentheses matter when conditions are combined. Decide whether you mean WEST AND (ACTIVE OR DISABLED), or (WEST AND ACTIVE) OR DISABLED. The latter includes disabled accounts outside WEST.
+## Small logic changes can change the boundary
 
-Test the intended decision with actual representative records before translating it into the particular connector's syntax.
+**OR** requires at least one condition to hold. “WEST OR ACTIVE” includes an active EAST account. Without a separate HUMAN condition, it also includes active service accounts.
 
-## Where is the selection happening?
+That isn't equivalent to the agreed population.
 
-A target application can limit what the integration sees before any explicit filter is evaluated.
+Parentheses determine which conditions are grouped. Even with a separate HUMAN requirement, compare the region/status parts:
 
-The integration's **read actor** is the account or application identity used to read data. Its **authorization** determines what that actor is permitted to read.
+WEST AND (ACTIVE OR DISABLED).
 
-An administrator viewing 500 accounts doesn't prove that the integration actor can read those same 500. Compare the actual destination, actor, permissions and operation.
+(WEST AND ACTIVE) OR DISABLED.
 
-A collection filter isn't a substitute for authorization controls. Selecting fewer records doesn't prove that the integration actor is forbidden from reading records outside that selection. Keep data-minimization choices and permission boundaries separate.
+The second admits a disabled human account outside WEST because DISABLED satisfies the final OR branch. The first retains the WEST requirement.
 
-A **native filter** is a selection applied through the external system's supported query or search mechanism. It can narrow what the external system returns.
+**NOT** reverses a true/false condition's result. How a particular mechanism evaluates absent or unknown values needs separate confirmation; don't assume that “not WEST” reliably classifies every account with missing region data.
 
-A **resource-object filter** evaluates records within a supported connector or integration implementation after retrieval. A **resource object** here is the connector's represented account or access object.
+Before translating the agreement into syntax, test representative records against the intended decision. Include an allowed account that looks unusual, such as west-disabled, as well as records that must remain outside.
 
-If filtering happens after retrieval, the data has already crossed the external read boundary. That doesn't automatically reduce the target's query work, network transfer or exposure in the way a native query can.
+This helps you catch a correctly written expression that implements the wrong business rule.
 
-SailPoint's connector software development kit, or **SDK**, provides tools for building integrations and includes resource-object filtering facilities. That doesn't establish that every standard connector supports the same configuration, expression language or match direction.
+## Start with what the read actor can actually see
 
-**Extraction** selects records or values from a response. A **mapping** selects or converts incoming information into represented attributes.
+A **read actor** is the account or application identity used by the integration to read data. Its **authorization** determines what it is permitted to read.
 
-The useful investigation boundaries are:
+An application administrator seeing 500 accounts doesn't prove that the integration actor can read the same 500. Compare the destination, actor, permissions and operation.
+
+The environment matters too. A successful connection to a test system doesn't establish anything about the production account you're investigating.
+
+Selecting fewer records with a query also isn't the same as restricting the actor's permissions. A filter can choose not to request certain records even when the actor could read them. It doesn't prove that reading them is forbidden.
+
+For our main case, assume the integration actor can read all 120 intended accounts. The evidence identifies ACTIVE selection as the cause of the missing ten, rather than a permission restriction.
+
+Without that evidence, a count difference alone wouldn't establish where the records disappeared.
+
+## Locate where the selection is applied
+
+A **native filter** uses the external system's supported query or search mechanism. It can reduce the set the system returns.
+
+A **resource-object filter** evaluates represented account or access records inside a supported connector or integration implementation. A **resource object** is that represented record.
+
+If selection happens after retrieval, the information has already crossed the external read boundary. Discarding it then doesn't automatically reduce the target's query work, transfer volume or read exposure in the way an upstream query can.
+
+SailPoint's connector **SDK**, or software development kit, provides tools for building integrations and includes resource-object filtering facilities. Those facilities don't establish that every standard connector supports the same property, language or match direction.
+
+There are other ways to lose information as well. **Extraction** selects records or values from a response. A **mapping** specifies which input supplies or is converted into a represented attribute.
+
+A wrong extraction path can omit records the application returned. A wrong mapping can leave an included account's field empty. Neither is automatically an intentional population filter.
+
+The investigation follows these boundaries:
 
 ```text
-[Correct target and read actor]
-               |
-[Native scope and returned records]
-               |
-[Supported filtering and extraction]
-               |
-[Collected records and access values]
-               |
-[Screen or query used to inspect them]
+[Correct destination and read actor]
+                 |
+[Native query and returned records]
+                 |
+[Filtering, paging and extraction]
+                 |
+[Collected accounts and access values]
+                 |
+[Viewing conditions and data freshness]
 ```
 
-The lines tell you where to compare evidence. They aren't a private ISC processing pipeline, and not every connector has a separate configurable filter at every line.
+The lines guide evidence comparisons. They aren't a private ISC processing pipeline, and they don't imply that every connector exposes a separate configurable filter at every boundary.
 
-A wrong extraction path can omit accounts from a returned collection. A wrong attribute mapping can leave a collected account's field empty. Neither problem is automatically an intentional population filter.
-
-Keep these distinctions when you inspect a missing record:
-
-| Boundary | Useful evidence | What it can help distinguish |
+| Boundary | Useful evidence | What it helps distinguish |
 |---|---|---|
-| External system and actor | Destination, same-actor query and permissions | Wrong environment or restricted visibility |
-| Native request | Actual supported search scope and conditions | Intended or unintended upstream exclusion |
-| Connector interpretation | Response pages, extraction, filtering and relevant errors | Unread data, wrong paths or post-read exclusion |
-| ISC record and viewing query | Source account, timestamps and current view conditions | Collection absence versus display/query absence |
+| External system and actor | Destination, same-actor read and permissions | Wrong environment or restricted visibility |
+| Native request | Actual scope and supported selection conditions | Intended versus unintended upstream exclusion |
+| Connector interpretation | Returned pages, extraction, filtering and errors | Incomplete read, wrong paths or post-read exclusion |
+| ISC record and viewing query | Account record, timestamps and viewing conditions | Collection absence versus hidden or stale results |
 
-A filter on a screen or a read-only API query can hide an already collected record from your current result. An **API**, application programming interface, lets software interact with a system.
+An **API**, or application programming interface, allows software to interact with a system. An API result filter can select records for a read query without changing the source's aggregation configuration.
 
-Clearing that viewing filter doesn't change the source's collection configuration. Likewise, a report containing only active accounts doesn't establish that disabled accounts weren't collected.
+The same distinction applies to a screen. A viewing condition that shows active accounts only can hide an already collected disabled account. Clearing that condition can reveal it; it doesn't repair or change collection.
 
-## Don't copy a condition between mechanisms
+A report omitting disabled accounts is therefore different evidence from the source never collecting them.
 
-A connector's supported attributes, operators, quoting, case handling and null behavior belong to that mechanism.
+**Account correlation** associates a collected account with its appropriate ISC identity using configured matching. A collected account without its intended person association is another distinct problem. Establish whether the source record exists before trying to repair its ownership by changing collection scope.
 
-For a concrete example, the Okta software-as-a-service (SaaS) connector supports an account aggregation filter such as `status eq "ACTIVE"`. In that documented filter, matching active accounts are selected.
+## The syntax belongs to the mechanism
 
-That example doesn't establish syntax for ServiceDeskFlow, an ISC Search query, an SDK evaluator or a different connector's exclusion setting.
+Field names, operators, quoting, case handling and missing-value behaviour need to be checked for the actual filter.
 
-A **data type** describes the kind of value, such as text or a true/false Boolean. A missing field and Boolean false are different inputs.
+For one concrete example, **SaaS** means software operated as a hosted service. The Okta SaaS connector documents `status eq "ACTIVE"` as a supported account-aggregation filter selecting accounts with ACTIVE status.
 
-If a source supplies region WEST but the expression tests a different field, you haven't evaluated the intended business value. If it supplies text "false", treating that as Boolean false requires a supported interpretation, not a guess.
+That isn't a filter expression to copy into our hypothetical service application, ISC Search, an SDK evaluator or another connector's exclusion setting.
 
-A **null** value explicitly represents no value in formats that support it; an omitted property isn't the same structural input. Don't assume that “not WEST” safely classifies every null or missing region.
+A **data type** describes the kind of value. A **Boolean** has true and false values. Text containing the letters false isn't automatically the same input as Boolean false.
 
-Establish how the actual mechanism handles missing attributes, comparisons and invalid expressions. Decide how unknown classifications will be investigated. Silently assigning every unknown account to the excluded population can hide a data-quality problem.
+If the condition reads the wrong field or uses the wrong representation, it isn't testing the intended business value.
 
-In our supplied example, region, kind and status are present, and their exact values are known. We can reason about the defect without inventing a parser's behavior.
+**Null** is an explicit no-value marker in formats that support it. An omitted property is structurally different. Establish the mechanism's treatment of missing attributes, comparisons and invalid expressions.
 
-## An included account can still have incomplete access information
+Also agree how unknown classifications will be investigated. Automatically treating every unknown kind or region as safely outside scope can hide a data-quality problem.
 
-Account scope answers which accounts are read. It doesn't, by itself, answer which access objects or membership values are read.
+In the supplied main records, region, kind and status are present and have the exact values shown. The selection can be explained without inventing a parser's unknown-value behaviour.
 
-An **entitlement aggregation** collects access-object information, such as group identifiers, names and descriptions. An **entitlement type** identifies a supported category of access objects on a source.
+## Account coverage isn't complete access coverage
 
-An account's membership values answer which of those objects the account holds. A catalog of group definitions and an account's group memberships aren't the same dataset.
+Including an account doesn't establish that all its access information was included.
 
-Where supported, account filters, entitlement-object filters and membership filters can select different information. An account can be included while selected memberships are omitted from its collected representation.
+An **entitlement aggregation** collects access-object information, such as group identifiers, names and descriptions. An **entitlement type** identifies a supported category of access object.
 
-That omission hasn't removed the membership from the application. It has reduced visibility into it.
+The catalog of group definitions and an account's membership values answer different questions: which groups exist, and which of them this account holds.
 
-Likewise, collecting group definitions for a restricted catalog doesn't automatically prove that account membership reads use the same restriction. Inspect the actual supported settings and resulting values.
+Where supported, account filters, entitlement-object filters and membership filters can select different information. A read can include an account while omitting selected memberships from its representation.
 
-For example, the Microsoft Entra ID connector documents separate user, group and group-membership filters. It also gives account filters priority over group filters: a group outside the group filter can still be collected when associated with an included account.
+That omission reduces visibility. It doesn't remove the target membership.
 
-That is a connector-specific interaction, not a universal rule that every filter is independent or that every connector behaves like Entra ID.
+Nor does a restricted group catalog automatically establish that account membership reads use the same restriction. Inspect the actual settings and results.
 
-If an account references a group but the detailed group isn't collected, you can have a membership reference without complete descriptive information. Conversely, a collected group definition doesn't prove that a particular account holds it.
+The Microsoft Entra ID connector provides a documented example. It has separate user, group and group-membership filters. It also prioritizes account filters over group filters: a group outside the group filter can still be collected when associated with an included account.
 
-For the access you intend to govern, compare the expected account, its actual membership values, the related access-object identifiers and the scope of both reads. A correct account count alone cannot establish complete access coverage.
+That interaction belongs to this connector. It doesn't establish universal independence or precedence for filters elsewhere.
 
-## Check completeness, not just the first successful response
+An account can have a membership reference without complete details for the related group. Conversely, a collected group definition doesn't prove that a particular account holds it.
 
-**Pagination** splits results into pages. A **page size** limits the records returned in one page, not the total number of records in the agreed population.
+For the access you need to govern, compare the expected accounts, their membership values, related access-object identifiers and both read scopes. A correct account total cannot establish all of that.
 
-An external API can return a successful first page and indicate that another page exists. The integration must follow the supported continuation mechanism to cover the intended result.
+## Make sure the complete selected result was consumed
 
-A **cursor** is a value identifying where a subsequent page should continue. Other interfaces use offsets or links. Don't assume every connector uses the same paging method.
+**Pagination** splits results into pages. **Page size** limits the number returned in one page; it isn't the total population size.
 
-Suppose a different read returns 100 accounts and supplies a continuation cursor. Stopping there doesn't prove that the population contains only 100 accounts.
+A successful first response can contain 100 accounts and a continuation value. If the integration stops there, it hasn't established that only 100 accounts exist in scope.
 
-**HTTP**, Hypertext Transfer Protocol, is the protocol used for these web requests and responses. An **HTTP status** describes the result of an individual request. HTTP 200 for page one isn't proof that later pages were requested or that every intended account was collected.
+A **cursor** identifies where a subsequent page should continue. Other interfaces use offsets or links. Follow the supported mechanism for the actual read.
 
-Compare continuation handling, stop conditions, duplicate identifiers, extraction and errors. Don't call a pagination defect a business filter merely because the final number is smaller.
+**HTTP**, Hypertext Transfer Protocol, carries these web requests and responses. An **HTTP status** describes an individual request's result. HTTP 200 on page one doesn't establish that later pages were requested or consumed.
 
-Counts alone also hide substitutions. If one expected account is missing and one unintended account is included, the count can still be 120.
+Inspect continuation handling, the terminal-page evidence, extraction, duplicate identifiers and errors. A pagination defect isn't a business filter merely because both can produce a smaller result.
 
-Compare identifiers and representative categories, not only totals. Check disabled accounts, missing classifications, boundary regions and accounts that changed categories.
+Counts can conceal substitutions too. If one intended account is omitted and one unintended account is included, the result can still total 120.
 
-For the ServiceDeskFlow case, the supplied evidence confirms that the active-only query's pages were fully read. The ten disabled accounts weren't lost on later pages; the native query never selected them.
+Compare identifiers and categories, including disabled accounts, boundary regions, missing classifications and accounts that recently changed category.
 
-That evidence identifies the cause more precisely than “110 is smaller than 120.”
+In our main case, supplied evidence confirms that the active-only query's pages were completely consumed. The ten disabled accounts weren't lost on later pages; the native query didn't select them.
 
-## A full read is full within its scope
+That is why this diagnosis is stronger than “110 is less than 120.”
 
-A **full aggregation** reads the configured source population rather than only a change feed. It doesn't bypass the target's read permissions, remove native conditions or include every application environment.
+## A full aggregation is still bounded by scope
 
-A supported **delta aggregation** reads changes since a defined point. An unchanged account can be absent from that change set without being absent from the source.
+A **full aggregation** reads the configured source population rather than only a change feed. It doesn't bypass read permissions, remove native filters or combine every environment.
 
-If you widen a filter, don't assume the next delta read backfills every newly included unchanged account. Establish the connector's supported handling and an appropriate collection plan before relying on the wider coverage.
+A supported **delta aggregation** reads changes since a defined point. An unchanged account can be absent from that change set while still existing in the application.
 
-An **optimized aggregation** can skip further processing for unchanged accounts after evaluating the read data. That is different from selecting only active accounts or reading only a change set.
+If a filter is widened, the next delta read doesn't automatically prove that every newly included unchanged account has been backfilled. Establish the connector's supported handling and an appropriate collection plan.
 
-A **single-account aggregation** reads one specified account where supported. Its result doesn't establish that the population-wide iteration selects the same account.
+An **optimized aggregation** can skip further processing for unchanged accounts after evaluating read data. That is different from an active-only population filter or a changes-only read.
 
-For example, an investigation can retrieve desk-47007 by its identifier while the broader active-only listing excludes it. That is possible because the operations ask different questions. Check the connector's supported operation-specific behavior; don't infer it from the word aggregation.
+A **single-account aggregation** reads one specified account where supported. Its result doesn't establish the population-wide listing's selection.
 
-Manually starting a read and scheduling it are trigger choices. Neither changes what its configured scope means.
+A supported lookup by identifier can have different selection rules from the listing. Finding west-disabled in such a lookup would establish that operation found it, rather than proving that the broader active-only iteration includes it.
 
-A **snapshot** describes state for an agreed scope and time. A file exported for one region or only changed accounts isn't automatically a complete replacement inventory for a wider source.
+Manual and scheduled starts are trigger choices. Neither changes the meaning of the configured scope.
 
-A **flat-file source** imports supplied files. Its effective input starts with the exporter's selection: report conditions, date range, columns and export time. A perfectly read file can faithfully reproduce an incomplete export.
+A **snapshot** describes state for an agreed scope and time. A changes-only file isn't automatically a replacement snapshot of the whole population.
 
-Don't run a new full aggregation simply to discover what a risky production filter does. Review collection mode, existing records, deletion settings and supported change handling first.
+A **flat-file source** imports supplied files. Its input already reflects the exporter's report conditions, status selection, columns, date range and export time. A perfectly read file can faithfully reproduce an incomplete export.
 
-## Excluding an existing account can have consequences
+Before using a new full aggregation to validate changed scope on an existing source, review current records, collection mode, deletion settings and supported change handling. The result can have consequences beyond a count on a test screen.
 
-Devi's example concerns the first collection for this source. No pre-existing ISC account record for desk-47007 is assumed.
+## A missing existing record is different from a missing first import
 
-Now consider a different situation: the account was already represented in ISC, and a later filter change makes it disappear from the next read.
+Our 110-account example concerns the source's first collection. There is no pre-existing ISC account record for west-disabled.
 
-ISC's **Enable Account Deletion** setting can allow missing accounts to be removed from ISC during applicable full source aggregations. The **Percentage of Deleted Accounts Allowed** setting provides a deletion safeguard.
+Now change that condition. Suppose the account was already represented, and a later filter change excludes it from the next read.
 
-These settings concern represented accounts in ISC. They aren't an instruction to delete those accounts from the external application.
+The **Enable Account Deletion** setting can allow missing accounts to be removed from ISC during applicable full source aggregations. **Percentage of Deleted Accounts Allowed** provides a deletion safeguard.
 
-A **deletion threshold** is a configured limit used by that safeguard. It isn't proof that every disappearance is legitimate, and it doesn't make a partial response trustworthy.
+These affect represented ISC accounts. They aren't instructions to delete the corresponding target accounts.
 
-Don't disable a safeguard merely to force an unexplained smaller result through. Investigate the cause and assess the intended scope change.
+A **deletion threshold** is the configured limit used by that safeguard. ISC can cancel an aggregation with a warning when the documented deletion-limit handling is triggered. That doesn't prove that the disappearing records were legitimately removed, or make a partial response a complete inventory.
 
-Deletion processing isn't the same for every operation. In the documented single-account aggregation action, an account not found on the source remains unchanged; account deletions are processed during full source aggregations.
+Disabling the safeguard won't fix the unexplained scope loss. Establish the cause and intended existing-record consequences before running the changed design.
 
-If the affected source establishes identities, the consequences can extend beyond an account record. An **authoritative source** participates in establishing identities through an **identity profile**, which configures that identity population and its attribute mappings. Removing an authoritative account can lead to profile reassignment or identity-deletion analysis under the applicable conditions.
+Operation matters here too. For the documented single-account aggregation action, an account not found on the source remains unchanged. Account deletions are processed during full source aggregations.
 
-That isn't a universal promise that one filtered account deletes a person or every account they hold.
+If the source establishes identities, removing its represented accounts can have wider consequences. An **authoritative source** supplies accounts used to establish identities through an **identity profile**, which configures that identity population and its mapped values.
 
-**Provisioning** performs supported changes to external accounts or access. A read-side filter doesn't itself disable an account or revoke its memberships.
+Under applicable removal conditions, the identity can require analysis for profile reassignment or deletion. That isn't a universal rule that filtering one account immediately deletes its person or every other account.
 
-A later access decision can depend on collected information, so changing visibility still requires dependency review. Don't turn a visibility change into an undocumented access-removal design.
+**Provisioning** performs supported external account or access changes. A read filter doesn't itself disable an external account or revoke its memberships.
 
-Disabled is also not synonymous with empty. The target can retain memberships on a disabled account, as it does in our supplied case. Those rights can matter if the account is enabled again.
+Collected information can influence later access decisions, so visibility changes still need dependency review. Check those processes and delivered results separately rather than using a filter as an undocumented removal mechanism.
 
-## Repair the agreed scope, then check what arrived
+Disabled also doesn't mean empty. Our disabled target accounts retain memberships, which can matter if they are enabled again. Excluding them conceals information the agreement required ISC to retain.
 
-For ServiceDeskFlow, the evidence says:
+## Correct the selection and verify the population
 
-The intended population contains 120 WEST human accounts. The integration actor can read those accounts. The native inclusion query adds ACTIVE and selects 110. Extraction and paging correctly collect that selected set.
+For the supplied main case, we have the intended 120-account population, sufficient actor visibility, the extra ACTIVE condition and complete consumption of its 110-account result.
 
-The responsible owners approve removing the extra active-only condition while preserving WEST and HUMAN.
+Responsible owners approve removing ACTIVE while retaining WEST and HUMAN. The appropriate subsequent collection represents all 120 intended accounts, including west-disabled.
 
-In the supplied corrected result, the appropriate collection represents all 120 intended accounts, including desk-47007. The comparable target state hasn't changed: Devi remains disabled and retains the same memberships.
+The comparable target state hasn't changed. West-disabled remains disabled with its memberships intact. Accounts outside WEST or classified as SERVICE remain outside the agreed collection.
 
-This is a correction to visibility, not a re-enable or an access grant.
+This corrects visibility. It isn't a re-enable or access grant.
 
-Verification includes the actual identifiers and status categories, not just a new total of 120. Accounts outside the agreement remain excluded.
+Verify the identifiers and status categories as well as the total. A new count of 120 would be insufficient if it contained the wrong records.
 
-Also check where you're looking. The source's Account Aggregation configuration describes the planned read and applicable safeguards. Aggregation History records an execution's status, timing and counts. Account details show a particular represented record.
+Then compare the appropriate UI evidence. The **user interface**, or UI, presents different kinds of records:
 
-ISC's Search results can have separate indexing delays. A missing search result immediately after a change doesn't, by itself, locate the defect in the connector. Compare the applicable account record, execution evidence, viewing conditions and freshness before rerunning work.
+Account Aggregation configuration describes the planned read and applicable safeguards. Aggregation History records an execution's status, timing and counts. Account details show a particular represented account.
 
-A **coverage gap** is a difference between intended governance coverage and the data actually available for it. A completed job can still leave one.
+A change can be present in an account record before it appears in ISC Search. The searchable view can be updated later. An immediately missing Search result doesn't locate a defect in the connector by itself. Compare the account record, execution evidence, viewing conditions and freshness before repeating work.
 
-## Work through these changes
+A **coverage gap** is the difference between intended governance coverage and the information available for it. A completed job can leave that gap; the population and record evidence tell you whether the requirement was met.
 
-### 1. The result count is correct
+## Work through the changed conditions
 
-The agreed population contains 120 accounts. The read returns 120, but it substitutes an EAST account for a disabled WEST account.
+### 1. The total matches
 
-Has the count established correct coverage?
+The intended population has 120 accounts. The result also has 120, but an EAST account replaces a disabled WEST account. Is coverage established?
 
-**Worked reasoning:** No. Compare identifiers and categories against the agreed population. Equal totals can conceal both an omission and an unintended inclusion.
+**Worked reasoning:** No. Compare identifiers and categories. An omission and unintended inclusion can cancel numerically while both violate the agreement.
 
-### 2. The filter uses OR
+### 2. The condition uses OR
 
-The intention is WEST human accounts. A proposed inclusion condition uses WEST OR ACTIVE, with no human-account condition.
+The intention is WEST human accounts. The proposed inclusion logic is WEST OR ACTIVE, with no HUMAN condition. Would it exclude an active EAST service account?
 
-Would an active EAST service account be excluded?
+**Worked reasoning:** No. ACTIVE satisfies OR, and there is no human-only boundary. Translate the complete agreement, then test representative records under the supported mechanism.
 
-**Worked reasoning:** No. ACTIVE satisfies the OR condition, and the missing kind condition provides no human-only boundary. Translate the full business agreement, then test representative records under the real mechanism.
+### 3. The read actor sees less than the administrator
 
-### 3. The integration actor sees less
+An administrator sees west-disabled. The integration actor cannot retrieve it through the same read operation, and no filter evidence is supplied. Should the team change its region?
 
-An administrator's screen shows desk-47007, but the same read operation using the integration actor cannot retrieve it. No filtering evidence is supplied.
-
-Should the team immediately change the account's region?
-
-**Worked reasoning:** No. Compare destination, operation and actor authorization before changing business data. The supplied difference concerns visibility; it doesn't establish an incorrect region value.
+**Worked reasoning:** No. Compare destination, operation and actor authorization first. The supplied difference concerns visibility; it doesn't establish incorrect business data or a filter defect.
 
 ### 4. The first page succeeds
 
-The API returns 100 accounts with a continuation cursor. Only that request is recorded.
+An API returns 100 accounts with a continuation cursor. Only that request is recorded. Can 100 be called the complete scoped population?
 
-Can the team call 100 the complete scoped population?
+**Worked reasoning:** Not yet. Establish continuation and terminal-page evidence, extraction and errors. One successful request doesn't prove that the complete selected result was consumed.
 
-**Worked reasoning:** No. Establish supported continuation and terminal-page evidence, extraction and errors. A successful request isn't proof that the complete result was consumed.
+### 5. An unchanged account is absent from delta output
 
-### 5. A delta response omits Devi
+The latest supported delta read includes changed accounts only. West-disabled hasn't changed. Does its absence prove deletion?
 
-The latest supported delta read contains changed accounts only. Devi's account hasn't changed.
+**Worked reasoning:** No. Establish the mode, relevant change state and independent account evidence. A missing change-set entry isn't evidence of absence from the source, and delta output isn't a replacement snapshot.
 
-Does her absence establish deletion?
+### 6. The view selects active accounts only
 
-**Worked reasoning:** No. Absence from this change set isn't absence from the source. Inspect the mode, applicable change state and correct account evidence. Don't interpret delta output as a replacement snapshot.
+The source account record for west-disabled exists, but the viewing query hides it. Will clearing the query repair collection?
 
-### 6. The screen hides disabled accounts
+**Worked reasoning:** It can reveal an already represented record in that view. It doesn't change collection configuration, and no collection defect was supplied.
 
-The source record for desk-47007 exists, but a viewing query selects active accounts only.
+### 7. A proposed filter halves an existing population
 
-Will clearing that query repair collection?
+Someone suggests disabling deletion safeguards and running the production change to see what happens. What needs resolving first?
 
-**Worked reasoning:** It can reveal the already represented account in that view. It doesn't change collection configuration, and no collection defect was supplied. Distinguish the viewing result from the stored record.
+**Worked reasoning:** Establish intended exclusions, representative identifiers, completeness, mode and existing-record consequences through an appropriate safe validation process. Unexplained scope loss needs investigation; the safeguard isn't causing the missing data, and disabling it doesn't validate the new population.
 
-### 7. A new production filter drops half the population
+### 8. The account arrives but a membership doesn't
 
-An existing source would return far fewer accounts after a proposed filter change. Someone suggests disabling deletion safeguards and running it to see what happens.
+A supported membership filter omits one target group from west-disabled's representation. The application owner confirms the actual membership remains. Did the filter remove access?
 
-What should stop that experiment?
-
-**Worked reasoning:** Unexplained scope loss and existing-record consequences require review before execution. Establish intended exclusions, representative IDs, completeness, mode and deletion behavior in a safe validation process. A safeguard isn't the cause of the missing data, and switching it off doesn't prove the new scope is correct.
-
-### 8. An account is present, but a membership is filtered
-
-The account read includes desk-47007. A supported membership filter omits one of its target groups from the collected representation. The application owner confirms that the account still belongs to that group.
-
-Has the filter removed the account's external access?
-
-**Worked reasoning:** No. It changed the access information available through that read, not the target membership. Inspect membership scope separately from account scope. Any intended removal needs its own supported operation and resulting-state evidence.
+**Worked reasoning:** No. It limited information supplied by the read. Inspect membership scope separately from account scope. Removal requires a supported external operation and resulting-state evidence.
 
 ## Review a payroll export
 
-A payroll project wants all current workers, future starters and recently terminated workers needed by its agreed joining/leaving process. This export classifies those groups as ACTIVE, FUTURE and TERMINATED respectively, but provides only ACTIVE workers changed today. The import finishes without errors, and the team proposes treating every absent worker as deleted.
+A payroll project needs current workers, future starters and recently terminated workers for its agreed joining/leaving process. The feed classifies them as ACTIVE, FUTURE and TERMINATED.
 
-What is wrong with that agreement?
+The export contains only ACTIVE workers changed today. Import completes successfully, and the team proposes treating every absent worker as deleted. What is wrong?
 
-**Worked reasoning:** The export doesn't represent the intended population or a complete snapshot. Active-only selection excludes required starters and terminated workers; changed-today selection excludes unchanged records. A successful import doesn't repair either omission.
+**Worked reasoning:** The file doesn't cover the intended population and isn't a complete snapshot. Active-only selection excludes required starters and recent leavers. Changed-today selection excludes unchanged records.
 
-Establish the required statuses, effective-date window, export time and full-versus-change contract. Agree stable identifiers, representative expected records, complete paging/export behavior and explicit handling of missing or unknown information.
+Agree required statuses, effective-date coverage, export time and full-versus-change meaning. Establish stable identifiers, representative expected records, complete export/paging behaviour and explicit treatment of missing or unknown information.
 
-Review existing-record and authoritative-identity consequences before choosing deletion settings. Never infer external termination completion or access removal solely from a missing row.
+Review existing-account and authoritative-identity consequences before choosing deletion settings. A missing row doesn't prove completed termination or external access removal.
 
-Explain the boundary to the owner: “We need evidence for the population we agreed to govern, not just evidence that the file or query finished. A record missing from a selected result hasn't automatically disappeared from the system.”
+Explain the result to the owner through its scope: “The import finished, but this file only describes active workers changed today. We still need coverage for the other agreed workers, and evidence that distinguishes a selected absence from a real deletion.”

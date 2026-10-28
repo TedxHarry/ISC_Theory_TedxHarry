@@ -1,0 +1,18 @@
+Access profile in ISC
+|
++-- name and description
+|   Explain purpose and scope
+|
++-- source and entitlement references
+|   Cases Production
+|   Case Readers
+|   Review Notes
+|
++-- owner references
+    Record package responsibility
+
+Native application
+  Account memberships + assigned queue
+      -> permitted actions/resources
+
+Description text is not enforcement.

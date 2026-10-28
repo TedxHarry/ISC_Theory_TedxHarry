@@ -1,0 +1,18 @@
+Collected assignmentStart + now
+                |
+supportWindow calculation
+                |
+verify applied identity value
+                |
+       +--------+---------+
+       |                  |
+role condition      identity result
+requires NIGHT-BASE visible in Search
+       |
+provisioning to intended account
+       |
+verify target membership
+
+A later account read supplies
+new collected membership evidence.
+These are dependencies, not job order.

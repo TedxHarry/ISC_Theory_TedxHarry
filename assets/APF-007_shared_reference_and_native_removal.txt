@@ -1,0 +1,15 @@
+Case review: Readers + Notes
+Evidence export: Readers + Export
+  Same Readers entitlement reference
+
+Account: Readers + Notes + Export
+             |
+             | revoke Case review
+             | removals succeed
+             v
+Account: Export only
+  Evidence export is incomplete
+  Its profile association is lost
+  Its Export membership remains
+
+No other requirement in this example.

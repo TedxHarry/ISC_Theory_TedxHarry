@@ -1,267 +1,302 @@
 # Where does an ISC identity come from?
 
-Devi is a new logistics coordinator. Human Resources has created worker record `hr-61001`, with employee number `61001`. She doesn't yet have an identity in SailPoint Identity Security Cloud (ISC), and her DispatchDesk application account hasn't been created.
+Human Resources (HR) has made a new worker record available. The person doesn't yet have an identity in SailPoint Identity Security Cloud (ISC), and no account exists for them in a separate business application.
 
-The onboarding team asks, “Once ISC reads the HR record, will Devi appear as an identity? And will that give her DispatchDesk access?”
+If ISC reads the worker record, what should appear?
 
-Those are separate outcomes. Reading a worker record, establishing an identity, and creating an application account have different responsibilities. Let's follow the information between them.
+There are separate results to establish: the collected HR record, an identity representing the person, and any application account or access needed afterward. They depend on different configuration and evidence.
 
-## A worker record can be an account without being a login
+Let's follow how the worker information becomes identity information.
 
-An **identity** is ISC's representation of a person or another managed entity. Here, it represents Devi and connects her person-level information with her accounts and access.
+## The HR account doesn't have to be a login
 
-An **account** is a record in a particular system. In a business application, that record can be a login. In our HR integration, it is a worker record. Devi doesn't need an HR login or an HR password for this worker record to supply her personnel information.
+An **identity** is ISC's representation of a person or another managed entity. It holds identity-level information and connects the entity's accounts and access.
 
-A **source** is ISC's configured representation of a system or account-data collection. The **connector** supplies its supported integration behavior, such as reading those records. **Account aggregation** reads account information into ISC, where ISC maintains source account records representing the collected data.
+An **account** is a record in a particular system. That can be an application login, but it can also be an HR worker record. The person doesn't need an HR password for that worker record to supply personnel information.
 
-So we already have two distinct objects to look for: the HR source account and the ISC identity. Finding the first doesn't prove the second is complete.
+A **source** is ISC's configured representation of a system or collection of account data. Its **connector** provides supported integration operations. **Account aggregation** reads account information and represents it as source accounts in ISC.
 
-For this fictional example, the source is **PeopleLedger Production**. It represents the organization's employee population, not every user of every application. The supplied connector supports account aggregation. The organization has approved this worker population for identity creation.
+The HR account and the identity are therefore different objects. Locating the collected worker record doesn't, by itself, prove that the identity is complete.
 
-## What makes this source authoritative?
+Our neutral source, HR-Production, represents an approved employee population. Its connector supports account collection. These are supplied example conditions, not results from a real tenant.
 
-An **authoritative source** supplies the accounts from which ISC establishes identities through an **identity profile**. The identity profile is configuration for those identities, including how their person-level values are populated. Configuring an identity profile for a source makes that source authoritative.
+## What makes these records establish identities?
 
-PeopleLedger Production is associated with the **Employees** identity profile in this example. The profile is shared configuration for this employee population, not a separate personal profile created for Devi. That relationship gives its worker accounts a different responsibility from ordinary application accounts.
+An **authoritative source** supplies accounts from which ISC establishes identities through an **identity profile**. Configuring an identity profile for a source makes that source authoritative.
 
-ISC doesn't choose that responsibility because a source has “HR” in its name. An organization can deliberately use a directory as an authoritative source. Equally, an application containing employee names doesn't automatically become authoritative.
+The profile supplies shared configuration for its identities, including how identity values are populated. In our example, the Employees profile belongs to HR-Production. It isn't a separate personal profile created for each worker.
 
-Ask what the records are meant to establish. Are they the approved population of people to represent, or additional accounts belonging to people established elsewhere?
+That relationship gives the source accounts their identity-establishment responsibility. ISC doesn't assign it because the source's name contains HR.
 
-Making every application authoritative to fix missing ownership is a design mistake. You would be changing which records establish identities, rather than finding why existing accounts haven't been associated with their owners.
+An approved design can use a directory as an authoritative source. An ordinary application containing employee names doesn't become authoritative merely because those names look useful.
 
-Authoritative also doesn't mean “permitted to write everywhere.” A read-only personnel feed can establish identities. Permission to create or disable an external account is a separate capability and configuration decision.
+Ask what the population is meant to establish. Is it the approved set of people ISC should represent, or additional accounts owned by people established elsewhere?
 
-## The profile tells ISC how to populate the person
+Making every application authoritative to fix unresolved ownership changes that responsibility. It doesn't investigate why the existing accounts haven't been connected to their intended owners.
 
-An **attribute** is a named piece of information. An account attribute describes the source record; an identity attribute describes the ISC identity.
+Authoritative also doesn't grant permission to write everywhere. A read-only personnel feed can establish identities. Creating or disabling external accounts requires separate capability, authority and configuration.
 
-For example, `familyName` on an HR account and `lastname` on an identity are different fields. Their values don't become connected merely because both describe a surname.
+## How does the profile supply the identity's values?
 
-An **identity attribute mapping** tells ISC how to obtain an identity attribute's value. A direct mapping selects a source and an account attribute. Mappings can also use supported calculation logic, but this example uses direct values so you can see every input.
+An **attribute** is a named piece of information. Account attributes describe source records. Identity attributes describe the ISC identity.
 
-The selected HR account data is shown as **JSON**, a text format that pairs field names with values. Each quoted name below is a field, followed by its quoted text value:
+For example, familyName on an HR account and lastname on an identity are distinct fields. Their similar meanings don't automatically connect their values.
+
+An **identity attribute mapping** specifies how to obtain an identity value. A direct mapping selects a source and an account attribute. Supported calculations can also supply values, but the main example uses direct inputs.
+
+Here is selected account data in **JSON**, JavaScript Object Notation, a format pairing property names with values:
 
 ```json
 {
-  "workerKey": "hr-61001",
-  "workerNumber": "61001",
-  "iscUserName": "worker61001",
-  "givenName": "Devi",
-  "familyName": "Rao",
-  "workEmail": "devi61001@example.com",
+  "workerKey": "worker-a",
+  "workerNumber": "W-101",
+  "iscUserName": "worker-w101",
+  "givenName": "Sample",
+  "familyName": "Worker",
+  "workEmail": "worker-w101@example.invalid",
   "departmentCode": "LOG"
 }
 ```
 
-This is a selected teaching record, not an API response or an upload template. The field names belong to this fictional HR integration. The organization's approved design supplies `iscUserName` and a usable work email at onboarding; don't assume every HR system has those fields.
+Each quoted value is text. The field names are choices in this supplied HR design, not a complete response or universal upload template. The name values and email address are illustrative; no real person or mailbox is claimed.
 
-The **account schema** describes the fields ISC expects for this source. Its configured **Account ID** identifies a source account. Here, it uses `workerKey`, so `hr-61001` identifies Devi's HR record within PeopleLedger Production.
+The project design supplies its initial username and email input before identity establishment. Don't assume every HR feed already provides those fields.
+
+An **account schema** describes the account fields ISC represents. Its **Account ID** designation identifies which attribute supplies the source account's identifying value. Here it selects workerKey, so worker-a identifies this HR record within HR-Production.
 
 The Employees profile uses these mappings:
 
-| Identity value | Selected source input | Result for Devi |
+| Identity attribute | Selected source input | Result in this example |
 |---|---|---|
-| User Name, technical name `uid` | PeopleLedger Production: `iscUserName` | `worker61001` |
-| Work Email, `email` | PeopleLedger Production: `workEmail` | `devi61001@example.com` |
-| Last Name, `lastname` | PeopleLedger Production: `familyName` | `Rao` |
-| First Name, `firstname` | PeopleLedger Production: `givenName` | `Devi` |
-| Identification Number, `identificationNumber` | PeopleLedger Production: `workerNumber` | `61001` |
-| Department, `department` | PeopleLedger Production: `departmentCode` | `LOG` |
+| User Name, uid | HR-Production: iscUserName | worker-w101 |
+| Work Email, email | HR-Production: workEmail | worker-w101@example.invalid |
+| Last Name, lastname | HR-Production: familyName | Worker |
+| First Name, firstname | HR-Production: givenName | Sample |
+| Identification Number, identificationNumber | HR-Production: workerNumber | W-101 |
+| Department, department | HR-Production: departmentCode | LOG |
 
-User Name, Work Email and Last Name are required identity attributes. Each profile must map them, and their resulting values cannot be null. User Name must also be unique across identities in all identity profiles. Work Email being non-null does not mean ISC has validated that it is a correctly formatted or deliverable email address.
+The source fields don't have to share the identity attributes' technical names. The mapping is the connection between them.
 
-The remaining rows make this example useful; they aren't all universally required for creating every identity. A project can need additional attributes for its own downstream decisions.
+User Name, Work Email and Last Name are required identity attributes. Every profile must map them, and their resulting values cannot be **null**, meaning no value.
 
-Look at the three identifiers. `hr-61001` identifies the HR account. `worker61001` is the mapped ISC User Name. `61001` is the organization's worker number, mapped here to `identificationNumber`. ISC's identity object also has its own platform ID. These references have different jobs, even when a naming convention makes them look related.
+User Name must also be unique across identities in all identity profiles. A different source account key doesn't remove that requirement.
 
-Changing an account key isn't an appropriate repair for a missing email. Nor should you change a worker number merely to make a username collision disappear.
+Work Email must be non-null, but ISC's required-value check doesn't validate email format. A populated string doesn't prove a real address, mailbox or mail delivery. The illustrative address above demonstrates a mapping, not a usable production mailbox.
+
+The other mapping rows serve the supplied design; they aren't all universal requirements for creating every identity. A project can require additional information for its own decisions.
+
+Now separate the identifiers. Worker-a identifies the HR account. Worker-w101 is the mapped ISC User Name. W-101 is the worker number mapped to identificationNumber. The identity also has its own platform object ID.
+
+Even related-looking values have different jobs. A missing email doesn't justify changing the account key, and a username collision doesn't justify changing a valid worker number.
 
 ## Follow the first successful arrival
 
-Assume the Employees profile and mappings have been saved and appropriately applied. No account aggregation is running during profile creation; ISC does not allow creating an identity profile while an account aggregation is running.
+Assume the Employees profile and mappings have been saved and appropriately applied. No account aggregation is running during profile creation; ISC doesn't allow creating a profile while account aggregation is running.
 
-For Devi, there is no existing person identity to match, no conflicting username, and no competing authoritative profile. All required mapped inputs are available. These conditions let us examine a new identity without mixing in a migration or duplicate-person problem.
+For this main path, no identity already represents the person. There is no conflicting User Name or competing eligible authoritative profile. All required mapped values are available.
 
-1. HR makes `hr-61001` available through the integration's approved read interface. The record must be visible to the integration account, meaning the account whose credentials the connector uses, and included in the configured collection scope.
-2. Account aggregation collects that record. Its fields are interpreted through the source's configured schema and extraction behavior. A value visible in HR still needs to arrive in the corresponding ISC source account field.
-3. The authoritative source and Employees profile participate in establishing Devi's identity. The profile's mappings supply the identity values; required-value and uniqueness requirements still apply.
-4. We inspect the resulting identity, its associated HR account, profile and values. In this supplied successful outcome, Devi has one Employees identity with User Name `worker61001` and Identification Number `61001`.
+First, HR exposes worker-a through the approved read interface. The integration account, the identity whose credentials the connector uses, must be able to read it. The configured collection scope must include it.
 
-The dependency is pictured below. Every arrow means that the next represented result depends on the preceding input or configuration. It does not specify private services, database transactions or an exact completion time.
+Aggregation then collects the record. The source's extraction and schema must represent the required fields correctly. A value visible in HR still needs to arrive in the matching ISC source-account attribute.
 
-```text
-HR worker record
-hr-61001
-       |
-       | connector account aggregation
-       v
-ISC HR source account
-PeopleLedger Production
-       |
-       | authoritative source +
-       | Employees identity profile
-       | mapped inputs meet requirements
-       v
-ISC identity for Devi
-uid: worker61001
-identificationNumber: 61001
-       |
-       | does not itself prove
-       v
-DispatchDesk account or access
-```
+Because this source is authoritative through Employees, its collected worker account participates in establishing the identity. The profile mappings supply identity values, subject to the required-value and uniqueness rules.
 
-The final arrow marks a boundary, not an automatic creation step. Our supplied outcome confirms the identity and its HR association. It does not claim a DispatchDesk account exists.
-
-**Identity processing** evaluates identity information against configuration, including identity attribute mappings and configured access-related decisions. Changes to identity data during aggregation can initiate this processing. A configured change can therefore lead to further work, but an aggregation result alone is not proof of every downstream outcome.
-
-Likewise, saving changed mappings is not the same evidence as seeing the new values on existing identities. A profile can show **Needs Processing** when changes need applying. Check the actual represented values after the relevant processing, rather than treating a saved configuration as an already-observed result.
-
-## What if the account arrives before all its values?
-
-Suppose the HR account is collected, but `familyName` is missing. Our direct `lastname` mapping then lacks its required input.
-
-ISC documents **identity exceptions** for missing required attributes and duplicate User Names. Identities missing required attributes also appear as **Incomplete Identities** on the Identities page. An incomplete identity is not the same as a fully populated identity, and an exception does not establish that account aggregation failed to read the worker record.
-
-Don't collapse those observations into “Devi isn't in ISC.” Be precise: is her account missing, is the identity incomplete, or does an identity exist with a conflicting username?
-
-Start with the profile's exception report and inspect the relevant source account and mapping. If HR never supplied `familyName`, the correction belongs with the HR data owner. If HR supplied `Rao` but the connector mapped the wrong field, changing the HR surname would repair the wrong layer. If the source account is correct but the profile selects a different attribute, inspect the identity mapping.
-
-After the approved correction, verify collection and the relevant identity processing, then recheck the exception and represented identity values. Repeating a read without changing the defective input or mapping does not resolve the cause.
-
-There is also an onboarding dependency worth catching during design. What if Work Email is mapped only from a directory account, while that account can be created only after the identity is established?
-
-The initial identity then depends on a value that the chosen downstream process has not supplied. A diagram won't make that dependency disappear. Decide an approved way to provide the required initial value and later maintain the intended email. Don't insert fabricated addresses merely to silence exceptions, or assume an account will arrive because a mapping references it.
-
-## Where does an ordinary application account fit?
-
-Now assume DispatchDesk already has account `dd-61001`, created independently by its application administrator. Its account attribute `employeeRef` contains text `61001`.
-
-DispatchDesk Production is a **non-authoritative source**: it is not the profile-backed origin of these employee identities. ISC can still collect and govern its accounts.
-
-**Account correlation** matches and associates a source account with its identity using configured comparisons. For this variation, the only criterion compares DispatchDesk `employeeRef` with identity `identificationNumber`. Devi is the sole eligible matching identity, and no manual association overrides that comparison.
-
-When that account is collected and evaluated for correlation, `61001` matches `61001`. The supplied result is an association between `dd-61001` and the existing Devi identity. It doesn't require a second person identity.
+In the supplied successful result, the engineer finds one Employees identity with uid worker-w101 and identificationNumber W-101, linked to the collected HR account.
 
 ```text
-Employees identity already exists
-Devi: identificationNumber 61001
-                  ^
-                  |
-      account correlation matches
-      employeeRef to identificationNumber
-                  |
-                  |
-Collected DispatchDesk account
-Account ID: dd-61001
-employeeRef: 61001
+[HR worker record: worker-a]
+              |
+[Supported account aggregation]
+              |
+[ISC HR source account]
+              |
+[Authoritative source + Employees]
+[Required mapped inputs valid]
+              |
+[ISC identity: uid worker-w101]
+[identificationNumber: W-101]
+
+[No application account proven]
 ```
 
-The upward arrow means ownership association performed by ISC, not a write back to DispatchDesk. Both records already exist in this variation.
+The connected lines show dependencies: available HR input, supported collection, represented account and profile-backed identity values. They don't specify private services, transactions or an exact completion time.
 
-If that application account arrives before Devi's identity is available, the required match may not exist. The account can remain **uncorrelated**, meaning not assigned to the intended person. A technical placeholder called a **shadow identity** can represent uncorrelated data; that does not mean the employee has been successfully established through the Employees profile.
+Employees in the diagram is the identity profile. The required-input line includes the stated mappings and unique User Name conditions.
 
-Once the person and matching values are available, the account needs suitable correlation evaluation. An optimized full aggregation can skip further processing for unchanged accounts. Don't assume that simply waiting, or repeating that operation, must repair ownership. Re-evaluating unchanged accounts after a correlation configuration change requires the documented unoptimized aggregation approach, which re-examines those accounts. A manual association is a deliberately established ownership link; changing comparison inputs does not automatically move such an account to another identity.
+The separated application line marks a result not established by this evidence. Creating the identity hasn't proved an application account or permission exists.
 
-## One person can have more than one authoritative account
+**Identity processing** evaluates identity information under the relevant configuration, including attribute mappings and access-related decisions. Identity changes during aggregation can initiate that processing.
 
-An employee can have records in an employee system and a contractor register. That doesn't mean the organization wants two separate people represented in ISC.
+That can lead to further configured work, but the aggregation result isn't evidence that every downstream outcome finished.
 
-Each identity is associated with only one identity profile. Where an identity has accounts on multiple authoritative sources, the highest-priority eligible profile governs that identity. The profile choice determines which mappings apply.
+Likewise, saving mappings isn't the same as observing their values on existing identities. A profile can show **Needs Processing** when changes need applying. Inspect the relevant processing and resulting values rather than treating saved configuration as an already-applied result.
 
-That rule assumes the relevant accounts belong to the same represented identity. A matching-looking name is not proof of that relationship, and changing profile priority is not a general-purpose merge operation for identities that were created separately.
+## What if the worker record arrives without a required value?
 
-If an existing contractor becomes an employee, investigate existing identities, account ownership and the approved continuity design before introducing the new authoritative population. Check the resulting association and governing profile rather than promising that an identical name, worker number or username will automatically merge every record.
+Consider a separate variation where familyName isn't supplied. The direct lastname mapping lacks its required input.
 
-For Devi's initial example, there was no existing identity and only one eligible profile. Keep that assumption in mind when comparing it with a migration.
+ISC reports **identity exceptions** for missing required attributes and duplicate User Names. Identities with missing required attributes also appear as **Incomplete Identities**.
 
-## What should you inspect on the screen?
+That doesn't mean account collection necessarily failed. It means the identity lacks required information or has another reported exception needing investigation.
 
-Each view answers a different question. Use the record it represents, not just its label.
+Be precise about what exists. Is the source account missing? Is an identity incomplete? Does the report identify a duplicate User Name?
+
+Use the profile's exception report, actual account attributes and mapping together.
+
+If the producer never supplied familyName, involve the source-data owner. If the response supplied Worker but extraction selected the wrong field, changing the source surname would address the wrong layer. If the account value is correct but the profile selects another attribute, inspect the identity mapping.
+
+After the approved correction, verify the relevant collection and identity processing, then recheck both the represented value and exception outcome. Another read of the same defective input doesn't resolve its cause.
+
+There is also a dependency to catch before onboarding. Suppose identity Work Email is mapped only from a directory account that the chosen process can create only after the identity is established.
+
+The initial identity then needs a value whose provider isn't available yet. Referencing that account in a mapping doesn't create it or make its email arrive.
+
+Agree how the required initial value will be supplied and how the intended email will be maintained later. Don't fabricate addresses to silence exceptions. The design has to satisfy its actual identity and business requirements.
+
+## How does an ordinary application account join the identity?
+
+Now take an independent variation. An application administrator has already created application-user, whose employeeRef is text W-101.
+
+Application-Production is **non-authoritative** for this employee population: it isn't the profile-backed origin of these identities. Its accounts can still be collected and associated with owners for access management and review.
+
+**Account correlation** matches and associates a source account with its owning identity using applicable comparisons.
+
+Here, the approved criterion compares account employeeRef with identity identificationNumber. The intended identity is the sole eligible match, and no manual ownership override applies.
+
+When the account is collected and evaluated, W-101 matches W-101. The supplied result links application-user to the existing Employees identity. It doesn't require creating another person.
+
+```text
+[Existing Employees identity]
+[identificationNumber: W-101]
+               ^
+               |
+[ISC correlates matching inputs]
+               |
+[Collected application account]
+[key: application-user]
+[employeeRef: W-101]
+```
+
+The upward arrow means ownership association performed by ISC. It isn't a write to the application. Both the application account and the identity already exist in this variation.
+
+If the application account is collected before the required person identity exists, the intended match may be unavailable. It can remain **uncorrelated**, meaning the intended ownership association isn't resolved.
+
+A technical **shadow identity** can represent uncorrelated account data. That isn't evidence of successful authoritative employee onboarding.
+
+When the person and required values become available, the account needs suitable correlation evaluation. An optimized full read can skip further processing of unchanged accounts.
+
+**Optimization** is that shortcut for existing unchanged data. A **full aggregation** reads the configured population; full coverage doesn't guarantee repeated matching for every unchanged record.
+
+After a correlation configuration change, the documented **unoptimized aggregation** approach re-evaluates unchanged accounts. Don't assume waiting or repeating an optimized run must repair ownership.
+
+A manual association is an administrator-established ownership link. Changes to comparison inputs don't automatically move that account to another identity. Review its documented handling when it affects the result.
+
+## What if two authoritative systems contain the same person?
+
+A person can have records in an employee system and a contractor register. That doesn't establish that ISC should represent two separate people.
+
+An identity can have only one governing identity profile at a time. If its accounts belong to multiple authoritative sources, the highest-priority eligible profile governs it. That profile's mappings determine the identity inputs.
+
+The qualification matters: the relevant accounts must actually belong to that represented identity. A similar name isn't proof, and changing priority isn't a general merge operation for separately created identities.
+
+For a contractor becoming an employee, inspect existing identities, account ownership and the approved continuity design. Verify the resulting association and governing profile rather than promising that matching names, numbers or usernames automatically merge records.
+
+Our main new-person example had no existing identity and one eligible profile. A migration has different conditions to establish.
+
+## Which evidence confirms each result?
+
+Use the record each view represents:
 
 | Evidence | What it helps establish | What it doesn't establish alone |
 |---|---|---|
-| PeopleLedger source Accounts entry for `hr-61001` | The collected worker record and its represented account values | A complete identity, correct profile or application access |
-| Employees profile and Mappings | The authoritative-source relationship and selected identity-value inputs | That all source records are available or processing has applied every change |
-| Profile exception report and Incomplete Identities view | Required-value or username issues needing investigation | That HR has no worker record or the entire read failed |
-| Devi's identity Details and associated accounts | Current person-level values, profile and represented account ownership | That the external application accepts a sign-in or grants the expected permission |
-| Application operation evidence and target observation | Whether the intended external change occurred | That unrelated identities, accounts or future changes are correct |
+| HR-Production Accounts entry for worker-a | Collected worker record and account values | Complete identity, correct profile or application access |
+| Employees profile and Mappings | Authoritative-source relationship and selected inputs | Input availability or application of every saved change |
+| Profile exception report and Incomplete Identities | Required-value or username issues | No worker record exists or the whole collection failed |
+| Identity Details and associated accounts | Current identity values, profile and represented ownership | Successful sign-in or permission in an application |
+| Application-operation result and target observation | The required external change occurred | Unrelated identities, accounts or future changes are correct |
 
-**Provisioning** performs supported account or access changes. To create DispatchDesk access from ISC, the design still needs the relevant access decision, supported integration, required account inputs and successful fulfillment. Account creation and permission assignment can also be separate outcomes.
+**Provisioning** performs supported external account or access changes. Application readiness still needs its access decision, supported integration, required account inputs and successful fulfillment.
 
-Similarly, **authentication** verifies a sign-in. Creating an ISC identity is not proof that Devi has registered for ISC, can use its configured sign-in method, or can sign in to DispatchDesk. The organization's ISC environment is its **tenant**. Identity representation, tenant sign-in and application access must be checked against their own requirements.
+Creating the application account and assigning its permissions can also be separate results.
+
+**Authentication** verifies a sign-in. Identity creation doesn't establish registration for ISC, use of its configured sign-in method or successful application sign-in.
+
+The organization's ISC environment is its **tenant**. Identity representation, tenant sign-in and application access have separate requirements and evidence.
 
 ## Try changing one condition
 
-These are independent fictional cases. Use the supplied evidence; don't assume missing results.
+Each case is independent of the supplied main result.
 
 ### 1. HR has the worker, but the source has no account
 
-**Facts:** HR shows `hr-61001`. The integration's approved view excludes newly hired workers until their start date. Today's read did not return Devi.
+The approved integration view excludes new workers until their start date. Today's read didn't return worker-a.
 
-**Question:** Would changing the identity's Department mapping make her account arrive?
+Would changing the identity's Department mapping make that account arrive?
 
-**Reasoning:** No. That mapping consumes represented account information; it doesn't expand the connector's read scope. Inspect the approved population and timing rule with its owner. Establish whether Devi should be included now before changing the filter. Then verify the intended account was collected.
+**Worked reasoning:** No. The mapping consumes represented account information; it doesn't expand the read. Confirm intended population and timing with the owner before changing selection, then verify the required account was collected.
 
 ### 2. The account exists, but Last Name is absent
 
-**Facts:** The source account has no `familyName`. The direct mapping selects that attribute for `lastname`, and the profile reports a missing required Last Name.
+The account lacks familyName. The direct lastname mapping selects it, and the profile reports a required Last Name problem.
 
-**Question:** Does the source account entry prove successful, complete identity onboarding?
+Does the account entry prove complete onboarding?
 
-**Reasoning:** No. It proves the account was represented. The exception identifies a separate required-value problem. Have the owning team correct the missing source value, collect the corrected information through the appropriate process, and verify the identity's Last Name and exception outcome.
+**Worked reasoning:** No. It establishes account representation. Correct the evidenced source-data problem through its owner, collect through the appropriate process and verify the identity's Last Name and exception outcome.
 
-### 3. Two distinct workers receive the same User Name
+### 3. Distinct workers receive the same User Name
 
-**Facts:** Their HR account keys are different. Their worker numbers are different. Both map `uid` to `worker61001`, and an identity exception reports a duplicate User Name.
+Two workers have different account keys and worker numbers, but both map uid to worker-w101. An exception reports a duplicate User Name.
 
-**Question:** Should you combine them because the usernames match?
+Should they be combined because the usernames match?
 
-**Reasoning:** No. The supplied facts describe different people with a naming collision. Distinct account keys don't remove the cross-profile username uniqueness requirement. Correct the approved username generation or input; do not merge people or change valid account keys merely to remove an exception.
+**Worked reasoning:** No. These are different people with a naming collision. Cross-profile username uniqueness still applies. Correct the approved naming input or generation; don't merge people or change valid account keys to remove the exception.
 
 ### 4. The application account has no person match
 
-**Facts:** DispatchDesk account `dd-61001` has been collected. There is no eligible identity with Identification Number `61001`. This source is non-authoritative.
+Application-user is collected, but no eligible identity has identificationNumber W-101. Its source is non-authoritative.
 
-**Question:** Does reading the account establish a new employee identity through the Employees profile?
+Does reading it establish the employee through Employees?
 
-**Reasoning:** No. The intended person match is unavailable. Investigate why the authoritative person and required matching values are missing. An uncorrelated account or shadow representation is not proof of successful employee onboarding. Don't change the application's authority just to hide that symptom.
+**Worked reasoning:** No. Investigate the missing authoritative person or matching values. An uncorrelated account or shadow representation doesn't prove successful employee identity establishment. Don't make the application authoritative just to conceal that symptom.
 
 ### 5. Two profiles are eligible
 
-**Facts:** One existing identity is correctly associated with employee and contractor authoritative accounts. The Employees profile has higher priority; its Department mapping selects PeopleLedger. The contractor account has a different department.
+One existing identity correctly owns employee and contractor authoritative accounts. Employees has higher priority and maps Department from HR. The contractor account contains another department.
 
-**Question:** Should the two departments automatically be combined?
+Must both departments be combined?
 
-**Reasoning:** No. The highest-priority eligible profile governs the identity, and its mapping selects the Department input. Profile priority is not a field-by-field vote. Verify the governing profile and mapping before concluding the contractor value was lost incorrectly.
+**Worked reasoning:** No. The governing profile's mapping selects the input. Priority isn't a field-by-field vote. Verify profile and mapping before concluding that the contractor value was lost incorrectly.
 
 ### 6. The identity exists, but the application account doesn't
 
-**Facts:** Devi has a complete Employees identity. No DispatchDesk account exists, and no access assignment or provisioning result has been supplied.
+The Employees identity is complete. No application account exists, and no access assignment or provisioning evidence is supplied.
 
-**Question:** Can you conclude that aggregation failed?
+Did aggregation fail?
 
-**Reasoning:** No. Identity establishment succeeded in the supplied facts. Investigate the intended access decision and fulfillment path separately. You don't yet know whether provisioning was requested, supported, attempted or successful.
+**Worked reasoning:** That doesn't follow. Identity establishment succeeded in the supplied facts. Investigate whether the access decision and supported fulfillment were requested, attempted and completed. Identity presence doesn't prove application readiness.
 
-### 7. Work Email is populated with an unsuitable value
+### 7. Work Email contains an unsuitable value
 
-**Facts:** The source supplies `not-an-email` and the Work Email mapping copies it. The value is non-null.
+The source supplies not-an-email, which the mapping copies. It is non-null.
 
-**Question:** Does the absence of a missing-email exception prove a usable mailbox?
+Does the absence of a missing-email exception prove a usable mailbox?
 
-**Reasoning:** No. ISC's required Work Email check does not validate email format. Validate the organization's data requirement at its owning boundary and verify the real address or mailbox where needed. A populated string is not evidence of mail delivery.
+**Worked reasoning:** No. The required-value check doesn't validate email format or delivery. Verify the organization's actual data requirement and real address or mailbox where needed.
 
-## Use the same reasoning on a contractor feed
+## Apply the reasoning to a contractor feed
 
-A contractor register supplies account `ctr-C804`, person reference `C804`, username `contractorC804`, surname `Sen`, and a non-null approved work email. There is no existing identity for this person. The Contractors profile is configured for that authoritative source, its required mappings are valid and appropriately applied, and the account has been collected successfully. No other profile is eligible.
+A contractor source supplies account contractor-a, person reference C804, username contractor-c804, surname Contractor and a non-null approved work-email input.
 
-A project manager says, “The contractor is visible in ISC, so the project application's account and access must be ready.”
+There is no existing identity. The Contractors profile makes this source authoritative, its required mappings are valid and applied, and the account is collected. No other profile is eligible.
 
-Explain the missing evidence. Name the objects you would inspect, and describe how your investigation changes if the contractor account is collected but the mapped surname is null.
+A project manager says, “The contractor is visible in ISC, so the project application must be ready.”
 
-A sound explanation separates the authoritative account, the resulting identity and any application account. Verify the contractor identity's profile, required values and authoritative association. Application readiness needs its own access-decision and fulfillment evidence, followed by confirmation of the required target state. Nothing in the supplied identity-creation facts proves those outcomes.
+What evidence is missing? How does the investigation change if the account arrives but the mapped surname is null?
 
-With a null mapped surname, investigate the required Last Name exception or incomplete identity and trace it back through the profile mapping and source account. Don't start by repairing application access when the person information itself isn't complete.
+**Worked reasoning:** Inspect the authoritative account, profile, required values and identity association. These establish the identity side; they aren't application-account or permission evidence.
 
-When someone asks why an identity exists, you should be able to point to its authoritative account and governing profile. When they ask why it contains a value, point to the mapping and actual input. When they ask what access works, follow the separate path to the application. Those questions are connected, but they don't have the same evidence.
+Application readiness needs its own access decision, supported fulfillment result and confirmed target state.
+
+A null mapped surname redirects investigation to the required Last Name value. Inspect the exception or incomplete identity, profile mapping and actual source field before trying to repair application access.
+
+To explain why an identity exists, identify its authoritative account and governing profile. To explain a value, trace the mapping and input. To explain working access, follow the separate application result.

@@ -1,0 +1,16 @@
+Human-approved change
+  preserve values and existing links
+  review identity-dependent operations
+                |
+                v
+Evaluation or supported link correction
+  verify the actual association
+                |
+                v
+Configured target write triggered?
+  yes -> check operation and target
+         approve any corrective write
+  no  -> no write supplied by this path
+
+Restoring the old comparison:
+  isn't proof these effects reversed

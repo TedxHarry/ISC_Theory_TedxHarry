@@ -1,0 +1,21 @@
+Human checks on a fallback result
+                 |
+Which option supplied the result?
+                 |
+Why was the preferred option not used?
+      /             |             \
+    null       excluded text      error
+     |              |              |
+Approved       Implemented       Explicit
+absence?       suitability       error
+     |         rule?             policy?
+     |              |              |
+Check input    Check rule       Inspect
+contract       and producer     failure
+      \             |             /
+        Is the alternative approved?
+                    |
+       Verify applied value and uses
+
+Text exclusion needs a separate rule.
+A returned value does not close a defect.

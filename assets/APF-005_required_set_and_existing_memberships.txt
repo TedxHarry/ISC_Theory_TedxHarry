@@ -1,0 +1,13 @@
+Profile requires Readers + Comments
+Collected account holdings:
+  Readers + Comments + Approvers
+             |
+             | both required items held
+             v
+Identity processing recognizes profile
+             |
+             v
+Profile associated with identity
+
+Native memberships are unchanged.
+Approvers remains outside the profile.

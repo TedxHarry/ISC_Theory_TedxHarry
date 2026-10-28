@@ -1,74 +1,64 @@
 # The account changed. What should change in ISC?
 
-Devi, employee number `51001`, reviews operational cases. Her existing ReviewBoard account, `rb-51001`, has moved from office code BLR to HYD in the application.
+An application's existing account has changed its operating-office code from BLR to HYD. ISC still shows BLR on its collected account record.
 
-SailPoint Identity Security Cloud (ISC) still shows BLR on its collected account record. Someone starts an account read to bring in the change.
+A read is started to bring the account information into ISC. The expected result is a current representation of that account, rather than a new application account or a new access grant.
 
-What should happen next?
+But the person's ISC identity has office = CHN, supplied by Human Resources (HR). Should that value change too?
 
-The expected result is an updated representation of that existing account. It isn't another ReviewBoard account, another employee, or a request to grant access.
+To answer, follow the account data into ISC, then inspect which input supplies the identity's office. The same field label on two records doesn't make them one shared value.
 
-There is one more detail: Devi's ISC identity has an office value of CHN, supplied by Human Resources (HR). The organization intentionally uses HR for that value.
+## Start with the account that already exists
 
-So a successful result can show HYD on the ReviewBoard account and CHN on the identity. Let's follow the records before deciding whether those values disagree.
+An **account** is a record in an external system. In SailPoint Identity Security Cloud (ISC), an **identity** represents a person or another entity and connects relevant information, accounts and access.
 
-The systems, data, mappings and outcomes below are fictional. The example assumes a supported account read, valid account identification and an existing correctly associated identity.
+A **source** is ISC's configured representation of a system or collection of account data. Its **connector** provides supported integration behaviour.
 
-## First identify which record we're talking about
+Our hypothetical `Case-Production` source represents a case-review application. The external account already exists. ISC also has its account representation, already associated with the intended existing identity.
 
-An **account** is a record in an external system. An **identity** is ISC's representation of a person or another entity, connecting information, accounts and access.
+An **attribute** is a named piece of information. The account's operating-office value and the identity's office value are attributes on separate records.
 
-A **source** is ISC's configured representation of a system or collection of account data. A **connector** provides the supported integration behavior for that source.
+**Account aggregation** collects account records and their attributes into ISC. The representation records information obtained under the source's configuration. It isn't the external account itself.
 
-Our source is ReviewBoard Production. The external application account already exists. ISC also has a representation of that account, associated with Devi's existing identity.
+That explains how the application can show HYD while ISC still shows BLR: the new value hasn't yet reached the relevant collected representation.
 
-**Account aggregation** collects account records and their attributes into ISC. An **attribute** is a named piece of information, such as office or employeeRef.
+**Provisioning** performs supported external account or access changes. A read of an existing account and an operation changing that account have different purposes.
 
-**Provisioning** performs supported changes to external accounts or access. Reading an account and changing it are different operations.
+The source, values, configuration and results here are supplied teaching conditions. The account-identification design is valid, the intended identity already exists and its association is correct. No real tenant read or target change is claimed.
 
-The source account representation is not the external account itself. It records what the integration has collected under its configuration.
+## What starts the work, and who reads the application?
 
-That is why the application can already show HYD while ISC's account still shows BLR. The latest application change hasn't yet been represented by the relevant collection.
+A supported source aggregation can start manually, on a configured schedule or through an authorized **API** operation. An API, or application programming interface, lets software interact with a system.
 
-An **identity attribute** is a value on the identity rather than on one external account. Identical names don't turn an account attribute and an identity attribute into one shared field.
+The start action asks ISC to perform work. It isn't the returned account data or evidence that the requested work finished.
 
-## Starting the read doesn't establish the result
+The connector uses the configured external connection. The **integration actor** is the account or application identity used to access that external system. Its permissions determine what it may read.
 
-A supported aggregation can be started manually or on a configured schedule. An authorized API operation can also initiate supported collection. An **API**, application programming interface, lets software interact with a system.
+An administrator seeing HYD in the application doesn't establish that this actor's account-read operation can retrieve the same record and field.
 
-The trigger asks ISC to perform work using a source's configuration. It isn't the account data and doesn't prove that the read has completed.
+**Collection scope** describes which records and information the operation covers. A **filter** selects or excludes records under supported conditions.
 
-Before following the work, establish:
+For our successful trace, the correct production source is selected, the operation includes the intended account, and the actor can read its required fields. No filter excludes it.
 
-The source and environment, the supported operation, its configured population, the integration actor and the applicable execution record.
+The source aggregation may collect many accounts. We are examining one record within the supplied complete intended read, rather than treating a one-record example as proof of the population.
 
-The **integration actor** is the account or application identity used to access the external system. Its permissions determine what it is allowed to read.
+The source's connection test and a visible Start Aggregation button don't establish those conditions. The operation and execution evidence do.
 
-An administrator seeing the account in ReviewBoard doesn't prove that this actor can read it. A successful connection check also doesn't establish that the account-read operation has the correct scope and permissions.
+## Inspect the delivered record
 
-**Collection scope** identifies which records and information the operation is intended to read. A **filter** selects or excludes records under supported conditions.
+A **direct-connect source** reads through a configured connector connection. A **flat-file source** imports supplied files instead.
 
-For this example, ReviewBoard Production's account read includes rb-51001. No filter excludes Devi's account, and the integration actor can read the required fields.
+Either way, ISC needs delivered data. A correct application screen doesn't substitute for the response or export the integration actually receives.
 
-Those are supplied conditions, not conclusions we draw merely because a Start Aggregation button was available.
-
-## Follow the response, not a picture of the application screen
-
-In a direct connection, the connector uses the supported external interface to obtain account information. A **direct-connect source** reads through that configured connection.
-
-A **flat-file source** instead imports supplied files. In either case, ISC needs actual delivered data, not a person's observation that the application screen looks correct.
-
-Our fictional integration uses a supported Web Services account response. **Web Services** here means an integration using the application's web API.
-
-Here is a selected response fragment in **JSON**, JavaScript Object Notation. Curly braces contain objects with named properties. Square brackets contain arrays, which are collections.
+For this Web Services example, the connector reads through the application's web API. Here is a selected response in **JSON**, JavaScript Object Notation:
 
 ```json
 {
   "items": [
     {
-      "accountKey": "rb-51001",
-      "login": "devi51001",
-      "employeeRef": "51001",
+      "accountKey": "case-account",
+      "login": "case-user",
+      "employeeRef": "W-31",
       "profile": {
         "siteCode": "HYD"
       },
@@ -78,290 +68,278 @@ Here is a selected response fragment in **JSON**, JavaScript Object Notation. Cu
 }
 ```
 
-The outer object isn't itself Devi's account. Its items collection contains account objects. Inside the selected account, profile is another object, and siteCode contains HYD.
+Curly braces enclose objects with named properties. Square brackets enclose arrays, which are collections. Quoted values such as HYD are text.
 
-The groups array contains G-51, the existing identifier for the case-reviewers group in this example. It describes access the account already holds, not a new assignment instruction.
+The outer object contains an items collection. That collection contains the selected account object. The `profile` property contains another object inside the account, and `siteCode` supplies a value inside it.
 
-A **response** is the information returned by the read operation. A successful response still needs to contain the intended records and values.
+The **response** is the information returned by the read operation. Successful delivery still needs the intended contents: this account, its HYD value and its relevant access information.
 
-This fragment doesn't establish the source's complete account population. If the operation returns multiple pages, the connector must follow its supported continuation behavior.
+Groups contains one text identifier, G-51. In this example it refers to an existing case-reviewers group already held by the account.
 
-**Pagination** splits a result into pages. The first successful request doesn't prove that every page was read. Nor does the length of this selected fragment tell you how many accounts the real operation should collect.
+The fragment isn't a complete population response. **Pagination** splits a result into pages; a successful first request doesn't prove that every page was consumed.
 
-In the supplied successful trace, the response contains rb-51001 and the complete intended read is confirmed. We aren't using a missing page to explain the old office value.
+In the supplied normal result, the intended record is present and complete collection is confirmed. A missing page isn't the explanation for the initial BLR value.
 
-## Select the account, then trace its fields
+## Turn the returned fields into represented account attributes
 
-**Extraction** selects the relevant records or values from delivered data. A **mapping** determines which input supplies a represented attribute, with supported conversion where needed.
+**Extraction** selects records or values from delivered data. A **mapping** determines which input supplies a represented attribute, with supported conversion where needed.
 
-A **schema** defines the represented attributes and their designated uses.
+A **schema** defines represented attributes and their designated uses. It describes the fields ISC represents; it doesn't fetch their values by itself.
 
-For ReviewBoard, the intended account extraction selects entries from items. Within each account, the response mappings supply these selected attributes:
+For this response, account extraction selects entries from items. Within each entry, the intended mappings are:
 
-| Delivered field | Represented account attribute | Job in this example |
+| Delivered field | Represented account attribute | Purpose |
 |---|---|---|
-| accountKey | accountKey | Identifies the ReviewBoard account |
-| login | login | Supplies the designated account naming value |
-| employeeRef | employeeRef | Supplies the person reference used by ownership matching |
-| profile.siteCode | office | Supplies the collected account's office code |
-| groups | groups | Supplies the account's group-membership identifiers |
+| accountKey | accountKey | Identifies this application account |
+| login | login | Supplies its designated account name |
+| employeeRef | employeeRef | Supplies the person reference used by configured matching |
+| profile.siteCode | office | Supplies the account's operating-office code |
+| groups | groups | Supplies existing membership identifiers |
 
-The field paths show the relationship in this selected response, not a complete connector configuration to copy.
+`profile.siteCode` describes the nested input relationship here. These paths aren't a complete connector configuration or syntax recipe for every runtime.
 
-The office schema attribute doesn't need to have the same name as the application's siteCode property. The configured mapping connects them.
+The external field can be named siteCode while the represented field is office. The mapping connects them.
 
-These selected represented account attributes make that change of structure visible:
+With the supplied correct extraction and mapping, selected represented account attributes are:
 
 ```json
 {
-  "accountKey": "rb-51001",
-  "login": "devi51001",
-  "employeeRef": "51001",
+  "accountKey": "case-account",
+  "login": "case-user",
+  "employeeRef": "W-31",
   "office": "HYD",
   "groups": ["G-51"]
 }
 ```
 
-This is an illustration of selected attributes on the collected account, not a complete ISC account API response. The nested siteCode input supplies office; the source and account context still matter.
+This illustrates selected account attributes, rather than a complete ISC accounts API response. The nested input supplies the office value while the account identifiers and memberships are preserved.
 
-Creating an office attribute in the schema doesn't fetch HYD by itself. The read must return the value, and the extraction and mapping must select it correctly.
+A **data type** describes the kind of value, such as text or a whole number. **Cardinality** describes one value versus a collection.
 
-A **data type** describes the kind of value, such as text or a whole number. **Cardinality** describes whether an attribute holds one value or a collection.
+HYD is one text value. Groups is a collection containing one text item. Preserving both value and structure is part of a correct read.
 
-HYD is one text value. groups is a collection containing one text identifier, G-51. Preserving those shapes is part of correct collection.
+Adding office to a schema wouldn't supply HYD without the returned input and correct mapping.
 
-If a mapping selects profile.branchCode but the response contains only profile.siteCode, the intended value wasn't selected. Investigate the configured path, resulting record and errors. Don't assume every connector rejects, skips or clears the field in exactly the same way.
-
-The useful read-side relationship is:
+Now you can follow the read-side dependency:
 
 ```text
 [ISC requests account collection]
-               |
-[Connector reads ReviewBoard]
-               |
-[Response selected and mapped]
-               |
-[ISC account representation]
+                 |
+[Connector reads the application]
+                 |
+[Returned record selected and mapped]
+                 |
+[ISC represents that source account]
 ```
 
-The lines describe logical dependencies in this read. They aren't separate private ISC jobs, a storage-commit sequence, or a guarantee that every connector uses the same execution host.
+The lines connect the collection request, supported read, selection/mapping and represented account. They aren't separate private jobs, a storage-commit sequence or a promise that all connectors execute on the same host.
 
-The connector supplies the supported read behavior. ISC records the represented account information. A person clicking the button isn't manually copying each application field into an identity.
+The connector performs the supported read; ISC records the account information. The person starting the job isn't manually copying each application field into an identity.
 
-## Recognize the existing account without confusing it with its owner
+## Recognize the account before deciding who owns it
 
-The schema selects attributes for **Account ID** and **Account Name**. In this fictional design, those are accountKey and login.
+The schema selects attributes for **Account ID** and **Account Name**. Here accountKey supplies the account-identifying value and login supplies its designated naming value.
 
-Their supplied values remain rb-51001 and devi51001. They haven't changed with the office move.
+Those values remain case-account and case-user. The operating-office change doesn't change either one.
 
-The supplied successful result updates the existing account representation from BLR to HYD. It doesn't add another account.
+The supplied outcome updates the existing account representation from BLR to HYD. It doesn't create another account.
 
-That outcome assumes the supported account-identification design is intact. Don't generalize it into a private storage-key algorithm or assume every connector handles missing, duplicated or renamed identifiers identically.
+That depends on the intact supported identification design. Don't infer a private storage-key algorithm or universal handling of missing, repeated or renamed identifiers.
 
-The selected account identifiers, ISC's own account-record ID and the person's employee number identify different things.
+The external account key, ISC's own account-record ID and a person reference identify different things.
 
-**Account correlation** matches and assigns a source account to its owning identity using configured account-to-identity attribute comparisons.
+**Account correlation** matches and associates source accounts with their appropriate ISC identities using configured account-to-identity comparisons.
 
-For this source, the configured person-reference comparison pairs account employeeRef with identity employeeNumber. Both contain the text 51001.
+Here the approved comparison pairs account employeeRef with identity employeeNumber. Both have the text W-31, and the intended identity is a supplied unique existing match.
 
-Devi is the supplied unique existing match. The association is verified as part of the result; we aren't inferring that any equal-looking number anywhere in the tenant automatically establishes ownership.
+The actual association is verified in the outcome. Equal-looking values alone wouldn't establish that every source already has this matching configuration.
 
-I-51 is a teaching label for this ISC identity, not a runnable API identifier.
+Office doesn't identify the owner. Many people can have HYD as an office without owning this account.
 
-The office value doesn't identify the person. Another employee can also work in HYD without owning Devi's account.
+Collection tells ISC about the account. Account identification distinguishes that record. Correlation establishes its person association.
 
-Collecting an account, identifying which account it is, and associating it with a person are related responsibilities, but they answer different questions.
+## Collected but uncorrelated is a different result
 
-If an account can't be matched to an established identity, it can be collected as **uncorrelated**. That means the intended ownership association is unresolved, not that the connector necessarily failed to read it.
+An **uncorrelated account** hasn't been associated with its intended established identity. That doesn't necessarily mean the connector failed to read it.
 
-The source's account view can represent such an account with a technical **shadow identity**, a placeholder rather than a verified match to the intended established identity. Don't confuse that placeholder with proof that HR has established another employee.
+The source account view can represent such an account through a technical **shadow identity**, a placeholder for unmatched account data rather than a verified match to the intended established person identity.
 
-## Now ask which source supplies the identity's office
+That placeholder isn't evidence that HR has established another employee.
 
-An **authoritative source** participates in establishing identities through an **identity profile**. The profile configures the identity population and the mappings supplying its attributes.
+If the source record exists but its owner is unresolved, inspect matching inputs, configuration and actual association. Changing the account's office or creating an HR identity to hide the uncertainty wouldn't establish the correct owner.
 
-ReviewBoard is non-authoritative in this example. Devi's identity already exists through the separate HR-backed profile.
+A separate mismatch variation can have employeeRef W-13 while the intended identity has W-31. A successful read still doesn't prove the intended ownership. Other supported matching and actual association need inspection; the read alone doesn't repair the reference.
 
-Non-authoritative doesn't mean its information is useless. Its accounts and access can be collected and associated with identities. It means we shouldn't assume this source is establishing the employee population.
+## Trace the identity's office through its own mapping
 
-The profile maps identity office from the HR source, where the agreed value remains CHN. It doesn't map identity office from ReviewBoard's office attribute.
+An **authoritative source** supplies accounts used to establish identities through an **identity profile**. The profile configures an identity population and the mappings supplying its attributes.
 
-Here are the two selected value paths:
+Case-Production is non-authoritative here: it isn't the configured source for establishing this identity population. The existing identity comes from a separate HR-backed arrangement.
+
+Non-authoritative doesn't make its accounts or access unimportant. They can be collected and associated with identities. The designation concerns identity origin; a profile can still use a supported account field from another source for a mapped value.
+
+In this design, however, identity office is explicitly mapped from HR, whose home-office value remains CHN. It isn't mapped from the case account's operating-office field.
+
+An **identity attribute** belongs to the ISC identity, rather than to an individual source-account representation.
 
 ```text
-[ReviewBoard office HYD]  [HR office CHN]
-          |                    |
-[Account office HYD]   [Identity office CHN]
+[Application operating office HYD]
+                |
+[Collected account office HYD]
+
+[HR home office CHN]
+          |
+[Mapped identity office CHN]
 ```
 
-The left path describes the ReviewBoard account value. The right path describes the configured HR-to-identity value. Neither path instructs one source to overwrite the other.
+The upper relationship supplies the application's collected account value. The lower relationship supplies the identity value through its configured HR mapping. Neither tells one system to overwrite the other.
 
-So HYD and CHN can both be correct under the supplied configuration. The labels need business meanings too: an application's operating office and an HR home office needn't be the same fact.
+HYD and CHN can therefore both be correct: operating office and HR home office are different agreed facts.
 
-If the requirement instead says identity office must come from ReviewBoard, investigate the profile's mapping and processing. Don't edit HR or reaggregate blindly merely because two screens have different values.
+If the requirement changes so identity office should use the case application, inspect and assess the profile mapping and its processing. Editing HR or repeatedly reading the application wouldn't implement that new value-source decision.
 
-A **transform** calculates or formats a value using supported logic. A mapping can include a transform, so the identity result needn't be a literal copy of one raw field.
+A **transform** calculates or formats a value using supported logic. A mapping can use one, so an identity result needn't be a literal copy of a raw field.
 
-The important question is which configuration supplies this output and what it is meant to mean.
+For any identity value, ask which configuration supplies it and what that output means.
 
-## Processing identity data is another responsibility
+## Collection and identity processing have different responsibilities
 
-**Identity processing** evaluates identity information and relevant access configuration. It can update mapped identity attributes and evaluate configured access consequences.
+**Identity processing** evaluates identity information and relevant access configuration. It can update mapped attributes and evaluate configured access consequences.
 
-When an aggregation or provisioning process modifies an identity, that event initiates identity processing. Other supported processing mechanisms also exist.
+When aggregation or provisioning modifies an identity, that event initiates processing under the applicable configuration. Other supported processing mechanisms also exist.
 
-That isn't a rule that every returned account triggers every identity calculation or every external write. Check what changed and what configuration applies.
+This doesn't mean that every account returned by a read triggers every identity calculation or external write.
 
-An **optimized aggregation** can skip further processing for an existing account whose read data hasn't changed. A supported **delta aggregation** reads changes rather than a complete configured population.
+An **optimized aggregation** can skip further processing for an existing account whose delivered data is unchanged. A supported **delta aggregation** reads changes rather than the complete configured population.
 
-A **single-account aggregation** is another operation, not a shorter name for every population-wide behavior. The documented single-account action updates collected account information but doesn't synchronize the new data with identity attributes or perform provisioning.
+A **single-account aggregation** is another operation. The documented single-account action updates collected account information but doesn't synchronize that new data with identity attributes or perform provisioning.
 
-For Devi's main trace, an applicable source aggregation represents the changed ReviewBoard office. The verified identity office remains HR-supplied CHN. We don't use a successful single-account read as proof that identity values were recalculated.
+Our main trace uses an applicable source account aggregation. It represents the changed office while the verified identity office remains HR-supplied CHN. A successful single-account action isn't used as evidence that the identity was recalculated.
 
-If someone changes correlation criteria or identity mappings, rereading unchanged data isn't automatically sufficient. Establish the documented re-evaluation or processing required for that configuration change.
+Likewise, changing correlation criteria or an identity mapping doesn't necessarily make unchanged source data different. Establish the documented re-evaluation or configuration-application process needed.
 
-This is why “run aggregation again” is a proposed action, not a diagnosis.
+“Run aggregation again” names an action. It doesn't yet explain why that action would resolve the issue.
 
-## Observing membership isn't granting membership
+## Seeing a group isn't granting it
 
-An **entitlement** represents an access right. A **membership** associates an account with an access object, such as a group.
+An **entitlement** represents an access right. A **membership** associates an account with an access object such as a group.
 
-G-51 is the supplied existing ReviewBoard group identifier. In this example, it represents the case-reviewers group. Its membership already exists in the application before the read.
+G-51 is the supplied identifier of the existing case-reviewers group. The target membership existed before collection and remains unchanged in the main outcome.
 
-The account aggregation collects that membership value. It doesn't create G-51 in ReviewBoard or add Devi to it.
+The account read collects its identifier. It doesn't create the group or assign it to the account.
 
-An **entitlement aggregation** collects information about access objects themselves, such as group identifiers, names and descriptions. Account membership values and the detailed group inventory have different responsibilities.
+An **entitlement aggregation** collects information about access objects themselves, such as identifiers, names and descriptions. Account-held membership values and detailed object inventory have separate responsibilities.
 
-Creating an application account, adding a group membership or changing an application field requires the relevant provisioning operation, not merely a read of its current state.
+Creating an external account, adding a membership or changing a target field requires the relevant supported provisioning operation.
 
-There can still be downstream effects from collected data. An ISC **role** groups access for business assignment, and a **lifecycle state** represents organizational status with configured access behavior.
+Collected data can still feed a wider access-changing process. An ISC **role** groups access for business assignment. A **lifecycle state** represents organizational status with configured access behaviour.
 
-If collected information changes identity data used by those configurations, processing can lead to separate provisioning work. Reading and changing remain distinct operations even when one workflow connects them.
+If a collected value changes identity information used by those configurations, processing can initiate separate provisioning work. The read supplies information; the change operation performs the external effect.
 
-Don't label an entire configured workflow harmless simply because its first action is a read. Equally, don't report that an aggregation granted a group just because it discovered an existing membership.
+That is why a workflow starting with a read can have access consequences, while discovering an existing membership isn't itself a new grant.
 
-In our supplied successful case, no access-changing operation is part of the result. The group membership remains the same while account office changes.
+The main example supplies no access-changing result: account office updates, but G-51 remains the same membership.
 
-## Compare the evidence for the specific question
+## Use evidence for the particular claim
 
-The completed example has these supplied observations:
+In the supplied completed trace, the application response contains HYD, the mapping supplies account office HYD, the existing account representation is updated, and its intended identity association is correct.
 
-ReviewBoard's account response contains siteCode HYD. The mapping supplies account office HYD. The existing rb-51001 representation is updated, its association to I-51 is correct, and identity office remains HR-supplied CHN.
-
-No new ReviewBoard account is created, and no membership change is reported.
-
-Different questions need different evidence:
+Identity office remains CHN under the HR mapping. No external account creation or membership change is reported.
 
 | Question | Useful evidence | What it doesn't establish alone |
 |---|---|---|
-| Did the target return HYD? | Correct actor's account response or controlled source export | That ISC selected or represented it correctly |
-| Did the account field update? | Identified source account and its collected office value | That the identity's office uses that field |
-| Is this Devi's account? | Actual association, correlation configuration and compared values | That matching on office or a repeated friendly name would be safe |
-| Why is identity office CHN? | Profile mapping, HR input and resulting identity value | That ReviewBoard collection failed |
-| Was external access changed? | Applicable provisioning outcome and resulting target state | That a collected membership was newly granted |
+| Did the target supply HYD? | Correct actor's response or controlled source export | Correct extraction or representation in ISC |
+| Did the account field update? | Correct source/account and its collected office | Which field supplies identity office |
+| Who owns this account? | Actual association, matching configuration and compared values | That office or a repeated friendly name safely identifies the person |
+| Why is identity office CHN? | Profile mapping, HR input and resulting identity value | That application collection failed |
+| Was access changed externally? | Applicable provisioning outcome and target state | That a collected existing membership was newly granted |
 
-**Aggregation History** shows an execution's status, timing, counts and relevant warnings or errors. Those facts describe the execution, not every business conclusion someone wants to draw from it.
+**Aggregation History** shows execution status, timing, counts and warnings or errors. Those describe the execution rather than every business conclusion.
 
-The source's Accounts view shows collected account records and their associations. Account details let you inspect the represented values for rb-51001. The identity's Details view shows identity values, and profile mappings explain their configured inputs.
+The **user interface**, or UI, presents different records. Source Accounts shows collected accounts and associations. Account details show this account's represented office. Identity details show identity values; profile mappings explain their inputs.
 
-A source-level count doesn't prove that this particular account changed. A generic success label doesn't identify which office field you inspected.
+A total account count doesn't establish that case-account changed. A general success label doesn't identify which office field was inspected.
 
-ISC Search results can have indexing delays separate from the account read. If one search view still looks old, compare the identified account record, execution evidence, viewing conditions and freshness before repeating work.
+A change can also reach an account record before it appears in ISC Search. Compare the actual record, execution evidence, viewing conditions and freshness before treating an old search result as a failed read.
 
-## If the expected record isn't there, narrow the investigation
+## Use the missing evidence to choose the next investigation
 
-If rb-51001 isn't in the external response, investigate the destination, integration actor, scope, filters, response pages and source data.
+If the account isn't in the external response, inspect the destination, integration actor, scope, filters, pages and source data.
 
-If it is in the response but not selected for representation, investigate extraction, schema mapping and relevant errors.
+If it arrived but wasn't selected for representation, inspect extraction, mapping, schema and relevant errors.
 
-If the account exists but office is old, compare the actual delivered value with the configured mapping, operation and collection evidence. A later job time doesn't prove that the input itself was current.
+If the account exists but office remains old, compare the actual delivered value with its configured input path, operation and execution. A later job timestamp doesn't prove the input was current.
 
-If account office is HYD but identity office is CHN, inspect the identity mapping before calling that a fault.
+For example, selecting profile.branchCode when only profile.siteCode exists doesn't select the supplied HYD value. Inspect the actual result and errors; don't assume every connector skips, rejects or clears it identically.
 
-If the owner is unresolved, investigate correlation separately from whether the source delivered the record.
+If the account value is HYD while identity office is CHN, inspect the identity mapping and business meaning before calling that a fault.
 
-If a target change was expected, first identify the configured change operation and whether it was actually initiated. Then inspect its outcome and target evidence rather than substituting the aggregation result for it.
+If ownership is unresolved, investigate correlation separately from delivery.
 
-These are investigation branches, not universal connector failure codes or a claim that every error stops at the same internal stage.
+If an external change was expected, establish the configured change operation and whether it was initiated. Then inspect its outcome and actual target state.
 
-Keep existing-record and deletion consequences in view before rerunning a wider source operation. A narrower response or a failed read isn't proof that an external account was deleted.
+These are investigation branches, rather than universal failure codes or undocumented internal stages. Before rerunning a wider source operation, consider existing records and deletion settings. A narrower response or failed read isn't proof of an external deletion.
 
-## Trace these variations
+## Trace the changed conditions
 
-### 1. HYD and CHN remain different
+### 1. Account and identity offices differ
 
-The ReviewBoard account now shows HYD. Identity office remains CHN, mapped from HR, whose input is still CHN.
+The collected account now has HYD. Identity office is still CHN, mapped from HR, whose input remains CHN. Must one value be wrong?
 
-Must one value be wrong?
+**Worked reasoning:** No. Verify the mappings and agreed business meanings. Equal field labels don't require equal values or authorize overwriting either source.
 
-**Worked reasoning:** No. The supplied mappings describe different record values and business meanings. Verify those mappings and requirements; don't use equal field names as a reason to overwrite either source.
+### 2. A representation appears for the first time
 
-### 2. A collected account appears for the first time
+In this separate variation, the external case-account already exists. The first collection creates its representation in ISC. What was created?
 
-In this separate first-collection variation, the external rb-51001 account already exists. The supplied collection result creates its account representation in ISC.
+**Worked reasoning:** The collected account representation. The external account wasn't created by the read. External creation is a separate supported provisioning outcome.
 
-What was created, and what already existed?
+### 3. The response has the value but the path is wrong
 
-**Worked reasoning:** The ISC representation was created. The external ReviewBoard account already existed. Discovering or representing that account isn't external account creation; provisioning is a separate capability.
+The response has profile.siteCode HYD. The office mapping selects absent profile.branchCode. Should the application owner change HYD first?
 
-### 3. The raw field exists but the path is wrong
+**Worked reasoning:** No. The supplied defect concerns selecting an available input. Inspect mapping, actual account result and errors without inventing universal clear, reject or retry behaviour.
 
-The response contains profile.siteCode HYD. The configured office mapping selects profile.branchCode, which isn't present.
+### 4. The person reference differs
 
-Should the team first ask the application owner to change HYD?
+A separate account variation has employeeRef W-13; the intended identity has employeeNumber W-31. No other matching evidence is supplied. Does read success establish ownership?
 
-**Worked reasoning:** No. The supplied defect is in selecting the delivered input. Inspect the mapping, resulting record and errors. Don't invent a universal reject, clear or retry behavior for every connector.
+**Worked reasoning:** No. Compare configured matching inputs and actual association. Reading a record isn't proof of the intended person link; don't silently replace the reference or choose an owner by office.
 
-### 4. The person reference doesn't match
+### 5. Only the first response page is confirmed
 
-The intended identity employeeNumber is 51001. A separate account variation supplies employeeRef 51010, and no other matching evidence is given.
+The first page succeeds, but continuation hasn't been checked. Has the intended population been completely collected?
 
-Does a successful read establish the intended ownership link?
+**Worked reasoning:** Not established. Check scope and supported continuation through completion. Individual response success isn't population completeness.
 
-**Worked reasoning:** No. Reading the account and assigning its owner are different questions. Check the actual compared values, association and supported correlation configuration; don't silently swap the reference or choose a person by office.
+### 6. Criteria change while account data stays the same
 
-### 5. One response page succeeds
+Correlation configuration changes, but delivered account attributes are unchanged. Is a new optimized run guaranteed to apply the criteria to every unchanged account?
 
-The read returns a successful first page, but continuation hasn't been checked.
+**Worked reasoning:** No. Optimization can skip unchanged records and correlation evaluation. Follow documented supported re-evaluation with appropriate scope and existing-record review. A new timestamp doesn't establish that work occurred.
 
-Can that establish that the complete intended account population was collected?
+### 7. A read leads to a later membership addition
 
-**Worked reasoning:** No. Verify scope and supported page continuation through completion. An individual response status isn't a population-completeness result.
+Collected information changes an identity value used by a role. Separate supported provisioning adds access. Which operation changed the membership?
 
-### 6. Correlation configuration changes but account data doesn't
+**Worked reasoning:** The provisioning operation. The read supplied input to the configured decision process. Verify the separate target result and acknowledge the access consequences of the complete workflow.
 
-The account's delivered attributes are unchanged. The source uses optimized aggregation, and someone expects a reread alone to apply new correlation criteria to every unchanged account.
+### 8. A new file carries an old value
 
-Is that expectation safe?
+A newly delivered file still contains BLR on the intended account row, while the application shows HYD. Can identity processing reconstruct HYD from that old input?
 
-**Worked reasoning:** No. Optimized aggregation can skip unchanged records and their correlation evaluation. Follow the documented supported re-evaluation approach for changed correlation configuration, with appropriate scope and existing-record review; don't infer it from a new run's timestamp.
-
-### 7. A read is followed by an access change
-
-Collected information changes an identity value used by a configured role. Separate supported provisioning work then adds access.
-
-Which operation performed the membership change?
-
-**Worked reasoning:** The separate provisioning work performed the change. The read supplied information to the configured decision process. Preserve those operation boundaries and verify the target result separately. The complete workflow still has access-changing consequences.
-
-### 8. A file is newly delivered but contains old data
-
-A file-based source imports a new delivery whose identified account row still contains BLR. The application currently shows HYD.
-
-Should identity processing be expected to reconstruct HYD from that old input?
-
-**Worked reasoning:** No. Check the producer's export, its source state and field selection. Calculation under a mapping doesn't manufacture an unsupplied current value. A fresh file timestamp doesn't prove fresh record contents.
+**Worked reasoning:** No. Inspect the producer's state and export selection. Mapping doesn't manufacture the unsupplied current value, and a fresh file timestamp doesn't prove fresh row contents.
 
 ## Trace a different HR record
 
-A new project receives a worker record from HR and expects an ISC identity plus a downstream application account. The proposal says, “Once the row is read, all three records exist and their fields match.”
+A project receives a worker record from HR and expects an ISC identity and a downstream application account. Its proposal says: “After the row is read, all three records exist and their fields match.”
 
-What would you separate?
+What must be established separately?
 
-**Worked reasoning:** Confirm the actual delivered worker record, source/schema identification, required values and intended population. Establish the authoritative source and identity-profile configuration for identity establishment; don't reuse the non-authoritative ReviewBoard assumption.
+**Worked reasoning:** Check the actual worker record, source/schema identification, population and required values. Establish the authoritative source and identity profile for identity creation; the main example's non-authoritative application-source assumption doesn't carry into this design.
 
-Check identity mappings and the resulting identity, including any required-value exceptions. Then identify the separately configured account-creation or access-changing mechanism, its inputs and authority, and verify the external result.
+Inspect the configured identity mappings, resulting identity and any required-value exceptions. Then establish the separate account-creation or access-changing mechanism, its inputs and authority, and verify the external result.
 
-A collected HR row, a correctly established identity and a provisioned target account are different outcomes. If a field differs, trace its own mapping and meaning before treating the difference as a failure.
+A collected HR row, an established identity and a provisioned target account are different outcomes. Trace any differing field through its own input and meaning before declaring failure.
 
-Explain the trace to the owner: “The read tells ISC about an account. Its identifiers tell us which account, correlation tells us whose account, and mappings tell us which identity values depend on it. An external change needs its own operation and evidence.”
+Explain the relationships directly: “The read supplies account information. Account identification distinguishes the record, correlation associates its owner, and profile mappings determine which identity values use it. An external change needs its own supported operation and evidence.”

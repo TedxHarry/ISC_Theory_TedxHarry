@@ -1,0 +1,14 @@
+12:00 corrected shared mapping saved
+12:05 Preview 0042 / current 0088
+12:10 selected processing initiated
+12:12 current 0042 / role verified
+12:13 group add: permission error
+12:14 target group absent
+12:15 three other affected values old
+12:20 profile application initiated
+12:25 all 12 identity results verified
+      six qualifying roles verified
+
+At 12:25 no new target check is supplied.
+The earlier failure is historical,
+not a new current membership result.

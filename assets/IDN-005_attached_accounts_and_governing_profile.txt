@@ -1,0 +1,12 @@
+[One identity: attached accounts]
+[HR-Production: hr-record]
+[Contractor-Production: contract-record]
+                  |
+[Employees 10 and Contractors 20]
+[Both meet account-presence condition]
+                  |
+[10 has higher priority than 20]
+[Employees governs this identity]
+
+[No SubsidiaryHR account attached]
+[Subsidiary Staff 5 does not compete]

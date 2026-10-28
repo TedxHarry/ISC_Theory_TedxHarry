@@ -1,0 +1,7 @@
+[Account read]       [Object read]
+      |                   |
+[Held group IDs]     [Group details]
+      |                   |
+      +---------+---------+
+                |
+ [Linked access information in ISC]

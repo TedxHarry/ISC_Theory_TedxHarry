@@ -1,0 +1,14 @@
+Cases Production
+|
++-- Account read, 09:00
+|   groups: [case-reviewers]
+|       -> recorded membership
+|
++-- Group read, 09:05
+    CurrentTeams only
+    case-reviewers in LegacyTeams
+        -> outside selected scope
+
+Native check, 09:10:
+Group exists in LegacyTeams.
+Permission meaning checked separately.

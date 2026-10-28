@@ -1,0 +1,13 @@
+All observations: October 23, UTC
+
+19:58 current Scheduled / no role
+20:00 recurring job queued
+20:04 job observed running
+20:06 current On duty / role verified
+20:07 Search still Scheduled
+20:08 overall activity Status: Pending
+20:09 add result + target group confirmed
+20:12 Search shows On duty
+20:21 fresh account read shows group
+
+No fixed duration or ordering promise.

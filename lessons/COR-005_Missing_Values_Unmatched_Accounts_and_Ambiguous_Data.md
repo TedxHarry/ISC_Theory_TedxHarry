@@ -1,61 +1,96 @@
 # The account has no clear owner in ISC. What is actually missing?
 
-Devi, employee `75005`, already has an employee identity in SailPoint Identity Security Cloud (ISC). A document-review application account intended for her has also been collected.
+An application account is visible in SailPoint Identity Security Cloud, or ISC, but it isn't connected to the person who uses it. The person already has an identity in ISC.
 
-The account is not associated with her identity. Its person-reference field has no value.
+You inspect the account and find that its person-reference field has no value. Someone suggests matching by email instead. But that email is a shared team contact recorded against two people.
 
-Someone suggests using its email address instead. That sounds convenient until you inspect the identities: the address is a shared team contact appearing on two people.
+These observations tell us different things. The current comparison lacks the reference it was meant to use. The proposed replacement value doesn't distinguish one person from another. Adding the email comparison would change the design without repairing the missing reference.
 
-We have different problems here. The configured comparison lacks its intended input. The proposed replacement doesn't identify one person.
+Before choosing a correction, let's follow the information that should establish the relationship. That makes it easier to see which part needs attention and what would demonstrate that it has been fixed.
 
-Let's keep those problems separate so the correction solves the cause rather than just reducing a count.
+## What relationship are we trying to establish?
 
-## Establish the account and the person before changing anything
+An **account** is a record in an application or another connected system. An **identity** is ISC's representation of a person or another managed entity.
 
-An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a connected system. An **attribute** is a named piece of information on one of those objects.
+**Account correlation** matches a source account to an identity and establishes their relationship in ISC. For a person's application account, the intended result is that ISC represents that account as belonging to the correct person.
 
-**Account correlation** matches and associates source accounts with identities. A **correlation criterion** pairs an account attribute with an identity attribute for comparison.
+A **source** is ISC's configured representation of a system or collection of account data. **Account aggregation** reads that account information into ISC. An account can be successfully collected while its identity relationship remains unresolved.
 
-A **candidate identity** is an identity being considered as the possible account owner.
+For the human-account situation here, an **uncorrelated account** is a collected account that hasn't been linked to an established human identity. ISC hasn't established that account-to-person relationship. The account can still have a legitimate business owner and work in the external application.
 
-An **uncorrelated account** is a collected account not associated with an authoritative identity. That describes an ISC relationship, not whether the external account has a legitimate business owner.
+How does ISC try to establish the relationship? A **correlation criterion** selects an account field and an identity field whose values will be compared. Each field is an **attribute**, a named piece of information on its record.
 
-A **source** is ISC's configured representation of a system or account-data collection.
+For example, account `ownerRef` can be paired with identity `identificationNumber`. The standard correlation form uses **Equals**. If the approved person reference is `P-204`, the intended comparison is between that reference on the account and the corresponding reference on the identity.
 
-In this fictional design, **BridgeHR Production** is authoritative for Employees: its worker accounts establish employee identities through the Employees **identity profile**. The profile is shared configuration governing those identities and how their attributes receive values.
+The field names differ because they belong to different records. Their values must still mean the same thing: the person who owns the account.
 
-BridgeHR account `bhr-75005` is already associated with Devi's identity. We'll call that identity `I-75005`, a teaching label rather than an actual ISC object ID.
+## Follow a missing reference to a completed relationship
 
-**ReviewDesk Production** represents the document-review application. It does not establish employee identities in this design. Its existing account `rd-608` should belong to Devi.
+Here are the supplied facts for a small hypothetical example. Approved application records and the worker registry establish the intended owner independently of the matching configuration.
 
-**Null** means no value is present. Here it describes `ownerRef`, not the existence of the account.
+**Null** means no value is present. The account exists; its `ownerRef` value is null.
 
-Here is the supplied current evidence:
-
-| Record or configuration | What is known |
+| Evidence | Current state |
 |---|---|
-| Devi's identity `I-75005` | Identification Number, `identificationNumber`, is text `P-75005`; identity `name` is `worker75005`; Work Email, `email`, contains the shared contact `review.team@learn.example`. |
-| Other identity `I-75006` | Identification Number is text `P-75006`; identity name is `worker75006`; email contains the same shared contact. |
-| ReviewDesk account `rd-608` | Account key `rd-608`; `userLogin = drao.rd`; `ownerRef = null`; `contactMail = review.team@learn.example`. |
-| Saved correlation criterion | The complete configured list has one criterion: account `ownerRef` Equals identity `identificationNumber`. The identity attribute is already eligible and applied. Contact email is not a configured criterion. |
-| Other matching evidence | No other configured match is supplied. No identity's name is `drao.rd`. No existing manual association applies. The account has been evaluated and is recorded as uncorrelated. |
-| Approved owner evidence | Application records and the worker registry establish that `rd-608` belongs to Devi, whose approved person reference is `P-75005`. That reference uniquely identifies her among the candidate identities. |
+| Collected application account | Account key `app-17`; login `app.user`; `ownerRef = null`; contact email `team@learn.example`. |
+| Intended person's existing identity | Applied `identificationNumber = P-204`; identity `name = worker204`; email `team@learn.example`. Only this identity has the approved reference `P-204`. |
+| Another identity | Reference `P-205`, name `worker205`, and the same contact email. |
+| Complete saved configured comparison | Account `ownerRef` Equals identity `identificationNumber`. The identity field is already prepared for correlation. Email isn't a configured criterion. |
+| Evaluation and result | The account has been evaluated, no existing manual association applies, and its recorded result is uncorrelated. |
 
-An **identity attribute mapping** supplies an identity value from selected data or a calculation. Employees has already populated Devi's Identification Number from BridgeHR's approved person reference.
+The identity already holds the correct person reference. The account doesn't supply it. So the current account-side input cannot identify the approved person through this comparison.
 
-The account's **account schema** defines the represented account fields. Its Account ID designation uses the account key; its Account Name designation uses `userLogin`.
+We also need to account for the separate **default correlation** path. The source's **account schema** defines its represented account fields. It designates one field as **Account ID**, which identifies the source account, and one as **Account Name**, which supplies its naming value.
 
-That distinction matters to the documented **default correlation** path. When configured correlation cannot establish an association, the default compares the account's designated Account Name with identity `name`, case-insensitively. The default is not configurable.
+Here, the account key is Account ID and the login field is Account Name. If configured correlation cannot establish an association, the documented default compares Account Name with identity `name`, ignoring differences in letter case. That default isn't configurable.
 
-In this example, `drao.rd` supplies no default match. The current uncorrelated result is supplied alongside those configured/default conditions; it is not an assumption based only on one empty field.
+No identity has a name matching `app.user`, even ignoring case. The default therefore supplies no match in this example. The stated uncorrelated result belongs with all these facts, rather than being inferred from one blank field alone.
 
-## A blank-looking value can mean different things
+Now establish the cause. In this example, the application owner verifies `app-17` against the worker registry. The integration is supposed to supply `P-204` as `ownerRef`, but the application's feed is missing that approved value.
 
-If someone says “ownerRef is blank,” ask which observation supports that description.
+The correction supplies `P-204` in that feed. It doesn't require changing the person's valid identity reference or using the shared contact email.
 
-Was the field absent from an application response? Present with null? Present as empty text? Hidden by the current view? Or replaced with a placeholder?
+What must happen after the feed is corrected? The new value must be collected into the same ISC account and that account must receive correlation evaluation. A correct value outside ISC can't participate in a comparison that still sees the old collected value.
 
-**JSON** represents named fields and their values. These compact fragments illustrate different data representations, not complete source records or API requests:
+Once `ownerRef = P-204` is present on the collected account, the saved criterion can compare it with identity `identificationNumber`. The intended identity already contains `P-204`, and no other identity contains it among the identities considered here.
+
+A **candidate identity** is an identity considered as a possible account owner during matching. Here there is one intended matching candidate. With evaluation occurring, eligible current identity data and no persistent manual link taking precedence, the supplied result is that the same account becomes associated with that identity.
+
+```text
+Approved owner reference: P-204
+
+Application feed
+  ownerRef: null -> P-204
+          |
+          v
+Same collected account: app-17
+  ownerRef = P-204
+          |
+          v
+Configured comparison evaluated
+  ownerRef Equals identificationNumber
+          |
+          v
+Identity identificationNumber = P-204
+  unique intended match -> associated
+
+Human verification, separately:
+Same account? Right person? Any writes?
+```
+
+The arrows follow the corrected input from the application's feed to the collected account and then to the comparison and supplied relationship. They don't describe separate mandatory jobs or ISC's private services.
+
+The account key remains `app-17`, the login remains `app.user`, and the intended identity already existed. The missing reference and the account's relationship changed. The shared contact email remains shared and isn't added as another criterion.
+
+Publishing the corrected feed is one piece of evidence. Seeing the collected value is another. Verifying the resulting relationship is what establishes that the account is now associated with the approved owner.
+
+## A field that looks blank needs a closer look
+
+The main example explicitly supplies a current null value. In an investigation, a description such as “the reference is blank” is often less precise.
+
+Perhaps the application didn't return the field. Perhaps it returned null, empty text or spaces. Perhaps the current screen doesn't display it, or the feed substituted a placeholder.
+
+**JSON** is a text format for representing and exchanging named fields and their values. These fragments illustrate different representations; they aren't complete source records or API requests.
 
 ```json
 {
@@ -75,278 +110,254 @@ Was the field absent from an application response? Present with null? Present as
 }
 ```
 
-The first object has no `ownerRef` member. Null explicitly represents no value. Empty text contains no characters. Spaces are characters even when the field looks blank. `UNKNOWN` is ordinary text, not a person reference.
+In the first object, `ownerRef` is absent. In the second, the field is present with null. Empty text contains no characters. The spaces example contains three characters, although it can look empty on a screen. `UNKNOWN` is ordinary text and doesn't identify the approved person.
 
-The JSON string `"null"` would also be text, not the JSON null value.
+The string `"null"` would also be text. It isn't the JSON null value.
 
-These are not interchangeable evidence.
+Why does this distinction matter? It tells you what was actually supplied and what still needs checking. A response that omits a field doesn't, by itself, establish that ISC cleared a previously collected value. The connector's handling and the current ISC account record are separate evidence.
 
-Nor does the illustration claim that every connector stores, clears or compares them identically. An omitted response field does not, by itself, prove ISC cleared a previously collected value. Inspect the actual source behavior and current ISC account record.
+A **connector** provides the integration used to read data from a system and, where supported, make changes there. If the application screen shows a valid reference but the ISC account doesn't, follow that reading path.
 
-**Account aggregation** reads account information into ISC. If the application supplies a correct field but the represented account lacks it, follow the delivery and representation path before editing the person's identity.
+Check the value in the response or file actually supplied to the integration. Then inspect whether the integration selected the intended field and whether the account schema represents the expected field and type. Finally, compare those observations with the current collected account.
 
-Check whether the field was included in the read, whether the integration extracted the expected member, and whether the account schema represents the intended field and type. An observation from an application screen is not automatically the same data returned to the connector.
+This helps locate where the information stopped matching expectations. An application screen may display a value calculated differently from the field returned to the connector.
 
-A **transform** calculates a value from inputs. If a calculation supplies a matching value, inspect its output and errors too. A failed calculation is not the same as a successful calculation returning null.
+A **transform** calculates a value from inputs. If a calculation supplies one side of the comparison, inspect its selected inputs, output and errors. A failed calculation and a successful calculation returning null tell you different things about where to investigate.
 
-For the supplied main case, the recorded account value is null. It does not supply `P-75005`. Copying `UNKNOWN` into every missing reference would make those fields non-null without identifying their owners.
+Nor does making a field non-null necessarily repair it. Replacing every missing reference with `UNKNOWN` changes the field-presence count while leaving the owner unidentified. It can also introduce the same unsuitable value across many records.
 
-## Locate which side lacks the information
+The question is whether the value carries the approved person's reference, with the intended meaning and representation.
 
-A criterion has an account side and an identity side.
+## Which side of the comparison is missing its value?
 
-If ReviewDesk has `ownerRef = P-75005` but the candidate identity's Identification Number is empty, the investigation is different from our main case.
+So far, the account lacked `P-204` while the identity already held it. Change that condition: the application account contains the correct reference, but the identity field is empty.
 
-Trace the identity's governing profile, selected mapping input and applied value. **Identity processing** evaluates identity data and configured requirements, including those mappings.
+The comparison still lacks necessary information, but the correction belongs elsewhere.
 
-**Preview** evaluates a profile mapping for a selected identity. It can show that a proposed calculation would produce `P-75005`; it does not prove the current identity already holds it or that source correlation used it.
+An **identity attribute mapping** defines how an identity field receives its value from selected source data or a calculation. An **identity profile** holds those mappings and other settings for a population of identities. Its **authoritative source** supplies the accounts used to establish that population's identities.
 
-Likewise, a new **custom identity attribute**, an additional organization-defined identity field, is not ready for correlation merely because its definition exists. It must be configured as searchable for correlation, populated appropriately, and receive the documented manual processing for all identities before source aggregation.
+A worker record can therefore supply a person reference through a profile mapping, while an application account independently supplies its own reference for comparison. Finding the reference on the worker record doesn't establish that the identity currently holds it.
 
-The separate Search interface's ability to query a field is not proof of that correlation eligibility.
+**Identity processing** evaluates identity data and configured requirements, including identity attribute mappings. Follow the identity's governing profile, the selected input and the resulting applied identity value.
 
-In the main evidence, the identity-side value is already applied and eligible. The missing input is on ReviewDesk's account side. Changing a correct identity mapping would repair the wrong layer.
+The profile's **Preview** evaluates mappings for a selected identity. A preview showing `P-204` helps explain what a calculation would produce. It doesn't prove the current identity field has been updated or that an application account was correlated using that value.
 
-## A value can be present and still find no intended identity
+For a **custom identity attribute**, an additional organization-defined identity field, preparation matters too. The field must be configured as searchable for correlation and populated appropriately. The documented preparation includes manual processing for all identities before source aggregation. Manual processing means an administrator initiates identity processing.
 
-Consider a different collected account with `ownerRef = P-99999`. The value is present, but no candidate identity has that reference.
+That correlation-searchable setting is separate from being able to query a field in the Search interface. A field appearing in search results isn't proof that it is ready for use in correlation.
 
-That is a no-candidate situation, not a missing account-side value.
+In this changed case, overwriting a correct application reference to imitate an empty identity field would damage good input. Establish and correct the identity-side cause, then verify the applied value and relevant correlation evaluation.
 
-“No match found” needs the actual selected field, value and candidate evidence behind it.
+## A present value can still identify nobody
 
-The reference could be wrong. The intended person might not have entered the approved authoritative population yet. Their identity might exist with a stale or incorrectly mapped value. Or the supplied reference might identify an employment contract rather than the person.
+Now consider a collected account containing `ownerRef = P-99999`. No candidate identity has that value.
 
-Those explanations require different corrections.
+The account-side input is present. The investigation has moved from “where is the value?” to “what does this value identify, and where is the corresponding identity?”
 
-Check the approved business reference and worker intake before creating another identity or changing the application source to authoritative. Making an application authoritative changes its identity-establishment responsibility; it does not prove the account belongs to an existing person.
+Perhaps the reference is incorrect. Perhaps it identifies an employment contract while the identity field contains a person reference. Perhaps the intended worker hasn't entered the approved authoritative population. Or the identity exists but its reference is stale or incorrectly mapped.
 
-An account absent from ISC is another situation again. Investigate collection scope and execution before diagnosing its correlation.
+These are explanations to test against evidence. They don't all call for the same correction.
 
-“Missing account,” “missing reference,” and “missing intended identity” are not three names for the same defect.
+Check the approved reference and worker-intake records, then the intended identity and its applied value. Creating another identity before establishing those facts can introduce a duplicate while leaving the original data problem unresolved.
 
-## More than one candidate is not a better match
+Similarly, making the application source authoritative changes its responsibility for establishing identities. It doesn't establish that the application account belongs to an existing person.
 
-The team proposes adding ReviewDesk `contactMail` compared with identity `email`.
+There is an earlier boundary too: is the application account actually present in ISC? If it isn't, investigate collection scope and execution. There may be no collected record available for correlation to evaluate.
 
-Both supplied identities contain `review.team@learn.example`. That shared contact does not distinguish Devi from the other person.
+Keep the missing object clear: the account, the account's reference, the identity's reference, or the intended identity itself. Each points to different evidence and a different responsible team.
 
-**Ambiguous matching data** means the available comparison evidence does not identify one intended candidate. It is a data and ownership problem to investigate, not an invitation to pick the first name displayed.
+## A shared value doesn't distinguish the owner
 
-The proposed email pairing is not currently configured. Its ambiguity therefore does not explain why the current single person-reference criterion lacks an input.
+Return to the proposal to use contact email. The account contains `team@learn.example`, and both supplied identities have that email.
 
-That separation matters. Fix the proven current defect while reviewing whether the proposed change would introduce another.
+A comparison with that value cannot distinguish which person owns this account. Independent application ownership evidence identifies the intended person; the shared address doesn't provide that distinction.
 
-Do not promise that ISC will always select the first candidate, select the newest identity, leave every duplicate uncorrelated, or continue to another criterion in exactly the same way for every ambiguous case. Establish the actual supported behavior and operation result for the configuration being investigated.
+**Ambiguous matching data** means the available comparison evidence leaves more than one possible person. This is a description of the evidence, not a universal ISC status label or error code.
 
-An ambiguous dataset is not itself a universal ISC status label or error code.
+The proposed email criterion isn't saved in our main configuration. Its ambiguity therefore doesn't explain the current missing `ownerRef`. It tells us why that proposed replacement is unsuitable as a dependable person reference.
 
-A recorded association also does not prove that the ambiguity was resolved correctly. Verify which identity was linked and whether approved ownership evidence supports it.
+If you encounter duplicate candidates in an actual configured comparison, obtain the supported behavior and recorded result for that case. Don't choose the first identity on a screen and present that choice as ISC's decision. The facts here also don't justify claiming that every duplicate always stays uncorrelated or follows the same continuation path.
 
-There is a different case where two fields on the same account point to different people. That is contradictory input, even if each field individually finds only one candidate.
+There are two related situations worth separating.
 
-Standard configured criteria are ordered alternatives; one criterion can establish an association. Adding another row does not automatically require every row to agree as an AND condition.
+One is **contradictory input**: an account's person reference identifies one person, while its email identifies someone else. Each value may individually find one candidate, yet the fields disagree about ownership.
 
-A weaker fallback can conceal a missing preferred reference while establishing a wrong person's relationship. Review each alternative's meaning, uniqueness and actual candidates rather than counting fields.
+Standard configured criteria are ordered alternatives; one criterion can establish an association. Separate rows aren't automatically an **AND condition**, which would require the specified conditions to hold together. Adding a weaker email alternative can provide a route to the wrong person when the preferred reference is missing.
 
-A **multi-valued attribute** holds a collection of values. One account field containing `["P-75005", "P-75006"]` is a different observation from two identities sharing one value. Check schema cardinality and supported comparison behavior; don't assume selecting the first list member or converting the list to text establishes its owner.
+The other situation is a **multi-valued attribute**, a field containing a collection of values. An account field containing `["P-204", "P-205"]` is different from two identities sharing one email. Inspect the schema's single-value or multi-value definition and supported comparison behavior. Selecting the first list member or converting the list to text isn't evidence that you identified its legitimate owner.
 
-```text
-Human investigation of an account:
+These distinctions help you explain what the data proves before choosing any configuration change.
 
-Not collected?
-  -> investigate the source read
+## An existing link can point to the wrong person
 
-Collected, reference unusable?
-  -> trace missing input and origin
+Suppose the account is already associated with the identity whose reference is `P-205`, while approved ownership records establish that it belongs to the person identified by `P-204`.
 
-Usable reference, no candidate?
-  -> verify value and intended identity
+The relationship exists, but it is wrong. The account can disappear from an uncorrelated report without becoming correctly owned.
 
-More than one possible person?
-  -> resolve ownership and data evidence
+Start by establishing how the link was created. Current fields don't prove that today's configured criterion created an older relationship. A stale reference, reused email or incorrect explicit assignment is a possible cause to investigate.
 
-Already linked to the wrong person?
-  -> inspect link history and correction
+**Manual correlation** establishes a persistent explicit account-to-identity relationship. Later source-data changes don't automatically clear it. Accounts created through ISC can also have manual-correlation treatment, indicated by `manuallyCorrelated=true`.
 
-After any approved correction:
-  -> verify the actual relationship
-```
+**Unoptimized aggregation** reevaluates correlation even for unchanged account records. It addresses whether those records are examined; it doesn't erase a persistent manual link. Correcting `ownerRef` and running that aggregation therefore don't, by themselves, prove a wrong explicit association moved.
 
-The branches separate investigation responsibilities. They are not ISC's private matching algorithm, a prescribed execution order, or a guarantee about duplicate-candidate outcomes.
+By contrast, **optimized aggregation** checks collected account records for changes. If an existing record is unchanged, correlation evaluation is skipped. Saving new criteria alone doesn't establish that every existing account has used them.
 
-## A wrong link can be more serious than no link
+These are separate questions: did the account receive the relevant evaluation, and does an existing persistent relationship require a supported explicit correction?
 
-Suppose `rd-608` is attached to `I-75006`, while approved application records establish Devi as its owner.
-
-The account is correlated, but incorrectly.
-
-It may no longer appear in an uncorrelated report. The smaller report is not proof of improved ownership quality.
-
-A stale reference, reused email or incorrect manual assignment can contribute to a wrong relationship. Establish which cause is supported by the record and association history rather than assuming the current criterion created the link.
-
-**Manual correlation** establishes a persistent explicit account-to-identity association. Later source-data changes and unoptimized aggregation do not automatically clear it. Accounts created through ISC can also have manual-correlation treatment.
-
-Correcting the account's current `ownerRef` therefore does not establish that every existing wrong link has moved. Verify the relationship itself and use the approved supported correction process where necessary.
-
-Do not change a correct person reference to imitate a wrong linked identity. Do not copy a guessed identity value into the account and then use that copied value as independent proof of ownership.
-
-Keep the legitimate business reference separate from the correction you intend to perform.
-
-## Correct the main case at the source of the defect
-
-For the main uncorrelated account, the application owner verifies `rd-608` against the worker registry. The approved owner is Devi, with person reference `P-75005`.
-
-The integration was supposed to deliver that reference in ReviewDesk `ownerRef`, but it did not.
-
-The approved correction supplies `P-75005` in the application's data feed. It does not replace the shared contact email, rename the login or change the valid employee identity.
-
-Once the corrected value is published, it must reach ISC and receive supported correlation evaluation.
-
-Here are the supplied before-and-after facts:
+Verify the actual resulting association after the approved correction. Keep the legitimate reference independent of the value you intend to write. Copying a guessed identity value into an account and then using the copied value as proof would make the reasoning circular.
 
 ```text
-Before:
-  ReviewDesk rd-608 ownerRef = null
-  no configured or default match
-    -> supplied result: uncorrelated
+Human investigation; choose by evidence
 
-Approved owner and feed correction:
-  same rd-608 ownerRef = P-75005
-  collected and evaluated
-    -> matches identificationNumber
-    -> same identity I-75005
+Account absent from ISC?
+  -> inspect collection and scope
 
-Human verification:
-  correct source and account key?
-  approved person reference and owner?
-  resulting link and affected consumers?
+Account value unusable?
+  -> trace its source and delivery
+
+Identity value unavailable?
+  -> trace mapping and applied state
+
+Usable value, no intended candidate?
+  -> reconcile reference and population
+
+Several possible people?
+  -> investigate ownership and data
+
+Existing link points to wrong person?
+  -> inspect history and correct link
+
+Verify the relevant outcome afterward.
 ```
 
-The successful result assumes the corrected account is collected and evaluated, the identity-side value is current and eligible, the candidate is unique, and no persistent manual override applies.
+This is a human investigation map. Its arrows point to the evidence needed for each finding. They aren't ISC's matching algorithm, a mandatory execution order or a promise about duplicate handling. A record can have more than one problem; correcting one may reveal another.
 
-It is not a promise that publishing an external value instantly updates every ISC view.
+## What would show that the problem is resolved?
 
-The account remains `rd-608`, the login remains `drao.rd`, and the identity remains `I-75005`. The missing input and the relationship changed.
+The source's account details show the collected record and represented attributes. The identity's details show current identity values and profile context. The saved correlation configuration shows selected fields and order. Aggregation history and available events help establish what operation ran and when.
 
-The shared contact can still be unsuitable for identifying people. We have not made it unique by correcting a different field, and it is not added as a matching alternative.
+A source-specific or global **Uncorrelated Accounts report** helps locate missing relationships. It doesn't establish that every existing relationship is correct or that every listed account lacks a legitimate owner.
 
-## Different symptoms need different completion evidence
+Keep the exact source and environment, account key, intended identity, selected values, saved criteria, evaluation scope and observation times together. An old file containing a correct reference doesn't establish the current collected value. Today's matching data doesn't prove a historical execution path if that evidence is unavailable.
 
-A **machine account** is a non-human account related to an application or service. Shared automation accounts need an appropriate classification and responsible-ownership design, not a guessed personal user. Use the features supported for the tenant and account type.
+The completion evidence should fit the cause:
 
-| Investigation finding | What would demonstrate the relevant correction |
+| Finding | Evidence needed for the relevant correction |
 |---|---|
-| Field absent or unusable | Approved source input reaches the actual collected account with the intended meaning and representation; an empty-field count alone is insufficient. |
-| Identity-side value unavailable | Correct profile mapping is applied to the intended existing identity, and correlation eligibility/preparation is established. |
-| No intended candidate | The approved reference and identity population are reconciled; the intended identity actually exists with suitable values. |
-| Multiple possible identities | Owner evidence and data resolve the identification gap; the actual recorded relationship is checked instead of guessing a tie-breaker. |
-| Account linked to the wrong person | The intended association is confirmed after supported correction, with previous and dependent effects investigated. |
-| Record not reevaluated | The relevant account receives supported evaluation; the new saved configuration alone is not completion evidence. |
-| Shared or machine account | Its account type, responsible-ownership design and approved treatment fit its use; assigning a source administrator as the personal user is not automatic resolution. |
+| Account-side input absent or unusable | The approved value reaches the actual collected account with the intended meaning and representation. |
+| Identity-side value unavailable | The correct mapping is applied to the intended existing identity, and correlation preparation is established. |
+| No intended candidate | Reference meaning and approved identity population are reconciled; the intended identity exists with suitable values. |
+| Several possible people | Ownership and data evidence resolve the identification gap; the actual relationship is checked. |
+| Wrong existing association | The approved intended relationship is verified after supported correction, with history and affected actions reviewed. |
+| Relevant evaluation didn't occur | Evidence establishes evaluation of this account under the relevant conditions and its resulting relationship. |
+| Shared or non-human use | Supported classification, responsibility and approved treatment fit the account's actual purpose. |
 
-**Optimization** skips unchanged account data for relevant processing. When correlation configuration changes, the documented unoptimized aggregation approach allows unchanged accounts to be reexamined.
+A **machine account** is a non-human account related to an application or service. Service accounts and shared automation accounts need an appropriate classification and responsibility design. Use the classification and ownership features supported for the tenant and account type.
 
-Choose the operation and scope for the actual cause. Do not repeatedly run broad reads just because the uncorrelated count remains the same.
+A source administrator manages an integration. That responsibility doesn't make every account on the source the administrator's personal login. For a legitimate shared or service account, establish who is responsible for it and how it should be represented and governed.
 
-A source-level or global Uncorrelated Accounts report helps locate missing relationships. Current account details, identity values, saved configured/default behavior, association history and ownership records explain individual cases.
+Choose correction and evaluation scope from the proven cause. Repeating broad reads won't supply a reference that the feed still omits.
 
-Keep the exact source, environment, account key, candidate identity, actual values and observation times together. A correct value in an old file doesn't prove the current account has it.
+## A correct relationship still leaves access questions to answer
 
-## Fixing the relationship is not the same as approving access
+An **entitlement** is a represented permission or membership. An uncorrelated account can still hold permissions and work in an external application. An unresolved ISC identity relationship doesn't automatically disable it.
 
-An **entitlement** is a represented permission or membership. An uncorrelated account can still exist in an external application with permissions. Missing an ISC identity relationship does not automatically disable it.
+**Provisioning** attempts supported account or access changes in an external system, such as creating an account or changing a membership. Correlation establishes a relationship; it doesn't demonstrate that one of those external changes succeeded.
 
-**Provisioning** attempts supported account or access changes in an external system.
+**Attribute synchronization** is a configured write path from identity values to fields on existing correlated accounts. The relationship determines which person's identity data applies to the account. Correcting a link can therefore affect configured writes.
 
-**Attribute synchronization** is a configured identity-to-account write path for existing correlated accounts. A new or corrected relationship can affect which identity data applies to the account when such synchronization is configured.
+Before moving a real account, review those dependencies and any actions already performed under the old relationship. Establishing the correct owner doesn't automatically reverse previous writes or demonstrate that every permission the account holds is still approved.
 
-Before moving a real account, review configured consumers and any changes already made under the old relationship. Correcting a link does not automatically undo previous writes or establish that old access is still authorized.
+No synchronization write or access-changing request is supplied in our main correction. Its successful outcome is the intended relationship, with the missing reference repaired.
 
-The main fictional correction includes no attribute-sync write or requested access change. Its supplied successful outcome is the intended account-to-identity relationship.
+Removing accounts, resetting a source or deleting duplicate-looking identities merely to shrink an exception list doesn't establish correct ownership. Shared names or emails require investigation, not an automatic merge or deletion.
 
-Do not remove accounts, reset a source or delete candidate identities just to clear an exception list. Duplicate-looking identities need investigation; shared names or emails are not authority to merge or delete them.
+## Work through the evidence yourself
 
-For a legitimate service or shared account, identify its supported classification and responsibility model. The absence of a personal employee match does not by itself prove the account should be removed.
+### A response omits the field
 
-## Work through the changed evidence
+The application response has no `ownerRef` field. You haven't inspected the current ISC account or verified how this connector handles omission.
 
-### 1. The response omitted the field
+Can you conclude that a previously collected reference was cleared?
 
-**Facts:** An application response has no `ownerRef` member. There is no current ISC account-value evidence or verified rule for how this connector handles omission.
+### A feed fills every blank
 
-Can you conclude ISC cleared the previously stored reference?
+Forty missing references are replaced with `UNKNOWN`. Each account should contain its own approved person's reference.
 
-**Reasoning:** No. The response's shape is evidence, but clearing the represented value is another outcome. Inspect the current account and documented connector behavior before choosing a correction.
+What has improved, and what remains unresolved?
 
-### 2. Every blank received UNKNOWN
+### A preview looks correct
 
-**Facts:** A feed replaces 40 missing references with `UNKNOWN`. The approved references should identify individual people.
+The application account contains the approved reference. A revised identity mapping previews that value, but the current identity field is empty.
 
-Has a non-null count demonstrated ownership repair?
+Which side needs investigation? Would you overwrite the account to match the empty field?
 
-**Reasoning:** No. The placeholder still supplies no approved person identity and introduces a shared value. Correct the missing-reference cause and verify each intended relationship instead of treating field presence as identification.
+### A value finds nobody
 
-### 3. The identity side is still empty
+An account contains `P-99999`, and no identity has it. Employment and intake evidence haven't been checked.
 
-**Facts:** Account `ownerRef` is correct. A revised identity mapping previews the intended reference, but the current identity field is empty.
+What must you establish before creating another identity?
 
-Should you overwrite the account to match the empty identity?
+### Two identities share the email
 
-**Reasoning:** No. Check the identity's actual mapping application, input and eligibility. Preview is not applied-state evidence; repair the proven layer rather than damaging correct source data.
+The proposed contact-email criterion would fit both supplied identities.
 
-### 4. A reference finds no identity
+Does screen order establish the winner? Can you declare a universal uncorrelated outcome? Does this proposed comparison explain the current saved criterion's missing input?
 
-**Facts:** A collected account contains `P-99999`, but no candidate identity has it. There is no verified employment or intake evidence yet.
+### The report count falls
 
-Must you create a new identity immediately?
+An account disappears from the uncorrelated report after being linked to someone other than its approved owner.
 
-**Reasoning:** No. Verify what the reference identifies, whether it is correct and whether the intended person belongs in the approved authoritative population. A wrong value and a missing legitimate identity require different repairs.
+Has ownership been repaired?
 
-### 5. Shared email fits two people
+### Corrected data meets a manual link
 
-**Facts:** ReviewDesk's proposed contact-email criterion would match the shared email on `I-75005` and `I-75006`.
+A wrong manual association exists. The source reference is corrected and an unoptimized aggregation runs.
 
-Should you pick the first displayed identity or assert every such account stays uncorrelated?
+Which two outcomes need separate verification?
 
-**Reasoning:** Neither follows from these facts. Resolve the ownership evidence and obtain supported result evidence. The shared contact is not a dependable person reference, and the proposed pairing does not explain the current configuration.
+### A shared automation account has no employee match
 
-### 6. The count falls after a wrong link
+The application owner confirms shared automation use. The team proposes attaching the account to the source administrator as a personal login.
 
-**Facts:** An account is now linked to a different identity from its approved owner and disappears from the uncorrelated report.
+What responsibility and classification questions remain?
 
-Has the project resolved it correctly?
+## Compare your reasoning
 
-**Reasoning:** No. An association exists, but ownership is wrong. Investigate its origin, use the approved supported correction, check the actual new relationship and review affected consumers.
+For the omitted field, you know the response's shape. You still need the current represented account value and supported connector handling to establish whether anything was cleared.
 
-### 7. Corrected data meets a persistent manual link
+For `UNKNOWN`, field presence increased. Individual identification hasn't been repaired. The shared placeholder doesn't supply the approved reference for each person.
 
-**Facts:** An account was manually linked to the wrong identity. Its source reference is corrected and an unoptimized aggregation runs.
+For the preview, investigate the identity mapping's input, application and correlation preparation. The account already contains the correct reference. A proposed calculation isn't evidence of applied identity state, and damaging correct account data won't repair the missing identity value.
 
-Does the corrected field prove the association moved?
+For `P-99999`, establish what the reference means, whether it is correct, and whether the legitimate person belongs in the approved authoritative population. Then inspect the existing identity and mapping. Wrong input and a missing legitimate identity need different repairs.
 
-**Reasoning:** No. Manual correlation persists through those changes. Verify and correct the explicit relationship through the approved supported path; data correction and relationship correction are separate evidence.
+For the shared email, neither a first-display winner nor a universal duplicate outcome follows from the supplied evidence. Obtain ownership and actual result evidence. Because email is only proposed, it doesn't explain the existing person-reference criterion's missing input.
 
-### 8. The account has no personal employee match
+For the lower report count, the relationship exists but identifies the wrong person. Investigate its origin, make the supported approved correction, verify the actual association and review affected actions.
 
-**Facts:** The application owner identifies a shared automation account. The team proposes assigning it to the source administrator as though it were that person's login.
+For the persistent manual link, verify both the corrected collected input and the intended resulting relationship. An unoptimized read doesn't automatically remove that explicit link.
 
-Is that the automatic solution to the missing person match?
-
-**Reasoning:** No. Establish the account's supported classification and responsibility design. Administration of a source is not proof that all its accounts are that administrator's personal accounts.
+For shared automation, determine the supported account classification and responsible-ownership design. Integration administration doesn't establish personal use. The approved treatment must fit the account's purpose.
 
 ## Organize a project exception queue
 
-A project has 100 investigation records, combining uncorrelated accounts and disputed existing links. Review finds 40 unusable references, 25 references without a verified intended identity, 20 ambiguous candidate cases, 10 wrong existing links and 5 shared or machine accounts needing classification review.
+A project has 100 investigation records, combining uncorrelated accounts and disputed existing links. Initial review places each record in one primary work group:
 
-The team proposes assigning every record to one administrator to close the queue.
+- 40 have unusable references.
+- 25 have references without a verified intended identity.
+- 20 have ambiguous candidate evidence.
+- 10 have wrong existing links.
+- 5 are shared or machine accounts needing classification review.
 
-How would you organize the work instead?
+The team proposes attaching every account to one administrator to close the queue.
 
-Group records by the proven cause and assign the missing evidence to the responsible source, business or ISC team. Confirm these categories against individual records rather than assuming a spreadsheet label proves the diagnosis.
+How would you organize the work and decide when each record is complete?
 
-The 40 missing-reference cases need usable approved input. The 25 no-candidate cases need reference and population reconciliation. The 20 ambiguous cases need ownership and data clarification. The 10 wrong links need relationship/history and dependent-effect review. The 5 non-person cases need appropriate classification and responsibility.
+The groups total 100 because this example assigns one primary investigation group per record. An actual record can have additional issues. Check the evidence behind its group and keep those additional issues visible.
 
-Then verify supported evaluation and the correct resulting relationship or approved non-person treatment. Keep unresolved records visible with the evidence still needed.
+The 40 unusable references need approved usable input and delivery evidence. The 25 unverified identities need reference and population reconciliation. The 20 ambiguous cases need ownership and data clarification. The 10 wrong links need association history, supported correction and review of dependent effects. The 5 non-person cases need suitable classification and responsibility.
 
-Closing a queue means the intended outcome is demonstrated for each case. Assigning everything to one person only hides the distinctions that made the investigation necessary.
+Assign each missing action to the team that can supply it: the application or feed owner for missing account data, the worker-data and identity teams for population or mapping evidence, and the responsible ISC team for configuration, evaluation and relationship checks. Business ownership decisions still need the appropriate approved records.
+
+For each case, verify the relevant evaluation and correct relationship, or its approved non-person treatment. Keep unresolved evidence visible. A lower count is useful only when the account's intended outcome has actually been demonstrated.

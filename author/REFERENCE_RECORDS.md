@@ -2,7 +2,7 @@
 
 These records support author review and source maintenance. They are not learner lesson content and must stay outside learner-facing exports.
 
-Publication update, October 26 batch 2: revised publication now includes ARC-002 through ARC-008 and SRC-001/002, in addition to the earlier fourteen revised lessons. See [current publication verification](PUBLICATION_2026-10-26_BATCH_2.md). Earlier local-only and prior published-version statements describe their authoring/review stage.
+Publication update, October 27: the current authorized snapshot includes all 86 completed revisions through ROL-001 plus tracing/processing guides revision 2.0. See [current scope and deployment verification](PUBLICATION_2026-10-27.md). Earlier local-only and published-version statements within individual records describe their authoring stages and are superseded by this publication record. Later ROL-002 revisions continue locally. Learner validation, full graphical review and formal approval remain pending.
 
 ## Record maintenance
 
@@ -1379,6 +1379,22 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## SRC-003: Reading a connector capability matrix
 
+- Current revision: 2.0. Course placement: Module 4.3. Teaching specification: 3.1.
+- Current coverage, first-use explanations, primary references, assumptions, preserved assessments and executed checks: [SRC-003 revision record](revisions/SRC-003_Concept_Led_Revision_Record.md).
+- Documentation checked: October 26, 2026; 12 primary-reference rows in the current record cover actual connector feature columns, framework operations and HTTP configuration, test-connection limits, AD IQService requirements, file representation, source modes, provisioning/activity/certification/correlation and RFC 9110 refusal semantics.
+- Author review: normal successful create/add/target-check/later-read mechanism precedes capability variants; 70 coverage purposes reconciled; all seven original cases and payroll transfer preserved.
+- Neutral example: Purchasing-Production source, buyer-user recipient, svc-purchasing technical actor and existing buyers group/Buyer. One existing ISC identity, no initial target account, one intended recipient and valid creation inputs. All target behaviours, outcomes and errors are hypothetical.
+- Read/create/department-update/add have supplied positive evidence. Removal has no supported target API; disable has a configured endpoint with explicit caller/account permission denial and enabled target; delete has no approved configured/tested path. These are project conditions, not actual application product claims.
+- Current editable diagrams: [supported change then collection](../assets/SRC-003_supported_change_then_collection.txt) and [operation support and ready conditions](../assets/SRC-003_operation_support_and_ready_conditions.txt); exact inline matches, maximum widths 40 and 41 characters. Distinct create/add effects, later observation and human dependency review aren't atomic rollback, fixed schedule or private processing order.
+- Historical [operation-readiness dependencies](../assets/SRC-003_operation_readiness_dependencies.txt) and [change versus collection paths](../assets/SRC-003_change_and_collection_paths.txt) remain unchanged.
+- No tenant, source/mode, account, credential, endpoint, privilege, fulfillment, certification, aggregation, provisioning or target operation. Actual beginner validation, full graphical review and formal approval remain pending.
+- Publication: SRC-003 revision 2.0 is local only; published version remains 1.0. The 23 revised lessons through SRC-002 are published; see [batch 2 verification](PUBLICATION_2026-10-26_BATCH_2.md). No commit/push in this subsequent local revision; original ISC_Theory_Learning unchanged.
+- Next existing lesson: SRC-004, body unopened in this task. New authoring remains paused at reserved ROL-007.
+
+### Historical verification record: revision 1.0
+
+The following authoring-stage record is retained as history. The current revision record above governs today's explanation, examples, checks and publication status. Historical learner content remains recoverable at 7123d85038c688f1ccecffa6a8504d22e3986b79.
+
 - Revision: 1.0. Course placement: Module 4.3.
 - Documentation checked: October 20, 2026. Current ISC Active Directory, Delimited File and Web Services SaaS feature documentation; Web Services SaaS operation configuration and test connection; AD IQService prerequisites; source setup modes; provisioning and activity evidence were freshly checked. Supporting source-runtime, correlation, access-object and certification meanings retain the same-day checks mapped in earlier records.
 - Author review: completed against teaching specification v2.6 for the stated scope; no unresolved author content issue identified.
@@ -1386,7 +1402,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 - Learner validation and formal publication approval: pending. Working-edition deployment is separate.
 - Scope: interpret support at operation/object level and establish project-readiness dependencies. This isn't a target API implementation guide, an exhaustive connector catalog, permission-grant recipe or source-mode conversion procedure. Detailed schemas, read modes, provisioning design and fulfillment configuration remain their own primary lessons.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -1402,13 +1418,13 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 | [Monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html) | Account Activity/provisioning details and manual tasks have different evidentiary scopes. A recorded decision or completed task is not independent measurement of target membership; target and later collection must be interpreted in context. |
 | [Managing sources](https://documentation.sailpoint.com/saas/help/sources/index.html), [account correlation](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) and [understanding certifications](https://documentation.sailpoint.com/saas/help/certs/understanding_certifications.html) | Supporting same-day checks retained from earlier authored lessons: selected runtime/source representation, configured account ownership association and reviewer decisions. These don't fill target API gaps or prove completed external changes. |
 
-### Diagram and example checks
+#### Diagram and example checks
 
 The two inline text diagrams match their editable assets after trailing-whitespace normalization, with maximum line widths 41 and 39 characters. The readiness diagram is a human dependency review, not undocumented backend order. The change/collection diagram separates coordinated create/add effects from later observation; it doesn't imply an all-or-nothing transaction or automatic reversal.
 
 Employee number 43003 belongs to this independent purchasing example. fulfill-43003 is the target account; svc-fulfill-isc is the integration actor; buyers is an already-existing target group and Buyer its teaching label. The eight-row matrix separates framework support from fictional project evidence. Reads/create/department update/add have supplied positive evidence. Remove lacks a supported target API; disable has an explicit target 403 permission message and an enabled account; delete is unconfigured and untested. No real operation, source mode, endpoint, permission or fulfillment configuration was changed.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Case | Misconception tested | Accepted reasoning and evidence boundary |
 |---|---|---|
@@ -1425,6 +1441,24 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## SRC-004: Account schemas, identifiers and display attributes
 
+- Current revision: 2.0. Course placement: Module 4.4. Teaching specification: 3.1.
+- Current coverage, first-use explanations, primary references, assumptions, preserved assessments and executed checks: [SRC-004 revision record](revisions/SRC-004_Concept_Led_Revision_Record.md).
+- Documentation checked: October 26, 2026; seven primary references cover schema definitions/designations/discovery/subsequent collection/audit/change warnings, schema and attribute-definition models, Delimited File schema replacement, account correlation/default naming and identity-profile/provisioning boundaries.
+- Author review: 81 coverage purposes reconciled; complete supported read/mapping/representation precedes failure variants; account identification and ownership matching remain distinct; all seven original cases and payroll transfer remain.
+- Neutral example: Billing-Production, accountKey acct-standard/acct-admin, loginName billing-user/billing-admin, shared employeeNumber E-24, repeated descriptive fullName, Billing Operations, officeCode BLR, textual costCentre 044, billing-read/billing-support. No named employee, company brand or arbitrary identity-ID stand-in.
+- Assumptions: legitimate standard/admin accounts, stable distinct supported keys/names, one intended production context, available read fields and unambiguous existing identity under configured employee-number comparison. All values and results hypothetical.
+- Normal officeCode-to-office BLR mapping is explained first. A distinct variation reads absent siteCode; approved mapping correction and later supported collection supply office BLR. Missing API input/read authority or legitimate absence require different evidence.
+- Current editable diagrams: [read values and schema definition](../assets/SRC-004_read_values_and_schema_definition.txt) and [distinct accounts, one person](../assets/SRC-004_distinct_accounts_one_person.txt); exact inline matches, maximum widths 37 and 41 characters. Neither asserts private backend order, merger or matching score.
+- Historical [record to account representation](../assets/SRC-004_record_to_account_representation.txt) and [account keys and person matching](../assets/SRC-004_account_keys_and_person_matching.txt) remain unchanged.
+- Documented Account Name immutability/post-aggregation duplicate warnings and Account ID reference risks are preserved. Default Account Name/name correlation adds a concrete non-cosmetic connection without replacing supplied explicit employee-number matching or teaching full correlation order.
+- No schema, source, data, mapping, correlation, aggregation, identity, credential, permission, target rename or provisioning operation. Actual beginner validation, full graphical review and formal approval remain pending.
+- Publication: revision 2.0 local only; published SRC-004 remains 1.0. SRC-003 revision 2.0 also remains local. The 23 revised lessons through SRC-002 remain the [verified published snapshot](PUBLICATION_2026-10-26_BATCH_2.md). No staging/commit/push/deployment; original ISC_Theory_Learning unchanged.
+- Next existing lesson: SRC-005, learner body unopened in this task. New authoring remains paused at reserved ROL-007.
+
+### Historical verification record: revision 1.0
+
+The following original authoring-stage record is preserved as history. The current revision record above governs today's explanation, examples, checks and publication status. Historical learner content is recoverable at 7123d85038c688f1ccecffa6a8504d22e3986b79.
+
 - Revision: 1.0. Course placement: Module 4.4.
 - Documentation checked: October 21, 2026. Official account-schema definitions/designations, discovery, subsequent collection, audit events and post-aggregation change warnings; Delimited File schema/account attributes; source-schema model properties; correlation and identity-profile mappings were freshly checked.
 - Author review: completed against teaching specification v2.6 for the stated scope; no unresolved author content issue identified.
@@ -1432,7 +1466,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 - Learner validation and formal publication approval: pending. Working-edition deployment is separate.
 - Scope: account-schema meaning, field/value relationships, designated ID/Name, ownership matching and safe changes. Complete type/format rules, entitlement-schema linking, aggregation modes, correlation criteria/order and provisioning remain their primary lessons. No API request, schema edit or migration is performed.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -1443,7 +1477,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 | [Creating identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Identity-profile responsibilities and identity-value mappings differ from source-account schemas; identity attributes can map from source account attributes with supported transforms/rules. Adding an account field isn't an instruction to overwrite identity department or confer authoritative source responsibility. |
 | [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html) | Supporting established distinction between representing collected data and performing supported external account/access changes. Schema definition and audit evidence don't prove target writes. The core account-changing definition was rechecked on October 21; no new provisioning operation or tenant test is claimed. |
 
-### Diagram, data and reasoning checks
+#### Diagram, data and reasoning checks
 
 The two editable text diagrams match their inline counterparts after trailing-whitespace normalization. Maximum line widths are 37 and 38 characters. The first is a read/mapping/representation relationship, not a private pipeline. The second depicts two supplied account-to-person associations, not merging or an invented matching score.
 
@@ -1451,7 +1485,7 @@ Employee number 44004 is shared by inv-acct-44004 and inv-admin-acct-44004. Thei
 
 The payroll transfer's duplicate local u17 keys belong to different people in two regional exports. Correlating them to different identities doesn't resolve conflicting account identification inside the proposed combined source. Separate supported contexts or deliberately designed stable keys can be acceptable design alternatives, not automatic repair/migration instructions.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Case | Misconception tested | Accepted reasoning and evidence boundary |
 |---|---|---|
@@ -1468,6 +1502,25 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## SRC-005: Attribute types, multiple values and data formats
 
+- Current revision: 2.0. Course placement: Module 4.5. Teaching specification: 3.1.
+- Current coverage, first-use explanations, primary sources, assumptions, preserved assessments and executed checks: [SRC-005 revision record](revisions/SRC-005_Concept_Led_Revision_Record.md).
+- Documentation checked: October 26, 2026; 12 primary references cover source attribute/type models, schema settings/Boolean entitlement constraint, Web Services response mapping/structure, dateFormat, JSON/CSV/timestamp standards, identity mappings/provisioning and background integer ranges.
+- Author review: 82 coverage purposes reconciled; selected input and complete correct representation precede failure variants; all seven original cases and independent HR-feed transfer retained.
+- Neutral example: Delivery-Production, delivery-user, employeeNumber E-25, textual costCentre 007, isActive true, openTaskCount 4, groups delivery.read/delivery.dispatch, day-first contractEnd 04/11/2026, backupPhone null. No named employee, biography or company brand.
+- Correct extraction and intended text/multi-value schema are supplied. A project-added converter creates text 7 and one joined group item; these aren't ISC defaults. Approved supported correction and later collection restore text 007 and two items without changing target account or memberships.
+- CSV alternative: four fields, displayName Operations, Delivery quoted as one field, separate agreed inner semicolon membership parser. Not a complete snapshot/upload or universal connector delimiter. HR transfer is independent.
+- Date meaning: 4 November 2026 becomes 2026-11-04 under agreed dd/MM/yyyy to yyyy-MM-dd patterns. Timestamp pair 18:00+05:30 and 12:30Z represents one instant; formatting doesn't choose cutoff, schedule or completed revocation.
+- Current editable diagrams: [separate values or joined text](../assets/SRC-005_separate_values_or_joined_text.txt) and [input-to-consumer evidence](../assets/SRC-005_input_to_consumer_evidence.txt); exact inline matches, maximum widths 36 and 39 characters.
+- Historical [list preservation and joining](../assets/SRC-005_list_preservation_and_joining.txt) and [value/shape evidence trace](../assets/SRC-005_value_and_shape_evidence_trace.txt) remain unchanged.
+- No universal coercion, splitter, null-clear, deduplication, array-order access meaning, parser skip/fail behaviour or private engine order is asserted. Invalid input can't silently stand for a valid no-membership result.
+- No actual tenant, source/schema, account/identity, rule/transform/mapping, aggregation, access/role, credential, permission, provisioning or target operation. Actual beginner validation, full graphical review and formal approval remain pending.
+- Publication: revision 2.0 local only; published SRC-005 remains 1.0. SRC-003/004 revisions 2.0 are also local. The 23 revised lessons through SRC-002 remain the [verified published snapshot](PUBLICATION_2026-10-26_BATCH_2.md). No staging/commit/push/deployment; original ISC_Theory_Learning unchanged.
+- Next existing lesson: SRC-006, learner body unopened in this task. New authoring remains paused at reserved ROL-007.
+
+### Historical verification record: revision 1.0
+
+The original authoring-stage record below is retained as history. The current revision record above governs today's explanation, examples, checks and publication status. Baseline learner content remains recoverable at 7123d85038c688f1ccecffa6a8504d22e3986b79.
+
 - Revision: 1.0. Course placement: Module 4.5.
 - Documentation checked: October 21, 2026. Source attribute-definition/type models, account-schema multi-value/entitlement settings, Web Services SaaS response mapping and response examples, dateFormat, and the primary JSON/CSV/timestamp specifications were freshly checked.
 - Author review: completed against teaching specification v2.6 for the stated scope; no unresolved author content issue identified.
@@ -1475,7 +1528,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 - Learner validation and formal publication approval: pending. Working-edition deployment is separate.
 - Scope: preserve value meaning, type, collection shape and transport format; distinguish missing states and date interpretation; trace configured conversions and consumers. No tenant configuration, provisioning request, complete transform payload, universal connector parser or private execution sequence is supplied.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -1491,7 +1544,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 | [Creating identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Supporting identity mappings/transforms and processing boundary, retained from same-day course verification. A corrected collected account value does not prove a corrected identity value or resulting access delivery without checking consumers. |
 | [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html) | Supporting established distinction between reading/representing attributes and performing supported external account/access changes, retained from same-day course verification. No real target writes or tenant tests occurred. |
 
-### Diagram, data and reasoning checks
+#### Diagram, data and reasoning checks
 
 Two editable text diagrams match their inline counterparts after trailing-whitespace normalization. Maximum line widths are 35 and 40 characters. The first compares preserving a list with joining its elements, not changing external membership. The second is a human evidence/dependency trace, not an ISC private execution pipeline.
 
@@ -1499,7 +1552,7 @@ Employee 45005 uses account route-45005. costCentre is the significant textual c
 
 The selected JSON block is valid and preserves strings, numeric quantity, Boolean true, a two-item array, date text and explicit null. The limited CSV alternative has four columns and one data row, preserves the quoted name and textual 007, and requires a separate field-specific membership interpretation. It is not a complete source snapshot/upload instruction. The date contract is day/month/year: 04/11/2026 means 2026-11-04. Offset arithmetic and the seven distinct missing/null/empty representations are checked independently. Invalid input must not silently become an assertion of no memberships; operation-specific error handling needs its own evidence.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Case | Misconception tested | Accepted reasoning and evidence boundary |
 |---|---|---|
@@ -1518,6 +1571,25 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## SRC-006: Entitlement membership attributes and entitlement schemas
 
+- Current revision: 2.0. Course placement: Module 4.6. Teaching specification: 3.1.
+- Current coverage, first-use explanations, official sources, assumptions, preserved assessments and executed checks: [SRC-006 revision record](revisions/SRC-006_Concept_Led_Revision_Record.md).
+- Documentation checked: October 26, 2026; seven primary references map account-schema linking, native entitlement types/schema designation/relationships/deletion, separate object aggregation, catalog/metadata/permissions, schema/attribute models and account correlation.
+- Author review: 86 purposes reconciled; complete normal source/type/ID relationship before mismatch; explicit automatic linking under documented conditions; all seven original cases and teams transfer retained.
+- Neutral example: Expenses-Production, expense-user, existing Expense Approvers membership G-206; groups native type/account attribute, groupKey selected ID, label selected Name, technicalName expense.approvers and supplied expense-approval-limit description. No employee biography/number or company brand.
+- Supported account/object reads and valid mappings are normal assumptions. Faulty project mapping substitutes technicalName while selected group ID stays G-206; approved preservation of G-206 and later supported collection produce the supplied link without changing target membership.
+- Native type name must match the supported source category. Named UI Type relationships are distinguished from basic value types and technical schema association properties; no unverified payload or invented native category is prescribed.
+- Conditional appRoles R-51 Audit Exporter, typed code51 and Expenses-Test/Production illustrate context. G-999 is inventory-only; independent teams T-8/teamCode/displayLabel transfer challenges label substitution, inventory-as-membership and duplicate account-attribute/type association.
+- Current editable diagrams: [reference to access object](../assets/SRC-006_reference_to_access_object.txt) and [membership and object reads](../assets/SRC-006_membership_and_object_reads.txt); exact inline matches, maximum widths 33 and 38 characters. Historical [account membership to entitlement](../assets/SRC-006_account_membership_to_entitlement.txt) and [two read responsibilities](../assets/SRC-006_two_read_responsibilities.txt) remain unchanged.
+- Diagrams show relationships/information responsibilities, not private backend order, universal schedule or target grants. Account-to-person matching, direct membership, indirect entitlement paths and effective access remain distinct evidence questions.
+- Ordinary Display Name/Description edits don't write to the source; manual-update preservation can explain later visible text. Schema ID/Name changes carry duplicate risk; type deletion doesn't remove associated entitlements or target memberships.
+- No actual source/schema/type, account/identity, mapping/correlation, collection, metadata/access/request/review, permission/hierarchy, provisioning or target operation. Actual beginner validation, full graphical review and formal approval remain pending.
+- Publication: revision 2.0 local only; published SRC-006 remains 1.0. SRC-003 through SRC-005 revisions 2.0 also remain local. The 23 revised lessons through SRC-002 remain the [verified published snapshot](PUBLICATION_2026-10-26_BATCH_2.md). No staging/commit/push/deployment; original ISC_Theory_Learning unchanged.
+- Next existing lesson: SRC-007, learner body unopened in this task. New authoring remains paused at reserved ROL-007.
+
+### Historical verification record: revision 1.0
+
+The original authoring-stage record below is preserved as history. The current revision record above governs today's explanation, examples, checks and publication status. Baseline learner content remains recoverable at 7123d85038c688f1ccecffa6a8504d22e3986b79.
+
 - Revision: 1.0. Course placement: Module 4.6.
 - Documentation checked: October 21, 2026. Official account-schema linking conditions, entitlement type/schema management, entitlement aggregation, entitlement metadata/permissions/deletion behavior and schema/attribute models freshly checked.
 - Author review: completed against teaching specification v2.6 for the stated scope; no unresolved author content issue identified.
@@ -1525,7 +1597,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 - Learner validation and formal publication approval: pending. Working-edition deployment is separate.
 - Scope: account membership values, access-object details, source/type/identifier relationships, selected ID/Name, supported multi-type relationships, collection and UI evidence, safe schema changes. Complete aggregation execution, access catalog governance, requests/certifications and provisioning have their primary lessons. No configuration edit or target operation is performed.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -1536,7 +1608,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 | [Source schema model](https://developer.sailpoint.com/docs/tools/sdk/angular/sources/models/schema/) | Schema id is distinct from identityAttribute/displayAttribute, which name attributes selected for object identification/display. nativeObjectType identifies the external category; supported hierarchy representation is connector/schema-specific. G-206 is the fictional selected external identifier, not a runnable ISC record ID. No API payload, feature-flag modification or storage-key algorithm is taught. |
 | [Source attribute definition](https://developer.sailpoint.com/docs/tools/sdk/angular/sources/models/attribute-definition/) | Separate type/schema association, isMulti and isEntitlement properties support distinguishing value shape, access designation and schema relationship. A collection alone is not access, and a flag alone does not establish correct collection/mapping/linking or external provisioning support. No universal coercion or arbitrary isGroup configuration is invented. |
 
-### Diagram, data and reasoning checks
+#### Diagram, data and reasoning checks
 
 The two editable text assets match their inline diagrams after trailing-whitespace normalization. Maximum line widths are 33 and 44 characters. The first maps an account's groups G-206 reference through the same source/type to an access object and its details. The second compares the separate information supplied by account and entitlement reads and its linking agreement. Neither diagram asserts a private execution sequence, scheduling order, queue or guaranteed target write.
 
@@ -1544,7 +1616,7 @@ Employee 46006 is an expense reviewer. spend-46006 belongs to Expense Approvers 
 
 A conditional supported extension uses appRoles R-51, Audit Exporter. Separate sources/types can reuse short code 51 without becoming one object. G-999 is an inventory-only case. The independent transfer uses teams T-8, teamCode and displayLabel Regional Reviewers; it rejects invented types or silent field merging to bypass the one-account-attribute-per-type constraint. Both selected JSON objects are valid explanatory fragments, not complete source payloads or change requests.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Case | Misconception tested | Accepted reasoning and evidence boundary |
 |---|---|---|
@@ -1561,6 +1633,25 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## SRC-007: Filters and collection scope
 
+- Current revision: 2.0. Course placement: Module 4.7. Teaching specification: 3.1.
+- Current coverage, first-use explanations, official sources, supplied conditions, preserved assessments and executed checks: [SRC-007 revision record](revisions/SRC-007_Concept_Led_Revision_Record.md).
+- Documentation checked: October 26, 2026; nine primary references cover loading-account modes/deletion/history/Search, SDK/native filtering, Okta selection, Entra account/group/membership interaction, entitlement collection, response mapping/paging, API query parameters and account correlation.
+- Author review: 86 purposes reconciled; normal WEST/HUMAN selection evaluated before additional ACTIVE condition; all eight original cases and independent payroll transfer remain.
+- Neutral example: Service-Production; west-disabled WEST/HUMAN/DISABLED, west-active WEST/HUMAN/ACTIVE, east-active EAST/HUMAN/ACTIVE, west-service WEST/SERVICE/ACTIVE. Actual fields determine scope; keys aren't inferred classifications. No named employee, biography, employee number or company brand.
+- Supplied comparable inventory: 500 overall = 120 intended + 380 outside; 120 = 110 active + 10 disabled. Counts are accounts, not unique people. Disabled target records retain memberships.
+- First-collection main case has no prior west-disabled ISC record. Actor can read intended120; supported native inclusion query addsACTIVE; all110 selected records/pages are consumed. Approved removal ofACTIVE preservesWEST/HUMAN and supplied later read represents120 with target unchanged.
+- Conceptual conditions aren't runnable source syntax. Okta status example is connector-specific; Entra account-over-group priority isn't generalized; SDK facility isn't every standard connector's filter contract.
+- Distinct existing-record variation explains full-run missing-account handling/safeguards and conditional authoritative effects. Separate100-account cursor case and ACTIVE-changed-today payroll export test completeness, not default page size or replacement semantics.
+- Current editable diagrams: [required population and active filter](../assets/SRC-007_required_population_and_active_filter.txt) and [read scope to view evidence](../assets/SRC-007_read_scope_to_view_evidence.txt); exact inline matches, maximum widths 31 and 39 characters. Historical [active-only scope comparison](../assets/SRC-007_active_only_scope_comparison.txt) and [collection evidence boundaries](../assets/SRC-007_collection_evidence_boundaries.txt) stay unchanged.
+- Diagrams compare inclusion designs and evidence boundaries, not private processing order or universally separate controls. Collection, ownership, membership scope and viewing/Search freshness are distinguished.
+- No actual source/filter/query, actor authorization, collection, deletion setting, account/identity, correlation, provisioning or target operation. Actual beginner validation, full graphical review and formal approval remain pending.
+- Publication: revision 2.0 local only; published SRC-007 remains 1.0. SRC-003 through SRC-006 revisions 2.0 also remain local. The 23 revised lessons through SRC-002 remain the [verified published snapshot](PUBLICATION_2026-10-26_BATCH_2.md). No staging/commit/push/deployment; original ISC_Theory_Learning unchanged.
+- Next existing lesson: SRC-008, learner body unopened in this task. New authoring remains paused at reserved ROL-007.
+
+### Historical verification record: revision 1.0
+
+The original authoring-stage record below is retained as history. The current revision record above governs today's explanation, examples, checks and publication status. Baseline learner content remains recoverable at 7123d85038c688f1ccecffa6a8504d22e3986b79.
+
 - Revision: 1.0. Course placement: Module 4.7.
 - Documentation checked: October 21, 2026. Account collection modes, deletion safeguards/single-account limitations/history/Search freshness; connector SDK filtering; Okta SaaS inclusion filters; Entra ID account/group/membership scopes; entitlement aggregation, response mapping and API collection parameters freshly checked.
 - Author review: completed against teaching specification v2.6 for the stated scope; no unresolved author content issue identified.
@@ -1568,7 +1659,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 - Learner validation and formal publication approval: pending. Working-edition deployment is separate.
 - Scope: decide intended coverage and interpret filter location/direction, read permissions, access scopes and completeness. Full aggregation execution, delta state, deletion threshold calculations, identity deletion analysis and connector syntax recipes have their primary lessons. No live filter, deletion setting or credential is changed.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -1581,7 +1672,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 | [Web Services SaaS aggregation](https://documentation.sailpoint.com/connectors/saas/web_services/help/saas_connectivity/web_services/json_aggregation.html) | Concrete supported response/paging configuration and cursor-based GraphQL pagination illustrate that completeness depends on the read's supported continuation. The 100-account/cursor scenario is fictional and not this connector's default page size. HTTP request success is not a completeness proof. |
 | [Standard API collection parameters](https://developer.sailpoint.com/docs/api/standard-collection-parameters/) | API result filtering and pagination select the results of a read query, not the source aggregation configuration. The lesson does not copy endpoint defaults, maximums or query syntax into target/connector collection, or assume every API uses offset pagination. |
 
-### Diagram, data and reasoning checks
+#### Diagram, data and reasoning checks
 
 Two editable text assets match the inline diagrams after trailing-whitespace normalization. Maximum line widths are 31 and 38 characters. The first compares adding or omitting an ACTIVE inclusion condition while retaining WEST and HUMAN. The second is a human evidence-boundary trace, not a private ISC execution pipeline or a claim that every connector offers each separate filter.
 
@@ -1589,7 +1680,7 @@ The comparable supplied inventory contains 500 application accounts: 120 intende
 
 The simple predicates and counts are checked against the table. OR variations deliberately alter the boundary; a missing/unknown field's parser result is not invented. A separate first-page example contains 100 accounts and a continuation cursor. The payroll export is an independent transfer, with intended starters/recent leavers/unchanged workers missing from active-and-changed-today input. No real import, filter change, account deletion, access revocation or guardrail change occurred.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Case | Misconception tested | Accepted reasoning and evidence boundary |
 |---|---|---|
@@ -1607,6 +1698,25 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## SRC-008: Data ownership agreements
 
+- Current revision: 2.0. Course placement: Module 4.8. Teaching specification: 3.1.
+- Current coverage, first-use explanations, official references, supplied conditions, preserved assessments and executed checks: [SRC-008 revision record](revisions/SRC-008_Concept_Led_Revision_Record.md).
+- Documentation checked: October 26, 2026; eight primary references cover source ownership/views, profiles/required values/Preview, schema-change warnings, aggregation/processing, attribute-sync prerequisites/direction/null, lifecycle states and dateFormat.
+- Author review: 89 purposes reconciled; successful approved-record/producer/ISC/target mechanism precedes stale variation; all eight cases and independent laboratory transfer retained.
+- Neutral example: HR-Production workerKey worker-record, personNumber W-28, managerNumber M-4 and Projects-Production account project-user. Worker and target accounts are already associated with the same intended existing identity; other required inputs and supported account designations are valid. No named employee, biography, company brand or numbered account.
+- HR is the configured authoritative source; applicable profile maps contractEnd. Target expiryDate supports updates, is directly mapped from identity contractEnd in Create Account definition and has eligible attribute synchronization configured for its existing correlated account. No account creation by sync is implied.
+- Supplied normal/corrected date is 2026-12-31, producer revision 18. The stale case preserves approval at 08:45 UTC on November 20, export at 09:20, read at 09:30 and delivered revision 17/2026-11-30. Correction fixes the producer view under the same workerKey, then source/identity/actual target values are checked.
+- Date contract is last authorized UTC day: 2026-11-30 gives required boundary 2026-12-01T00:00:00Z; 2026-12-31 gives 2027-01-01T00:00:00Z. These aren't ISC defaults or proven future operations.
+- Current editable diagrams: [value responsibility and delivery](../assets/SRC-008_value_responsibility_and_delivery.txt) and [approved record versus stale delivery](../assets/SRC-008_approved_record_and_stale_delivery.txt); exact inline matches, maximum widths 41 and 31 characters.
+- Historical [correction responsibility handoffs](../assets/SRC-008_correction_responsibility_handoffs.txt) and [approved and exported revisions](../assets/SRC-008_approved_and_exported_revisions.txt) remain unchanged.
+- Role assignments and data contracts are illustrative operating practices, not native automatic validation/quarantine/order arbitration. Null sync, manual target overrides, missing partial rows, business authority and timestamp freshness remain explicitly scoped.
+- No actual producer/source/account/identity/profile/mapping/sync/transform/lifecycle/collection/processing/credential/permission/provisioning/target operation. Actual beginner validation, full graphical review and formal approval remain pending.
+- Publication: revision 2.0 local only; published SRC-008 remains 1.0. SRC-003 through SRC-007 revisions 2.0 also remain local. The 23 revised lessons through SRC-002 remain the [verified published snapshot](PUBLICATION_2026-10-26_BATCH_2.md). No staging/commit/push/deployment; original ISC_Theory_Learning unchanged.
+- All eight Module 4 lessons are individually revised. Next existing lesson: AGG-001, learner body unopened in this task. New authoring remains paused at reserved ROL-007.
+
+### Historical verification record: revision 1.0
+
+The original authoring-stage record below is retained as history. The current revision record above governs today's explanation, examples, checks and publication status. Baseline learner content remains recoverable at 7123d85038c688f1ccecffa6a8504d22e3986b79.
+
 - Revision: 1.0. Course placement: Module 4.8.
 - Documentation checked: October 21, 2026. Source ownership/account views, identity-profile mappings/required values/preview, account-schema change warnings, collection and identity processing, lifecycle-state boundaries, dateFormat, and attribute synchronization eligibility/direction/null handling freshly checked.
 - Author review: completed against teaching specification v2.6 for the stated scope; no unresolved author content issue identified.
@@ -1614,7 +1724,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 - Learner validation and formal publication approval: pending. Working-edition deployment is separate.
 - Scope: field authority, producer/integration/consumer responsibility, identifiers, requiredness, temporal and missing-value contracts, correction/acceptance/change evidence. These operating practices are an illustrative engineering model, not documented universal ISC roles, a contract-validation engine, automatic quarantine or automatic version arbitration. The sources below support product boundaries, not a mandate for the fictional team's job assignments.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -1627,7 +1737,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 | [Setting up lifecycle states](https://documentation.sailpoint.com/saas/help/provisioning/lifecycle.html) | Organizational state and enabled/configured actions differ from raw HR codes or date strings. The lesson establishes only this dependency; full state mappings, enabling states, account actions and removal behavior have primary lessons. No date text alone schedules an exact external action. |
 | [dateFormat transform](https://developer.sailpoint.com/docs/extensibility/transforms/operations/date-format/) | Supported representation conversion is separate from approving a new fact or selecting business cutoff/time-zone semantics. No full transform payload or default-UTC claim is made. The next-day UTC boundaries are expressly supplied agreement choices and checked arithmetically. |
 
-### Diagram, data and reasoning checks
+#### Diagram, data and reasoning checks
 
 Two editable text assets match the inline diagrams after trailing-whitespace normalization. Maximum line widths are 30 and 37 characters. The first compares approved revision 18 (2026-12-31) with stale exported revision 17 (2026-11-30). The second is a responsibility/dependency handoff: business approval, producer correction, ISC values and verified target update. Neither is an undocumented ISC transaction or guaranteed execution schedule.
 
@@ -1637,7 +1747,7 @@ HR approves the extension on 20 November 2026 at 08:45 UTC. The export is genera
 
 The agreement treats contractEnd as last authorized calendar day in UTC: 2026-11-30 maps to required boundary 2026-12-01T00:00:00Z, and 2026-12-31 to 2027-01-01T00:00:00Z. These are not product default meanings or proven delivery instants. Producer revisions do not give ISC automatic stale-row rejection, latest-arrival precedence, exactly-once processing or rollback. Business extension approval differs from correcting the stale export representation.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Case | Misconception tested | Accepted reasoning and evidence boundary |
 |---|---|---|
@@ -1655,6 +1765,25 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## AGG-001: Following an account record from a source into ISC
 
+- Current revision: 2.0. Course placement: Module 5.1. Teaching specification: 3.1.
+- Current coverage, first-use meanings, official references, supplied conditions, preserved assessments and executed checks: [AGG-001 revision record](revisions/AGG-001_Concept_Led_Revision_Record.md).
+- Documentation checked: October 26, 2026; nine primary references cover account loading/modes/history/Search, Web Services mapping, schemas, correlation/shadow/source views, identity profiles/processing, entitlement aggregation and provisioning.
+- Author review: 81 purposes reconciled; complete returned-record-to-existing-account trace precedes ownership/value/mode variations; all eight cases and independent HR-record transfer remain.
+- Neutral main example: Case-Production non-authoritative source, key case-account, designated login case-user, account employeeRef W-31 matching identity employeeNumber W-31 under supplied unique existing association; operating office BLR-to-HYD, HR home office CHN, existing G-51 case-reviewers membership. No employee biography, brand, numbered account/login or identity-ID stand-in.
+- Conditions: intended source/read/actor/scope and complete pages supplied; valid unchanged account ID/Name, correct extraction from items and profile.siteCode-to-office mapping, verified intended existing owner. Selected raw/represented JSON fragments aren't complete population or ISC API responses.
+- Normal result updates the existing account to office HYD; identity remains HR-mapped CHN, membership stays G-51, no external account/grant change reported. Non-authoritative concerns origin, not inability to supply supported mapped values. Unmatched-account shadow representation isn't a verified new HR person.
+- Independent variations: first representation, missing profile.branchCode path, W-13 person-reference mismatch, unchecked pagination, changed correlation with unchanged input, later configured provisioning and newly delivered stale file. None is a simultaneous hidden defect in the main trace.
+- Current editable diagrams: [account read and representation](../assets/AGG-001_account_read_and_representation.txt) and [separate account and identity inputs](../assets/AGG-001_separate_account_and_identity_inputs.txt); exact inline matches, maximum widths 37 and 34 characters.
+- Historical [account read to representation](../assets/AGG-001_account_read_to_representation.txt) and [account and identity value paths](../assets/AGG-001_account_and_identity_value_paths.txt) remain unchanged.
+- Diagrams show logical dependencies and separate input paths, not private jobs/commits/hosts or write instructions. Optimized/delta/single-account behaviour and identity processing don't collapse into universal reread/recalculate/provisioning equivalence.
+- No actual source/schema/mapping, actor/credential, account/identity, correlation, read/processing, provisioning or target operation. Actual beginner validation, full graphical review and formal approval remain pending.
+- Publication: revision 2.0 local only; published AGG-001 remains 1.0. SRC-003 through SRC-008 revisions 2.0 also remain local. The 23 revised lessons through SRC-002 remain the [verified published snapshot](PUBLICATION_2026-10-26_BATCH_2.md). No staging/commit/push/deployment; original ISC_Theory_Learning unchanged.
+- Next existing lesson: AGG-002, learner body unopened in this task. New authoring remains paused at reserved ROL-007. Subsequent legacy +## author-reference sections are preserved.
+
+### Historical verification record: revision 1.0
+
+The original authoring-stage record below is retained as history. The current revision record above governs today's explanation, examples, checks and publication status. Baseline learner content remains recoverable at 7123d85038c688f1ccecffa6a8504d22e3986b79.
+
 - Revision: 1.0. Course placement: Module 5.1.
 - Documentation checked: October 21, 2026. Account collection modes/triggers/history/single-account and Search boundaries, Web Services SaaS response paths, schema identification/naming, account correlation, source views including shadow identity representation, profile mappings, identity processing, entitlement aggregation and provisioning freshly checked.
 - Author review: completed against teaching specification v2.6 for the stated scope; no unresolved author content issue identified.
@@ -1662,7 +1791,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 - Learner validation and formal publication approval: pending. Working-edition deployment is separate.
 - Scope: trace the logical account-read and evidence relationships, not a private execution pipeline. Detailed full/delta/optimization/single-account operation mechanics, correlation criterion ordering, entitlement inventory and provisioning have primary lessons. No source, mapping, correlation or target configuration is changed.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -1676,7 +1805,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 | [Aggregating entitlements](https://documentation.sailpoint.com/saas/help/loading_entitlements/aggregating_entitlements.html) | Access-object inventory/descriptive collection differs from account membership values. G-51 is supplied existing membership, not a group creation or a grant caused by the read. Complete inventory and linking receive deeper treatment in AGG-002. |
 | [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html) | External account/access changes use provisioning capabilities/configurations, distinct from observed collection. A read can supply data to later configured decision/change work, so the full workflow must not be described as universally consequence-free. No new account, membership or target field is changed in the main supplied result. |
 
-### Diagram, data and reasoning checks
+#### Diagram, data and reasoning checks
 
 Two editable text assets match their inline diagrams after trailing-whitespace normalization. Maximum line widths are 33 and 44 characters. The first depicts logical read dependencies, not separate private jobs, storage commits or a universal runtime host. The second separates the ReviewBoard-to-account HYD path from the HR-to-identity CHN path; it is not a write/synchronization instruction.
 
@@ -1686,7 +1815,7 @@ The selected raw JSON envelope contains one illustrative items entry with nested
 
 Counterfactual first-collection, wrong branchCode path, employeeRef 51010, incomplete pages, unchanged-record optimization, downstream access and stale-file cases are explicitly variations, not simultaneous defects in the successful trace. The HR-record transfer uses an independent authoritative scenario. Formal learner testing has not occurred.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Case | Misconception tested | Accepted reasoning and evidence boundary |
 |---|---|---|
@@ -1702,7 +1831,28 @@ Counterfactual first-collection, wrong branchCode path, employeeRef 51010, incom
 
 Questions and worked reasoning remain in the learner file. Source evidence, assessment intent and review limitations stay outside it.
 
-+## AGG-002: Account aggregation and entitlement aggregation
+## AGG-002: Account aggregation and entitlement aggregation
+
+- Current revision: 2.0. Course placement: Module 5.2. Teaching specification: 3.1.
+- Learner title: The group is in ISC. Does the account hold it?
+- Current coverage, first-use meanings, official sources, supplied conditions, preserved assessments and executed checks: [AGG-002 revision record](revisions/AGG-002_Concept_Led_Revision_Record.md).
+- Documentation checked: October 26, 2026; nine primary-reference rows map ten official account/object-loading, schema/type-linking, entitlement-management, source/correlation, provisioning and Web Services operation/multi-call pages.
+- Author review: 81 purposes reconciled; complete account-held/object-details/link mechanism before count, type, scope, time and metadata variants; all eight original cases and project-file transfer retained.
+- Neutral example: Invoice-Production, existing invoice-user holding G-520/G-521, account-b holding G-520, account-c holding G-521; correct intended identity association supplied/verified. No employee biography/number, company brand or numbered account. Unnecessary employeeRef sample field removed while ownership meaning/evidence remains.
+- Selected complete account population: three accounts, four direct membership occurrences, two held group IDs. Object read returns G-520 Invoice Reviewers, G-521 Archive Readers and G-599 Exception Reviewers, with G-599 unheld within that supplied population.
+- Schema agreement: groups entitlement-marked/multi-valued and connected to supported groups type; groupKey selected ID, label selected Name. Account-derived representations gain details, and G-599 becomes known under supplied complete reads/no protected-description blocking. No grant or target-group creation is implied.
+- Source/type/ID context, direct versus indirect/effective access, actor/read scope, endpoint multi-call collection and selected-type coverage remain distinct. No universal read order or native schedule for flat-file entitlement imports is promised.
+- Independent UTC timing variation: account observation at 09:00, external G-520 membership removal at 09:20, group existence observation at 09:30. Later object read doesn't refresh old account membership or reverse removal. T-22/T-90 project files are separate transfer.
+- Current editable diagrams: [held values and object details](../assets/AGG-002_held_values_and_object_details.txt) and [membership change and later object read](../assets/AGG-002_membership_change_and_later_object_read.txt); exact inline matches, maximum widths 36 and 38 characters.
+- Historical [two collection responsibilities](../assets/AGG-002_two_collection_responsibilities.txt) and [separate observation times](../assets/AGG-002_separate_observation_times.txt) remain unchanged.
+- Metadata edits aren't source writes; manual descriptions can persist after a successful read. Account aggregation doesn't delete entitlements; partial object absence isn't proven deletion or revocation.
+- No actual tenant/source/schema/type, account/identity, actor/permission, read/schedule/import, manual metadata, membership or provisioning operation. Actual beginner validation, full graphical review and formal approval remain pending.
+- Publication: revision 2.0 local only; published AGG-002 remains 1.0. SRC-003 through SRC-008 and AGG-001 revisions 2.0 also remain local. The 23 revised lessons through SRC-002 remain the [verified published snapshot](PUBLICATION_2026-10-26_BATCH_2.md). No staging/commit/push/deployment; original ISC_Theory_Learning unchanged.
+- Next existing lesson: AGG-003, learner body unopened. This task corrects only the owned AGG-002 legacy header; earlier author records and the downstream AGG-003 tail remain preserved. New authoring stays paused at reserved ROL-007.
+
+### Historical verification record: revision 1.0
+
+The original authoring-stage record below is retained as history. The current revision record above governs today's explanation, examples, checks and publication status. Baseline learner content remains recoverable at 7123d85038c688f1ccecffa6a8504d22e3986b79.
 
 - Revision: 1.0. Course placement: Module 5.2.
 - Documentation checked: October 21, 2026. Official account/entitlement loading, entitlement types and account-schema linking, entitlement management, source/connector definitions, account correlation, provisioning and Web Services SaaS operation/multi-call examples freshly checked.
@@ -1711,7 +1861,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 - Learner validation and formal publication approval: pending. Working-edition deployment is separate.
 - Scope: compare held account access values with access-object inventory and details, then reason about linking, counts, coverage and freshness. Detailed aggregation modes and runtime handling retain their primary lessons. No source schema, credential, schedule, manual metadata state or actual membership is changed.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -1725,7 +1875,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 | [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html) | External account/access changes are separate supported operations. Observed membership isn't a newly issued grant. Collected data can feed subsequent configured change decisions, so complete workflows aren't declared universally consequence-free. |
 | [Web Services SaaS HTTP operations](https://documentation.sailpoint.com/connectors/saas/web_services/help/saas_connectivity/web_services/http_operations.html) and [aggregation examples](https://documentation.sailpoint.com/connectors/saas/web_services/help/saas_connectivity/web_services/json_aggregation.html) | Account aggregation, group aggregation and entitlement-add/remove are distinct supported operations. Account collection can use multiple external calls. Endpoint names alone don't establish the completed ISC responsibility. These are connector-specific supporting examples, not a complete InvoiceDesk configuration or a claim every connector uses the same calls. |
 
-### Diagram, data and reasoning checks
+#### Diagram, data and reasoning checks
 
 Two editable text assets match their inline blocks after trailing-whitespace normalization. Maximum line widths are 48 and 37 characters. The first separates account-held IDs from object definitions and shows their logical information relationship. It doesn't claim a private storage implementation, simultaneous execution, universal run order or external grant. The second is a separate UTC observation/change timeline, not internal aggregation stages.
 
@@ -1735,7 +1885,7 @@ The selected JSON account object and three-element group array are valid teachin
 
 The timeline is independent of the main completed trace: account observation 09:00 UTC, target removal of Devi's G-520 membership 09:20, group existence observation 09:30. The later object read doesn't establish refreshed account membership. Counterfactual mapping, denied group read, manual description and selected-type cases aren't simultaneous main defects. T-22/T-90 is an independent project-file transfer.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Case | Misconception tested | Accepted reasoning and evidence boundary |
 |---|---|---|
@@ -1752,7 +1902,38 @@ The timeline is independent of the main completed trace: account observation 09:
 Questions and worked reasoning remain in the learner file. Source evidence, assessment intent and review limitations stay outside it.
 
 
-+## AGG-003: Full aggregation, optimization and reprocessing unchanged records
+## AGG-003: Full aggregation, optimization and reprocessing unchanged records
+
+- Current revision: 2.0, local only. Course placement: Module 5.3. Teaching specification: 3.1.
+- Fresh official-document checks: October 26, 2026, including the generated V2025 operation reference rather than relying on its redirect wrapper.
+- Current review: neutral account records and causal beginner explanation; full coverage/processing distinction, fixed-input two-run trace, request-local option, first-use terms, eight worked cases and identity-profile transfer reconciled against original purposes.
+- Current [revision record](revisions/AGG-003_Concept_Led_Revision_Record.md) contains coverage, primary-source applicability, assumptions, assessments and executed checks.
+- Current [read/process choice](../assets/AGG-003_read_then_process_choice.txt) and [two-run comparison](../assets/AGG-003_two_runs_same_records.txt) match inline blocks, maximum widths 40 and 41. Historical assets remain unchanged.
+- No tenant/API execution. Equipment-Production, four account records, W-33/W-30 identifiers and completed association results are supplied examples, not observed operations.
+- Publication: revised snapshot remains 23 lessons through SRC-002; AGG-003 revision 2.0 and prior SRC-003 through SRC-008/AGG-001/002 drafts remain local. Published AGG-003 is revision 1.0.
+- Actual beginner validation, full graphical review and formal approval remain pending. No fixed diagram/table/word quota is applied.
+
+### Current official sources by claim
+
+| Official reference | Claim / section and applicability |
+|---|---|
+| [Loading account data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html) | Aggregation Methods distinguishes optimized default/unchanged skip from unoptimized account and manager reevaluation. API section documents form-data disableOptimization=true, current-run lifetime and optimized UI runs. History/detail counters, Search freshness, single-account limits, supported delta scope and deletion safeguards supply separate evidence boundaries. No private comparison algorithm, universal delta reset, exact counter formula or performance duration is inferred. |
+| [Assigning source accounts to identities](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) | Account-to-identity comparison, unresolved ownership and shadow representation; reprocessing after changed comparison. Manual ownership persists despite changed account data and isn't removed by unoptimized aggregation. Main supplied initially uncorrelated/unique-match/no-manual-override condition is not a promise to move previously assigned accounts. |
+| [Manager correlation](https://documentation.sailpoint.com/saas/help/sources/manager_correlation.html) | Manager correlation establishes employee identity to manager identity, distinct from source-account ownership. No manager result or internal engine ordering is invented. |
+| [V2025 account aggregation](https://developer.sailpoint.com/docs/api/v2025/import-accounts/) and [generated operation reference](https://developer.sailpoint.com/redoc/sailpoint-api-v2025-light.html#tag/Sources/operation/importAccounts) | Wrapper redirects to generated reference. Inspected the specific importAccounts operation's rendered HTML: source ID, multipart/form-data body, string disableOptimization flag, supported authentication, authorization error and 202 task response. This isn't an account JSON field or persistent source patch. Request acceptance isn't verified completion; no runnable request or tenant execution supplied. Admin guide currently illustrates beta while this generated reference is V2025; lesson supplies no endpoint/version equivalence claim. |
+| [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Identity modification by aggregation/provisioning initiates event processing. Profile/access-model configuration changes require relevant manual processing even when identity inputs haven't changed. Applying a profile mapping is a different responsibility from account ownership reevaluation; starting processing doesn't confirm target delivery. |
+| [Identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Profile population and attribute mappings; identity values differ from source-account attributes. Existing-input office-mapping transfer requires expected-output and freshness checks, supported application of changes and separate external result evidence. |
+| [Managing sources](https://documentation.sailpoint.com/saas/help/sources/index.html) | Source/connector representation, source account view and correct source/account context. Complete four-account visibility and read are explicit example conditions, not facts inferred from successful status. |
+| [Managing account schemas](https://documentation.sailpoint.com/saas/help/accounts/schema.html) | Represented fields and their uses; delivered input and mapping differ from application-only display changes. No algorithm for detecting changes is asserted. |
+| [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html) | External account/access changes are distinct from collected records or ownership associations. Collected information can feed subsequent configured changes; a successful read or association doesn't prove delivery of a denied membership write. |
+
+### Current reasoning boundaries
+
+The account was initially uncorrelated, with valid stable identification, exactly one intended existing identity under the corrected comparison and no manual override. The old email mismatch existed before initial collection. Changing configuration doesn't establish input changes or unlink a previously assigned account. Run A uses a complete optimized four-record read: two process and two skip. After recording its changed/new records, no further external or mapped account-value changes occur; unoptimized Run B reprocesses all four. Model counts are not exact UI field formulas.
+
+Full read coverage, unchanged processing, identity calculations and external writes remain separate. A processing choice doesn't prove delivery through a delta/filter/permission gap, correct unequal values, remove a manual association or apply every configuration change. The profile-office transfer uses existing current inputs and supported manual identity processing. Deletion safeguards and downstream access consequences remain in scope.
+
+### Historical verification record: revision 1.0
 
 - Revision: 1.0. Course placement: Module 5.3.
 - Documentation checked: October 21, 2026. Official account-loading modes, API initiation/request lifetime, history/Search and single-account boundaries; account correlation including manual associations; manager correlation; V2025 account-aggregation request; identity processing/profile mappings; and source/schema/provisioning responsibilities freshly checked.
@@ -1761,7 +1942,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 - Learner validation and formal publication approval: pending. Working-edition deployment is separate.
 - Scope: distinguish full configured-population reading from unchanged-record handling, then trace a changed comparison against unchanged input. Detailed delta mechanisms, single-account behavior, schedules, deletion handling and correlation/identity-processing design retain their primary lessons. No real account, source setting, identity, credential or access is changed.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -1775,7 +1956,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 | [Managing account schemas](https://documentation.sailpoint.com/saas/help/accounts/schema.html) | Represented attribute structure and identification responsibilities. Stable valid account identification is supplied. A target-only comment outside the returned/represented data doesn't establish a changed collected record; no private comparison algorithm is inferred. |
 | [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html) | External account/access changes require their supported change mechanism. Correct ownership isn't a successful target grant. Read/processing can feed configured downstream changes, so the whole workflow isn't characterized as universally harmless. |
 
-### Diagram, data and reasoning checks
+#### Diagram, data and reasoning checks
 
 Two editable text assets match the inline blocks after trailing-whitespace normalization. Maximum line widths are 43 and 41 characters. The decision diagram covers new/changed records versus existing unchanged records and the optimization choice. It is a logical processing model, not a checksum, queue, host, transaction sequence or guarantee of successful ownership. The second is a comparison of two sequential teaching executions, not a task screenshot or universal counter-name mapping.
 
@@ -1785,7 +1966,7 @@ Run A's configured population contains four fully delivered records: existing un
 
 The selected JSON is valid and isn't a full ISC API object or runnable request. example.invalid addresses aren't real contacts. Counterfactual 53030 mismatch, absent delta delivery, manual ownership and denied target-write cases are independent of the successful correction. HR/profile transfer uses a different configuration-change problem with current account inputs already present.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Case | Misconception tested | Accepted reasoning and evidence boundary |
 |---|---|---|
@@ -1804,6 +1985,38 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## AGG-004: Delta aggregation and connector-specific limitations
 
+- Current revision: 2.0, local only. Course placement: Module 5.4. Teaching specification: 3.1.
+- Fresh official-document checks: October 26, 2026, including JDBC SaaS change tables, Active Directory reference/DirSync/permissions, Okta SaaS interfaces/90-day retention and ISC aggregation/processing boundaries.
+- Current review: neutral account records; explain the normal baseline/capture/selection/value/result mechanism before connector variants and failure recovery. All original assessment purposes retained.
+- Current [revision record](revisions/AGG-004_Concept_Led_Revision_Record.md) records coverage, assumptions, primary references, assessment reasoning and executed checks.
+- Current [capture responsibilities](../assets/AGG-004_captured_changes_to_records.txt) and [unchanged-account inventory](../assets/AGG-004_delta_keeps_unchanged_accounts.txt) match inline blocks; widths 38 and 34. Historical assets remain unchanged.
+- No tenant/database/API execution. Service-Production, SERVICE_ACCOUNTS/SERVICE_CHANGES, acct-a/b/c/d, W-44 and completed outcomes are supplied examples.
+- Publication: revised snapshot remains 23 lessons through SRC-002. SRC-003 through SRC-008 and AGG-001 through AGG-004 revisions 2.0 remain local; published AGG-004 remains 1.0.
+- Actual beginner validation, full graphical review and formal approval remain pending.
+
+### Current official sources by claim
+
+| Official reference | Claim / section and applicability |
+|---|---|
+| [Loading account data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html) | Delta selection differs from full population reading and optimized/unoptimized processing. Supported source selection, history, Search timing and OU-move full-read guidance remain qualified. Processing choices don't prove delivery of a record absent from delta. No universal schedule, checkpoint reset or retry result is inferred. |
+| [JDBC SaaS delta tables](https://documentation.sailpoint.com/connectors/saas/jdbc/help/saas_connectivity/jdbc/delta_agg.html) | Full initial collection; account and tracking tables; identifying value and Insert/Update/Delete action; capture triggers and tracking read/write/cleanup requirements. Documented tracking re-initialization isn't a private atomic cleanup guarantee or license for manual unread-entry deletion. Group delta is unsupported by this mechanism. Service table/column names and completed account-removal result are supplied teaching conditions. |
+| [Active Directory delta aggregation](https://documentation.sailpoint.com/connectors/active_directory/help/integrating_active_directory/delta_aggregation.html) | Default DirSync mode, initial full-reference establishment and account added/changed/deleted coverage. Not generalized into one starting-reference mechanism for every connector. |
+| [Active Directory delta permissions](https://documentation.sailpoint.com/connectors/active_directory/help/integrating_active_directory/delta_aggregation_permissions.html) | Additional Replicating Directory Changes and Deleted Objects container read authority. Connection success or ordinary read doesn't establish both. No permission commands or actual security changes supplied. |
+| [Okta SaaS delta aggregation](https://documentation.sailpoint.com/connectors/saas/okta/help/saas_connectivity/okta/delta_aggregation.html) | Accounts-only delta; profile updates through users API and entitlement/deleted-user changes through logs API. Documented 90-day retained-log limit and full account-aggregation recovery for current state; expired events aren't recreated. No universal token lifetime inferred. |
+| [Managing account schemas](https://documentation.sailpoint.com/saas/help/accounts/schema.html) | Represented attributes/identification differ from change-entry formats. Account key acct-a is distinct from employeeRef W-44; valid identification is supplied. Omitted response fields aren't given universal clear-value semantics. |
+| [Managing sources](https://documentation.sailpoint.com/saas/help/sources/index.html) | Source/connector responsibilities and identified Accounts records/associations. Saved configuration, connection test and person-name Search aren't proof of delivered population or applied changes. |
+| [Assigning source accounts to identities](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) | Ownership uses applicable comparisons; existing correct acct-a association is explicit, not inferred from account-key characters or delta success. Changed ISC-only comparisons need appropriate coverage and reevaluation. |
+| [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Aggregation/provisioning modifications of identities initiate identity processing. Account value, identity mapping, access decisions and successful external delivery are distinct. No every-row/every-calculation guarantee. |
+| [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html) | External account/access changes use supported write operations. Change entries observe existing external changes, not commands to repeat creates/deletes. Collection bookkeeping isn't unrestricted business-data authority; downstream outcomes need separate evidence. |
+
+### Current reasoning boundaries
+
+The main example starts from completed acct-a/b/c baseline and continuous correct capture. A supported completed read handles Update acct-a, Insert acct-d and Delete acct-c, resulting in acct-a/b/d while acct-a gains FIN. Acct-b is omitted unchanged, not deleted. Account key and employee reference are distinct; acct-a's correct existing ownership and supported deletion result are supplied rather than inferred.
+
+A query capable of returning the right value doesn't establish selection of the affected account. A delta count isn't a full population or live-account count. Capture gaps, partial results, tracking state, retention, table relationships and scope changes need supported handling; no atomic rollback, exactly-once replay or universal checkpoint is asserted. Supported cleanup isn't an invitation to clear unread evidence. JDBC account delta isn't group-object delta. Profile/log, OU-move and permission limits stay connector-specific.
+
+### Historical verification record: revision 1.0
+
 - Revision: 1.0. Course placement: Module 5.4.
 - Documentation checked: October 21, 2026. ISC account loading/modes/history/Search/OU-move guidance; JDBC SaaS change-table design; Active Directory DirSync/baseline and additional permissions; Okta SaaS account/profile/log/retention behavior; and source/schema/correlation/identity-processing/provisioning responsibilities freshly checked.
 - Author review: completed against teaching specification v2.6 for this scope; no unresolved author content issue identified.
@@ -1811,7 +2024,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 - Learner validation and formal publication approval: pending. Working-edition deployment is separate.
 - Scope: changes-only collection and the dependencies behind coverage. Detailed deletion safeguards, schedules, single-account operations and source reprocessing retain their primary lessons. No SQL, API, credential, permission, tracking-state or real account change is executed.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -1826,7 +2039,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 | [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Aggregation/provisioning changes to an identity initiate processing; mapped identity values and configured access consequences remain distinct from source account data. No every-delta-row/every-identity-calculation or completed-target-write guarantee is made. |
 | [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html) | External account/access changes use their supported change mechanism. Delta observes already-performed WorkQueue changes; it doesn't repeat external create/delete actions. Tracking-table bookkeeping isn't unrestricted business-data provisioning, and downstream consequences require separate verification. |
 
-### Diagram, data and reasoning checks
+#### Diagram, data and reasoning checks
 
 Two editable text assets match their inline blocks after trailing-whitespace normalization. Maximum line widths are 38 and 40 characters. The first shows database capture, connector read and ISC handling as logical collection dependencies. The separated engineer line is human verification, not an automatic success stage or private transaction guarantee. The second displays supplied before/observed/after account representations, not commands sent to WorkQueue.
 
@@ -1838,7 +2051,7 @@ Selected JSON is valid teaching data, not a full ISC API object. No change-table
 
 A baseline/capture transition gap, missing change entry, unknown checkpoint state or partial response is treated as insufficient evidence rather than a universal product failure algorithm. No exactly-once replay, global rollback, atomic update/cleanup, universal timestamp boundary or token lifetime is asserted.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Case | Misconception tested | Accepted reasoning and evidence boundary |
 |---|---|---|
@@ -1857,6 +2070,38 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## AGG-005: Single-account aggregation and its boundaries
 
+- Current revision: 2.0, local only. Course placement: Module 5.5. Teaching specification: 3.1.
+- Fresh official-document checks: October 26, 2026, especially the explicit UI single-account contract and current Accounts SDK stored-read/asynchronous reload distinction.
+- Current review: neutral account records, causal beginner explanation, separate account/identity/external states, correct existing profile input, eight original worked cases and support-button transfer preserved.
+- Current [revision record](revisions/AGG-005_Concept_Led_Revision_Record.md) records coverage, sources, assumptions, assessment purposes and executed checks.
+- Current [selected lookup and values](../assets/AGG-005_selected_lookup_and_values.txt) and [UI refresh scope](../assets/AGG-005_ui_refresh_scope.txt) match inline diagrams; maximum widths 33 and 34. Historical assets remain unchanged.
+- No tenant/API/source operation. Support-Production, support-user/support-admin, W-55, status mappings and completed results are supplied examples.
+- Publication: revised snapshot remains 23 through SRC-002. SRC-003 through SRC-008 and AGG-001 through AGG-005 revisions 2.0 remain local; published AGG-005 remains 1.0.
+- Actual beginner validation, full graphical review and formal approval remain pending.
+
+### Current official sources by claim
+
+| Official reference | Claim / section and applicability |
+|---|---|
+| [Loading account data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html), single-account section | Documented UI Aggregate Account updates selected account data/status without synchronizing new identity attributes or affecting provisioning. Not found leaves the ISC account unchanged. Deletion guidance here points to full source aggregation; this isn't generalized to negate connector-specific explicit delta deletions. History/view freshness and full versus optimized processing remain distinct. |
+| [Managing accounts](https://documentation.sailpoint.com/saas/help/accounts/index.html), unlock/remove sections | Supported unlock changes lock state separately and may need a read first for current status. Remove Account removes ISC representation, not the external account; a later full aggregation can represent an existing external account again. No unlock/removal/security operation is executed or presented as a routine stale-display fix. |
+| [Managing sources](https://documentation.sailpoint.com/saas/help/sources/index.html) | Correct source/account context and associations; reading one account doesn't establish all accounts of an identity or full-source freshness. Direct-connect versus file evidence is operation-specific. |
+| [Web Services SaaS Get Object](https://documentation.sailpoint.com/connectors/saas/web_services/help/saas_connectivity/web_services/get_object.html) | Specified-account request uses nativeIdentity as external AccountID, with request/response mapping. Documented example uses POST, so HTTP method alone doesn't determine business read/change responsibility. Other workflows can use Get Object; no universal one-call architecture or UI/API effect equivalence is asserted. |
+| [Web Services SaaS HTTP operations](https://documentation.sailpoint.com/connectors/saas/web_services/help/saas_connectivity/web_services/http_operations.html) | Test Connection, Account Aggregation, Get Object, Group Aggregation and account changes have distinct supported configurations. List/connection success doesn't establish lookup authority, request or response handling. Main lookup/unlock support and authority are supplied assumptions. |
+| [Account schemas](https://documentation.sailpoint.com/saas/help/accounts/schema.html) | Represented fields, shapes and selected account identification. accountKey support-user differs from employeeRef W-55. Boolean locked and office codes are supplied fields/status interpretation, not universal defaults or complete API objects. |
+| [Identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Identity values use configured source/attribute inputs. Main office explicitly maps from this account; BLR remaining isn't explained away as an intentional HR override. Mapping relationship doesn't override the UI action's explicit no-sync boundary. |
+| [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Relevant profile/access configuration changes may require manual identity processing even unchanged inputs. Selected identity processing is separate and has reviewed scope/consequences; no automatic run-after-every-account-read recipe or target-success guarantee is given. |
+| [Assigning source accounts to identities](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) | Account-owner assignment uses applicable comparison and association handling. Correct main association is supplied. A successful UI account read isn't a universal correlation/manual-ownership repair. |
+| [Official Accounts SDK reference](https://developer.sailpoint.com/docs/tools/sdk/typescript/accounts/methods/accounts/) | Fresh current get-account-v1 retrieves account details; submit-reload-account-v1 asynchronously reloads through the connector and performs one-time aggregation, returning AccountsAsyncResult. Separate unlock submits change work. Account id parameter is ISC account ID, not native key/employee reference. Routes, scopes and runnable payloads omitted; API contracts aren't presumed identical to the UI action. |
+
+### Current reasoning boundaries
+
+The main external account already exists and is correctly associated with an established identity. Source support/authority, stable account identification, lock-status interpretation and profile office mapping from this application account are supplied. Before UI action: external true/HYD, ISC account false/BLR, identity office BLR. After successful specified read: ISC account true/HYD, identity office still BLR, external account still locked. Correct profile mapping doesn't imply this operation applies identity attributes.
+
+No UI-read side effect is inferred from a nearby independent process. Not found, explicit delta deletion, full-source deletion and representation removal have different contracts. Stored-account retrieval and accepted connector reload aren't completed fresh-source observations. Selected source/account, actual returned/extracted values, completed operation and resulting record evidence remain separate. File import time doesn't upgrade export freshness. Transfer manager input is HR, not the refreshed application.
+
+### Historical verification record: revision 1.0
+
 - Revision: 1.0. Course placement: Module 5.5.
 - Documentation checked: October 21, 2026. Account-loading single-account UI section, account unlock/remove guidance, Web Services SaaS Get Object/HTTP operations, account schema, identity profiles/processing, correlation and current Accounts SDK operation definitions freshly checked.
 - Author review: complete against teaching specification v2.6 for this scope; no unresolved author content issue identified.
@@ -1864,7 +2109,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 - Learner validation and formal publication approval: pending; working-edition deployment is separate.
 - Scope: documented UI Aggregate Account for an existing represented account. API names/versions, custom workflows and connector hooks need separate effect verification. No runnable API, unlock or deletion procedure is supplied.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -1879,7 +2124,7 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 | [Assigning source accounts to identities](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) | Ownership matching is a distinct responsibility with required input/comparison context. A successful specified-account refresh is not a documented promise of universal ownership or manual-association repair. |
 | [Official Accounts TypeScript SDK reference](https://developer.sailpoint.com/docs/tools/sdk/typescript/accounts/methods/accounts/) | Fresh current operations distinguish stored account-details retrieval, asynchronous connector reload/one-time aggregation returning AccountsAsyncResult, and separate unlock. Account id parameter is not the external native key or employee number. Exact routes, scope lists and API versions deliberately omitted from learner prose because they are not needed for this theory distinction and older v3/beta pages differ. No API executed or API/UI side-effect equivalence asserted. |
 
-### Example and diagram consistency
+#### Example and diagram consistency
 
 Devi 55005 coordinates support cases. Main case has one existing correctly associated CaseHub Production account ch-55005. A supported Web Services SaaS lookup returns selected JSON accountKey ch-55005, employeeRef text 55005, locked Boolean true and office HYD. Before the UI action, external data is locked/HYD and ISC account data is unlocked/BLR; identity office is BLR with an existing profile mapping from this account. After the supplied successful action, ISC account data is locked/HYD, identity office remains BLR and external lock remains true. Neither an unlock nor identity-attribute synchronization is inferred.
 
@@ -1889,7 +2134,7 @@ Two editable assets exactly match the inline text blocks after trailing-whitespa
 
 Selected JSON parses and contains four stated fields. Two learner tables keep identity, account, external state and identifier roles separate. No real credentials, URLs, tenant output, access grant or deletion instruction is embedded in learner prose.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Case | Misconception tested | Accepted reasoning and evidence boundary |
 |---|---|---|
@@ -1907,6 +2152,36 @@ Questions, supplied facts and worked reasoning remain in the learner file. No be
 
 ## AGG-006: Schedules, scope, dependencies and data freshness
 
+- Current revision: 2.0, local only. Course placement: Module 5.6. Teaching specification: 3.1.
+- Fresh official-document checks: October 26, 2026, including daily recurrence windows, queue submission, runtime-specific time zones, entitlement/file controls and migration clock warnings.
+- Current review: neutral worker record and causal beginner explanation; all timeline events, freshness/offset/window calculations, eight original worked cases and contractor-disable design transfer preserved.
+- Current [revision record](revisions/AGG-006_Concept_Led_Revision_Record.md) records coverage, primary sources, assumptions, assessment reasoning and executed checks.
+- Current [publication/observation trace](../assets/AGG-006_publication_and_observation_times.txt) and [required handoffs](../assets/AGG-006_required_handoffs_and_outcomes.txt) match inline blocks, widths 30 and 37. Historical assets remain unchanged.
+- No tenant/API/schedule/time-zone/runtime/source/target changes. HR-Production, worker-a/W-66, department codes, batches/times and completed outcomes are supplied.
+- Publication: revised snapshot remains 23 through SRC-002. SRC-003 through SRC-008 and AGG-001 through AGG-006 revisions 2.0 remain local; published AGG-006 remains 1.0.
+- Actual beginner validation, full graphical review and formal approval remain pending.
+
+### Current official sources by claim
+
+| Official reference | Claim / section and applicability |
+|---|---|
+| [Loading account data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html) | Scheduled due time queues work; other work can delay start. Daily recurrences end at midnight; documented 14:00/eight-hour example yields 14:00/22:00, with weekly day/time and monthly 1-28 date. Execution/history/status/scanned/optimization evidence, collection modes, flat-file inputs and Search timing remain distinct. No universal overlap, merge, skip, retry or fixed duration is inferred. |
+| [Time Zone Settings](https://documentation.sailpoint.com/saas/help/common/time-zones.html) | Feature-specific runtime distinction: VA-based aggregation uses cluster fixed standard-time GMT offset, without daylight-saving changes; SaaS uses tenant zone. Browser/activity and report clocks can differ. Tenant-zone tasks follow applicable zone daylight-saving changes. This specific distinction qualifies broad VA notes in aggregation pages rather than assigning one clock to every source. |
+| [Aggregating entitlements](https://documentation.sailpoint.com/saas/help/loading_entitlements/aggregating_entitlements.html) | Supported direct-connect entitlement collection has separate manual/recurring controls, all/selected types and queued execution. Native flat-file mechanism has manual imports without recurring schedule or multiple types. Account memberships and object details can have independent observations. No unsupported file-discovery scheduler is invented. |
+| [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Identity changes from aggregation/provisioning can initiate event processing; scheduled/time-based/manual processing are distinct from collection schedules. Identity output/decisions don't prove successful external writes. Supplied confirmation time isn't exact persistence time or guaranteed processing duration. |
+| [Identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Source/attribute mappings supply identity values. Existing correct HR association/profile department mapping are explicit main conditions. Late producer publication doesn't establish faulty consumer configuration; account and identity results need their own evidence. |
+| [Account schemas](https://documentation.sailpoint.com/saas/help/accounts/schema.html) | Represented fields and selected identification: workerKey worker-a differs from employeeNumber text W-66. HR account representation needn't be a login; it differs from identity and downstream accounts. |
+| [Connector documentation overview](https://documentation.sailpoint.com/connectors/isc/landingpages/help/landingpages/isc_landing.html) | Supported runtime families and collection responsibilities. VA versus SaaS path matters to time basis. HR-Production/published-batch interface are supplied design assumptions, not a claim that this named connector exists. |
+| [Migrating VA-based sources](https://documentation.sailpoint.com/saas/help/sources/migrate_sources.html) | Migration warning identifies scheduling impacts if VA-cluster and SaaS time zones differ. Retaining a clock label doesn't establish the same real-world due time. Review only; no migration or irreversible action performed. |
+
+### Current reasoning boundaries
+
+Main tenant UTC and daily 00:10/hourly collection are explicit. Business WH-to-DIST change is 03:00, producer publication 03:40. Due/start/read/end are 03:10/03:15/03:17/03:22 (WH) and 04:10/04:15/04:18/04:24 (DIST). Account is confirmed 04:24; identity 04:26. Confirmation isn't exact persistence timing or a universal identity-processing wait. 86-minute elapsed time comprises 40 + 30 + 5 + 9 + 2 in this trace. At 04:30, change/publication/read/confirmation ages are 90/50/12/4.
+
+Daily 14:00/eight-hour recurrence yields 14:00/22:00 then next-day 14:00, a 16-hour opportunity gap and 15h59 wait from supplied 22:01. Fixed GMT-06 02:00 equals 08:00 UTC, business GMT-05 03:00. Full scope, complete freshness and target delivery don't follow from more frequent jobs. Object/membership observations, Search and producer/file timing remain independent. Conditional handoffs don't imply every collection changes access or every source must run in one serial chain.
+
+### Historical verification record: revision 1.0
+
 - Revision: 1.0. Course placement: Module 5.6.
 - Documentation checked: October 21, 2026. Account-loading scheduling/modes/history/Search, feature-specific time zones, entitlement schedules/files, identity processing, profile mappings, account schemas, connector runtime distinctions and migration time-basis guidance freshly checked.
 - Author review: completed against teaching specification v2.6 for this scope; no unresolved author content issue identified.
@@ -1914,7 +2189,7 @@ Questions, supplied facts and worked reasoning remain in the learner file. No be
 - Learner validation and formal publication approval: pending. Working-edition deployment is separate.
 - Scope: scheduling and evidence of freshness. No source schedule, tenant time zone, VA setting, credential, API, source or target record is changed. Detailed account-deletion settings retain their primary lesson.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -1927,7 +2202,7 @@ Questions, supplied facts and worked reasoning remain in the learner file. No be
 | [Connector documentation overview](https://documentation.sailpoint.com/connectors/isc/landingpages/help/landingpages/isc_landing.html) | Runtime families and supported collection/change responsibilities. VA-based versus SaaS-based connection path is material to time-zone selection. PeopleRoster's SaaS interface and publication contract are fictional supported-design assumptions, not a claim that this named connector exists. |
 | [Migrating VA-based sources](https://documentation.sailpoint.com/saas/help/sources/migrate_sources.html), time-zone warning before schema handling | VA cluster time basis can differ from SaaS and affect aggregation due times. The lesson asks for a review before migration; no migration is performed or irreversible migration instruction supplied. |
 
-### Example, arithmetic and diagram review
+#### Example, arithmetic and diagram review
 
 Devi 56006 plans warehouse work. HR changes recorded department from Warehouse Planning WH to Distribution Planning DIST at 03:00. PeopleRoster Production reads the producer's published worker interface through a supplied supported SaaS design, not by uploading a CSV or reading the HR screen. Main record pr-56006 has workerKey pr-56006 and employeeNumber text 56006, a correct existing identity association and identity-profile department mapping. Tenant UTC and daily 00:10/hourly schedule are explicit.
 
@@ -1943,7 +2218,7 @@ Two editable text assets match inline blocks after trailing-whitespace normaliza
 
 Two learner tables retain all events and identify which age is being measured. No invented universal queue algorithm, retry limit, concurrency policy, source performance figure or live tenant evidence is supplied.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Case | Misconception tested | Accepted reasoning / evidence boundary |
 |---|---|---|
@@ -1961,6 +2236,37 @@ Supplied facts, questions and worked reasoning remain in learner prose. No begin
 
 ## AGG-007: Missing records, account deletion and safeguards
 
+- Current revision: 2.0, local only. Course placement: Module 5.7. Teaching specification: 3.1.
+- Fresh official-document checks: October 26, 2026; source deletion/rounding/authoritative/hidden handling, profile priority, representation removal, correlation, explicit JDBC delta Delete and provisioning/lifecycle boundaries.
+- Current review: neutral records, connected beginner explanation, all original guard/identity/hidden/recovery purposes and eight cases plus HR-file transfer retained.
+- Current [revision record](revisions/AGG-007_Concept_Led_Revision_Record.md) records coverage, sources, assumptions, assessment reasoning and executed checks.
+- Current [exclusion/volume guard](../assets/AGG-007_exclusion_and_volume_guard.txt) and [authoritative-loss outcomes](../assets/AGG-007_authoritative_loss_outcomes.txt) match inline blocks; widths 37 and 40. Historical assets, including the older 45-column diagram, stay unchanged.
+- No tenant/source/API/deletion/threshold/permission/protection/ownership/target change. Application-Production, app-user, HR-Production/worker-record, W-77 and completed outcomes are supplied examples.
+- Publication: revised snapshot remains 23 through SRC-002. SRC-003 through SRC-008 and AGG-001 through AGG-007 revisions 2.0 remain local; published AGG-007 remains 1.0.
+- Actual beginner validation, full graphical review and formal approval remain pending.
+
+### Current official sources by claim
+
+| Official reference | Claim / section and applicability |
+|---|---|
+| [Loading account data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html), deletion settings/limits and identity outcomes | Account Deletion permits absence-based removal of ISC representations, not external writes; manual/scheduled and flat-file controls. Volume guard cancels/warns, with documented ten-account rounding limitation and one-or-more cancellation example. Authoritative removal can reassign profile/remap values or lead to nightly identity-deletion attempt. All seven blockers, hidden/profile/mapping/listing/attached-account/uncorrelated-review handling retained. Single-account UI not-found retains record. No universal denominator/edge comparator/rollback or immediate identity/target deletion is inferred. |
+| [Managing accounts](https://documentation.sailpoint.com/saas/help/accounts/index.html), Removing Accounts | Remove Account targets ISC representation, not external account; existing account can return on later full aggregation. Authoritative removal can affect profile/listing. Recollection isn't a promise of original ISC ID, historical relationships or complete identity recovery. No removal/reset command supplied. |
+| [Identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | One profile per identity and highest-priority eligible authoritative profile; fallback can change mapped values. Main application source isn't authoritative; separate HR account remains. No priority or protected-state API executed. |
+| [Assigning source accounts to identities](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) | Account-to-identity association differs from external identity/key equality. Existing app-user/worker-record associations are supplied. Reintroduction needs actual ownership evidence, not automatic restoration assumptions. |
+| [JDBC SaaS delta tables](https://documentation.sailpoint.com/connectors/saas/jdbc/help/saas_connectivity/jdbc/delta_agg.html) | Explicit account-key Delete action is connector-specific deletion information, distinct from omitted unchanged accounts. Source-level full-population absence and UI safeguards aren't asserted universal across all delta/API paths. No SQL/tracking reset or actual delete. |
+| [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html) | Supported external account/access changes require their own operation and outcome evidence. Account/identity representation disappearing doesn't establish disabled external account, revoked membership or ended session. |
+| [Lifecycle states](https://documentation.sailpoint.com/saas/help/provisioning/lifecycle.html) | Employment/access-state design is distinct from hidden-identity handling. Retained worker status/end date can support configured offboarding, subject to actual approved source/retention design. No universal indefinite HR retention or offboarding-by-absence mandate. |
+
+### Current reasoning boundaries
+
+All 1,000 expected external application accounts remain present, including 150 disabled. The unintended active-only result returns 850 with no new/key changes. 150/1,000=15% is clearly above 10%; cancellation and separately retained app-user are supplied, not inferred atomic rollback. Approved corrected full read includes all 1,000 without target enable/create/delete. Five/1,000=0.5% illustrates a small incorrect omission below a volume guard.
+
+Ten-account 1% gives raw0.1, rounding to zero under the documented limitation; ten-account 5% raw0.5 becomes one according to the explicit product example, with cancellation at one or more. No general comparator or rounding implementation is invented. Main record keys app-user and worker-record differ from employee number W-77.
+
+Authoritative profile fallback, no-authoritative nightly attempt, all seven blockers and hidden-account review treatment are qualified. Eligible means not blocked, not completed deletion. Not-found/delta/full/Remove Account have different contracts. Hidden isn't terminated lifecycle state, and removed ISC data isn't external access-removal evidence. Recovery checks actual ownership/profile/account state rather than guaranteeing original IDs or relationships.
+
+### Historical verification record: revision 1.0
+
 - Revision: 1.0. Course placement: Module 5.7.
 - Documentation checked: October 21, 2026. Account loading/deletion settings/rounding/authoritative outcomes/hidden identities, Remove Account, profile priorities/mappings, correlation, JDBC SaaS delta actions and provisioning/lifecycle boundaries freshly checked.
 - Author review: complete against teaching specification v2.6 for this scope; no unresolved author content issue identified.
@@ -1968,7 +2274,7 @@ Supplied facts, questions and worked reasoning remain in learner prose. No begin
 - Learner validation and formal publication approval: pending. Working-edition deployment is separate.
 - Scope: source account-absence handling and identity consequences. No external or ISC account/identity is deleted. No threshold, deletion flag, source filter, permission, protected flag, elevated level, ownership or manager relationship is changed.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -1981,7 +2287,7 @@ Supplied facts, questions and worked reasoning remain in learner prose. No begin
 | [JDBC SaaS delta tables](https://documentation.sailpoint.com/connectors/saas/jdbc/help/saas_connectivity/jdbc/delta_agg.html) | Supported account-key Delete action is an explicit connector-specific delta deletion signal, unlike omission of an unchanged account. Full-population absence and source UI safeguards are not declared universal for all connector/API paths. No SQL, tracking reset or database deletion is performed. |
 | [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html) and [Lifecycle states](https://documentation.sailpoint.com/saas/help/provisioning/lifecycle.html) | External account/access changes use configured supported provisioning and employment-state/access rules. A hidden identity is not a normal terminated lifecycle state. A source or identity representation disappearing does not establish external disablement, membership removal or session termination. Offboarding retention/status/end-date contract is a project decision, not a universal product retention mandate. |
 
-### Example, arithmetic and diagram review
+#### Example, arithmetic and diagram review
 
 Devi 57007 coordinates delivery support. QueueDesk Production is a fictional non-authoritative source with 1,000 existing expected accounts, including 150 disabled ones; no new records or key changes in the comparison. qd-57007 is disabled but externally present and already correctly associated. Her identity remains established by separate WorkerRegistry account wr-57007.
 
@@ -1995,7 +2301,7 @@ Two text assets match inline blocks after trailing-whitespace normalization. Mis
 
 Two learner tables separate objects/states and illustrate whole-account rounding. All source citations, dates and assessment metadata stay outside learner prose.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Case | Misconception tested | Accepted reasoning / evidence boundary |
 |---|---|---|
@@ -2013,6 +2319,36 @@ No beginner read-through or transfer validation has been performed. Source and a
 
 ## AGG-008: Reading aggregation outcomes
 
+- Current revision: 2.0, local only. Course placement: Module 5.8. Teaching specification: 3.1.
+- Fresh official-document checks: October 26, 2026, including dedicated Web Services SaaS paging guidance, loading/history/termination/retries and entitlement-count semantics.
+- Current review: neutral records and connected beginner explanation; input/task/inventory distinctions, partial evidence, all original eight cases and dashboard transfer preserved.
+- Current [revision record](revisions/AGG-008_Concept_Led_Revision_Record.md) records coverage, references, assumptions, assessments and executed checks.
+- Current [page/record evidence](../assets/AGG-008_pages_and_verified_records.txt) and [required outcome checks](../assets/AGG-008_required_outcome_evidence.txt) match inline blocks, maximum widths 36 and 35. Historical assets remain unchanged.
+- No tenant/source/API/retry/permission/guard/delta/account/identity/target changes. Dispatch-Production, dispatch-user/received-user, counts/pages/times and completed results are supplied.
+- Publication: revised snapshot remains 23 through SRC-002. SRC-003 through SRC-008 and AGG-001 through AGG-008 revisions 2.0 remain local; published AGG-008 remains 1.0.
+- Actual beginner validation, full graphical review and formal approval remain pending.
+
+### Current official sources by claim
+
+| Official reference | Claim / section and applicability |
+|---|---|
+| [Loading account data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html) | Activity/history/status/start-stop/scanned/optimization/termination details and actor evidence. Optimized unchanged skip, supported retries including connection reset, deletion-warning cancellation, queued versus complete and independent Search synchronization remain qualified. No universal counter equation, rollback, invalid-record handling, retry/resume sequence or fixed duration. |
+| [Web Services SaaS aggregation](https://documentation.sailpoint.com/connectors/saas/web_services/help/saas_connectivity/web_services/json_aggregation.html) | Supported account operation, response extraction and configured endpoint dependencies. Main sequential page/error trace is supplied design, not a universal persistence/call architecture or partial-write contract. |
+| [Web Services SaaS aggregation paging](https://documentation.sailpoint.com/connectors/saas/web_services/help/saas_connectivity/web_services/config_paging.html) | Dedicated official paging support distinguishes configured page size from a universal default. Main 30/30/30/10 sizes and page-3 failure are supplied. No claim every connector uses the same paging or retry behavior; multiple-operation coverage remains configuration-specific. |
+| [Aggregating entitlements](https://documentation.sailpoint.com/saas/help/loading_entitlements/aggregating_entitlements.html) | A run's discovered count can differ from accumulated inventory created through account/entitlement collection. Source, selected types, keys and prior collection matter; subtraction isn't duplicate or membership proof. |
+| [Account correlation](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) | Account ownership and unchanged reevaluation differ from collection/coverage. Main correct association is supplied. High unchanged count doesn't prove corrected logic applied; force processing doesn't supply unread pages. |
+| [Identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Account input and mapped identity outputs are separate. Main account-site requirement supplies no identity-site mapping or required identity update; none is invented. |
+| [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Identity evaluation and configured downstream consequences require relevant inputs/output evidence. Processing can initiate changes without validating successful target delivery; no every-read/every-identity guarantee. |
+| [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html) | Supported external changes differ from updated account representations. Collected membership isn't a newly issued grant. Task success/identity decision alone doesn't prove target disablement. |
+
+### Current reasoning boundaries
+
+All 100 expected accounts already exist in ISC and remain stable between supplied runs. Pages are configured 30/30/30/10, not default size. Run A 09:00-09:08 fails at page 3 after 60 unique accounts; received-input comparison 50 same/10 different doesn't certify 10 updated outputs. Dispatch-user is among 40 unread and remains EAST; received-user CENTRAL is independently confirmed. No other operation changes ISC values between Run A and checks. Same 100 inventory keys don't prove fresh coverage or universal rollback.
+
+After resolved cause/review, Run B 10:00-10:06 obtains all 100 expected keys, and 10:07 confirms dispatch-user CENTRAL. Requirement is population/account evidence, not invented identity-site/access outcome. Independent cases test 90/100 scope, 95 unchanged, failure events versus unread accounts, administrative termination, 5 discovered/8 inventory groups and 100 rows/99 keys. The second diagram is human conditional verification, not backend automation.
+
+### Historical verification record: revision 1.0
+
 - Revision: 1.0. Course placement: Module 5.8.
 - Documentation checked: October 21, 2026. Account activity/history/termination/modes/retries/Search/deletion-warning guidance, Web Services SaaS aggregation/paging, entitlement counts, correlation, identity-profile mappings and identity/provisioning boundaries freshly checked.
 - Author review: complete against teaching specification v2.6 for this scope; no unresolved author content issue identified.
@@ -2020,7 +2356,7 @@ No beginner read-through or transfer validation has been performed. Source and a
 - Learner validation and formal publication approval: pending. Working-edition deployment is separate.
 - Scope: interpreting execution and output evidence, not defining a universal UI/API counter schema or production retry recipe. No actual source, credential, permission, retry setting, delta state, account/identity or target change is made.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -2033,7 +2369,7 @@ No beginner read-through or transfer validation has been performed. Source and a
 | [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html), event-based processing | Identity evaluation can initiate external provisioning but does not validate successful target delivery. Evidence for account, identity and target outcomes remains distinct; no every-read/every-identity processing guarantee. |
 | [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html) | Supported external account/access changes are different from read-side representation. An account-update result is not automatically an external account modification; read membership is not a grant. |
 
-### Main example, diagrams and arithmetic
+#### Main example, diagrams and arithmetic
 
 Devi 58008 coordinates warehouse dispatches. WarehouseFlow Production uses a fictional supported Web Services SaaS read design; existing wf-58008 is correctly associated. Source site changes EAST to CENTRAL while the earlier ISC value is EAST. wf-58009 is a different received account whose new CENTRAL representation is independently checked.
 
@@ -2047,7 +2383,7 @@ Independent variations include a successful 90-of-100 wrong scope; 95 unchanged 
 
 Two text assets exactly match inline blocks after trailing-whitespace normalization, maximum widths 35/35 characters. First shows the supplied connector page progression and separates human post-run record checks. Second is an engineer's conditional evidence-check path, not an automated backend pipeline. Two tables distinguish evidence facts and count meanings. Published visual rendering must also be inspected.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Case | Misconception tested | Accepted reasoning / evidence boundary |
 |---|---|---|
@@ -2065,6 +2401,40 @@ Questions and supplied reasoning remain in learner prose. No beginner validation
 
 ## AGG-009: Investigating a missing or stale account
 
+- Current revision: 2.0, local only. Course placement: Module 5.9. Teaching specification: 3.1.
+- Fresh official-document checks: October 26, 2026; source/uncorrelated/shadow views, Account ID/Name caution, Web Services SaaS root/response mapping/Get Object, correlation/default-path qualification and read/identity/target boundaries.
+- Current review: neutral source/account/login/employee values, causal beginner explanation, wrong-field-to-comparison trace, reviewed correction and all eight original cases plus text-code transfer preserved.
+- Current [revision record](revisions/AGG-009_Concept_Led_Revision_Record.md) records coverage, references, assumptions, assessment purposes and executed checks.
+- Current [wrong-field trace](../assets/AGG-009_wrong_field_to_unresolved_owner.txt) and [corrected field/owner](../assets/AGG-009_corrected_field_and_owner.txt) match inline diagrams, widths 39 and 39. Historical assets stay unchanged.
+- No actual tenant/source/API/credential/permission/correlation/identifier/account/identity/target changes. All response/configuration/corrected-result evidence is supplied.
+- Publication: revised snapshot remains 23 through SRC-002. SRC-003 through SRC-008 and AGG-001 through AGG-009 revisions 2.0 remain local; published AGG-009 remains 1.0.
+- All nine Module 5 lessons are individually revised. Actual beginner validation, full graphical review and formal approval remain pending. Next is IDN-001 in Module 6; its learner body wasn't opened.
+
+### Current official sources by claim
+
+| Official reference | Claim / section and applicability |
+|---|---|
+| [Managing sources](https://documentation.sailpoint.com/saas/help/sources/index.html) | Source Accounts/Uncorrelated views distinguish a represented account from its intended owner list. Technical shadow identity isn't an authoritative person match. Correct source/key is needed; aggregation/disable/remove effects aren't interchangeable. |
+| [Account schemas](https://documentation.sailpoint.com/saas/help/accounts/schema.html) | Represented fields and Account ID/Name roles. Changing those selections after aggregation can break references/create significant record problems. Main accountKey/login remain valid; only employeeRef extraction changes. |
+| [Web Services SaaS response mapping](https://documentation.sailpoint.com/connectors/saas/web_services/help/saas_connectivity/web_services/response_mapping.html) | Configured schema field uses response attribute path with root context. Main valid login value is selected for the wrong field, not a universal absent/null/error result from a bad path. |
+| [Web Services SaaS response information](https://documentation.sailpoint.com/connectors/saas/web_services/help/saas_connectivity/web_services/response_information.html) | Root selects common response portion. $.data account list and per-account person.number are supplied example paths, not a complete executable connector configuration or private extraction algorithm. |
+| [Web Services SaaS Get Object](https://documentation.sailpoint.com/connectors/saas/web_services/help/saas_connectivity/web_services/get_object.html) | Specified-account lookup has its own supported key/request/response contract. Bulk success doesn't prove lookup authority/configuration or effect equivalence with every API/workflow. |
+| [Account correlation](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) | Account/identity comparison and association, unresolved ownership and supported reevaluation after changed criteria. Docs also describe default Account Name-to-identity-name matching; the main is explicitly observed uncorrelated with no other resolving path, not a claim one configured criterion is all ISC correlation. Unique eligible W-99 and no manual override are supplied. |
+| [Loading account data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html) | Modes, history and independent Search timing; unchanged-record skip versus appropriate reevaluation. UI single-account no identity sync/provisioning effect and not-found retention remain bounded to that operation. Scope/deletion consequences reviewed; no universal force run, tracking reset or threshold bypass. |
+| [Identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Identity inputs can intentionally differ from application account fields. HYD account versus HR-mapped BLR can be correct. Main ownership correction doesn't invent an identity-office requirement or require profile changes. |
+| [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Identity evaluation uses actual mappings/access configuration. Correct account data alone isn't every identity output. No exact private collection/reprocessing order or universal mapping-triggered repair. |
+| [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html) | External account/access changes differ from extraction/ownership correction. Main requires no create/enable/delete/grant; a recorded-state correction doesn't establish target unlock/removal. |
+
+### Current reasoning boundaries
+
+Purchasing-Production already represents uncorrelated purchase-user with valid accountKey and login purchase.login. Identified connector response contains nested person.number text W-99. Root $.data selects its list; current employeeRef extraction selects login instead of person.number. The approved criterion compares employeeRef with employeeNumber. Exactly one eligible identity has W-99, none has purchase.login, no manual override applies and no other path resolves the observed account.
+
+Reviewed extraction correction preserves source/key/login/criterion/identity. Supported collection and reevaluation produce W-99 and the independently checked existing-owner association. No concurrent edits or external create/enable/delete occur. This isn't a universal automatic repair or exact forced-processing prescription.
+
+Other causes remain independent branches: environment, visibility, scope/pages/files, producer publication, root/path/conversion, profile input, Search and status semantics. Cost-centre transfer preserves producer text 0042 instead of project-converted numeric 42, stable key/owner and affected dependencies. No backend detail is guessed across missing evidence.
+
+### Historical verification record: revision 1.0
+
 - Revision: 1.0. Course placement: Module 5.9.
 - Documentation checked: October 21, 2026. Source account/uncorrelated views, schema/Account ID cautions, Web Services SaaS root/response mapping/Get Object, correlation/re-evaluation, loading/history/single-account/Search and identity/provisioning boundaries freshly checked.
 - Author review: complete against teaching specification v2.6 for this scope; no unresolved author content issue identified.
@@ -2072,7 +2442,7 @@ Questions and supplied reasoning remain in learner prose. No beginner validation
 - Learner validation and formal publication approval: pending. This completes authoring of Module 5, not learner validation, overall course completion or formal approval.
 - Scope: evidence-driven missing/stale-account investigation. No real source, credential, permission, correlation, account identifier, API, person/account or external-access operation is changed.
 
-### Official sources by claim and section
+#### Official sources by claim and section
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -2087,7 +2457,7 @@ Questions and supplied reasoning remain in learner prose. No beginner validation
 | [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Person-value evaluation uses profile/access configuration and is distinct from mere account read. Main correction requires reviewed supported collection/re-evaluation, not an invented private scheduling sequence. |
 | [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html) | External account/access change differs from representation and ownership correction. Main needs no create/enable/delete or permission grant; read-side status repair is not external unlock/removal evidence. |
 
-### Main trace, data and diagram review
+#### Main trace, data and diagram review
 
 Devi 59009 coordinates purchasing and already has an established ISC identity with employeeNumber text 59009. PurchaseDesk Production uses a fictional supported Web Services SaaS design. Existing external and represented account pd-59009 has login devi59009 and is uncorrelated. The required result is association with the existing person, not new identity/account creation.
 
@@ -2105,7 +2475,7 @@ Two editable text assets match inline blocks after trailing-whitespace normaliza
 
 Two learner tables map observations to bounded conclusions and current/intended extraction. Technical qualifications and fictional assumptions remain in learner prose; official references, dates and assessment metadata stay here.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Case | Misconception tested | Accepted reasoning / evidence boundary |
 |---|---|---|
@@ -2121,7 +2491,39 @@ Two learner tables map observations to bounded conclusions and current/intended 
 
 No beginner read-through or independent transfer validation occurred. Source review, author review and deployment do not substitute for those stages.
 
-## IDN-001
+## IDN-001: Authoritative sources, identity profiles and identity creation
+
+- Current revision: 2.0, local only. Course placement: Module 6.1. Teaching specification: 3.1.
+- Fresh official-document checks: October 26, 2026, especially profile authority, required non-null values, cross-profile uid uniqueness, email validation boundary, exceptions, priority and creation/processing conditions.
+- Current review: neutral worker data, causal beginner explanation, direct mapping/identifier trace, new-person assumptions, seven original cases and contractor transfer retained.
+- Current [revision record](revisions/IDN-001_Concept_Led_Revision_Record.md) records coverage, primary sources, assumptions, assessments and executed checks.
+- Current [authoritative account and identity](../assets/IDN-001_authoritative_account_and_mapped_identity.txt) and [existing-person application correlation](../assets/IDN-001_application_account_matches_existing_identity.txt) match inline blocks, widths 34 and 32. Historical assets stay unchanged.
+- No actual tenant/source/profile/mapping/account/identity/permission/sign-in/target operation. HR-Production, worker-a/W-101/worker-w101, neutral names/email and completed outcomes are supplied examples.
+- Publication: revised snapshot remains 23 through SRC-002. SRC-003 through SRC-008, AGG-001 through AGG-009 and IDN-001 revisions 2.0 remain local; published IDN-001 remains 1.0.
+- Actual beginner validation, full graphical review and formal approval remain pending. Next IDN-002 learner body wasn't opened. Attribute tracing reference aid remains planned with detailed Module 6 mapping lessons.
+
+### Current official sources by claim
+
+| Official reference | Claim / section and applicability |
+|---|---|
+| [Creating identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Configuring a source's identity profile makes it authoritative; shared profile mappings, non-null uid/email/lastname and cross-profile uid uniqueness. Email isn't format-validated by required check. Missing required values/duplicate uid exceptions, Incomplete Identities, creation blocked during account aggregation, Needs Processing/Apply Changes and one highest-priority eligible governing profile. Profile priority isn't an automatic merge; no private creation transaction or sign-in/target readiness inferred. |
+| [Loading account data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html) | Supported collection/input scope and optimized unchanged skip versus appropriate reevaluation. No specified-account UI identity-creation promise, guaranteed timing or universal scheduled/retry repair. |
+| [Account schemas](https://documentation.sailpoint.com/saas/help/accounts/schema.html) | Account field representation and selected Account ID. workerKey worker-a differs from workerNumber W-101, mapped uid worker-w101 and platform identity ID. identificationNumber is a selected identity attribute, not a required custom employeeNumber on every tenant. |
+| [Account correlation](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) | Application account and existing identity association under applicable comparison. One unique eligible W-101/no manual override are supplied. Unchanged-record reevaluation after criteria change and manual-link handling are qualified; no fuzzy matching, automatic merge or application account creation. |
+| [Managing sources](https://documentation.sailpoint.com/saas/help/sources/index.html) | Account/ownership views and uncorrelated/shadow representation. Shadow account data isn't successful authoritative worker identity establishment. |
+| [Identities overview](https://documentation.sailpoint.com/saas/help/identities/index.html) | ISC identity holds entity-level information and connects accounts/access. Presence doesn't prove complete mappings, sign-in or external access. |
+| [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Identity changes during aggregation can initiate processing and relevant configuration evaluation. Saved mappings and observed outputs differ; no automatic every-read grant, private queue/order/atomicity or completion time. |
+| [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html) | Supported external account/access changes are separate from authoritative collection and ownership. Account creation, permission assignment and usable application sign-in require their own evidence. |
+
+### Current reasoning boundaries
+
+Main HR account is worker-a, workerNumber text W-101, uid input worker-w101, familyName Worker/givenName Sample, illustrative email worker-w101@example.invalid and LOG department. Direct profile mappings provide six stated outputs. Source support/scope, approved population, applied profile, no active aggregation during profile creation, no existing identity/uid conflict/other eligible profile and non-null required inputs are supplied.
+
+The email value demonstrates mapping and required presence; no real deliverable mailbox or production placeholder recommendation is claimed. Initial-email dependency requires an approved actual project design, not fabricated data. Main establishment doesn't prove application account, permissions, registration or sign-in.
+
+Application-user already exists independently and employeeRef W-101 matches existing identificationNumber W-101 under supplied unique eligibility/no override. Correlation is ownership, not creation. Multiple-authoritative priority assumes accounts already belong to the same identity and doesn't merge separate people or combine every field. Independent contractor transfer uses contractor-a/C804/contractor-c804/Contractor, valid required inputs and no existing identity/competition; null-surname variant redirects to the required-value investigation.
+
+### Historical verification record: revision 1.0
 
 - Current lesson: [IDN-001](../lessons/IDN-001_Authoritative_Sources_Identity_Profiles_and_Identity_Creation.md), revision 1.0, Module 6.1.
 - Author review and fresh official-documentation check: October 21, 2026.
@@ -2129,7 +2531,7 @@ No beginner read-through or independent transfer validation occurred. Source rev
 - Scope: approved authoritative worker accounts and identity profiles in identity establishment; direct mapped values and separate source-account, person, ownership and access evidence. Full mapping mechanics, priority design, exception remediation and profile responsibilities continue in their planned primary lessons.
 - Publication verification: verify exact deployed revision, complete lesson text, both diagrams, both accessible tables, new Module 6 and all thirty-nine lesson routes. Deployment is not a beginner learning test.
 
-### Sources mapped to claims
+#### Sources mapped to claims
 
 | Official reference | Supported section or claim | Boundary retained |
 |---|---|---|
@@ -2144,7 +2546,7 @@ No beginner read-through or independent transfer validation occurred. Source rev
 
 Current official pages use SailPoint Human Fabric/Identity Services branding in their navigation. The lesson retains the user's ISC course terminology and verifies the described identity-service behavior; it does not introduce a new product or imply an IdentityIQ mechanism.
 
-### Fictional inputs and consistency review
+#### Fictional inputs and consistency review
 
 The primary case uses Devi, logistics coordinator, employee 61001, PeopleLedger Production, authoritative Employees profile, workerKey hr-61001 and ISC uid worker61001. The JSON account maps workerNumber text 61001 to identificationNumber, familyName Rao to lastname, givenName Devi to firstname, workEmail devi61001@example.com to email and departmentCode LOG to department. HR provides the approved initial usable email. Profile/mappings are saved and appropriately applied; no existing person, conflicting username or other eligible profile. Successful person/association values are supplied fictional outcomes, not results observed in a tenant.
 
@@ -2152,7 +2554,7 @@ DispatchDesk variation uses existing independently created dd-61001 with employe
 
 Selected JSON, two diagrams and both tables were traced against prose and answers. Editable sources: [worker account to identity](../assets/IDN-001_worker_account_to_identity.txt), maximum width 40 characters; [existing identity and application account](../assets/IDN-001_existing_identity_and_application_account.txt), maximum width 41. First diagram describes data/configuration dependencies and a non-guarantee boundary, not a private execution sequence; second describes ISC ownership association, not a target write. Visual live rendering verification remains a separate publication check.
 
-### Assessment reasoning map
+#### Assessment reasoning map
 
 | Entry | Understanding and supplied facts | Expected reasoning / acceptable evidence | Misconception exposed / source anchor |
 |---|---|---|---|
@@ -2168,7 +2570,44 @@ Selected JSON, two diagrams and both tables were traced against prose and answer
 Author review includes independent entry context, first-use terminology, actor and arrow meanings, causal transitions, success/failure assumptions, UI evidence limits, consistency and a narration/humanizer pass. It is not learner validation, proof of tenant behavior from execution, or formal approval. Attribute tracing reference aid remains planned for development within Module 6 with the detailed mapping lessons.
 
 
-## IDN-002
+## IDN-002: What an identity profile controls
+
+- Current revision: 2.0, local only. Course placement: Module 6.2. Teaching specification: 3.1.
+- Fresh official-document checks: October 26, 2026; profile/global attributes/preview/application/deletion, lifecycle requirements, processing, authentication/invitations/SSO, attribute sync and access/identity-state/manager boundaries.
+- Current review: neutral shared-profile example, complete Department mechanism before other responsibilities, explicit mapped-value/assignment/target distinction, seven original cases and contractor-email transfer retained.
+- Current [revision record](revisions/IDN-002_Concept_Led_Revision_Record.md) records coverage, sources, assumptions, assessments and executed checks.
+- Current [enabled state to verified membership](../assets/IDN-002_enabled_state_and_verified_membership.txt) and [shared responsibilities](../assets/IDN-002_shared_profile_responsibilities.txt) match inline blocks, widths 38 and 36. Historical diagrams, including older 43-column asset, remain unchanged.
+- No actual tenant/security/profile/mapping/authentication/attribute/source/account/identity/invitation/provisioning/target changes.
+- Publication: revised snapshot remains 23 through SRC-002. SRC-003 through SRC-008, AGG-001 through AGG-009 and IDN-001/002 revisions 2.0 remain local; published IDN-002 remains 1.0.
+- Actual beginner validation, full graphical review and formal approval remain pending. Next IDN-003 learner body wasn't opened; tracing-aid work remains planned with detailed mapping lessons.
+
+### Current official sources by claim
+
+| Official reference | Claim / section and applicability |
+|---|---|
+| [Creating identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Shared authority/profile, eligible priority, multi-source mappings and required/global-unique values; global custom definitions versus local mappings; preview/save/Needs Processing/application; security/MFA/network restrictions and profile deletion effects. No profile-label merger, all-values authority override or preview-as-execution inference. |
+| [Lifecycle states](https://documentation.sailpoint.com/saas/help/provisioning/lifecycle.html) | Per-profile states, mapped cloudLifecycleState, exact case-sensitive technical name, disabled-by-default/enabled requirement, configured access/actions/notifications and invitation link. Current-state access-profile enforcement and departure revocation are qualified by new-state/other paths. No target success or permanent account-state repair loop inferred. |
+| [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Identity-change and configuration-application evaluation. Apply Changes from profile concerns its identities and may affect access. Starting evaluation doesn't validate completed provisioning; no fixed finish time or private sequence. |
+| [Pass-through authentication](https://documentation.sailpoint.com/saas/help/common/pta.html) | Supported selected authentication source, source/account aggregation prerequisite, profile Directory Connection and production Support consultation. Personnel authority, email input and authentication source are different responsibilities; no password copying or real auth change. |
+| [Inviting users](https://documentation.sailpoint.com/saas/help/common/users/inviting_users.html) | Manual/profile automatic invitations and enabled lifecycle-state choice, Work Email and registration dependency. Identity existence/invitation configuration doesn't prove delivery/registration. No emails sent. |
+| [ISC as a service provider](https://documentation.sailpoint.com/saas/help/common/config_isc_service_provider.html) | External identity-provider SSO path differs from profile/local-password assumptions. No SAML, certificate or bypass setup. |
+| [Attribute synchronization](https://documentation.sailpoint.com/saas/help/provisioning/attr_sync.html) | Separately configured identity-to-account changes, supported provisioning and existing correlated account scope. Main has no sync; choosing identity input alone isn't a directory write or account creation. |
+| [Access profiles](https://documentation.sailpoint.com/saas/help/access/access-profiles.html) | One-source entitlement bundle and lifecycle use. Benefits Self-Service is a supplied standing self-service bundle, not benefits administration or JIT activation. |
+| [Roles](https://documentation.sailpoint.com/saas/help/access/roles.html) | Separate business-access object and configured criteria consuming identity values. Mapping change can affect consumers without editing role; no unnamed automatic HR-role grant asserted. |
+| [Access requests](https://documentation.sailpoint.com/saas/help/requests/index.html) | Request/policy/fulfillment differs from identity profile or automatic grant. |
+| [Identity states](https://documentation.sailpoint.com/saas/help/provisioning/identity_states.html) | ISC processing/service participation classification differs from business lifecycle and target enabled flag. Active identity doesn't establish every enabled account or successful target operation. |
+| [Manager correlation](https://documentation.sailpoint.com/saas/help/sources/manager_correlation.html) | Profile Manager Name input and source relationship matching are both relevant. A string isn't reporting-relationship evidence. |
+| [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html) | Supported target account/access work differs from input reads, identity values and authentication/authorization. Main Department result and independent target-membership outcome have bounded evidence. |
+
+### Current reasoning boundaries
+
+Employees governs an existing identity with correctly associated HR-Production hr-record and Directory-Production directory-user. HR workerNumber W-102, username user-w102, surname Worker, workDepartment HR and workerState active are supplied. Directory department FIN/email input is selected for Department/Work Email and that source separately supplies supported PTA. Main changes only Department mapping; preview/application yields identity HR, directory remains FIN with no sync configured. No owner/profile/credential/auth change is inferred.
+
+Independent lifecycle case has enabled provisioning and saved/applied enabled active state, exact mapped input, automatic assignment, existing unambiguous benefits-user on Benefits-Production, supported authorized entitlement write and no competing path. Successful operation and independently observed benefits-selfservice are supplied. Identity state, lifecycle technical value, assignment, access-profile requirement, actual membership and successful use are distinct.
+
+Security, global-attribute and contractor email changes are independent cases, not actual mutations. Single preview doesn't establish population coverage or initial-directory email dependency. Profile deletion/field deletion aren't stale-value repairs. No unknown outcome is converted into a grant or sign-in success.
+
+### Historical verification record: revision 1.0
 
 - Current lesson: [IDN-002](../lessons/IDN-002_What_an_Identity_Profile_Controls.md), revision 1.0, Module 6.2.
 - Author review and fresh official-documentation check: October 21, 2026.
@@ -2176,7 +2615,7 @@ Author review includes independent entry context, first-use terminology, actor a
 - Scope: what a governing shared profile controls, applicable dependencies and what its settings do not prove. Full mapping design, profile priority, lifecycle policy/removal, authentication and provisioning mechanics retain their primary course lessons.
 - Publication verification: separately check exact deployed revision, complete new lesson text, both diagrams/tables and all forty lesson routes with native panel/module defaults.
 
-### Sources mapped to claims
+#### Sources mapped to claims
 
 | Official reference | Lesson claim or section supported | Limit retained |
 |---|---|---|
@@ -2196,7 +2635,7 @@ Author review includes independent entry context, first-use terminology, actor a
 
 Current official documentation uses SailPoint Human Fabric/Identity Services branding; the lesson retains ISC course terminology without mixing IdentityIQ behavior. Sources are author-only and not appended to learner prose.
 
-### Example and diagram review
+#### Example and diagram review
 
 Devi is independently reintroduced as a benefits coordinator, employee 62002, governed by Employees. PeopleCore Production is authoritative; hr-62002 supplies workerNumber 62002, iscUserName employee62002, familyName Rao, workDepartment HR and workerState active. Corporate Directory is non-authoritative with correctly associated cd-62002, department FIN and mail devi62002@example.com; it is also the configured supported authentication source. These roles are deliberately different.
 
@@ -2208,7 +2647,7 @@ Editable diagram sources: [lifecycle requirement to target](../assets/IDN-002_li
 
 The two inline tables contain selected fictional mappings and the distinct claims supported by identity/configuration/preview/state/target observations. No upload/API template is supplied. Read-through, first-use meanings, example consistency, qualifications, questions, humanizer/narration pass and technical source checks constitute author review only.
 
-### Assessment reasoning map
+#### Assessment reasoning map
 
 | Entry | Understanding / supplied evidence | Expected reasoning and acceptable checks | Misconception / reference |
 |---|---|---|---|
@@ -2224,7 +2663,49 @@ The two inline tables contain selected fictional mappings and the distinct claim
 No learner interview or uncoached transfer test has occurred. Formal approval remains pending. IDN-003 and its attribute tracing reference aid are planned, not authored in this update.
 
 
-## IDN-003
+## IDN-003: Mapping account information into identity attributes
+
+- Current [learner source](../lessons/IDN-003_Mapping_Account_Information_into_Identity_Attributes.md): revision 2.0 local, Module 6.3; teaching specification 3.1.
+- Author review and fresh official-documentation verification: October 26, 2026.
+- Current [revision and coverage record](revisions/IDN-003_Concept_Led_Revision_Record.md) preserves original purposes, all eight exercises and returning-contractor transfer.
+- [Attribute tracing guide](../assets/ATTRIBUTE_TRACING_GUIDE.txt): revision 2.0 local, same eight evidence questions and neutral filled trace; standalone definitions retained.
+- Published learner/guide remain 1.0; published revised snapshot remains 23 through SRC-002. No push, commit or deployment in this task.
+- Beginner validation, full graphical review and formal approval remain pending. No actual tenant, schema, profile, transform, rule, account, identity, source or target operation performed.
+
+### Fresh sources mapped to claims
+
+| Official reference | Claims or lesson sections supported | Conditions and limits |
+|---|---|---|
+| [Creating identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Multi-source identity mappings; Source/Attribute selections, direct/transform/rule calculations; ToLower/ToUpper; required uid/email/lastname and exceptions; documented mapping-transform first-value reduction; Preview and Apply Changes | Primary mapping already applied and inputs available; selected fictional account fields are not universal defaults; list reduction scoped to this documented UI mapping behavior, not every transform/API; no email syntax/mailbox validation inferred |
+| [Account Attribute transform](https://developer.sailpoint.com/docs/extensibility/transforms/operations/account-attribute/) | Associated-source account lookup, attributeName, created ascending default, first non-null default, filtering/sorting and accountReturnFirstLink; explicit input | Defaults apply to accountAttribute, not all ISC account selection; filter stays within source/identity lookup; no assumption created means hire date or newest account is business primary; no accountFilter/accountPropertyFilter syntax executed |
+| [Lower transform](https://developer.sailpoint.com/docs/extensibility/transforms/operations/lower/) | Lowercase conversion and explicit input overrides reliance on UI source/attribute combination | UI ToLower and technical lower names distinguished; uppercase email transformed under supplied approved convention, not universal mailbox case equivalence |
+| [Upper transform](https://developer.sailpoint.com/docs/extensibility/transforms/operations/upper/) | Uppercase conversion used in the qualified officeCodes example | Does not decide which office is primary; no generic assertion that every transform reduces all lists |
+| [Managing account schemas](https://documentation.sailpoint.com/saas/help/accounts/schema.html) | Field representation, multi-valued designation and separate account identifiers | Account schema does not define identity mapping; no Account ID/Name change recommended or executed |
+| [Assigning accounts to identities](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) | Account ownership association before use as the intended person's data | Correct association and single eligible account per source are supplied in primary case; mapping conversion does not repair wrong ownership |
+| [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Identity changes during aggregation initiate processing; configuration edits require manual application; profile scope; roles/lifecycle evaluation and provisioning-success limitation | No fresh connector call inferred from mapping evaluation; no invented transaction order, exact duration or all-target guarantee |
+| [Attribute synchronization](https://documentation.sailpoint.com/saas/help/provisioning/attr_sync.html) | Separate configured identity-to-existing-correlated-account writes | No email synchronization configured in primary example; identity output difference does not imply source account change or creation |
+
+All eight primary pages were freshly checked on October 26, 2026. Source-specific defaults stay scoped: created-ascending order and first-non-null behavior belong to accountAttribute; accountReturnFirstLink true retains the first value even null. Filter eligibility is separate from sorting, and explicit lower input can override reliance on interface selections. The profile administration guide's first-value reduction is limited to that documented mapping-transform path, not every transform or API. Cloud rules used for these mappings require SailPoint Services review.
+
+Current official pages use Human Fabric/Identity Services terminology. This is ISC teaching material; no IdentityIQ behavior or private execution ordering is imported.
+
+### Current example, diagrams and reference aid
+
+Employees governs an existing identity through authoritative HR-Production. Correctly associated hr-record supplies workerNumber text W-103, iscUserName user-w103 and familyName Worker. Correctly associated non-authoritative Directory-Production account directory-user supplies accountKey directory-user, login user.w103, mail USER-W103@EXAMPLE.INVALID and officeCodes [blr, hyd]. The four-field JSON fragment is illustrative, not an API/upload template. Main case has one eligible account per source, available inputs and no override: ToLower/lower produces independently confirmed applied identity email user-w103@example.invalid. Directory mail stays uppercase with no configured synchronization write. Addresses are illustrative, not real mailbox evidence.
+
+Current diagrams: [selected input to applied email](../assets/IDN-003_selected_input_to_applied_email.txt), 35 columns, and [optional consumers and target evidence](../assets/IDN-003_optional_consumers_and_target_evidence.txt), 37 columns. Both match inline text exactly and satisfy the 42-column limit. Dependency/consumer flow is not a universal backend pipeline or timing promise; human verification is separated. Historical 47/48-column sources remain unchanged and are not claimed current compliant assets.
+
+The reference aid's eight numbered questions match the learner source after line-ending normalization. The guide's neutral filled trace agrees on profile, source, account, field, input, conversion, applied output and no directory write; introductory, selection, type/cardinality and downstream definitions keep it independently usable. Own revision/check metadata is retained for the reference artifact; source/course links are absent from both learner source and guide. Revision 1.0 of the lesson and guide remain recoverable at baseline 7123d85038c688f1ccecffa6a8504d22e3986b79.
+
+The independent directory-admin, stale-input, selected-login, explicit-input, sorted-null, absent-account, first-office, exact-code and unapplied-preview variations retain their original conditions. Contractor-Production transfer correctly excludes the old inactive non-null account, leaving current active null with no approved fallback. No arbitrary non-null value is accepted as a design correction.
+
+### Current assessment and validation
+
+All eight worked cases and the returning-contractor transfer remain, with coverage/reasoning mapped in the revision record. Counts reflect this topic's retained coverage rather than course-wide quotas. Documentation checks and site tests cannot establish beginner comprehension; no beginner interview, uncoached explanation or transfer test occurred. Next IDN-004 learner body was not opened.
+
+### Historical verification record: revision 1.0
+
+The following is the dated original record. Its former route count, diagram widths, example and next-lesson status are historical, not current claims.
 
 - Current lesson: [IDN-003](../lessons/IDN-003_Mapping_Account_Information_into_Identity_Attributes.md), revision 1.0, Module 6.3.
 - Author review and fresh official-documentation check: October 21, 2026.
@@ -2233,7 +2714,7 @@ No learner interview or uncoached transfer test has occurred. Formal approval re
 - Reference aid: [ISC attribute tracing guide](../assets/ATTRIBUTE_TRACING_GUIDE.txt), revision 1.0, documentation checked October 21, 2026; complete editable/downloadable text with introductory meanings, all eight inline evidence questions, the same filled fictional trace and downstream definitions.
 - Publication verification: independently verify exact deployed revision, all forty-one lesson routes and native navigation defaults, full lesson text/headings/JSON/diagrams/tables and exact served reference-aid text. Deployment is not learner validation.
 
-### Sources mapped to claims
+#### Sources mapped to claims
 
 | Official reference | Claims or lesson sections supported | Conditions and limits |
 |---|---|---|
@@ -2248,7 +2729,7 @@ No learner interview or uncoached transfer test has occurred. Formal approval re
 
 Technical source sections reviewed include identity profile mappings/required attributes/multi-value transform caution/preview, Account Attribute overview/required and optional properties, Lower explicit-input definition and processing's event/manual sections. Official pages currently use Human Fabric/Identity Services terminology; this ISC course does not import IdentityIQ behavior.
 
-### Example, diagram and reference-aid consistency
+#### Example, diagram and reference-aid consistency
 
 Devi is independently introduced as payroll analyst, employee 63003. Employees governs her identity through authoritative WorkerLedger Production; hr-63003 supplies workerNumber text 63003, iscUserName employee63003 and familyName Rao. Corporate Directory is non-authoritative and correctly associated cd-63003 supplies accountKey cd-63003, login devi63003, mail Devi63003@Example.com and multi-valued officeCodes [blr, hyd]. JSON is a selected fictional teaching record, not an API/upload template. Primary case has only the intended eligible account on each source and no explicit input override; ToLower yields observed identity email devi63003@example.com with source mail unchanged and no sync write.
 
@@ -2260,7 +2741,7 @@ Reference aid's eight numbered questions are synchronized with the inline sequen
 
 Two tables distinguish selected mappings from stage-specific evidence. Author review includes first-use meanings before process dependence, scope/actors/input/output, supplied-success and changed-condition reasoning, diagram labels, independent entry context and narration/humanizer pass. Visual rendering remains a separate publication check.
 
-### Assessment reasoning map
+#### Assessment reasoning map
 
 | Entry | Supplied facts and tested understanding | Expected reasoning / acceptable evidence | Misconception exposed |
 |---|---|---|---|
@@ -2277,7 +2758,59 @@ Two tables distinguish selected mappings from stage-specific evidence. Author re
 Source support for cases 1/8: processing/profiles; 2: profiles/schema; 3: Lower; 4/transfer: Account Attribute; 5: profiles/Account Attribute; 6: profiles/Upper; 7: supplied text/number semantics and exact-match requirement. No beginner interview or uncoached transfer exercise has occurred. IDN-004 remains planned only.
 
 
-## IDN-004
+## IDN-004: Choosing the source of each attribute
+
+- Current [learner source](../lessons/IDN-004_Choosing_the_Source_of_Each_Attribute.md): revision 2.0 local, Module 6.4; teaching specification 3.1.
+- Documentation-based author review and fresh nine-page official-source verification: October 26, 2026.
+- [Current coverage and verification record](revisions/IDN-004_Concept_Led_Revision_Record.md) reconciles original purposes, all eight exercises and sponsor-date transfer.
+- Existing [attribute tracing guide](../assets/ATTRIBUTE_TRACING_GUIDE.txt) remains local revision 2.0, unchanged this task; no prerequisite link replaces inline teaching.
+- Published IDN-004 remains 1.0; published revised snapshot remains 23 through SRC-002. No commit, push or deployment.
+- Beginner validation, full graphical review and formal approval remain pending. No actual tenant/source/profile/identity/account/transform/invitation/synchronization/contract/access or target operation performed.
+
+### Fresh official sources mapped to claims
+
+| Official reference | Supported claim or section | Boundary retained |
+|---|---|---|
+| [Creating identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Authoritative population/profile relationship; identity mappings can use any source and differ by profile; required non-null uid/email/lastname, uid uniqueness and no email-format validation; Preview/Apply Changes | Field ownership and fit-for-use criteria are supplied business agreements, not enforced automatically by ISC; no change to population authority merely to select a field |
+| [First Valid](https://developer.sailpoint.com/docs/extensibility/transforms/operations/first-valid/) | Ordered first-non-null selection; static none Work Email example; ignoreErrors default false; errors differ from null | Does not test business approval, freshness, email syntax or coverage; actual input values supplied in cases; supported technical placeholder is not presented as a universal recommendation or mailbox |
+| [Account Attribute](https://developer.sailpoint.com/docs/extensibility/transforms/operations/account-attribute/) | Associated-account input selection, filtering and sorting | Account selection filters differ from connector collection; no newest/first-non-null account automatically equals approved ordinary account |
+| [Attribute synchronization](https://documentation.sailpoint.com/saas/help/provisioning/attr_sync.html) | Configured identity-to-existing-correlated-account writes; mismatch enforcement; conflicting logic/cyclical synchronization caution and safeguards | Primary outcome has no directory sync; receiving-copy example is directional reasoning, not a claimed universal endless loop or tested target write |
+| [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Applying changed mappings to associated identities, role/lifecycle reevaluation and no verification of successful provisioning by identity processing | Shared impact reviewed; no exact duration, private execution topology or all-target success guaranteed |
+| [Loading account data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html) | Account reads and retained observations are separate from selected identity outputs | Supplied times establish specific fictional reads; no automatic latest-timestamp source election or implicit refresh from Preview |
+| [Managing sources](https://documentation.sailpoint.com/saas/help/sources/index.html) | Source Owner responsibilities and source/account representations | Source ownership assignment is not a complete business field-ownership agreement |
+| [Inviting users](https://documentation.sailpoint.com/saas/help/common/users/inviting_users.html) | Work Email registration invitations, profile/manual/lifecycle and certification-related triggers | Ordinary manual invitation setting is not represented as blocking every email path; no emails sent or protection configuration tested |
+| [Roles](https://documentation.sailpoint.com/saas/help/access/roles.html) | Configured role membership can consume identity values | Selecting ENG does not itself prove a particular role or external permission is assigned |
+
+All nine primary pages were freshly reviewed on October 26, 2026. First Valid's property contract distinguishes ordered non-null selection and ignoreErrors default false. Its static none email example is presented as a supported technical possibility requiring explicit project design, not a universal recommendation or usable mailbox. Source Owner's operational tasks are distinct from business field authority.
+
+The attribute sync page describes existing correlated accounts, separate configured writes and safeguards against unnecessary cyclical synchronization. The lesson therefore does not claim that every receiving-copy or two-way design loops indefinitely. Processing, proposed Preview, actual identity output and target delivery remain separate evidence. Profile/manual invitations do not block every registration trigger, including certification-related invitations.
+
+Official pages currently use Human Fabric/Identity Services/Identity Security branding. This ISC lesson does not import IdentityIQ behavior or undocumented private execution topology. Ownership, timing and format policies below are supplied engineering agreements, not automatic ISC source-election or business-validation features.
+
+### Current neutral inputs and teaching decisions
+
+Employees governs the existing identity through HR-Production. Relevant HR/directory/project/finance account associations are supplied correct and each source has one intended eligible account in the main case.
+
+On October 21 UTC: HR-Production homeDepartment ENG is approved effective09:00 and collected09:05. Directory-Production department OPS is an old receiving copy; record modification09:08 concerns phone, read09:10. Project-Production department PRJ-17 is resource grouping/read09:11. Finance-Production allocationCostCenter text0042 is approved current allocation/read08:45. Exact HR publication time is not supplied; availability by the read is all that is inferred.
+
+Additional selected mappings: HR workerNumber textW-104 to identificationNumber, iscUserName user-w104 to uid and familyName Worker to lastname; directory mail user-w104@example.invalid to email, finance allocationCostCenter text0042 to costCenter. Addresses are illustrative, not real mailbox evidence. Main old identityOPS follows directory selection; approved saved/representative-reviewed/applied direct HR correction yields observed identityENG with directoryOPS retained and no configured Department sync.
+
+Normal input/meaning/correction/output is completed before variants. Later sections retain field-specific ownership, six source-choice criteria, effective/publication/collection distinctions, future publication and late export, required-email project circularity, initial technical value versus usable contact data, invitation consumers, ordered fallback/error policy and UID transition, populations/accounts/value shape, feedback direction and correction/acceptance evidence.
+
+All eight original cases remain with worked answers. Sponsor transfer retains approvedNov30 versus unapproved proposedDec31 from a more recently read application, plus calendar/time-zone/start-versus-end boundary semantics. No extension or access change is performed.
+
+### Current diagrams, aid and validation
+
+- [Approved input and applied Department](../assets/IDN-004_approved_input_and_applied_department.txt): 38 columns, exact inline match; selected value dependency and separate unselected records, not a voting or write-back pipeline.
+- [Project email starting dependency](../assets/IDN-004_project_email_starting_dependency.txt): 36 columns, exact inline match; explicit stated project prerequisites and no initial alternative, not universal ISC architecture or retry behavior.
+- Both current assets meet the 42-column limit. Original 45/44-column assets remain unchanged as history and are not claimed current-compliant.
+- Existing tracing guide 2.0 remains unchanged; it is not silently reverted by the older record below.
+- No learner source citations, course links, biography or author verification metadata. No fixed table/diagram/case/word quotas.
+- Site checks and content-consistency checks do not establish beginner comprehension. Beginner teach-back, full graphical review and formal approval remain pending. Next IDN-005 learner body was not opened.
+
+### Historical verification record: revision 1.0
+
+The following is the dated original record. Its reference-aid revision, route count, examples, diagram widths and next-lesson statement are historical, not current claims.
 
 - Current lesson: [IDN-004](../lessons/IDN-004_Choosing_the_Source_of_Each_Attribute.md), revision 1.0, Module 6.4.
 - Author review and fresh documentation check: October 21, 2026.
@@ -2286,7 +2819,7 @@ Source support for cases 1/8: processing/profiles; 2: profiles/schema; 3: Lower;
 - Reference aid: existing [attribute tracing guide](../assets/ATTRIBUTE_TRACING_GUIDE.txt), revision 1.0, unchanged. Relevant source-choice criteria and filled examples are explained inline; no prerequisite link replaces the teaching.
 - Publication verification: exact deployed revision, complete lesson text and both diagrams/tables, all forty-two routes/native navigation and unchanged served reference aid must be checked separately. These checks do not constitute learner validation.
 
-### Sources mapped to claims
+#### Sources mapped to claims
 
 | Official reference | Supported claim or section | Boundary retained |
 |---|---|---|
@@ -2302,7 +2835,7 @@ Source support for cases 1/8: processing/profiles; 2: profiles/schema; 3: Lower;
 
 Review emphasized profile mapping/required-field sections, First Valid overview/properties/examples, Account Attribute selection, attribute sync direction and safeguards, processing's manual/event-based sections and invitation trigger descriptions. Official sites currently use Human Fabric/Identity Services/Identity Security branding; the ISC course terminology is retained without mixing IdentityIQ behavior.
 
-### Fictional policy and example consistency
+#### Fictional policy and example consistency
 
 Devi is independently introduced as an employee transferring Operations to Engineering, number 64004. PersonnelHub Production is authoritative and Employees governs the one correctly associated identity. PersonnelHub ph-64004 homeDepartment ENG is HR-approved effective October 21, 2026 at 09:00 UTC and collected 09:05. Corporate Directory cd-64004 department OPS is an older downstream copy; its record was modified for a phone correction 09:08 and collected 09:10. ProjectFlow Production pf-64004 department PRJ-17 is a project resource group, collected 09:11, not employment Department.
 
@@ -2312,14 +2845,14 @@ The required-email cycle expressly assumes this project's account-creation path 
 
 Independent variations include contractor coverage gaps, first candidate empty text, first input calculation error/default ignoreErrors false, none with unspecified safeguards, receiving-copy feedback and current OPS/next ENG effective November 1. Transfer has sponsor-approved November 30 versus unapproved proposed December 31 application expiry, with no authority for an extension. No access or business date is changed.
 
-### Diagram and narration review
+#### Diagram and narration review
 
 - [Approved department input](../assets/IDN-004_approved_department_input.txt): synchronized with inline source, maximum width 45 characters. Arrow is configured data dependency, not source voting, transaction sequence or target synchronization.
 - [Required email dependency](../assets/IDN-004_required_email_dependency.txt): synchronized, maximum width 44. Arrows mean depends on under the supplied project constraints; not a retry loop or mandatory ISC backend design.
 - Two two-column tables retain full candidate evidence and field-level selected inputs/reasons for narrow-screen readability. Supporting source/owner/producer/time/mapping/transform/processing/provisioning/sync/fallback/invitation/role/lifecycle terms are introduced before process dependence.
 - Narration and humanizer pass checks independent context, causal reasoning, useful qualifications and no teaching-method announcements, external learner citations, false tenant-test claims or confidence promises. Visual publication checks remain separate.
 
-### Assessment reasoning map
+#### Assessment reasoning map
 
 | Entry | Understanding / supplied facts | Expected reasoning and acceptable evidence | Misconception / reference |
 |---|---|---|---|
@@ -2336,9 +2869,63 @@ Independent variations include contractor coverage gaps, first candidate empty t
 No beginner interview or uncoached transfer exercise has occurred. Formal approval remains pending. Module 6.5 IDN-005 is planned only.
 
 
-## IDN-005
+## IDN-005: Multiple identity profiles, populations and priority
 
-### Revision, checks and limits
+### Current revision and verification limits
+
+- [Learner source](../lessons/IDN-005_Multiple_Identity_Profiles_Populations_and_Priority.md), revision 2.0 local, Module 6.5; teaching specification 3.1.
+- Fresh documentation-based author review: October 26, 2026. Six official documentation pages and two maintained vendor specification files checked.
+- [Coverage and verification record](revisions/IDN-005_Concept_Led_Revision_Record.md) preserves original purposes, all eight cases and acquisition transfer.
+- Existing [tracing guide](../assets/ATTRIBUTE_TRACING_GUIDE.txt) remains local 2.0, unchanged this task. Published guide remains 1.0.
+- Published IDN-005 remains 1.0; published revised snapshot remains 23 through SRC-002. No commit, push or deployment.
+- No actual tenant/API/source/profile/priority/correlation/account/identity/deletion/processing/lifecycle/security/access or target operation performed. Beginner validation, full graphical review and formal approval remain pending.
+
+### Fresh official sources and claim mapping
+
+| Source | Sections or claims checked | Limit applied in the lesson |
+|---|---|---|
+| [Creating Identity Profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Prioritizing Authoritative Sources, mappings, global custom attributes, required values, Preview, viewing profile priority/status, resolving identity exceptions | Exactly one associated profile; highest-priority profile where the identity has an authoritative account. Earlier-created defaults 10 then 20. Per-profile mappings can read other sources; lower profile is not an implicit field fallback. Duplicate uid generates an exception, not a merge instruction. |
+| [Official Identity Profile schema](https://github.com/sailpoint-oss/api-specs/blob/main/idn/apis/identity-profiles/schemas/identityprofile.yaml) | priority numeric field, authoritativeSource reference, identityAttributeConfig, identityCount and identityRefreshRequired | Configuration object roles corroborated directly from maintained vendor API specification; no runnable request, historical endpoint guarantee or automatic reassignment timing asserted. |
+| [Official Update Identity Profile operation](https://github.com/sailpoint-oss/api-specs/blob/main/idn/apis/identity-profiles/paths/identity-profiles-v1-by-identity-profile-id.yaml) | PATCH update operation, JSON Patch body, authorization and updated-profile response | Maintained vendor operation freshly retrieved read-only; learner body does not hard-code an endpoint version/path, execute a request or infer immediate completed reassignment from an update response. |
+| [Assigning Source Accounts to Identities](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) | Matching account attributes with related identity attributes; configured criteria; uncorrelated accounts and corrective investigation | Supplied correct account relationships are prerequisites to profile reasoning; no invented name matching, authoritative deduplication algorithm, forced merge or destructive correction recipe. |
+| [Account Attribute transform](https://developer.sailpoint.com/docs/extensibility/transforms/operations/account-attribute/) | Identity/source-scoped lookup, filters, created ascending default, first-non-null default and optional overrides | Defaults belong to accountAttribute, not all mappings/operations. Lookup filtering does not itself remove an authoritative-account relationship, change connector scope or rank profiles. |
+| [Processing Identity Data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Event-based identity processing, profile mappings/access reevaluation, manual processing and profile Apply Changes scope | Saved configuration, sample preview, initiated processing and completed identity results are distinct. No fixed delay or claim that one profile's current membership covers every priority-change impact. Processing does not validate successful provisioning delivery. |
+| [Setting Up Lifecycle States](https://documentation.sailpoint.com/saas/help/provisioning/lifecycle.html) | Per-profile state configuration, technical name, enabled setting, access/account actions and processing | Same displayed Active label is not proof of equivalent configuration or access. No assertion that a priority change removes every old permission or changes every session/login. |
+| [Loading Account Data: Deleting Authoritative Accounts and Identities](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html#deleting-authoritative-accounts-and-identities) | Confirmed governing authoritative-account removal, lower-priority reassignment and attribute recalculation, no alternative authoritative account, blocked deletion/hidden identity | Deletion conditions are explicit. Missing row, inactive status, transform filter and actual removal remain different. Documented behavior is not a recommendation to delete records to force conversion. |
+
+All eight primary resources were checked October 26, 2026. The web reader returned cache misses for the two raw vendor specification URLs; direct read-only HTTP retrieval succeeded with 200 responses. The schema confirms integer priority, authoritativeSource and identityAttributeConfig. The maintained update operation confirms PATCH/JSON Patch and authorized profile management, without asserting an immediate universal reassignment recipe. No request was made to an ISC tenant.
+
+Priorities 10 then 20 and lower-number precedence are documented configuration ordering. Eligible and governing are explained teaching shorthand, not new configuration fields. No tie-breaker, name-based merge, business-date election, private service ordering or all-target success is inferred. Official naming now includes Human Fabric/Identity Services; no IdentityIQ behavior is imported.
+
+### Current neutral inputs and causal explanation
+
+HR-Production hr-record and Contractor-Production contract-record belong to one existing identity. Supplied configured correlation uses stable person reference P-105 against identity Identification Number, distinct from employee number W-105 and either source account ID. No teaching identity label is treated as an actual ISC ID.
+
+Employees10 and Contractors20 are eligible; Subsidiary Staff5 is absent because no SubsidiaryHR-Production account belongs to this identity. Highest eligible Employees governs. Both worker accounts remain associated.
+
+Selected mappings: Employees HR departmentCodeENG/workerCategoryEMPLOYEE versus Contractors assignmentDepartmentOPS/workerCategoryCONTRACTOR; shared custom workerType definition available across profiles with independent mappings. Both use associated Directory-Production directory-user mail person-w105@example.invalid and produce unique uid person-w105. Required values are assumed available. Email is illustrative, not mailbox evidence.
+
+Normal supplied transition retains the same identity: contractor-only→HR account collected and associated→Employees precedence→successful processing and observed ENG/EMPLOYEE/directory email. Data arrival, correct association, applied mappings and target results are separate facts.
+
+Independent variations preserve ordinary/admin input lookup, scoped accountAttribute defaults, reversed creation order Contractors10/Employees20 and proposed Employees5, shared scope, separate identities A/B, retained inactive account, confirmed deletion of the only governing-source account, remaining contractor account and successful mappings. No deletion is recommended to force conversion.
+
+Acquisition transfer requires stable same-identity references, approved overlap/effective-time policy, per-profile fields/security/lifecycle/consumers, processing scope and independent access evidence. Static priority does not read the acquisition date and delay precedence itself.
+
+### Current diagrams, coverage and validation
+
+- [Attached accounts and governing profile](../assets/IDN-005_attached_accounts_and_governing_profile.txt): 40 columns; exact inline match, account-presence then rank and separated absent source.
+- [Same identity profile transition](../assets/IDN-005_same_identity_profile_transition.txt): 38 columns; exact inline match, same-identity continuity and supplied processing/output followed by separated human verification.
+- Both satisfy 42 columns. Historical 43/39-column assets remain unchanged and are not claimed current-compliant.
+- All eight cases and acquisition worked reasoning retained. Required uid/email/lastname and global uid uniqueness remain distinct from duplicate merging and general priority fixes.
+- Inactive data, disabled account, LCS and actual deletion remain separate; confirmed reassignment uses the documented deletion path with remaining lower authoritative account. No-other-authority deletion/blocked-hidden outcome is qualified, not a simple transfer guarantee.
+- Learner source contains no source/course links, biography or author verification metadata. Structure and counts follow this topic, not course-wide quotas.
+- Site/content checks do not establish beginner comprehension or full graphical quality. Next IDN-006 learner body was not opened.
+
+### Historical verification record: revision 1.0
+
+The dated original follows. Its old guide revision, route count, examples, diagram widths and next-lesson status are historical, not current claims.
+
+#### Revision, checks and limits
 
 Revision 1.0, Module 6.5, **Two worker records. Which identity profile governs the person?** Documentation checked October 21, 2026. This is documentation-based author review, not tenant execution, observed beginner comprehension or formal publication approval. Existing lessons and the attribute tracing guide revision 1.0 are unchanged.
 
@@ -2348,7 +2935,7 @@ Main profile configuration is Employees 10, Contractors 20, Subsidiary Staff 5. 
 
 The reversed creation-order case is an independent configuration: Contractors 10, Employees 20; proposed Employees 5 illustrates a shared change, not a per-person API command. Case 4 deliberately separates the accounts across identities A and B. Case 7 explicitly supplies confirmed authoritative-account deletion through the approved aggregation path, a remaining associated contractor account and successful required mappings. The acquisition transfer is a new design problem, not Devi's continuing biography.
 
-### Official sources and claim mapping
+#### Official sources and claim mapping
 
 | Source | Sections or claims checked | Limit applied in the lesson |
 |---|---|---|
@@ -2363,7 +2950,7 @@ The reversed creation-order case is an independent configuration: Contractors 10
 
 The current documentation uses Identity Services / Human Fabric naming in places. The course retains the requested ISC name; this does not establish a licensing entitlement or feature availability in every tenant.
 
-### Engineering interpretation and excluded claims
+#### Engineering interpretation and excluded claims
 
 - Eligible profile and governing profile are teaching shorthand explained in the learner body. They are not additional product fields or a claim about private implementation.
 - Population boundaries are an approved integration design. Profile names and job-title strings do not automatically implement those boundaries.
@@ -2375,7 +2962,7 @@ The current documentation uses Identity Services / Human Fabric naming in places
 - An unexpected access result is investigated through assignment/removal and fulfillment evidence. No universal removal, rollback, session termination or mailbox/username change is promised.
 - All examples describe supplied facts or conditional design reasoning; none is advertised as lab/production observation.
 
-### Diagrams and presentation checks
+#### Diagrams and presentation checks
 
 - [Profile eligibility and priority](../assets/IDN-005_profile_eligibility_and_priority.txt), maximum 43 characters: two attached authoritative accounts, one absent higher-ranked profile, then ranking among eligible profiles.
 - [Contractor-to-employee transition](../assets/IDN-005_contractor_to_employee_transition.txt), maximum 39 characters: same identity before/after new associated authoritative account, supplied successful Employees mapping results and separate human verification.
@@ -2383,7 +2970,7 @@ The current documentation uses Identity Services / Human Fabric naming in places
 - Two two-column tables compare configured populations/priorities and selected per-profile mappings. Full source text, diagrams, tables, all forty-three routes, navigation and the unchanged downloadable tracing aid are publication checks; visual rendering is checked separately on the live page.
 - No external links, course navigation links or source-citation labels are added to the learner article. Author metadata stays here.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Exercise | Understanding tested | Expected reasoning / acceptable alternatives | Misconception exposed | Source anchor |
 |---|---|---|---|---|
@@ -2399,9 +2986,61 @@ The current documentation uses Identity Services / Human Fabric naming in places
 
 Questions and worked reasoning remain in the learner file. The observed learner-validation result remains pending.
 
-## IDN-006
+## IDN-006: Required attributes, identity exceptions and incomplete information
 
-### Revision, review and limits
+### Current revision and verification limits
+
+- [Learner source](../lessons/IDN-006_Required_Attributes_Identity_Exceptions_and_Incomplete_Information.md), revision 2.0 local, Module 6.6; teaching specification 3.1.
+- Fresh documentation-based author review: October 26, 2026; seven primary pages checked.
+- [Coverage and verification record](revisions/IDN-006_Concept_Led_Revision_Record.md) preserves original purposes, eight cases and contractor-intake transfer.
+- Existing [tracing guide](../assets/ATTRIBUTE_TRACING_GUIDE.txt) remains local 2.0, unchanged this task; published guide remains 1.0.
+- Published IDN-006 remains 1.0; published revised snapshot remains 23 through SRC-002. No commit, push or deployment.
+- No actual tenant/source/profile/identity/account/mapping/transform/authentication/correlation/deletion/processing/provisioning/target operation performed. Beginner validation, full graphical review and formal approval remain pending.
+
+### Fresh official references and claim mapping
+
+| Source | Sections and behavior checked | Lesson boundary |
+|---|---|---|
+| [Creating Identity Profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Required uid/email/lastname mappings and non-null outputs, cross-profile username uniqueness, Work Email not format-validated, cross-source mappings, Preview, Identity Exceptions download and source-data correction | Configured mapping is different from successful per-person output. Duplicate uid is an exception, not an automatic merge. Main mapping correction is engineering reasoning over supplied inputs, not a claim that every exception originates in HR. |
+| [Working with Identities](https://documentation.sailpoint.com/saas/help/identities/identity_mgmt.html) | All/Incomplete/Errors filters, incomplete sign-in/request/certification restrictions, statuses and error-detail examples for alternate email and authentication-source mismatch | Incomplete is not all errors. An available required email does not establish that a separately configured alternate invitation address exists. The lesson does not equate account/identity/lifecycle states or teach destructive reset/deletion as repair. |
+| [Processing Identity Data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Event-based updates, manual application of profile configuration, Preview/Apply scope, applied identity evidence, Search synchronization and independent provisioning verification | Processing existing data does not itself reread the external producer. Preview/save/initiation are distinct from applied results. No fixed completion/index delay, universal automatic retry or proof of provisioning success is promised. |
+| [Loading Account Data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html) | Source aggregation, activity/history, source read scope and view freshness | Correction needs the actual account read and changed represented data, not green aggregate status alone. Omitted input is not assumed to universally clear existing data; no target change follows merely from a successful read. |
+| [First Valid transform](https://developer.sailpoint.com/docs/extensibility/transforms/operations/first-valid/) | Ordered first non-null result, static strings/nested results, ignoreErrors default false, documented email placeholder example | Empty text differs from null; a literal none/unknown is not business approval or a usable mailbox. Explicit error handling differs from null fallback. Transform evaluation is separated from connector normalization and required-field validation. |
+| [Account Attribute transform](https://developer.sailpoint.com/docs/extensibility/transforms/operations/account-attribute/) | Lookup uses associated identity accounts for a selected source and account field | Supports selected-account input inspection, not a universal person-name lookup, arbitrary read of another identity's account or every-operation account-selection algorithm. |
+| [Assigning Source Accounts to Identities](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) | Configured comparisons establish account-to-identity associations; unmatched accounts remain uncorrelated | Ownership investigation for a repeated-person collision is separate from naming uniqueness for different people. No forced merge or destructive correction recipe is inferred. |
+
+All seven primary pages freshly reviewed October 26, 2026. Required mapped uid/email/lastname and global UID uniqueness are separate from usable address, identity continuity and optional business dependencies. Identity Exceptions includes duplicate UID as well as missing required values; Incomplete and Errors views are not universal synonyms.
+
+First Valid's non-null contract/default ignoreErrors=false is scoped to successful evaluated values and explicit error handling. Literal none/unknown/empty/space and omitted input are not assigned universal normalization/acceptance/clearing behavior across connectors and platform stages. Processing existing represented data is not an external read, and initiating provisioning does not certify delivery.
+
+Current sources use Human Fabric/Identity Services branding. This course retains ISC without importing IdentityIQ behavior, licensing assumptions or undocumented backend order.
+
+### Current neutral inputs and complete repair
+
+HR-Production is authoritative for Employees; hr-record belongs to the intended identity and uid person-w106 is supplied unique. Selected JSON: workerNumber textW-106, loginName person-w106, workMail person-w106@example.invalid, familyName Worker and surname null. Both surname fields remain defined, but surname is retired. Email is illustrative, not mailbox evidence.
+
+User Name and Work Email select loginName/workMail; Last Name selects surname with no calculation replacing null. Supplied identity has correct uid/email but no lastname, missing-required exception evidence and Incomplete observation.
+
+Approved saved/representative-reviewed/previewed/applied correction selects familyName. Successful processing and supplied current evidence confirm the same identity's lastname Worker, unchanged correct uid/email, cleared specific exception and no current Incomplete appearance. Account fields and HR surname are unchanged.
+
+The normal repair is completed before producer/extraction/mapping branches, blank/error states, specific UI distinctions and username collisions. Different-person UID naming and same-person continuity remain separate; no merge/deletion shortcut. Search/report scope/time are considered without dismissing all disagreement as delay.
+
+Optional manager/department/end-date dependencies, email fitness, configured access and target outcomes remain distinct from required completeness. Contractor transfer retains initial unknown proposal, approved eventual input, all consumers/transition controls and changed collision/error/empty/uncollected conditions.
+
+### Current diagrams and validation
+
+- [Selected null and incomplete identity](../assets/IDN-006_selected_null_and_incomplete_identity.txt): 38 columns; exact inline match, selected retired null field to missing identity output and supplied evidence.
+- [Repair layer and verify identity](../assets/IDN-006_repair_layer_and_verify_identity.txt): 39 columns; exact inline match, human cause-based branches with collection/application dependencies and independent identity/target checks.
+- Both satisfy the 42-column limit. Historical 39/43-column sources remain unchanged and are not claimed current-compliant.
+- Five-field JSON, three required-field rows, six input-state rows, eight exercises and worked contractor transfer remain consistent. Counts preserve topic coverage and are not quotas.
+- Existing tracing guide 2.0 is unchanged. No learner source citations, course links, biography or author verification metadata.
+- Structural/site checks do not establish learner understanding or full graphical quality. Next IDN-007 learner body was not opened.
+
+### Historical verification record: revision 1.0
+
+The dated original follows. Its prior guide revision, route count, examples, widths and next-lesson status are historical, not current claims.
+
+#### Revision, review and limits
 
 Revision 1.0, Module 6.6, **The account arrived. Why is the identity incomplete?** Documentation checked October 21, 2026. Documentation-based author review only; no tenant execution, observed beginner validation or formal publication approval. Prior lessons, presentation behavior and the complete attribute tracing aid revision 1.0 are unchanged.
 
@@ -2409,7 +3048,7 @@ Independent fictional example: joining employee Devi 66006; WorkforceBook Produc
 
 The approved correction selects familyName, and successful processing produces lastname Rao on the same intended identity while uid/email remain correct. Current exception evidence clears and the identity no longer appears in Incomplete Identities. These are fictional supplied observations, not executed UI/API/account/profile changes or exact replicas of report fields. The source surname is already correct; no real HR data, naming rule, profile, authentication, identity, correlation, deletion, provisioning or external target operation occurs.
 
-### Official references and claim mapping
+#### Official references and claim mapping
 
 | Source | Sections and behavior checked | Lesson boundary |
 |---|---|---|
@@ -2423,7 +3062,7 @@ The approved correction selects familyName, and successful processing produces l
 
 Current official documents use Identity Services / Human Fabric naming in places. The course retains the requested ISC title; source terminology does not assert a licensing entitlement or availability in every tenant.
 
-### Reasoning and deliberately excluded claims
+#### Reasoning and deliberately excluded claims
 
 - The two required-value checks are shared configured mappings and actual per-identity results. A valid schema field, a saved mapping, a successful read or a sample preview does not alone prove that a particular required output exists.
 - The main selected account explicitly contains null in the retired field. Empty, whitespace, omitted and literal-null examples are changed conditions; the lesson does not assert undocumented acceptance/trim/clearing behavior across all connectors, transforms and platform validation stages.
@@ -2435,7 +3074,7 @@ Current official documents use Identity Services / Human Fabric naming in places
 - Applied identity repair and current exception/status evidence must be checked for the specific identity and other affected records. Historical reports/counts and stale Search observations do not independently prove present correctness or failure.
 - Source collection, identity processing and external provisioning remain separate operations. Source-data correction, integration correction and mapping correction require different approved actions; the map is human engineering reasoning, not an automated repair feature.
 
-### Diagrams and publication checks
+#### Diagrams and publication checks
 
 - [Missing required value trace](../assets/IDN-006_missing_required_value_trace.txt), maximum 39 characters: collected familyName Rao/surname null, wrong profile input, missing identity lastname and supplied incomplete/exception evidence.
 - [Cause-based correction](../assets/IDN-006_cause_based_correction.txt), maximum 43 characters: human diagnosis branches to producer, collection/extraction or mapping fixes; collection/processing dependencies converge on specific-identity and separate downstream checks.
@@ -2443,7 +3082,7 @@ Current official documents use Identity Services / Human Fabric naming in places
 - One selected JSON extract is syntactically valid. Two two-column tables explain required values and input-state distinctions. Full source text, JSON, diagrams, tables, all forty-four routes, navigation and unchanged aid text are publication checks; live visual rendering is checked separately.
 - Learner article contains no external source links, course links or reference labels. Assessment metadata stays outside the teaching body.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Exercise | Understanding tested | Expected reasoning / acceptable alternatives | Misconception exposed | Source anchor |
 |---|---|---|---|---|
@@ -2459,9 +3098,65 @@ Current official documents use Identity Services / Human Fabric naming in places
 
 Learner questions and worked answers remain in the lesson. No beginner read-through or transfer-test result is claimed.
 
-## IDN-007
+## IDN-007: Changing mappings and understanding downstream effects
 
-### Revision, review and limits
+### Current revision and verification limits
+
+- [Learner source](../lessons/IDN-007_Changing_Mappings_and_Understanding_Downstream_Effects.md), revision 2.0 local, Module 6.7; teaching specification 3.1.
+- Fresh documentation-based author review: October 26, 2026; nine primary pages checked.
+- [Coverage and verification record](revisions/IDN-007_Concept_Led_Revision_Record.md) preserves original purposes, eight cases and contract end-date transfer.
+- Existing [tracing guide](../assets/ATTRIBUTE_TRACING_GUIDE.txt) remains local 2.0 and published 1.0, unchanged this task.
+- Published IDN-007 remains 1.0; published revised snapshot remains 23 through SRC-002. No commit, push or deployment.
+- No actual tenant/source/profile/account/identity/mapping/transform/role/manager/lifecycle/sync/permission/deletion/target operation performed. Beginner validation, full graphical review and formal approval remain pending.
+
+### Fresh official sources and claim mapping
+
+| Source | Sections or behavior checked | Lesson boundary |
+|---|---|---|
+| [Creating Identity Profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Per-profile mappings from multiple sources, Preview, shared custom attribute definitions, required fields, impact of deleting attributes | Mapping edit, mapping removal and global definition deletion are distinct. One selected preview is a calculation, not population/consumer delivery validation. Required inputs and global uid uniqueness remain relevant. |
+| [Processing Identity Data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Mapped values, manager/lifecycle/role evaluation, manual profile Apply Changes scope versus role/application list scope, selected-identity processing, event/scheduled paths, monitoring and view synchronization | No fixed private execution order, isolated staging mode, atomic multi-configuration transaction or guarantee that all saved configuration waits safely behind one button. Selected processing scopes one request, not all activity. Processing does not validate successful provisioning delivery. |
+| [Automating Role Assignment](https://documentation.sailpoint.com/saas/help/provisioning/role_assignment.html) | Identity-attribute criteria, Equals behavior, role reevaluation after configuration/identity changes, automatic role/access-profile removal when criteria no longer match | Engineering versus ENG are different strings, not a case-only comparison. An unchanged criterion no longer matches; actual removal/provisioning and overlapping access reasons require separate evidence. Coordinated example updates the criterion rather than claiming the code automatically retains the role. |
+| [Managing Roles](https://documentation.sailpoint.com/saas/help/access/roles.html) | Standard roles grouping access profiles and standing entitlements; direct role access relationships | Supports the introductory role definition. Membership-condition changes in this lesson are not conflated with removing items from a role definition and its separate propagation controls. |
+| [Synchronizing Attributes](https://documentation.sailpoint.com/saas/help/provisioning/attr_sync.html) | Eligible direct identity mappings in Create Account definition; existing correlated accounts; all correlated accounts per source; mapped null propagation; ongoing enforcement | Main example explicitly supplies eligible mapping and active identity. Sync is not a missing-account creation path, read aggregation, per-normal-account-only write or proof of target acceptance. Mapped null is distinguished from omission/unmapping. |
+| [Configuring Manager Correlation](https://documentation.sailpoint.com/saas/help/sources/manager_correlation.html) | Profile/source configuration, matching manager reference, recalculation, changed non-null unmatched input retaining current manager versus null outcome | Actual relationship must be checked, not just a mapped label. The lesson does not replace the documented manager-specific source/priority resolution with a single generic profile assumption. Main Department example supplies unchanged manager. |
+| [Setting Up Lifecycle States](https://documentation.sailpoint.com/saas/help/provisioning/lifecycle.html) | Profile-specific state technical names and enabled state, date/calculation effects, account/access actions, identity-state participation, deletion warning | Main lifecycle remains active; Department does not automatically change every lifecycle. Source account enabled status differs from identity state. No universal action replay, undo or account restoration is promised. |
+| [Reference transform](https://developer.sailpoint.com/docs/extensibility/transforms/operations/reference/) | Reusing an existing transform within another transform, maintained logic propagating to referencing implementations | Inspect actual references and saved definitions. Identical display names do not prove sharing; updating one local mapping is not assumed to update independent copies. Reevaluate affected consumers with the appropriate processing scope. |
+| [Monitoring Provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html) | Provisioning Activity report, individual event details, account activity and errors | Execution records describe attempted work/results. Supplied direct target observation establishes actual receiving value. A denied write is not cured by editing correct HR data or blindly rerunning all identities. |
+
+All nine primary pages freshly reviewed October 26, 2026, including the current tracking.html provisioning page. Historical failed URL discovery below is not a new task event.
+
+Attribute sync conditions remain explicit: eligible direct identity mapping in Create Account, existing correlated account, supported configured writer; all correlated source accounts and mapped null behavior are writer-specific. Manager correlation's unmatched changed non-null retention differs from null and requires its own source/profile configuration resolution. Reference reuse can extend scope beyond the profile being edited.
+
+Saved configuration, selected Preview, initiated processing, observed identity/role and target delivery are distinct. Profile versus role Apply Changes scopes and other event/scheduled evaluation prevent treating selected processing or an unpressed button as a private staging barrier. No atomic transition, universal retry, automatic undo or restored deleted history is inferred.
+
+Current Human Fabric/Identity Services naming does not import IdentityIQ behavior or assert universal tenant licensing.
+
+### Current neutral configuration and causal flow
+
+HR-Production is authoritative for Employees. hr-record departmentCode ENG and Directory-Production directory-user department Engineering belong to one correct identity. Required inputs are available. The main ordinary account is the only intended directory account; directory-admin is introduced only in a separate variation.
+
+The current identity reads directory Engineering; proposed HR mapping returns ENG for the same business department. Enabled automatic Engineering Worker initially compares Engineering, with no alternative match in the uncoordinated-risk scenario. Directory Department sync has eligible direct mapping and an existing correlated account; the update operation is supported, while execution permission can still fail.
+
+The coordinated agreement approves identity/target codes and revised role equality ENG. Supplied applied outcome: identity ENG, role correct, manager/active lifecycle unchanged, Active identity state, directory write denied and target still Engineering. No actual grant or source update occurs in this task.
+
+Separate recovery variation explicitly supplies successful directory write to ENG and collection of changed account data. Restoring the previous directory-based mapping then reads ENG. Previous configuration is not previous input or reversal of completed external effects.
+
+Other retained conditions: OPS negative role sample, missing/future input, multiple supplying accounts, other profile/shared Reference scope, all correlated target accounts, mapped optional null, unmatched non-null manager retention and null distinction. End-date transfer distinguishes approved current from proposed extension, effective timing/format/zone, relevant lifecycle/access consumers and action-specific recovery.
+
+### Current diagrams, preserved support and validation
+
+- [Code consumers and separate outcomes](../assets/IDN-007_code_consumers_and_separate_outcomes.txt): 39 columns, exact inline match; branch to unchanged role comparison and configured sync, with separated human verification.
+- [Restored mapping with changed input](../assets/IDN-007_restored_mapping_changed_input.txt): 41 columns, exact inline match; before value, successful-write/recollection variation and old mapping reading changed input.
+- Both satisfy 42 columns. Historical 44/41-column assets remain unchanged and are not claimed current assets.
+- Two comparisons retain configuration and six representative conditions. All eight exercises and the worked end-date transfer remain; counts are coverage, not quotas.
+- Existing tracing guide 2.0 is unchanged. Learner body contains no source/course links, biography or author verification metadata.
+- Site/content checks do not establish beginner comprehension or full graphical quality. Next IDN-008 learner body was not opened.
+
+### Historical verification record: revision 1.0
+
+The dated original follows. Its old guide revision, route count, examples, diagram widths and next-lesson status are historical, not current claims.
+
+#### Revision, review and limits
 
 Revision 1.0, Module 6.7, **The mapping is correct. What else will change?** Documentation checked October 21, 2026. Documentation-based author review only; no tenant execution, observed beginner validation or formal publication approval. All earlier lessons, navigation behavior and the complete attribute tracing aid revision 1.0 are unchanged.
 
@@ -2469,7 +3164,7 @@ Independent fictional example: employee Devi 67007, WorkforceHub Production auth
 
 The dependency diagram illustrates the uncoordinated risk while the old role criterion remains. The coordinated example supplies approved ENG consumer logic and approved target code format, identity ENG and correct role, unchanged manager/lifecycle active, but a denied directory write and actual directory Engineering. The rollback diagram is explicitly a different variation: the directory write succeeds, ENG is read into ISC, and restoring the old directory-based mapping now reads ENG rather than Engineering. Administration account cd-admin-67007 appears only in the changed multi-account case; OPS supplies a negative role test. No source/profile/transform/role/manager/lifecycle/sync/account/permission/deletion/target mutation is performed.
 
-### Official sources and claim mapping
+#### Official sources and claim mapping
 
 | Source | Sections or behavior checked | Lesson boundary |
 |---|---|---|
@@ -2485,7 +3180,7 @@ The dependency diagram illustrates the uncoordinated risk while the old role cri
 
 The initially attempted monitoring.html URL is not current (404); the official navigation led to tracking.html, which was read and is the reference retained here. Current documentation uses Identity Services / Human Fabric naming in places; the course keeps the requested ISC title without implying licensing/feature availability for every tenant.
 
-### Engineering reasoning and excluded guarantees
+#### Engineering reasoning and excluded guarantees
 
 - Main department change is a representation migration, not a job transfer. Identical business meaning does not make old/new text comparisons equivalent or approve the receiving format in every project.
 - Dependency review follows actual inputs, referenced calculations, consumers and writers. It does not claim every mapping change triggers every manager/lifecycle/role/integration branch.
@@ -2499,7 +3194,7 @@ The initially attempted monitoring.html URL is not current (404); the official n
 - User Name, Work Email and Last Name remain required; additional manager/lifecycle/consumer correctness and actual target state need their own evidence.
 - No live changes, connector permission grants, rollback commands, deletions or production rollout are executed.
 
-### Diagrams and presentation checks
+#### Diagrams and presentation checks
 
 - [Department consumers](../assets/IDN-007_department_consumers.txt), maximum 44 characters: changed identity code branches to an unchanged role comparison and separately configured directory sync, followed by human checks.
 - [Restoring a mapping](../assets/IDN-007_restoring_a_mapping.txt), maximum 41 characters: old directory label path; a separate successful new-code sync and collection; restored old mapping now reading changed input; human recovery.
@@ -2507,7 +3202,7 @@ The initially attempted monitoring.html URL is not current (404); the official n
 - Two two-column tables hold selected configuration and sample test conditions. Complete live text, diagrams, tables, all forty-five routes/navigation and unchanged downloadable guide are publication checks; diagrams/table readability is checked separately on the live page.
 - Learner body contains no external citations, course links or source lists. Assessment metadata remains here.
 
-### Assessment intent and acceptable reasoning
+#### Assessment intent and acceptable reasoning
 
 | Exercise | Understanding tested | Expected reasoning / acceptable alternatives | Misconception exposed | Source anchor |
 |---|---|---|---|---|
@@ -2523,9 +3218,61 @@ The initially attempted monitoring.html URL is not current (404); the official n
 
 Questions and worked reasoning remain in the learner file. Beginner comprehension and formal approval remain pending.
 
-## IDN-008
+## IDN-008: Tracing an incorrect identity value to its origin
 
-### Revision, review and limits
+### Current revision and verification limits
+
+- [Learner source](../lessons/IDN-008_Tracing_an_Incorrect_Identity_Value_to_Its_Origin.md), revision 2.0 local, Module 6.8; teaching specification 3.1.
+- Fresh documentation-based author review: October 26, 2026; eight primary pages checked.
+- [Coverage and verification record](revisions/IDN-008_Concept_Led_Revision_Record.md) preserves original purposes, all eight evidence questions, eight cases and work-email transfer.
+- Existing [tracing guide](../assets/ATTRIBUTE_TRACING_GUIDE.txt) remains local 2.0 and published 1.0, unchanged. IDN-008 applies its eight dimensions through the original inline questions; it does not replace the guide's wording.
+- Published IDN-008 remains 1.0; published revised snapshot remains 23 through SRC-002. No commit, push or deployment.
+- No actual tenant/source/profile/account/identity/transform/correlation/aggregation/processing/sync/target operation performed. Beginner validation, full graphical review and formal approval remain pending.
+- All eight Module 6 lessons are now individually revised. This is not an additional cross-module learner test or completion of the planned course. Next COR-001 learner body was not opened.
+
+### Fresh official sources and claim mapping
+
+| Source | Sections or behavior checked | Lesson qualification |
+|---|---|---|
+| [Creating Identity Profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Single associated profile, authoritative-account priority, multi-source mappings, Preview/Apply, required fields | Exact governing profile must be established. Priority is not field fallback or a way to merge identities. One calculated preview differs from applied identity/target outcomes. |
+| [Trim transform](https://developer.sailpoint.com/docs/extensibility/transforms/operations/trim/) | Leading/trailing whitespace removal, optional explicit input overriding reliance on UI source/attribute selection, nested input structure | Saved JSON uses type trim with attributes.input containing accountAttribute. Trim receives directory text, not HR 0042; no numerical conversion or arbitrary replacement is inferred. |
+| [Account Attribute transform](https://developer.sailpoint.com/docs/extensibility/transforms/operations/account-attribute/) | Identity/source-scoped lookup, sourceName/attributeName, account filters, created ascending and first-non-null defaults | Main example has one associated account per source. Changed two-account case uses documented oldest-created default with a non-null first value. No universal newest/oldest ISC selection rule or ownership repair is implied. |
+| [Reference transform](https://developer.sailpoint.com/docs/extensibility/transforms/operations/reference/) | Reusing a previously defined transform and following the referenced logic/input | Nested or referenced calculations require inspection of the actual definitions. Source labels/display names alone do not establish the input path. No claim of tenant-tested reference resolution. |
+| [Assigning Source Accounts to Identities](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) | Configured account-to-identity association and unmatched account distinction | Ownership precedes lookup evidence. Wrong identity/profile/account questions are separate from field transformation; supplied correct ownership is not inferred from display name. |
+| [Loading Account Data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html) | Account aggregation, per-record representation and activity evidence, observation freshness and Search delay | Green read does not establish mapping use or exact-record correctness. Producer, extraction, represented account and identity are distinct boundaries. No universal omission-clearing behavior or fixed view delay is taught. |
+| [Processing Identity Data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Event/manual processing, profile Apply Changes scope, execution monitoring, synchronization with views and external provisioning verification boundary | Current Preview reproduces current logic, not an earlier execution or automatic application. Saved correction, initiated/completed processing, current identity and consumer outcomes need distinct evidence. |
+| [Synchronizing Attributes](https://documentation.sailpoint.com/saas/help/provisioning/attr_sync.html) | Configured identity-to-existing-correlated-account writes and distinction from source reads | Main scenario explicitly has no cost-centre sync; correct identity does not imply a directory write. Work-email transfer requires proving the actual consumer/write path before classifying an application discrepancy. |
+
+All eight primary resources freshly reviewed October 26, 2026. Trim's optional input and nested accountAttribute definition establish actual selected input rather than relying on the outer screen. Lookup selection defaults remain operation-specific. Reference reuse and shared mapping scope are checked before correction.
+
+Present source values and definition reproduce current Preview0900 and are consistent with the identity observation. They do not identify the exact earlier run without its revision, input and execution evidence. Historical limits are engineering evidence reasoning, not a claim of undocumented ISC history capture.
+
+Profile/processing/current identity/Search/target observations remain separate. No configured directory cost-centre sync is supplied, so main correction does not imply a write. Current branding includes Human Fabric/Identity Services; no IdentityIQ behavior or universal licensing is imported.
+
+### Current neutral inputs and complete trace
+
+HR-Production is authoritative for Employees. Finance approves its published costCenter text0042 as current effective09:00, collected on hr-record09:05. Directory-Production directory-user contains text with surrounding spaces0900, collected09:08. One relevant account on each source belongs to the same intended identity; no pseudo identity ID or display-name matching is used.
+
+October21 UTC: current identity0900 observed09:10; outer HR/costCenter selections plus Trim Cost Center inspected09:12; current saved calculation Preview0900 at09:13. Saved trim.attributes.input uses accountAttribute sourceName Directory-Production and attributeName costCenter. Readable JSON is not an upload instruction.
+
+Input lookup returns spaced0900; Trim returns text0900. HR0042 was not the value being trimmed. Correcting the explicit source to HR-Production preserves field/Trim, yields Preview0042 and supplied same-identity applied0042 after successful relevant processing. Required fields remain intact, no HR rewrite/ownership/profile change and no directory sync.
+
+Normal calculation/correction is completed before lookup selection, type/cardinality/Reference variants, hypothesis comparison and historical reasoning. Seven hypotheses preserve producer publication, account representation, profile/account, actual definition, application, view and writer distinctions. All eight original general evidence questions remain verbatim after line-ending normalization.
+
+### Current diagrams, reference aid and validation
+
+- [Actual explicit input and current evidence](../assets/IDN-008_actual_explicit_input_and_current_evidence.txt): 37 columns, exact inline match; unused HR row, actual directory input/Trim/Preview and separated identity/history evidence.
+- [Correct input then verify same identity](../assets/IDN-008_correct_input_then_verify_same_identity.txt): 38 columns, exact inline match; before calculation, approved input correction and separately supplied post-processing result/no write.
+- Both satisfy 42 columns. Historical 45/41-column sources remain unchanged and are not claimed current assets.
+- Nested JSON and local supplied-value model are checked as teaching examples, not execution of ISC transforms.
+- Original question dimensions remain aligned with unchanged guide2.0; no source/course URLs, biography or author verification metadata in learner text.
+- Structural/site checks cannot establish learner comprehension or full graphical rendering. Exact visual publication review and formal approval remain pending.
+
+### Historical verification record: revision 1.0
+
+The dated original follows. Its earlier guide revision, authored route/module counts, examples, widths and next-lesson statements are historical, not current claims.
+
+#### Revision, review and limits
 
 Revision 1.0, Module 6.8, **Where did this identity value come from?** Documentation checked October 21, 2026. Documentation-based author review only; no tenant execution, observed beginner validation or formal publication approval. Earlier lessons, site behavior and tracing guide revision 1.0 are unchanged. All eight Module 6 lessons are now authored, which does not establish completion of learner validation or the whole course.
 
@@ -2533,7 +3280,7 @@ Independent fictional example: employee Devi 68008, teaching identity label I-68
 
 Both supplied accounts belong to the same intended identity, with exactly one relevant account per source. UI selections name StaffLedger/costCenter, but Trim Cost Center explicitly nests accountAttribute with sourceName Corporate Directory and attributeName costCenter. The selected directory text trims to 0900. Correcting the actual explicit source to StaffLedger Production yields Preview and supplied post-processing identity text 0042, preserving zeros. No directory cost-centre synchronization is configured, so no directory write is expected. All configuration, observations and successful correction are supplied fictional evidence, not real system executions or screenshots of tenant records.
 
-### Official sources and claim mapping
+#### Official sources and claim mapping
 
 | Source | Sections or behavior checked | Lesson qualification |
 |---|---|---|
@@ -2548,7 +3295,7 @@ Both supplied accounts belong to the same intended identity, with exactly one re
 
 Documentation uses Identity Services / Human Fabric naming in places; the requested ISC course title is retained without implying every licensed feature or connector is present.
 
-### Trace assumptions, engineering reasoning and excluded claims
+#### Trace assumptions, engineering reasoning and excluded claims
 
 - HR expected value is an approved current business fact in the supplied example. The integration is not choosing authority from recency or the familiar HR label.
 - The selected JSON is a valid reading example, not an API request or command to upload into a tenant. Corrected explicit input is described in prose, preserving the intended operation and field.
@@ -2562,7 +3309,7 @@ Documentation uses Identity Services / Human Fabric naming in places; the reques
 - Inline eight-question trace applies the same evidence dimensions as the unchanged complete guide revision 1.0. It is a human investigation order, not a backend execution sequence.
 - All records, times, calculations and before/after outcomes are illustrative. No source/profile/transform/account/correlation/identity/sync or target change is performed.
 
-### Diagrams, reference aid and presentation checks
+#### Diagrams, reference aid and presentation checks
 
 - [Explicit input trace](../assets/IDN-008_explicit_input_trace.txt), maximum 45 characters: unused approved HR value versus actual directory input, Trim, current Preview/output comparison and historical-evidence caution.
 - [Correction and verification](../assets/IDN-008_correction_and_verification.txt), maximum 41 characters: current wrong input, approved input correction and selected Preview, separately supplied post-processing identity, unchanged directory and human checks.
@@ -2572,7 +3319,7 @@ Documentation uses Identity Services / Human Fabric naming in places; the reques
 - All six navigation modules remain; do not create a seventh module until COR-001 exists. The next reserved lesson is Module 7.1, not authored in this change.
 - No external links, course links or source-reference labels are in the learner article.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Exercise | Understanding tested | Expected reasoning / acceptable alternatives | Misconception exposed | Source anchor |
 |---|---|---|---|---|
@@ -2588,9 +3335,64 @@ Documentation uses Identity Services / Human Fabric naming in places; the reques
 
 Questions and worked reasoning stay in the learner file. Beginner validation and formal approval remain pending.
 
-## COR-001
+## COR-001: Why importing an account leaves a relationship to establish
 
-### Revision, review and limits
+### Current revision and verification limits
+
+- [Learner source](../lessons/COR-001_Why_Importing_an_Account_Leaves_a_Relationship_to_Establish.md), revision 2.0 local, Module 7.1; teaching specification 3.1.
+- Fresh documentation-based author review: October 26, 2026; eight primary pages checked.
+- [Coverage and verification record](revisions/COR-001_Concept_Led_Revision_Record.md) preserves original purposes, all eight cases and 2,000-account transfer.
+- Existing [tracing guide](../assets/ATTRIBUTE_TRACING_GUIDE.txt) remains local 2.0/published 1.0, unchanged.
+- Published COR-001 remains 1.0; published revised snapshot remains 23 through SRC-002. No commit, push or deployment. Existing site modules/routes/code preserved.
+- No actual tenant/source/profile/account/identity/correlation/manual-link/reset/deletion/sync/target operation performed. Beginner validation, full graphical review and formal approval remain pending.
+- COR-001 begins the individual Module 7 revision pass, not a newly authored navigation module. Next COR-002 learner body was not opened.
+
+### Fresh official sources and claim mapping
+
+| Source | Sections or claims checked | Lesson boundary |
+|---|---|---|
+| [Assigning Source Accounts to Identities](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) | Configured account/identity comparisons, prerequisites, preset and default logic, default Account Name to identity name case-insensitive comparison, uncorrelated reports, unchanged account reexamination, manual correlation permanence and ISC-created account treatment | Missing configured reference alone is not universal proof of uncorrelated status. Main case explicitly excludes a default match. Display name differs from schema-designated Account Name and identity name. No destructive reset/removal or automatic manual-link reassignment recipe is taught. |
+| [Managing Accounts](https://documentation.sailpoint.com/saas/help/accounts/index.html) | Human/machine/uncorrelated classifications, account status/attributes, source account correlation management and governance requirement | Uncorrelated means missing authoritative identity relationship, not external deletion or absence of business ownership. Shared/machine accountability must use appropriate classification; no license entitlement or personal correlation for every service account is implied. |
+| [Creating Identity Profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Authoritative source/profile identity establishment, identity attributes and cross-source mappings | Existing employee identity is already established. Making LedgerPay authoritative would change population establishment rather than prove ownership. Correlation, profile selection and identity field mappings are distinct responsibilities. |
+| [Loading Account Data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html) | Account reads/representation, aggregation evidence and optimization context, view freshness | Account existence in the target, source representation and owner association are separate observations. Logical teaching stages are not separate mandatory jobs. Correcting feed data must reach ISC and be evaluated; success of one read is not full outcome proof. |
+| [Viewing Identity Control Panels](https://documentation.sailpoint.com/saas/help/identities/control_panel.html) | Identity profile/details and access/account relationships, represented access evidence | Person-level view describes associated data; source inventory and current matching evidence are needed when account is absent from that person's view. Matching UI names or a correlation flag do not establish business ownership. |
+| [Managing Sources: Assigning a Source Owner](https://documentation.sailpoint.com/saas/help/sources/index.html#assigning-a-source-owner) | Source Owner manual fulfillment and certification responsibilities | Operational owner of a source is not automatically the personal owner/user of all its accounts. The 120-account bulk-assignment proposal is rejected on that distinction, not a blanket prohibition of supported manual correlation. |
+| [Processing Identity Data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Identity evaluation and role/lifecycle/manager/access requirements; provisioning delivery limit | Correct association can affect data available to configured consumers, but does not prove every role/lifecycle change or successful external delivery. Main example supplies no access-changing work. |
+| [Synchronizing Attributes](https://documentation.sailpoint.com/saas/help/provisioning/attr_sync.html) | Existing correlated accounts and association changes as possible triggers for configured sync | Moving/correlating an account can matter beyond a display label when sync exists. Main correction explicitly has no sync write; no universal automatic field update or access grant is inferred. |
+
+All eight primary resources freshly reviewed October 26, 2026. Current Managing Accounts is accounts/index.html; the older failed-path discovery below is historical, not a new task event.
+
+Default correlation compares schema-designated Account Name with identity name case-insensitively when configured correlation cannot match; friendly display labels are not interchangeable. Preset source-type configurations and persistent manual/ISC-created account treatment remain distinct. No ambiguous-candidate tie-breaker or manual-link clearing through unoptimized read is inferred.
+
+Uncorrelated means absent authoritative identity link, not necessarily unknown business ownership or disabled external access. Person-linked governance evidence is distinguished from source inventory/reporting, without claiming all review or inventory is unavailable. Shared/service accountability and Source Owner responsibility are not forced personal-account relationships.
+
+Current Human Fabric/Identity Services naming does not import IdentityIQ behavior or imply universal licensing.
+
+### Current neutral evidence and complete correction
+
+HR-Production establishes Employees identities. hr-record is already attached to the intended identity, which has required values, identificationNumber textW-107, name worker-w107 and friendly display name Worker A.
+
+Payroll-Production is non-authoritative for employee establishment. Selected Account ID accountKey has pay-account; selected Account Name loginName has pay.user; friendly displayName Worker A is separate. employeeRef is null. Sole configured employeeRef/identificationNumber pairing supplies no match, no other configured comparison matches, and no identity has name pay.user. Supplied result is uncorrelated.
+
+Payroll owner confirms approved W-107 reference for that exact account. Feed correction publishes/collects the changed field, correlation is reevaluated and the unique approved identity is associated with the same account. Account key/login remain unchanged, no new employee identity or authority change, and no sync/access action is supplied.
+
+The normal repair precedes broader wrong-match, manual, optimized-read and target-state variants. Original eight cases retain all conditions, including same friendly labels but different designated fields, default-path match and persistent explicit manual links. The transfer preserves 2,000 imported/120 uncorrelated records and rejects equating source administration with personal account ownership.
+
+### Current diagrams and validation
+
+- [Collected account and missing match](../assets/COR-001_collected_account_and_missing_match.txt): 39 columns, exact inline match; separate identity/account facts followed by configured/default no-match result and separated human verification.
+- [Correct reference and verify relationship](../assets/COR-001_correct_reference_verify_relationship.txt): 41 columns, exact inline match; same account corrected input, publication/collection, reevaluation and unique approved same-identity association.
+- Both satisfy 42 columns. Historical 45/47-column assets remain unchanged and are not claimed current assets.
+- Diagram responsibilities do not imply mandatory separate jobs, private service order, immediate view updates or external access changes.
+- Two comparisons retain six record/configuration observations and five evidence boundaries. All eight exercises and worked transfer retained; counts are coverage, not quotas.
+- Tracing guide 2.0 unchanged. No source/course URLs, employee biography, pseudo identity ID or author verification metadata in learner source.
+- Site/content checks do not establish beginner comprehension or full graphical rendering. Formal approval remains pending.
+
+### Historical verification record: revision 1.0
+
+The dated original follows. Its guide revision, route/module counts, examples, widths and next-lesson status are historical, not current claims.
+
+#### Revision, review and limits
 
 Revision 1.0, Module 7.1, **The account was imported. Why isn't it on the person's identity?** Documentation checked October 21, 2026. Documentation-based author review only; no tenant execution, observed beginner validation or formal publication approval. All previous lessons, the tracing guide revision 1.0 and presentation code are unchanged. A seventh navigation module is added using existing manifest-driven behavior.
 
@@ -2598,7 +3400,7 @@ Independent fictional example: employee Devi 71001; PeopleBook Production author
 
 Only configured pairing is LedgerPay employeeRef to identity identificationNumber. No other configured comparison matches, and no identity has the name drao, so the documented default also provides no match. Initial uncorrelated result is supplied. Owner-approved feed correction supplies employeeRef text 71001; collection and reevaluation are supplied, the target reference is unique, and the same account becomes associated with the same intended identity. Login/account key remain unchanged. No sync or access-changing operation is configured as part of the correction. No actual source/profile/correlation/account/identity/reset/deletion/sync or target change occurs.
 
-### Official references and claim mapping
+#### Official references and claim mapping
 
 | Source | Sections or claims checked | Lesson boundary |
 |---|---|---|
@@ -2613,7 +3415,7 @@ Only configured pairing is LedgerPay employeeRef to identity identificationNumbe
 
 The initially attempted account_mgmt.html path was not current; official navigation identifies accounts/index.html as Managing Accounts, which was read and retained. Current documents use Identity Services / Human Fabric naming in places; the course retains the requested ISC title without claiming feature licensing in every tenant.
 
-### Engineering assumptions and excluded claims
+#### Engineering assumptions and excluded claims
 
 - Account recognition within a source and assigning the account to a person are different relationships. The account's key lp-87, login drao and employee reference 71001 need not be identical.
 - Default correlation is not ignored. Its documented comparison uses schema-selected Account Name and identity name, not every friendly/full-name field. The case-insensitive rule is named but no unverified tie-breaking or ambiguous-candidate algorithm is invented.
@@ -2626,7 +3428,7 @@ The initially attempted account_mgmt.html path was not current; official navigat
 - Manual correlation can be an approved exception, but broad defects require cause-based correction. Source reset, account removal, manual move and identity deletion are not executed or recommended as count cleanup.
 - Main association correction does not change login, account ID, employee identity or permissions. Any real downstream dependency needs separate reviewed execution and target evidence.
 
-### Diagrams and presentation checks
+#### Diagrams and presentation checks
 
 - [Collection and relationship](../assets/COR-001_collection_and_relationship.txt), maximum 45 characters: established PeopleBook relationship, collected LedgerPay record, separate configured/default no-match evidence and human ownership check.
 - [Verified relationship correction](../assets/COR-001_verified_relationship_correction.txt), maximum 47 characters: same account before/after approved employeeRef data correction, reevaluation and association to the same identity.
@@ -2634,7 +3436,7 @@ The initially attempted account_mgmt.html path was not current; official navigat
 - Two two-column tables hold supplied records/configuration and five observation boundaries. Eight worked cases plus the project transfer address the principal distinctions. Complete live text, diagrams, tables, all forty-seven routes and seven-module native defaults/current-page links are publication checks; visual rendering is checked separately.
 - Attribute tracing aid revision 1.0 is unchanged. COR-002 is reserved but not authored. Source links and assessment metadata remain outside the learner article.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Exercise | Understanding tested | Expected reasoning / acceptable alternatives | Misconception exposed | Source anchor |
 |---|---|---|---|---|
@@ -2650,9 +3452,66 @@ The initially attempted account_mgmt.html path was not current; official navigat
 
 Learner questions and worked reasoning remain in the article. Beginner validation and formal approval remain pending.
 
-## COR-002
+## COR-002: Account and identity attributes used in correlation
 
-### Revision, review and limits
+### Current revision and verification limits
+
+- [Learner source](../lessons/COR-002_Account_and_Identity_Attributes_Used_in_Correlation.md), revision 2.0 local, Module 7.2; teaching specification 3.1.
+- Fresh documentation-based author review: October 26, 2026; eight primary pages checked.
+- [Coverage and verification record](revisions/COR-002_Concept_Led_Revision_Record.md) preserves original purposes, eight cases and contractor transfer.
+- Existing [tracing guide](../assets/ATTRIBUTE_TRACING_GUIDE.txt) remains local 2.0/published 1.0, unchanged.
+- Published COR-002 remains 1.0; revised published snapshot remains 23 through SRC-002. No commit, push or deployment; existing routes/site code preserved.
+- No actual tenant/API/schema/profile/identity/correlation/searchable-setting/processing/account-association/sync/target operation performed. Beginner validation, full graphical review and formal approval remain pending.
+- Next COR-003 learner body was not opened.
+
+### Fresh official sources and claim mapping
+
+| Source | Sections or claims checked | Lesson boundary |
+|---|---|---|
+| [Assigning Source Accounts to Identities](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) | Account/identity field pairing, standard Equals, configured case-insensitive default and ignoreCase setting, eligible searchable identity attributes and all-identity manual processing before aggregation, presets/default Account Name to identity name, persistent manual association and unoptimized reexamination | Same-named fields are neither required nor sufficient. Search query capability differs from correlation-searchable eligibility. Actual applied inputs, settings and ownership evidence matter. No ambiguous-match winner, confidence score or unsupported cleanup behavior is invented. |
+| [Managing Source Account Schemas](https://documentation.sailpoint.com/saas/help/accounts/schema.html) | Source account field definitions, selected Account ID/Name and risks of changing designations after aggregation | WorkTrack technical key, naming field, person reference and friendly label are distinct. Renaming valid schema fields or changing account keys is not taught as a mismatch repair. |
+| [Creating Identity Profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Authoritative profile establishment, mappings from account attributes on different sources, custom attribute definitions across profiles, profile-specific mappings, transforms, Preview and Apply Changes | Correlation uses the identity field, whose input can originate from independently associated HR account data. A new custom definition is not automatically populated across all profiles; Preview is not applied identity or relationship evidence. |
+| [Processing Identity Data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Mapping evaluation, manual processing scopes, downstream requirements and independent provisioning validation, view synchronization | Eligibility preparation requires documented all-identity processing, not one Preview. Current values and views need timestamps; identity processing alone does not confirm successful target provisioning. |
+| [Loading Account Data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html) | Account collection, optimized unchanged-account skipping, unoptimized reevaluation and independent operation evidence | Source read success does not establish identity-side mapping freshness or universal relationship evaluation. No destructive source reset, per-run API execution or universal delay is prescribed. |
+| [Account Attribute transform](https://developer.sailpoint.com/docs/extensibility/transforms/operations/account-attribute/) | Lookup of an account on an identity and return of a selected attribute | Circular first-account example assumes no associated WorkTrack account, no independent input/fallback and no other matching path. Lookup does not discover an arbitrary uncorrelated account's owner. No infinite-loop or automatic fallback claim. |
+| [Trim transform](https://developer.sailpoint.com/docs/extensibility/transforms/operations/trim/) | Removal of leading/trailing whitespace from input strings | Identity mapping calculation does not rewrite the incoming application account field. No implicit correlation numeric conversion, prefix stripping or whitespace trimming is assumed. |
+| [Synchronizing Attributes](https://documentation.sailpoint.com/saas/help/provisioning/attr_sync.html) | Configured identity-to-existing-correlated-account writes and downstream impact | Main example has no sync/access change. Real mapping/association corrections need dependency review and independent target evidence; an established association is not proof of delivered changes. |
+
+All eight primary resources reviewed October 26, 2026. Admin correlation documentation directly supports fixed Equals, configured case-insensitive default/ignoreCase, correlation-searchable eligibility distinct from Search, and all-identity manual processing before source aggregation. No extra API availability test or generic source-update inference is claimed in this task; older exploration below is historical.
+
+Definition, per-profile mapping, actual applied value, correlation eligibility and preparation remain distinct. No unused searchable-capacity quota is added. Account Attribute lookup requires an identity-associated account, so the first-account circular example's unavailable input is explicit rather than a universal claim about all account-derived fields.
+
+Default Account Name/identity name and persistent manual/ISC-created-account treatment remain in scope, with no invented ambiguous-match winner, implicit trimming/numeric coercion or link-clearing behavior.
+
+Current Human Fabric/Identity Services branding does not import IdentityIQ behavior or licensing assumptions.
+
+### Current neutral data and complete comparison
+
+HR-Production is authoritative for Employees; hr-record personNumber is text0072002 and payrollRef PAY-884. Applied identity identificationNumber is0072002, name worker72002, friendly display Worker A. No pseudo identity ID is used.
+
+Project-Production is non-authoritative for employees. Account key/Account ID is project-account; loginName/Account Name project.user; workerRef text0072002; friendly displayName Worker A. Saved criterion uses workerRef Equals already-eligible identificationNumber, the approved reference is unique, no other criterion conflicts, no identity name project.user supplies a default path and no explicit prior link overrides this case.
+
+Identity input came from already-associated HR via applied Employees mapping. The comparison is account-to-identity, not project-account-to-HR join. Successful evaluation and same-identity association are supplied; key/login unchanged and no sync/access operation supplied.
+
+Independent defects distinguish selected accountKey project-account from unselected correct workerRef, and correct project input from identity PAY-884 due wrong HR mapping. Further variants retain custom eligibility/preparation, numeric loss, case distinction, whitespace/list/null/empty/omission, circular projectWorkerRef/no associated account/no fallback/no other path, and Preview versus actual application/reevaluation/manual history.
+
+Contractor transfer preserves sponsor workerId versus genuine externalPersonRef, independently supplied contractorRef and unresolved eligibility/preparation. It remains a candidate design, not a claimed completed association.
+
+### Current diagrams and validation
+
+- [Selected values and identity origin](../assets/COR-002_selected_values_and_identity_origin.txt): 42 columns, exact inline match; independently applied HR-to-identity value and separate project comparison input/outcome.
+- [Missing link and independent reference](../assets/COR-002_missing_link_and_independent_reference.txt): 40 columns, exact inline match; unavailable circular first-account input versus independent value availability.
+- Both satisfy 42 columns. Historical 47/46-column assets remain unchanged and are not current assets.
+- JSON is grouped reading evidence, not an API request or full response. Local models check strings/selected values only, not ISC execution.
+- Four responsibility rows, seven evidence questions, eight exercises and worked transfer retained. Counts are coverage, not quotas.
+- Guide2.0 unchanged. Learner source contains no source/course links, biography, pseudo identity ID or author verification metadata.
+- Site/content checks cannot establish beginner comprehension or full graphical rendering; formal approval remains pending.
+
+### Historical verification record: revision 1.0
+
+The dated original follows. Its old guide revision, route/module counts, examples, widths and next-lesson status are historical, not current claims.
+
+#### Revision, review and limits
 
 Revision 1.0, Module 7.2, **Which account field is ISC comparing with which identity field?** Documentation checked October 22, 2026. Documentation-based author review only; no tenant execution, observed beginner validation or formal publication approval. Existing lessons, tracing aid revision 1.0 and presentation/navigation code remain unchanged.
 
@@ -2660,7 +3519,7 @@ Independent fictional example: Devi's approved employee reference is text 007200
 
 WorkTrack Production is non-authoritative for employee establishment. Its accountKey/Account ID is wt-391, loginName/Account Name drao.wt, workerRef text 0072002 and displayName Devi Rao. The saved pairing is workerRef Equals identificationNumber. Identification Number is supplied as already eligible for correlation; intended reference uniquely identifies Devi, no other configured criterion supplies a different relationship, no identity name drao.wt supplies a default match, and no manual association overrides the case. Successful supported evaluation and association with I-72002 are fictional supplied results, not observations from a real tenant. No sync write or access-changing request is supplied.
 
-### Official references and claim mapping
+#### Official references and claim mapping
 
 | Source | Sections or claims checked | Lesson boundary |
 |---|---|---|
@@ -2675,7 +3534,7 @@ WorkTrack Production is non-authoritative for employee establishment. Its accoun
 
 The initially opened generic Update Source API was not used to infer correlation behavior. The admin correlation documentation explicitly names the configuration's ignoreCase option and links its supported correlation API; this lesson does not provide an API payload, version-migration procedure or executable tenant-changing request. Identity-attribute API leads were checked for availability; searchable eligibility and preparation claims are anchored in the admin guide. Current official pages use Identity Services / Human Fabric naming in places; the course retains the requested ISC title without asserting every feature is licensed in every tenant.
 
-### Example and reasoning checks
+#### Example and reasoning checks
 
 - JSON is a compact teaching grouping, not an API request or complete response. String 0072002 is preserved; integer conversion would produce 72002. Neither account key wt-391 nor payrollRef PAY-884 is the selected approved person reference.
 - The first diagram shows HR-account-to-identity value provenance and a separate WorkTrack account-side input, then a configured comparison and supplied intended association. It does not draw a direct account-to-HR correlation join or undocumented private pipeline.
@@ -2687,7 +3546,7 @@ The initially opened generic Update Source API was not used to infer correlation
 - Existing mapping Preview does not prove applied state, source reevaluation or association history. No automatic disable, permission grant or target result follows from the correlation statement.
 - Contractor transfer distinguishes sponsor workerId from contractor externalPersonRef and independently mapped contractorRef; eligibility and preparation remain unresolved, so no completed association is claimed.
 
-### Diagram and publication checks
+#### Diagram and publication checks
 
 - [Two sides of the comparison](../assets/COR-002_two_sides_of_the_comparison.txt), maximum 47 characters per line.
 - [Independent matching input](../assets/COR-002_independent_matching_input.txt), maximum 46 characters per line.
@@ -2695,7 +3554,7 @@ The initially opened generic Update Source API was not used to infer correlation
 - One JSON block, two two-column tables, eight worked cases and contractor transfer remain in the learner article. Full live article/JSON/diagrams/tables, all forty-eight routes, seven-module native defaults/current-page links and unchanged tracing aid are publication checks; visual rendering is checked separately.
 - COR-003 is reserved but not authored. Source links and assessment metadata remain author-only.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Exercise | Understanding tested | Expected reasoning / acceptable alternatives | Misconception exposed | Source anchor |
 |---|---|---|---|---|
@@ -2711,9 +3570,65 @@ The initially opened generic Update Source API was not used to infer correlation
 
 Learner validation and formal approval remain pending.
 
-## COR-003
+## COR-003: Choosing identifiers for reliable account correlation
 
-### Revision, review and limits
+### Current revision and verification limits
+
+- [Learner source](../lessons/COR-003_Choosing_Identifiers_for_Reliable_Account_Correlation.md), revision 2.0 local, Module 7.3; teaching specification 3.1.
+- Fresh documentation-based author review: October 26, 2026; eight primary pages checked.
+- [Coverage and verification record](revisions/COR-003_Concept_Led_Revision_Record.md) preserves original purposes, eight cases and acquisition transfer.
+- Existing [tracing guide](../assets/ATTRIBUTE_TRACING_GUIDE.txt) remains local 2.0/published 1.0, unchanged.
+- Published COR-003 remains 1.0; revised published snapshot remains 23 through SRC-002. No commit, push or deployment; routes/site code preserved.
+- No actual tenant/source/schema/criterion/profile/identity/account/manual-link/reset/deletion/sync/target operation performed. Beginner validation, full graphical review and formal approval remain pending.
+- Next COR-004 learner body was not opened; its accepted historical pilot remains preserved for rechecking when reached.
+
+### Fresh official sources and claim mapping
+
+| Source | Sections or claims checked | Lesson boundary |
+|---|---|---|
+| [Assigning Source Accounts to Identities](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) | Paired account/identity values, fixed Equals, uniqueness guidance, ordered alternatives/one satisfied criterion, case/ignoreCase, sample Test, licensed recommendations, searchable identity eligibility and processing, preset/default paths and persistent manual associations | Identifier selection is an engineering decision based on documented comparison behavior plus supplied organizational guarantees. Separate rows do not declare a composite AND match. No duplicate-candidate winner, confidence score, automatic stale-link move or percentage-to-ownership guarantee is invented. |
+| [Managing Source Account Schemas](https://documentation.sailpoint.com/saas/help/accounts/schema.html) | Represented field definitions, Account ID/Name designations and post-aggregation change hazards | Distinguish source-account key and naming field from cross-system person reference. Do not change valid account keys or schema designations to imitate a better person identifier. |
+| [Creating Identity Profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Authoritative establishment, mappings from different sources, profile-specific values and shared custom definitions, transforms, Preview and Apply Changes | Applied identity reference has its own origin; an approved persistent business reference does not guarantee retained ISC object continuity, automatic rehire recovery or restored access. Preview is not applied-state proof. |
+| [Loading Account Data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html) | Collection and optimization; unoptimized reevaluation of unchanged accounts | Data availability on both sides must be established, and new configuration does not prove every account reevaluated. No broad rerun, destructive reset or universal timing recipe. |
+| [Processing Identity Data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Identity mapping evaluation, processing scope and manual preparation, requirements versus successful provisioning | Raw HR, current identity and collected app values are separate evidence. Better matching design does not prove delivered access or safe recovery. |
+| [Managing Accounts](https://documentation.sailpoint.com/saas/help/accounts/index.html) | Human, machine and uncorrelated account classifications, represented account view, wrong associations and supported correction contexts | Shared/service responsibility is not automatically personal ownership. No account reset, deletion or manual reassignment procedure is executed or taught as count cleanup. |
+| [Account Attribute transform](https://developer.sailpoint.com/docs/extensibility/transforms/operations/account-attribute/) | Lookups of accounts already on an identity and support for multiple associated accounts | First-account dependency assumes only missing application relationship supplies input. Repeat reads do not create independent ownership evidence; legitimate multiple accounts are not duplicate-person proof. |
+| [Synchronizing Attributes](https://documentation.sailpoint.com/saas/help/provisioning/attr_sync.html) | Configured identity-to-existing-correlated-account writes and multi-account scope | Association/identity changes need consumer review. A guessed value copied into an account is not independent proof of owner; main example supplies no sync or access-changing work. |
+
+All eight resources reviewed October 26, 2026. Identifier quality dimensions are design criteria using documented comparison behavior and supplied organizational contracts, not product validation flags.
+
+Standard configured criteria can correlate when one row matches; adding company and number as separate rows does not assert an AND composite key. Qualified references require approved consistent meaning on both sides. No duplicate-candidate tie-breaker or implicit numeric/prefix/whitespace repair is inferred.
+
+Correlation Test estimates sample matching, with licensed recommendations conditional on availability; neither certifies legitimate ownership. Default/preset/manual and changed-configuration evaluation remain distinct. Current Human Fabric/Identity Services branding does not import IdentityIQ behavior or assert universal licensing.
+
+### Current neutral policies, values and complete result
+
+HR-Production establishes Employees through hr-record. Employee73003 differs from persistent personRef P-73003; Employees maps personRef to applied identificationNumber. Identity email worker.a@example.invalid and name worker73003 are supplied.
+
+Project-Production project-account is Account ID, login project.user is Account Name, ownerPersonRef P-73003 and mail the same illustrative address. Approved organizational policy supplies independent availability, persistence and non-reuse, rather than assuming all HR fields have those properties.
+
+Identification Number is already eligible, approved candidate unique, no prior explicit link overrides evaluation and no identity name project.user supplies a default match. Saved ownerPersonRef Equals identificationNumber and supported evaluation supply the same intended relationship. No sync/access-changing work is supplied.
+
+Independent variants retain legitimate project-admin with shared owner reference, duplicate-identity reference concern, missing first-account input, 30 UNKNOWN gaps, leading-zero text, NORTH/SOUTH qualification, reused old address/current new holder and deleted-identity rehire without recovered object/access authority.
+
+Metric comparison remains exact: 1,000 current email equalities, one confirmed wrong owner; 970 verified person-reference values and 30 missing. This is 100% value-match coverage versus97% reference availability, not a declared overall uncorrelated count, proof of the other999 email relationships or blanket go-live approval.
+
+Acquisition transfer preserves overlapping numbers, missing contractor references and downstream email timing, with deliberate non-matches and supported eligibility/paths/history/evaluation checks.
+
+### Current diagrams and validation
+
+- [Person reference and distinct accounts](../assets/COR-003_person_reference_and_distinct_accounts.txt): 36 columns, exact inline match; legitimate several-accounts-to-one-identity versus different-identity duplicate concern.
+- [Reassigned email and owner continuity](../assets/COR-003_reassigned_email_and_owner_continuity.txt): 39 columns, exact inline match; supplied earlier/later reuse facts and separate persistent-reference meaning.
+- Both satisfy 42 columns. Historical 48/49-column assets unchanged and not claimed current assets.
+- Two comparisons, eight worked exercises and acquisition transfer preserve their purposes without quotas. No JSON/API request needed.
+- Tracing guide2.0 unchanged. Learner source has no source/course links, employee biography, pseudo identity ID or author verification metadata.
+- Logical diagrams do not imply automatic account creation, permission assignment or movement of existing links. Structural/site checks do not establish learner comprehension or full graphical rendering.
+
+### Historical verification record: revision 1.0
+
+The dated original follows. Its old guide revision, route/module counts, examples, widths and next-lesson status are historical, not current claims.
+
+#### Revision, review and limits
 
 Revision 1.0, Module 7.3, **Which identifier will still point to the right person tomorrow?** Documentation checked October 22, 2026. Documentation-based author review only; no tenant execution, observed beginner validation or formal publication approval. Prior lessons, tracing aid revision 1.0 and presentation/navigation code are unchanged.
 
@@ -2721,7 +3636,7 @@ Independent fictional example: Devi employee 73003, AnchorHR Production authorit
 
 Identification Number is supplied as already eligible, intended identity reference is unique, no manual override is supplied, and no identity has the name drao.tp. Supported evaluation supplies the intended association tp-206 to I-73003. No sync write or access-changing request is configured as part of that result. A second-account variation uses tp-admin-206 with the same legitimate owner reference. Email-reassignment variation supplies stale old account mail and a different current holder, without claiming automatic movement of existing associations.
 
-### Official references and claim mapping
+#### Official references and claim mapping
 
 | Source | Sections or claims checked | Lesson boundary |
 |---|---|---|
@@ -2736,7 +3651,7 @@ Identification Number is supplied as already eligible, intended identity referen
 
 Current official pages use Identity Services / Human Fabric naming in places. The course keeps the requested ISC title without implying every feature is available or licensed in every tenant. No API operation or payload is needed to understand identifier selection.
 
-### Engineering reasoning, assumptions and limits
+#### Engineering reasoning, assumptions and limits
 
 - Uniqueness, availability/coverage, consistency and stability are design evaluation dimensions, not four product status flags or guaranteed ISC identifier validation stages.
 - Candidate scope and business identity matter. Local company uniqueness is not proof for a shared matching population. A profile label alone is not a documented restriction on the source's candidate identities; inspect the actual supported configuration.
@@ -2751,7 +3666,7 @@ Current official pages use Identity Services / Human Fabric naming in places. Th
 - The data contract and illustrative producer/application/integration/ISC responsibilities are an operating model to agree, not official mandatory job titles. No new sensitive personal data is collected or encouraged merely for matching.
 - Main supplied match selects ownerPersonRef Equals identificationNumber. Default Account Name drao.tp has no identity-name match. No sync, permission grant, target field change or real tenant execution follows from the teaching result.
 
-### Diagram and publication checks
+#### Diagram and publication checks
 
 - [Account keys and person references](../assets/COR-003_account_keys_and_person_references.txt), maximum 48 characters per line: two distinct accounts to one intended identity, separate duplicate-identity concern and human ownership check.
 - [Reused address and stable reference](../assets/COR-003_reused_address_and_stable_reference.txt), maximum 49 characters per line: supplied earlier/later email ownership facts and separate persistent-reference path without promising automatic reassignment.
@@ -2759,7 +3674,7 @@ Current official pages use Identity Services / Human Fabric naming in places. Th
 - Two two-column tables, eight worked cases and acquisition transfer stay in the learner file. Full published article, diagrams/tables, all forty-nine routes, seven-module native defaults/current-page links and unchanged tracing aid are publication checks; visual rendering is checked separately.
 - No JSON/API payload is needed in this lesson. COR-004 remains planned. References and assessment metadata stay author-only.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Exercise | Understanding tested | Expected reasoning / acceptable alternatives | Misconception exposed | Source anchor |
 |---|---|---|---|---|
@@ -2775,9 +3690,40 @@ Current official pages use Identity Services / Human Fabric naming in places. Th
 
 Learner validation and formal approval remain pending.
 
-## COR-004
+## COR-004: ordered comparisons, defaults and evaluation evidence
 
-### Revision, review and limits
+### Current revision 2.0
+
+Module 7.4, **The first comparison found no match. What happens next?** Revised and documentation-checked October 26, 2026 under teaching specification 3.1. Complete coverage, assessment reasoning, sources and verification are recorded in [COR-004 revision 2.0](revisions/COR-004_Concept_Led_Revision_Record.md).
+
+The accepted [pilot](pilots/COR-004_Concept_Led_Pilot.md) and [review notes](pilots/COR-004_Concept_Led_Review_Notes.md) have now been integrated and rechecked. Historical pilot files and both original diagram assets remain unchanged. Beginner validation, full graphical review and formal approval are separate and pending.
+
+Neutral current example: existing application account and human identity; complete configured pairings employeeRef to identificationNumber then mail to email; fixed Equals, applied eligible values, case-insensitive comparison, actual evaluation, no manual override, independently approved owner. OLD-E-204 matches no identity; USER@learn.example uniquely matches user@learn.example. Association doesn't repair the old reference. Default loginName app.user has no identity-name match; independent WORKER204 matches worker204 after no configured match. No schema redesign, real tenant operation or completed external write is supplied.
+
+The explanation preserves all eight original assessment purposes and contractor transfer, plus the pilot's four unanswered-first prompts and worked reasoning. First-row success, later alternatives, no AND/voting, default/no-match, configured case, duplicate/conflicting candidates, optimized skipping, unoptimized reevaluation, manual persistence and ISC-created treatment remain distinct. Current matching explanations aren't invented historical execution logs.
+
+### Primary references checked October 26, 2026
+
+| Primary source | Claims rechecked October 26, 2026 | Limits retained |
+|---|---|---|
+| [Assigning Source Accounts to Identities](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) | Selected attributes; fixed Equals; saved order and one pairing at a time; criterion establishing association; case and ignoreCase; preset versus default Account Name/name; Test sampling; searchable preparation; manual persistence and ISC-created treatment | Straightforward unique intended matches and explicit no-matches; no invented ambiguous-candidate winner, error continuation, confidence score or per-criterion UI log. |
+| [Managing Source Account Schemas](https://documentation.sailpoint.com/saas/help/accounts/schema.html) | Represented fields; selected Account ID and Account Name; risks of changing designations after aggregation | Independent account value variation, not schema alteration; friendly display value is not default naming evidence. |
+| [Loading Account Data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html) | Collection; optimized unchanged-record skipping; unoptimized correlation reevaluation; activity/history context | Read completion, record evaluation and persistent association treatment remain distinct; no rerun or actual tenant operation. |
+| [Creating Identity Profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Authoritative identity origin; profiles and identity mappings; Preview versus Apply Changes | Current applied identity values are supplied; no proposed preview is treated as population state. |
+| [Processing Identity Data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Evaluation of identity mappings/requirements; manual processing | Supporting concept only; no private processing pipeline or universal schedule; processing isn't target delivery proof. |
+| [Managing Accounts](https://documentation.sailpoint.com/saas/help/accounts/index.html) | Collected accounts, fields and correlation context; uncorrelated accounts; wrong-link correction context | An unresolved identity relationship is not external disablement or deletion; no account removal or reassignment performed. |
+| [Viewing Identity Control Panels](https://documentation.sailpoint.com/saas/help/identities/control_panel.html) | Current identity attributes and available events | Current represented state and available history cannot manufacture missing criterion-by-criterion execution evidence. |
+| [Synchronizing Attributes](https://documentation.sailpoint.com/saas/help/provisioning/attr_sync.html) | Configured identity-to-existing-correlated-account writes; relationship changes as relevant input | Review dependent writes separately; none is supplied as completed in this lesson. |
+
+### Diagram and review scope
+
+[Current ordered/default flow](../assets/COR-004_ordered_pairings_and_default_path.txt) matches its learner block, maximum 39 columns. Arrows cover the supplied ordinary no-match/unique intended match decisions; human owner verification is separate. Original [comparison flow](../assets/COR-004_configured_comparisons_and_default.txt), [reevaluation flow](../assets/COR-004_configuration_and_reevaluation.txt), and [pilot flow](pilots/assets/COR-004_configured_and_default_flow.txt) are historical and unchanged. Source synchronization isn't graphical publication review.
+
+Progress: 50 of 91 individually revised; 41 await revision. COR-005 is next, learner body unopened. Published revised snapshot remains 23 through SRC-002, with COR-004 still published at 1.0. No commit, push, deployment or site-code change. No observed beginner outcome or formal approval is claimed.
+
+### Historical verification record: revision 1.0
+
+#### Revision, review and limits
 
 Revision 1.0, Module 7.4, **The first comparison found no match. What happens next?** Documentation checked October 22, 2026. Documentation-based author review only; no tenant execution, observed beginner validation or formal publication approval. All prior lessons, tracing aid revision 1.0 and presentation/navigation code are unchanged.
 
@@ -2787,7 +3733,7 @@ CasePort Production is non-authoritative for employee establishment. cp-419 acco
 
 Independent cp-420 variation has neither configured match, designated Account Name WORKER74004, unique intended identity name worker74004 and approved Devi ownership, with supplied default association. cp-421 has neither configured match nor a default name match for unmatched421, no manual/other supplied match and an uncorrelated result. These are teaching facts, not tenant observations or a real schema/naming change.
 
-### Official references and claim mapping
+#### Official references and claim mapping
 
 | Source | Sections or claims checked | Lesson boundary |
 |---|---|---|
@@ -2802,7 +3748,7 @@ Independent cp-420 variation has neither configured match, designated Account Na
 
 Only primary ISC admin documentation supports product claims. Search results about IdentityIQ rules, multi-host/resource-specific correlation and unrelated products are not used to define this standard account-correlation lesson. Current official pages use Identity Services / Human Fabric naming in places; the course keeps the requested ISC title without universal licensing claims.
 
-### Reasoning boundaries and checks
+#### Reasoning boundaries and checks
 
 - The distinction is criterion no-match versus configured no-association versus overall uncorrelated result, not a claim that the product exposes these as three official status flags.
 - Main selected strings are OLD-74004 versus 74004/74005 and DEVI.RAO@learn.example versus devi.rao@learn.example. Case-insensitive equality supplies only the second unique intended match. No prefix stripping, whitespace cleanup or numeric conversion is invented.
@@ -2816,7 +3762,7 @@ Only primary ISC admin documentation supports product claims. Search results abo
 - Contractor transfer has wrong-person sponsor reference, unavailable future contractor email and an independent reference not yet implemented on both sides. No safe completed association is inferred.
 - Main example has no source/schema/criteria/account/identity/correlation/reset/deletion/sync/target operation. No tenant/API execution or learner result is claimed.
 
-### Diagrams and publication checks
+#### Diagrams and publication checks
 
 - [Configured comparisons and default](../assets/COR-004_configured_comparisons_and_default.txt), maximum 37 characters per line: first configured no-match, second unique intended match, default only if configured matching cannot establish relationship, and independent human verification.
 - [Configuration and reevaluation](../assets/COR-004_configuration_and_reevaluation.txt), maximum 38 characters per line: saved configuration, unchanged-account skip, supported reevaluation and persistent-manual boundary; no guaranteed movement.
@@ -2824,7 +3770,7 @@ Only primary ISC admin documentation supports product claims. Search results abo
 - Two two-column tables, eight worked cases and contractor-source transfer remain in the article. Complete live text/diagrams/tables, all fifty routes, seven-module native defaults/current-page links and unchanged tracing aid are publication checks; visual rendering is checked separately.
 - No JSON or executable API example is necessary here. COR-005 remains planned. Source citations and assessment metadata remain author-only.
 
-### Assessment intent and accepted reasoning
+#### Assessment intent and accepted reasoning
 
 | Exercise | Understanding tested | Expected reasoning / acceptable alternatives | Misconception exposed | Source anchor |
 |---|---|---|---|---|
@@ -2840,11 +3786,42 @@ Only primary ISC admin documentation supports product claims. Search results abo
 
 Learner validation and formal approval remain pending.
 
-## COR-005
+## COR-005: missing inputs, unmatched candidates and wrong links
+
+### Current revision 2.0
+
+Module 7.5, **The account has no clear owner in ISC. What is actually missing?** Revised and documentation-checked October 26, 2026 under teaching specification 3.1. Full original-to-new coverage, assumptions, assessment reasoning and executed checks are in [COR-005 revision 2.0](revisions/COR-005_Concept_Led_Revision_Record.md).
+
+The neutral main case supplies existing app-17/login app.user/ownerRef null/contactMail team@learn.example and an existing intended identity with eligible applied P-204/name worker204. Another identity holds P-205/name worker205 and the same email. The only configured pairing is ownerRef Equals identificationNumber; email is proposed, not saved. No identity name fits app.user, no manual association applies, and evaluated uncorrelated state is supplied.
+
+Approved application and registry evidence independently establishes unique P-204. Verified feed correction delivers that reference, the same account is collected/evaluated, and the supplied relationship reaches the same existing intended identity. Shared email remains shared, login/schema remain unchanged, and no sync or access-changing operation is supplied.
+
+The lesson preserves absent/null/empty/spaces/placeholder/string-null distinctions, missing identity input, no candidate, ambiguity, contradictions, multi-value input, wrong links and persistent manual treatment. Human investigation follows the evidence, not a fabricated backend algorithm. All eight original assessment purposes and the 100-record 40/25/20/10/5 transfer remain, with primary-group and secondary-issue boundaries explicit.
+
+### Primary references checked October 26, 2026
+
+| Primary source | Claims rechecked October 26, 2026 | Scope and limits |
+|---|---|---|
+| [Assigning Source Accounts to Identities](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) | Paired attributes, fixed Equals and order; unique-value guidance; default Account Name/name; searchable preparation; source/global reports; manual persistence and ISC-created treatment | Supplied simple unique matches/no-match conditions only. No universal duplicate winner, ambiguous status or error continuation. |
+| [Managing Accounts](https://documentation.sailpoint.com/saas/help/accounts/index.html) | Collected accounts and attributes; human, uncorrelated and machine contexts; supported relationship correction | Human-account explanation is scoped to its example. Shared/service accounts need supported classification; no universal feature availability or actual corrective operation. |
+| [Loading Account Data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html) | Collection, optimized unchanged-record skipping, unoptimized correlation reevaluation, history/activity context | Saved configuration and run success don't prove this record was evaluated; no broad rerun or automatic reassignment promise. |
+| [Managing Source Account Schemas](https://documentation.sailpoint.com/saas/help/accounts/schema.html) | Represented fields and types; multi-valued setting; Account ID/Name | No automatic conversion, list selection or schema-designation change is used to force a match. |
+| [Creating Identity Profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Authoritative origin, governing profile, mappings, Preview and application | Worker source input, proposed preview and current identity value remain separate evidence. |
+| [Processing Identity Data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Identity attribute/requirement evaluation and manual processing | Supporting identity-side preparation only; no invented internal services, order or schedule. |
+| [Viewing Identity Control Panels](https://documentation.sailpoint.com/saas/help/identities/control_panel.html) | Current identity attributes/profile and available events | Current data isn't a complete historical criterion trace or independent business-ownership proof. |
+| [Synchronizing Attributes](https://documentation.sailpoint.com/saas/help/provisioning/attr_sync.html) | Configured writes to existing correlated accounts; changed relationships as relevant input | Correcting a relationship can affect writes; no sync result or automatic reversal is supplied. |
+
+### Assets and review status
+
+Current [missing-reference correction](../assets/COR-005_missing_reference_to_verified_relationship.txt) and [investigation paths](../assets/COR-005_evidence_and_investigation_paths.txt) exactly match their learner blocks, each maximum 39 columns. Original [separating matching problems](../assets/COR-005_separating_matching_problems.txt) and [verified reference correction](../assets/COR-005_verified_reference_correction.txt) remain unchanged. JSON is illustrative data, not an API request or connector guarantee.
+
+Progress becomes 51 of 91 revised, 40 awaiting; COR-006 next, learner body unopened. Published revised snapshot remains 23 through SRC-002, with COR-005 still published at 1.0. Sources and revision metadata remain author-only. No real tenant operation, commit, push, deployment or site-code change. Beginner validation, full graphical review and formal approval remain pending.
+
+### Historical verification record: revision 1.0
 
 Revision 1.0. Documentation checked October 22, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi is employee 75005. BridgeHR Production is authoritative for Employees; bhr-75005 is already associated with teaching identity I-75005, not an actual ISC ID.
 - Applied eligible identificationNumber is text P-75005; identity name worker75005; email review.team@learn.example. Other I-75006 has P-75006/name worker75006 and the same shared email.
@@ -2854,7 +3831,7 @@ Revision 1.0. Documentation checked October 22, 2026. Documentation-based author
 - Application records and worker registry independently establish Devi and unique P-75005. Approved feed correction supplies that reference, collection/evaluation occurs, and supplied association reaches the same I-75005 with the same rd-608 and drao.rd. Shared email remains unchanged and is not added as a criterion.
 - Independent variations: P-99999 without a candidate, wrong rd-608-to-I-75006 association, absent/null/empty/three spaces/UNKNOWN/string null, multi-valued P-75005/P-75006 input, and a combined queue of 100 uncorrelated or disputed-link records (40/25/20/10/5). These are teaching observations, not tenant output.
 
-### Primary references
+#### Primary references
 
 1. [Account correlation](https://documentation.sailpoint.com/saas/help/accounts/correlation.html): configured pairings, Equals and ordering/case; unique-value recommendations; correlation-searchable preparation; separate default naming comparison; persistent manual and ISC-created account treatment; reports and supported correction; unoptimized reevaluation.
 2. [Managing accounts](https://documentation.sailpoint.com/saas/help/accounts/index.html): account records, human/machine classification, uncorrelated relationships and supported investigation/correction contexts.
@@ -2867,7 +3844,7 @@ Revision 1.0. Documentation checked October 22, 2026. Documentation-based author
 
 All eight primary pages were fetched successfully during review. The correlation article was read in full; the other pages were read for the sections supporting the mappings above.
 
-### Claim boundaries
+#### Claim boundaries
 
 - The main identity-side reference is already applied and eligible. Missing input is on the account side. Preview is not applied-state or correlation-result proof.
 - A newly defined custom identity field must receive documented correlation-searchable configuration, population and manual processing for all identities before source aggregation; separate Search queryability is not equivalent.
@@ -2881,7 +3858,7 @@ All eight primary pages were fetched successfully during review. The correlation
 - Machine/shared accounts require supported classification and responsibility. Source administration is not proof of personal ownership.
 - Correlation is not external account disablement, access approval, provisioning success or automatic reversal of prior writes. No actual tenant/API/configuration/correlation/deletion/reset/synchronization/target operation occurred.
 
-### Diagram and assessment review
+#### Diagram and assessment review
 
 The two inline text diagrams exactly match assets/COR-005_separating_matching_problems.txt and assets/COR-005_verified_reference_correction.txt. Maximum line widths are 40 and 40 characters. The first is a human investigation map, not backend matching order; the second distinguishes supplied before-state, approved feed correction, collection/evaluation and ownership/consumer verification. One valid illustrative JSON block and two two-column tables remain in the article.
 
@@ -2898,11 +3875,44 @@ The two inline text diagrams exactly match assets/COR-005_separating_matching_pr
 
 The transfer queue combines uncorrelated records and disputed existing links, not a single report claiming wrong links are uncorrelated. Its five cause groups total 100. Each needs owner/source/ISC evidence and cause-specific acceptance; arbitrary mass association hides unresolved work. No beginner teach-back or transfer performance has been observed.
 
-## COR-006
+## COR-006: existing relationships and correlation changes
+
+### Current revision 2.0
+
+Module 7.6, **The matching rule changed. What happens to accounts that are already linked?** Revised October 27, 2026 under teaching specification 3.1; documentation checked October 26, 2026 during this revision. Full coverage, assumptions, assessment reasoning and verification are in [COR-006 revision 2.0](revisions/COR-006_Concept_Led_Revision_Record.md).
+
+Neutral current case: existing intended identity P-306/email user@learn.example/name worker306, another P-307; workspace app-31/work.user already correctly associated by old automatic email matching, review app-32/review.user supplied previously evaluated uncorrelated. Both already hold personRef P-306 and remain unchanged. Complete old mail Equals email is replaced with personRef Equals identificationNumber, no email alternative. The identity field is applied/eligible; no manual precedence or default naming match applies.
+
+Supplied optimized read skips both unchanged accounts. Included unoptimized evaluation preserves app-31's correct owner and links app-32 to the same existing intended person. Keys/logins/schema/identity remain unchanged. No universal reassignment of old automatic links is inferred.
+
+Separate app-39 retains wrong persistent manual treatment to P-307 despite current P-306; app-40 has ISC-created manuallyCorrelated=true without file import. Independent department Operations-to-Engineering variation is conditional on configured synchronization and actual operation/target evidence. Restoring comparison configuration doesn't demonstrate relationship or target reversal.
+
+All eight original assessment purposes and the 400-account migration remain. Its 360 automatic, 25 uncorrelated, 10 manual and 5 ISC-created persistent groups total 400; the latter two total 15 separate persistence reviews. No tenant output or execution is claimed.
+
+### Primary sources checked October 26, 2026
+
+| Primary source | Claims rechecked October 26, 2026 | Limits |
+|---|---|---|
+| [Assigning Source Accounts to Identities](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) | Pairings/Equals; unoptimized reevaluation after configuration edits; sample Test; default Account Name/name; searchable preparation; manual persistence; ISC-created manuallyCorrelated=true and manual import history | Supplied main outcomes only; no universal automatic-link reassignment, ambiguous winner, private decision log or automatic manual release. |
+| [Loading Account Data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html) | Optimized unchanged-record account/manager skip; unoptimized reevaluation; history timing/status/scanned/mode; Search freshness | Source-wide mode isn't a guaranteed one-record correction; no universal display timing or API procedure. |
+| [Creating Identity Profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Profiles, authoritative identity origin, selected identity mappings, Preview and application | Current main identity values are explicitly applied; proposed calculation isn't state or account evaluation. |
+| [Processing Identity Data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Identity mappings/requirements and manual processing; independent provisioning-result boundary | Not a universal source-account reassignment command or private execution pipeline. |
+| [Managing Source Account Schemas](https://documentation.sailpoint.com/saas/help/accounts/schema.html) | Account ID/Name designations and serious post-aggregation reference/duplicate risks | Designations remain unchanged; criterion replacement doesn't rename/rekey accounts. |
+| [Managing Accounts](https://documentation.sailpoint.com/saas/help/accounts/index.html) | Current account details and supported correlation updates for incorrect manual or aggregation-origin relationships | Theory of choosing an approved supported correction; no account move/removal/reset performed. |
+| [Viewing Identity Control Panels](https://documentation.sailpoint.com/saas/help/identities/control_panel.html) | Current profile/attributes/access and available events | Current compatibility and represented access aren't historical matching proof or business approval. |
+| [Synchronizing Attributes](https://documentation.sailpoint.com/saas/help/provisioning/attr_sync.html) | Configured mapped account attributes, existing correlated accounts, moved-account trigger with differing identity values, operation events | Conditional separate department variation; verify actual target write; restoring comparison doesn't prove reversal. |
+
+### Assets and review scope
+
+Current [instruction/read/relationship flow](../assets/COR-006_instruction_read_and_relationship_evidence.txt) and [conditional target-effects review](../assets/COR-006_change_review_and_conditional_target_effects.txt) exactly match learner blocks, each maximum 39 columns. Original [configuration/relationships](../assets/COR-006_configuration_and_existing_relationships.txt) and [relationship/dependent effects](../assets/COR-006_relationship_change_and_dependent_effects.txt) remain unchanged.
+
+Progress: 52 of 91 revised, 39 awaiting; COR-007 next, learner body unopened. Published revised snapshot remains 23 through SRC-002; COR-006 remains published 1.0. No commit, push, deployment or site-code change. Beginner validation, full graphical review and formal approval remain pending.
+
+### Historical verification record: revision 1.0
 
 Revision 1.0. Documentation checked October 22, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi is employee 76006. PeopleBridge Production is authoritative for Employees; pb-76006 already belongs to teaching I-76006, not an actual ISC ID.
 - Applied eligible identificationNumber P-76006, email devi.rao@learn.example and name worker76006 identify Devi. Other I-76007 has P-76007/email other.worker@learn.example/name worker76007. No other candidate has P-76006.
@@ -2914,7 +3924,7 @@ Revision 1.0. Documentation checked October 22, 2026. Documentation-based author
 - Separate moved-account sync variation uses Operations on the wrong identity and Engineering on Devi, with department sync configured. The main example supplies no target write or access change.
 - Project transfer population totals 400: 360 existing automatic links, 25 uncorrelated, 10 manual and 5 ISC-created persistent links. Fifteen persistent cases need separate review, not automatic release.
 
-### Primary references
+#### Primary references
 
 1. [Account correlation](https://documentation.sailpoint.com/saas/help/accounts/correlation.html): saved pairings/Equals/order/case, sample Test, searchable preparation, separate default naming path, persistent manual links, ISC-created manuallyCorrelated=true, unoptimized aggregation does not remove manual correlation, and supported correction contexts.
 2. [Loading account data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html): optimized unchanged-record skip without account/manager correlation, unoptimized recalculation, aggregation timing/status/scanned/mode history, manual-import filtering and Search freshness boundaries.
@@ -2927,7 +3937,7 @@ Revision 1.0. Documentation checked October 22, 2026. Documentation-based author
 
 All eight primary pages were fetched successfully during review. Correlation, identity processing, identity control panels and attribute-sync articles were read for their relevant full explanations; aggregation methods/activity and profile/schema/account-correction sections were read for the specific claims.
 
-### Claim and scope checks
+#### Claim and scope checks
 
 - Source criteria, account fields, identity mapping values and recorded relationships are separate objects/states. Saving criteria or seeing a sample estimate does not prove every existing link was updated.
 - Account ID/key and Account Name/login designations stay fixed; criterion replacement is not a schema migration, account rename, identity creation or deletion.
@@ -2941,7 +3951,7 @@ All eight primary pages were fetched successfully during review. Correlation, id
 - An association move can trigger configured attribute synchronization; correlation is not access approval, target delivery proof or automatic reversal. Restoring old criteria does not demonstrate prior effects were undone.
 - Scope includes source-wide reevaluation and consumer review, not destructive reset/delete/filter recipes or real configuration/flag edits. No actual tenant, API, schema, source, identity, aggregation, processing, correlation, provisioning or target operation was performed.
 
-### Diagram and assessment review
+#### Diagram and assessment review
 
 Two inline text diagrams exactly match assets/COR-006_configuration_and_existing_relationships.txt and assets/COR-006_relationship_change_and_dependent_effects.txt; maximum line widths 40 and 39 characters. The first follows supplied criterion-save/optimized-skip/unoptimized-result evidence. The second is a human change-review map with conditional target effects, not a fixed private execution pipeline. Two two-column tables remain in the article.
 
@@ -2958,11 +3968,43 @@ Two inline text diagrams exactly match assets/COR-006_configuration_and_existing
 
 Transfer assessment tests population segmentation, reference preparation, representative non-production evidence, supported production scope, persistent exceptions and independent target verification. Accept equivalent approved operating plans; reject one successful badge, automatic release of 15 persistent links, reset/filter shortcuts or a requirement that all 400 links move. No beginner teach-back or transfer performance has been observed.
 
-## COR-007
+## COR-007: manual correction and separate completion outcomes
+
+### Current revision 2.0
+
+Module 7.7, **The account is on the right identity now. What did the manual correction actually fix?** Revised and documentation-checked October 27, 2026 under teaching specification 3.1. Full coverage, assumptions, assessment reasoning and verification are in [COR-007 revision 2.0](revisions/COR-007_Concept_Led_Revision_Record.md).
+
+Neutral production account app-41/login review.user/personRef null is supplied evaluated and uncorrelated. Intended existing identity has prepared P-407/name worker407; another has P-408/name worker408, both display Review User. Sole saved pairing is personRef Equals identificationNumber, with no default naming match. Independently approved ownership supports an explicit correction to the intended identity; the same account key/login/null input/shared criterion remain unchanged and the feed defect stays open.
+
+Main sync is disabled and no access-changing operation is supplied. Independent later agreeing/conflicting references, wrong manual app-42 correction, ISC-created flag without file upload, 12-row import issues and conditional Support/Engineering write distinguish relationship, data and delivery outcomes. No invented import identifiers, winner, atomicity, historical trace or automatic manual release is asserted.
+
+All eight original assessment purposes and the 80-proposed-row transfer remain. Its 40 verified uncorrelated, 10 wrong links, 15 unknown owners, 5 automation and 10 duplicate/contradictory proposals total rows, not unique accounts or completed changes.
+
+### Primary sources checked October 27, 2026
+
+| Primary source | Claims rechecked October 27, 2026 | Limits |
+|---|---|---|
+| [Assigning Source Accounts to Identities](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) | Selected pairings/Equals; default naming; explicit manual persistence; file workflow/status/history; ISC-created manuallyCorrelated=true; unoptimized non-release; broader reset scope | No import template, invented identifiers, duplicate winner, automatic conversion or universal omission-clearing rule. |
+| [Managing Accounts](https://documentation.sailpoint.com/saas/help/accounts/index.html) | Supported Update Correlation/classification and wrong-link correction; human/machine context; account details; Remove versus Delete and authoritative-removal effects | Conceptual approved change only. No actual update, removal, deletion, machine feature availability promise or broader cleanup recommendation. |
+| [Loading Account Data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html) | Optimized unchanged-record skip, unoptimized reevaluation, activity/history and view freshness | Neither mode automatically releases manual links; source history isn't a complete account decision transcript. |
+| [Managing Source Account Schemas](https://documentation.sailpoint.com/saas/help/accounts/schema.html) | Represented fields, Account ID and Account Name | Business owner reference isn't automatically an account key or interface-specific identity identifier; no schema change performed. |
+| [Creating Identity Profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Profile/authoritative origin, selected identity mappings and Preview versus application | Main identity values are already current and prepared; missing account input is separate. |
+| [Processing Identity Data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Mapping/requirement evaluation and independent provisioning-success boundary | Supporting identity-side repair, not universal account reassignment or proof of target writes. |
+| [Viewing Identity Control Panels](https://documentation.sailpoint.com/saas/help/identities/control_panel.html) | Current profile/attributes/access and successful/failed events | Verify old and intended contexts; no invented per-candidate historical UI trace or business-owner proof from a display label. |
+| [Synchronizing Attributes](https://documentation.sailpoint.com/saas/help/provisioning/attr_sync.html) | Configured mapped identity-to-existing-account writes and changed-association trigger | Main sync is disabled; separate department variation requires actual operation and target evidence; link success doesn't establish write success. |
+| [Access Requests Overview](https://documentation.sailpoint.com/saas/user-help/requests/index.html) | Requests for access items, review and provisioning as separate responsibilities | Supporting first-use meaning only; manual owner assignment isn't access approval or fulfillment. |
+
+### Assets and review scope
+
+Current [explicit link/unchanged input](../assets/COR-007_explicit_link_and_unchanged_input.txt) and [separate review tracks](../assets/COR-007_relationship_input_and_effects_review.txt) exactly match learner blocks, maximum 35 and 39 columns. Original [manual relationship correction](../assets/COR-007_manual_relationship_correction.txt) and [follow-up tracks](../assets/COR-007_separate_follow_up_tracks.txt) remain unchanged.
+
+Progress: 53 of 91 revised, 38 awaiting; COR-008 next, learner body unopened. Published revised snapshot remains 23 through SRC-002, with COR-007 published 1.0. No actual tenant operation, commit, push, deployment or site-code change. Beginner validation, full graphical review and formal approval remain pending.
+
+### Historical verification record: revision 1.0
 
 Revision 1.0. Documentation checked October 22, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi is employee 77007. StaffPath Production is authoritative for Employees; sp-77007 is already associated with teaching I-77007, not an actual ISC object ID.
 - Applied eligible identificationNumber P-77007/name worker77007/email devi.rao@learn.example identify the intended person. Different I-77008 has P-77008/name worker77008/email another.devi@learn.example. Both display Devi Rao.
@@ -2972,7 +4014,7 @@ Revision 1.0. Documentation checked October 22, 2026. Documentation-based author
 - Separate variations: later corrected P-77007 input, conflicting P-77008 input under persistent treatment, wrong manual ps-513-to-I-77008 with correct P-77007 input and approved explicit move, ISC-created manuallyCorrelated=true without file upload, 12-row import issues and conditional Support-to-Engineering department synchronization.
 - The 80-row transfer contains 40 verified uncorrelated, 10 known wrong, 15 unknown-owner, 5 automation and 10 duplicate/contradictory proposals. Rows are not asserted to be distinct accounts or all completed changes.
 
-### Primary references
+#### Primary references
 
 1. [Account correlation](https://documentation.sailpoint.com/saas/help/accounts/correlation.html): configured pairings, explicit manual permanence/source-change persistence, manual-file workflow/status/history, ISC-created manuallyCorrelated=true, unoptimized non-release, supported correction contexts and separate non-configurable default naming comparison.
 2. [Managing accounts](https://documentation.sailpoint.com/saas/help/accounts/index.html): Update Correlation/classification/intended human selection for uncorrelated or wrong links, machine licensing context, current account details, Remove Account versus Delete Account and authoritative-removal consequences.
@@ -2985,7 +4027,7 @@ Revision 1.0. Documentation checked October 22, 2026. Documentation-based author
 
 All eight primary pages were fetched successfully during review. Correlation and account-management articles were read in full; relevant schema/mapping/Preview/processing/aggregation/history/events and synchronization-trigger sections were read for the claims above.
 
-### Claim and scope checks
+#### Claim and scope checks
 
 - Main manual association is approved by independent ownership evidence, not by a guessed display name, email equality or source-administrator responsibility.
 - Supported account-update and manual-file paths are described conceptually. No real interface actions, CSV template, identifier substitution recipe or API payload is supplied. A teaching label is explicitly not a real file identifier.
@@ -2999,7 +4041,7 @@ All eight primary pages were fetched successfully during review. Correlation and
 - Remove Account removes represented data from ISC, not the external account; later full aggregation can reload it. Delete Account is a separate supported external operation with applicable request/approval conditions. Source reset is broader. These are safety distinctions, not recommended cleanup instructions.
 - No actual tenant/API/account update/file import/schema/correlation/processing/reset/deletion/synchronization/provisioning or target operation occurred.
 
-### Diagram and assessment review
+#### Diagram and assessment review
 
 Two inline text diagrams exactly match assets/COR-007_manual_relationship_correction.txt and assets/COR-007_separate_follow_up_tracks.txt; maximum line widths 33 and 39 characters. The first separates human owner verification, approved correction and supplied link with unchanged null input. The second separates follow-up tracks, not a fixed backend order or automatic repair. Two two-column tables remain in the learner article.
 
@@ -3016,11 +4058,43 @@ Two inline text diagrams exactly match assets/COR-007_manual_relationship_correc
 
 Transfer assessment tests separating approved personal assignments, wrong links, unverified owners, automation and duplicate/contradictory instructions. Accept equivalent approved plans preserving exact identifiers, persistence/consumer checks, supported import contract and individual reconciliation. Reject last-row-wins assumptions, 80-unique-account claims, mass administrator assignment or completion from a falling count. No beginner teach-back or transfer performance has been observed.
 
-## COR-008
+## COR-008: manager-reference selection, identity lookup and separate consumers
+
+### Current revision 2.0
+
+Module 7.8, **HR names a manager. How does ISC know which identity that means?** Revised and documentation-checked October 27, 2026 under teaching specification 3.1. Full coverage, assumptions, assessment reasoning and verification are in [COR-008 revision 2.0](revisions/COR-008_Concept_Led_Revision_Record.md).
+
+Neutral main case: employee own P-108 with collected managerRef P-208; existing intended manager's own identificationNumber P-208 and alternate P-209. Employees Manager Name selects HR-Primary.managerRef; source manager comparison uses identificationNumber on candidate manager identities. Prepared current unique values, standard matching and relevant evaluation support the supplied employee-to-manager relationship while account ownership remains unchanged.
+
+Separate Employees 10/HR-Primary P-99999 and Contractors 20/HR-Secondary P-209 inputs demonstrate first non-null source, not first successful match. Higher null permits lower non-null input. One governing profile remains distinct. Qualified changed-input cases start with P-208 manager: selected null clears without competing source, changed unmatched non-null retains prior manager, approved P-209 can resolve a new one.
+
+All eight original assessment purposes and the 120-employee 70/20/10/10/5/5 transfer remain. Requests, standard Manager Campaign snapshots and target manager writes have separate records and acceptance evidence. Main supplies no consumer execution. No custom rule, duplicate winner or automatic cycle repair is assumed.
+
+### Primary sources checked October 27, 2026
+
+| Primary source | Claims rechecked October 27, 2026 | Limits |
+|---|---|---|
+| [Configuring Manager Correlation](https://documentation.sailpoint.com/saas/help/sources/manager_correlation.html) | Both setups; employee account reference to manager's own identity field; all-identity search; priority/first-non-null source; custom searchable field; aggregation/processing; null clearing versus changed no-match retention; programmatic extension | Standard unique main match and qualified selected-input variations; no duplicate winner, cycle repair or private pipeline. |
+| [Creating Identity Profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Profiles/authority/mappings, one governing profile, priority and Preview versus applied state | Manager-source selection isn't simultaneous governance by multiple profiles. |
+| [Processing Identity Data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Manager determination during identity evaluation; mapping/requirement processing and independent provisioning result | Relevant evaluation supplied; no invented universal schedule or mandatory separate jobs. |
+| [Loading Account Data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html) | Optimized unchanged-record account/manager skip; unoptimized reevaluation; operation/history context | Evaluation doesn't repair missing inputs/candidates or change selected source. |
+| [Managing Requests for Roles and Access Profiles](https://documentation.sailpoint.com/saas/help/requests/config_ap_roles.html) | Manager reviewer is recipient's manager; configured review context; missing-reviewer reassignment | Standard role/access-profile behavior only; no universal approval engine, automatic approval from missing data or all-old-task reassignment. |
+| [Starting a Manager or Source Owner Campaign](https://documentation.sailpoint.com/saas/help/certs/starting_campaign.html) | Standard Manager Campaign excludes managerless identities; Identities Without Managers report; generated snapshot and later-added manager limit | Other certification modes and explicit campaign corrections need their own evidence. |
+| [Synchronizing Attributes](https://documentation.sailpoint.com/saas/help/provisioning/attr_sync.html) | Configured existing-correlated-account writes; built-in Manager usable in Create Account but ineligible for direct sync; custom managerToSync approach | Custom field name alone doesn't establish correct representation, configuration or delivery. |
+| [Viewing Identity Control Panels](https://documentation.sailpoint.com/saas/help/identities/control_panel.html) | Current profile/attributes and available successful/failed events | No complete candidate-by-candidate history or current value as proof of old execution. |
+| [Active Directory Default Provisioning Attributes](https://documentation.sailpoint.com/connectors/active_directory/help/integrating_active_directory/provisioning_reference.html) | Manager provisioning uses target-specific manager representation; documented default Get Manager LDAP DN generator | Supporting connector example only; no AD payload, implementation or universal directory behavior. |
+
+### Assets and review scope
+
+Current [account ownership and manager lookup](../assets/COR-008_account_owner_and_manager_lookup.txt) and [separate manager outcomes](../assets/COR-008_current_manager_and_separate_outcomes.txt) exactly match learner blocks, maximum 42 and 41 columns. Original [manager reference/relationship](../assets/COR-008_manager_reference_and_identity_relationship.txt) and [manager consumers](../assets/COR-008_manager_relationship_and_consumers.txt) remain unchanged.
+
+Progress: 54 of 91 revised, 37 awaiting; COR-009 next, learner body unopened. Published revised snapshot remains 23 through SRC-002, with COR-008 published 1.0. No tenant operation, commit, push, deployment or site-code change. Beginner validation, full graphical review and formal approval remain pending.
+
+### Historical verification record: revision 1.0
 
 Revision 1.0. Documentation checked October 22, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi is employee 78008. RosterHR Production is authoritative for Employees; rh-78008 already belongs to teaching I-78008, not an actual ISC object ID. Devi's own applied identificationNumber is P-78008.
 - Her account managerRef is P-89008. Approved reporting-line evidence identifies existing manager I-89008, established through rh-89008 with applied identificationNumber P-89008. Existing I-89009/rh-89009/P-89009 is a later approved-change variation.
@@ -3030,7 +4104,7 @@ Revision 1.0. Documentation checked October 22, 2026. Documentation-based author
 - Separate changed-input variations start with I-89008 as existing manager and have actual selected/collected/evaluated input, no competing source or custom rule. Null clears; unmatched non-null P-99999 retains the old relationship; approved unique P-89009 can resolve I-89009.
 - Requests/campaigns/target writes are separate illustrations. Main case supplies none of those executions. The 120-employee transfer is 70 prepared/20 wrong non-null references/10 missing inputs/10 missing legitimate manager identities/5 source conflicts/5 duplicate or invalid hierarchy references.
 
-### Primary references
+#### Primary references
 
 1. [Configuring manager correlation](https://documentation.sailpoint.com/saas/help/sources/manager_correlation.html): employee-to-manager identity relation; both configurations; profile-priority first-non-null source; account-field to manager's own identity field across identities; custom searchable fields; aggregation/processing; changed null versus non-null no-match retention; separate complex-rule extension.
 2. [Identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html): Manager Name mapping, identity attributes and applied configuration versus Preview, shared profile context.
@@ -3044,7 +4118,7 @@ Revision 1.0. Documentation checked October 22, 2026. Documentation-based author
 
 All nine primary pages were fetched successfully. The manager-correlation article was read in full, including first-non-null priority behavior and retained-manager note. Profile/processing/aggregation, request reviewer/missing-reviewer, campaign prerequisites, sync Manager restrictions, identity evidence and directory manager provisioning sections were read for their specific claims.
 
-### Claim and scope checks
+#### Claim and scope checks
 
 - Employee account ownership and employee-to-manager relationships are different. Comparing the manager reference in account-owner criteria can select the wrong account owner; no such configuration change is performed.
 - Manager Name is a mapping label, not a requirement to match friendly names. The account input is the employee's manager reference; the candidate field is the manager's own identificationNumber, not the employee's number or manager's manager reference.
@@ -3059,7 +4133,7 @@ All nine primary pages were fetched successfully. The manager-correlation articl
 - Built-in Manager is not a direct sync input. A custom field alone does not establish correct manager-account selection, target representation, eligible sync or successful write. Main supplies no target operation.
 - No actual tenant/API/source/profile/priority/mapping/correlation/processing/approval/campaign/synchronization/provisioning or target operation occurred. No destructive correction is recommended.
 
-### Diagram and assessment review
+#### Diagram and assessment review
 
 Two inline text diagrams exactly match assets/COR-008_manager_reference_and_identity_relationship.txt and assets/COR-008_manager_relationship_and_consumers.txt; maximum line widths 40 and 38 characters. The first separates account ownership, manager input/configuration, candidate's own field and supplied manager relationship. The second separates request review, Manager Campaign snapshot and external write, not a fixed or universally triggered sequence. Two two-column tables remain in the learner article.
 
@@ -3076,11 +4150,44 @@ Two inline text diagrams exactly match assets/COR-008_manager_reference_and_iden
 
 Transfer assessment tests cause segmentation, source choice, actual manager presence/correctness and processing before Manager Campaign generation. Accept equivalent approved plans preserving 120-case groups and separate existing-request/campaign/target evidence. Reject arbitrary candidate selection, source fallback after any non-null failure, automatic creation of missing managers, campaign inclusion from a successful aggregation badge or direct built-in Manager sync. No beginner teach-back or transfer performance has been observed.
 
-## COR-009
+## COR-009: evidence-led account and manager investigation
+
+### Current revision 2.0
+
+Module 7.9, **The account or manager looks wrong. Where would you start the investigation?** Revised and documentation-checked October 27, 2026 under teaching specification 3.1. Full coverage, assumptions, assessment reasoning and verification are in [COR-009 revision 2.0](revisions/COR-009_Concept_Led_Revision_Record.md).
+
+Neutral main facts: existing employee P-509/name worker509, other P-510/name worker510 and manager P-609. Application-Production app-51/workspace.user has correct P-509 input but mistaken manual P-510 link; app-52/review.user has null input, prior evaluation and uncorrelated result without explicit link. Sole personRef Equals identificationNumber comparison, eligible unique P-509 and no default naming match are supplied.
+
+Employee HR account already belongs to employee and holds managerRef P-609. Source manager comparison exists, Employees Manager Name mapping does not. Independent approved supported link correction, feed delivery/evaluation and missing manager mapping/evaluation establish both accounts on intended employee and manager P-609. Keys/logins stay fixed. No main target/request/campaign execution is supplied.
+
+All eight original assessment purposes and the 90-record 20/20/15/10/10/10/5 transfer remain. Wrong selected field, optimized skip, manager retention and failed-write cases preserve their separate conditions. No private historical trace, hidden winner, automatic manual release or universal one-run repair is invented.
+
+### Primary sources checked October 27, 2026
+
+| Primary source | Claims rechecked October 27, 2026 | Limits |
+|---|---|---|
+| [Assigning Source Accounts to Identities](https://documentation.sailpoint.com/saas/help/accounts/correlation.html) | Selected pairings/Equals, default naming, searchable preparation, manual persistence, ISC-created flag and file-history context | No automatic release, hidden winner, guessed import identifier, universal reassignment or omission rule. |
+| [Configuring Manager Correlation](https://documentation.sailpoint.com/saas/help/sources/manager_correlation.html) | Dual setup, employee input to manager's own field, priority/first-non-null selection, searchable field, processing, qualified null/no-match behavior and separate extension | Main fault is missing mapping; changed-input variations aren't silently substituted as its diagnosis. |
+| [Loading Account Data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html) | Collection, optimized skip/unoptimized reevaluation, single-account data-only limits, history/mode and Search freshness | Source success isn't record proof. Documented single-account reload doesn't synchronize identity attributes or affect provisioning. |
+| [Creating Identity Profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Authoritative population, required data, identity mappings/exceptions, Preview versus applied values | No application matching change creates a legitimate missing identity or repairs wrong mapping automatically. |
+| [Processing Identity Data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Mapping/manager evaluation and configured requirements; separate provisioning-success boundary | Actual relevant evaluation supplied; no universal schedule or private stage order. |
+| [Managing Source Account Schemas](https://documentation.sailpoint.com/saas/help/accounts/schema.html) | Represented fields and Account ID/Name designations | Account key isn't automatically the person reference; no rekey/rename used for repair. |
+| [Managing Accounts](https://documentation.sailpoint.com/saas/help/accounts/index.html) | Account details, supported Update Correlation, wrong links/classification, Remove versus external effects | No actual update/removal/deletion/reset or arbitrary personal assignment. |
+| [Viewing Identity Control Panels](https://documentation.sailpoint.com/saas/help/identities/control_panel.html) | Current identity/profile/attributes and available successful/failed events | No complete historical candidate transcript or display as independent ownership evidence. |
+| [Synchronizing Attributes](https://documentation.sailpoint.com/saas/help/provisioning/attr_sync.html) | Existing-correlated-account writes, changed identity association trigger, built-in Manager restriction/custom mapped approach | Main supplies no target write; failed-write variation keeps link and delivery distinct. |
+| [Starting a Manager or Source Owner Campaign](https://documentation.sailpoint.com/saas/help/certs/starting_campaign.html) | Standard Manager Campaign excludes missing-manager identities and uses generation snapshot | Current manager correction doesn't establish existing campaign inclusion; not all certification modes share that rule. |
+
+### Assets and review scope
+
+Current [human investigation branches](../assets/COR-009_record_relationship_and_manager_investigation.txt) and [separate verified outcomes](../assets/COR-009_separate_account_input_and_manager_results.txt) exactly match learner blocks, maximum 41 and 37 columns. Original [investigation branches](../assets/COR-009_investigation_branches.txt) and [three verified results](../assets/COR-009_three_verified_relationship_results.txt) remain unchanged.
+
+Progress: 55 of 91 revised, 36 awaiting; all nine Module 7 lessons individually revised, learner validation separate. TRN-001 next, learner body unopened. Published revised snapshot remains 23 through SRC-002, with COR-009 published 1.0. No tenant operation, commit, push, deployment or site-code change. Beginner validation, full graphical review and formal approval remain pending.
+
+### Historical verification record: revision 1.0
 
 Revision 1.0. Documentation checked October 22, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi is employee 79009. TeamLedger Production is authoritative for Employees; tl-79009 already belongs to teaching I-79009, not an actual ISC object ID. Applied eligible identificationNumber P-79009/name worker79009 identify the intended person.
 - Different I-79010 has P-79010/name worker79010. Approved manager I-89909 already exists with applied eligible identificationNumber P-89909.
@@ -3091,7 +4198,7 @@ Revision 1.0. Documentation checked October 22, 2026. Documentation-based author
 - Distinct approved supported work supplies wd-601 relationship correction, wd-602 feed repair/collection/evaluation, and Manager Name mapping to managerRef plus relevant identity processing. Actual supplied results are both accounts on I-79009 and that identity's manager I-89909, with fixed account keys/logins.
 - No external write, request or campaign result is supplied. Alternate wrong-field, optimized-skip, P-99999 retained-manager and failed-sync cases are separate. The 90-record queue splits 20 absent/20 unusable input/15 wrong persistent/10 missing identities/10 manager/10 ambiguous or contradictory/5 non-person cases.
 
-### Primary references
+#### Primary references
 
 1. [Account correlation](https://documentation.sailpoint.com/saas/help/accounts/correlation.html): configured pairings/order/Equals, default naming path, eligibility/manual preparation, persistent manual and ISC-created treatment, file history and supported correction; unoptimized aggregation does not remove manual correlation.
 2. [Manager correlation](https://documentation.sailpoint.com/saas/help/sources/manager_correlation.html): dual mapping/source setup, employee reference against manager's own identity attribute, first-non-null profile-priority source selection, searchable preparation, processing, null clearing versus changed non-null no-match retention and separate rule extension.
@@ -3106,7 +4213,7 @@ Revision 1.0. Documentation checked October 22, 2026. Documentation-based author
 
 All ten primary pages were fetched successfully. Account and manager correlation were read in full. Relevant aggregation/history/single-account, mapping/Preview/exceptions, identity processing, schema, account correction/removal, identity evidence, sync and campaign prerequisite sections were read for the claims above.
 
-### Claim and scope checks
+#### Claim and scope checks
 
 - Three main faults are distinct: existing wrong persistent link, collected unmatched record with missing input, and incomplete manager setup. Absence from an identity page does not imply the account was never collected.
 - Source/environment/stable account key, approved person identity and actual current association are checked before correction. Missing legitimate identities require intake/mapping investigation, not arbitrary application authority changes.
@@ -3120,7 +4227,7 @@ All ten primary pages were fetched successfully. Account and manager correlation
 - Main successful results preserve object keys/logins and identity. No removal/reset/deletion is used as routine cleanup, and no simulated source-level badge is invented as per-account execution proof.
 - No actual tenant/API/source/profile/mapping/correlation/processing/import/reset/deletion/synchronization/provisioning, approval/campaign or target operation occurred.
 
-### Diagram and assessment review
+#### Diagram and assessment review
 
 Two inline text diagrams exactly match assets/COR-009_investigation_branches.txt and assets/COR-009_three_verified_relationship_results.txt; maximum line widths 39 and 37 characters. The first is a human investigation map, not backend execution order. The second separates three supplied before/after outcomes and explicitly supplies no external write result. Two two-column tables remain in the article.
 
@@ -3137,11 +4244,43 @@ Two inline text diagrams exactly match assets/COR-009_investigation_branches.txt
 
 Transfer assessment tests cause segmentation across 90 investigation records and distinct collection/intake/input/persistent-link/manager/ambiguity/classification evidence. Accept equivalent approved plans preserving exact identifiers, supported correction scope and individual acceptance. Reject one-rule/one-run universal closure, destructive cleanup, guessed owners and completion based only on job status or count. No beginner teach-back or transfer performance has been observed.
 
-## TRN-001
+## TRN-001: direct mapping, justified calculations and actual inputs
+
+### Current revision 2.0
+
+Module 8.1, **The source already has a value. Do we need a transform?** Revised and documentation-checked October 27, 2026 under teaching specification 3.1. Full coverage, assumptions, assessment reasoning and verification are in [TRN-001 revision 2.0](revisions/TRN-001_Concept_Led_Revision_Record.md).
+
+Neutral Employees/HR-Primary setup: existing identity and exactly one correctly linked collected HR account. Approved single text costCentreCode `0042` maps directly to costCenter `0042`; departmentLabel `Finance` uses ToLower with implicit mapped input to department `finance`. Other required identity fields are valid. Approved shared review/processing supplies current identity values `0042` and `finance` while HR remains0042/Finance; no external write/use result supplied.
+
+Explicit associated directoryLegal, FIN translation, Finance trailing-space, null/unapproved fallback and accountAttribute oldest `Legal`/newer `Finance` variations retain separate causes. No JSON/API example, arbitrary role outcome, universal lower-null behavior or direct-mapping multi-account rule is invented.
+
+All eight assessment purposes and the 100 proposed mappings 40/25/15/10/10 remain, with counts distinguished from failed identities. Calculation, applied identity and dependent decision/write evidence stay separate.
+
+### Primary sources checked October 27, 2026
+
+| Primary source | Claims rechecked October 27, 2026 | Limits |
+|---|---|---|
+| [Transforms](https://developer.sailpoint.com/docs/extensibility/transforms/) | Configurable input/output operations; implicit versus explicit input precedence; separately configured account-create usage | No JSON/API procedure, private services or claim every transform visibly changes text. |
+| [Creating Identity Profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Source mappings, ToLower, Preview versus Apply Changes; multi-value mapping-transform first-value/single-result behavior | Single strings in main case; source-field selection and application remain distinct. |
+| [Lower](https://developer.sailpoint.com/docs/extensibility/transforms/operations/lower/) | Lowercase operation and optional explicit input versus mapped source/field input | ASCII examples only; no universal null/error behavior or added trimming/translation. |
+| [Account Attribute](https://developer.sailpoint.com/docs/extensibility/transforms/operations/account-attribute/) | Associated-account retrieval; oldest-created sorting, first-non-null default and configured sorting/filtering | Both example values non-null; defaults scoped to this operation, not every direct mapping or unattached-account lookup. |
+| [Trim](https://developer.sailpoint.com/docs/extensibility/transforms/operations/trim/) | Separate removal of beginning/end whitespace | No combined transform implemented or automatic producer-data repair claimed. |
+| [Lookup](https://developer.sailpoint.com/docs/extensibility/transforms/operations/lookup/) | Key/value translation and optional default for unknown keys | Business translation/unknown-code policy must be approved; no actual table supplied. |
+| [Processing Identity Data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Mapping evaluation, relevant event/manual initiation, profile Apply Changes population and separate delivery evidence | No universal schedule/instant change; main processing and current values are supplied assumptions. |
+| [Synchronizing Attributes](https://documentation.sailpoint.com/saas/help/provisioning/attr_sync.html) | Separately configured mapped identity-to-eligible-existing-correlated-account writes | Main has no target write; transform doesn't itself enable a path or prove its success. |
+| [Managing Roles](https://documentation.sailpoint.com/saas/help/access/roles.html) | Identity-attribute changes can affect assignment during processing; access-bundle/consumer context | No concrete role assignment, universal comparison setting or delivered grant supplied. |
+
+### Assets and review scope
+
+Current [preserved code/lowercase label](../assets/TRN-001_preserved_code_and_lowercase_label.txt) and [separate evidence checks](../assets/TRN-001_calculation_application_and_delivery_evidence.txt) exactly match learner blocks, maximum 42 and 38 columns. Historical [direct/calculated paths](../assets/TRN-001_direct_and_calculated_value_paths.txt) and [application/consumer checks](../assets/TRN-001_calculation_application_and_consumer_checks.txt) remain unchanged, including the historical 45-column second diagram.
+
+Progress: 56 of 91 revised, 35 awaiting; TRN-002 next, learner body unopened. Published revised snapshot remains 23 through SRC-002; TRN-001 remains published 1.0. No tenant operation, commit, push, deployment or site-code change. Beginner validation, full graphical review and formal approval remain pending.
+
+### Historical verification record: revision 1.0
 
 Revision 1.0. Documentation checked October 22, 2026. Documentation-based author review completed; actual tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi 81001 already has teaching identity I-81001 (not an actual ISC object ID), governed by Employees. PeopleLedger Production is authoritative for that population; pl-81001 is already collected and correctly associated. Exactly one account on this source supplies both single-valued text fields.
 - Approved costCentreCode string 0042 maps directly to costCenter unchanged. Approved departmentLabel Finance supplies implicit input to ToLower, yielding department finance. No explicit input override, missing field, competing account or other required-field defect is part of the main design.
@@ -3150,7 +4289,7 @@ Revision 1.0. Documentation checked October 22, 2026. Documentation-based author
 - Transfer categories sum to 100 proposed mappings: 40 already exact, 25 lowercase, 15 translation agreement, 10 missing policy, 10 multiple-account selection. Counts do not describe failed identities.
 - No actual tenant/API/source/profile/mapping/transform/collection/processing/role/sync or target operation was performed. Illustrative string checks are not a simulation or validation of the ISC engine.
 
-### Official sources and claim mapping
+#### Official sources and claim mapping
 
 1. [Transforms](https://developer.sailpoint.com/docs/extensibility/transforms/) supports configurable input/output objects, operations and nesting; implicit versus explicit input and override; separately configured account-create use. Mapped to transform meaning, actual input and execution-context boundaries. JSON and private implementation mechanics are not taught in this lesson.
 2. [Creating identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) supports population mappings from source account attributes, transform calculations, simple ToLower, selected-identity Preview, Save versus Apply Changes, and first-value/single-result mapping-transform boundary for multi-valued input. Mapped to direct design, main example, list qualification and evidence table.
@@ -3164,7 +4303,7 @@ Revision 1.0. Documentation checked October 22, 2026. Documentation-based author
 
 All sources are official SailPoint cloud documentation, not IdentityIQ. Pages may display SailPoint Human Fabric/Identity Security branding; this course retains ISC terminology. Source availability does not prove every tenant supports a particular connector operation. Account selection, population authority, lowercase requirement, code meaning and exact results are explicit fictional assumptions, not product defaults.
 
-### Diagrams, limits and assessment mapping
+#### Diagrams, limits and assessment mapping
 
 - Editable sources: ../assets/TRN-001_direct_and_calculated_value_paths.txt and ../assets/TRN-001_calculation_application_and_consumer_checks.txt. Inline blocks match exactly, maximum widths 38 and 45 characters. First arrows carry selected values; second diagram is a human evidence sequence. Neither invents backend services, unconditional target writes or successful delivery.
 - Two two-column tables retain requirements and evidence limitations. Source-level checks are separate from actual live rendering and horizontal-overflow review.
@@ -3180,11 +4319,25 @@ All sources are official SailPoint cloud documentation, not IdentityIQ. Pages ma
 - Author review includes independent reading, first-use context, causal/changed-input reasoning, value/identifier consistency, technical source checks and narration pass. Beginner read-through and unfamiliar-case transfer remain pending; no competence guarantee follows from author review or deployment.
 
 
-## TRN-002
+## TRN-002: reading instructions, inputs and returned values
+
+### Current revision 2.0
+
+Module 8.2, **What is this transform actually going to return?** Revised and documentation-checked October 27, 2026 under teaching specification 3.1. Author review completed; real beginner validation and formal publication review remain pending. Local only; no commit, push or deployment.
+
+Full preserved-coverage, assumptions, primary-source claim mapping, assessment reasoning and local verification: [TRN-002 revision 2.0 record](revisions/TRN-002_Concept_Led_Revision_Record.md).
+
+The learner replaces story context with the approved single-string requirement and neutral HR-Primary / Directory-Primary references. Root lower explicitly receives trim, which explicitly retrieves the selected identity's associated HR departmentLabel: raw `" Finance "` -> `"Finance"` -> `"finance"`. The profile mapping establishes destination department. Approved shared review/Preview/processing plus supplied current identity evidence establish finance; HR raw data remains unchanged and no external result is supplied.
+
+The separate implicit lower definition retains spaces for mapped HR input. Changed Directory-Primary selector Legal produces legal for implicit input, while explicit HR instructions still produce finance. Main one-account assumptions, changed Operations input, account selection/missing-data boundaries, source display-name dependency, JSON parsing versus supported/business meaning, context and application evidence are preserved. Proposed names and Department Code FIN transfer do not imply a live name/type update or automatic translation.
+
+Nine fresh primary sources and exact claim boundaries are mapped in the revision record. Original eight question purposes and transfer remain. Local parsing/string checks are illustrative, not tenant execution. New editable diagram sources: [retrieval/trim/lower](../assets/TRN-002_retrieval_trim_and_lower_values.txt) and [selector/defined input](../assets/TRN-002_mapping_selector_and_defined_input.txt), both maximum 38 columns and exact inline matches.
+
+### Historical revision 1.0 record
 
 Revision 1.0. Documentation checked October 22, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi 82002 has teaching identity I-82002 (not actual ISC ID), governed by Employees; StaffRoster Production authoritative worker account sr-82002 is already collected and correctly associated. One account supplies departmentLabel as a single string with one leading and one trailing space around Finance.
 - Approved identity department representation is finance without surrounding spaces. Other required fields are valid. Main definition Department text for Employees has root lower, explicit input trim, its explicit input accountAttribute with sourceName StaffRoster Production/attributeName departmentLabel. Input retrieval returns raw spaces, trim returns Finance, lower returns finance.
@@ -3194,7 +4347,7 @@ Revision 1.0. Documentation checked October 22, 2026. Documentation-based author
 - Supplied approved review/Preview/processing continuation establishes current I-82002.department finance, collected HR input unchanged. No target write, access assignment or application-use result supplied.
 - No actual tenant/API/source/profile/mapping/transform/collection/aggregation/processing/provisioning or target operation performed. Local JSON and string checks are illustrative, not ISC engine validation.
 
-### Official sources and claim mapping
+#### Official sources and claim mapping
 
 1. [Transforms](https://developer.sailpoint.com/docs/extensibility/transforms/) supports root name/type/attributes, unnamed nested objects, input/output composition, explicit-input override and separate identity-mapping versus account-create contexts. Mapped to definition reading, value dependencies, diagrams and input comparison; no private service order or per-operation log is invented.
 2. [Lower](https://developer.sailpoint.com/docs/extensibility/transforms/operations/lower/) supports lowercase conversion with optional explicit input and implicit mapped source/attribute. Mapped to main final result and implicit retained-space comparison; no universal null/error outcome asserted.
@@ -3208,7 +4361,7 @@ Revision 1.0. Documentation checked October 22, 2026. Documentation-based author
 
 Cloud sources may display Human Fabric/Identity Security naming; the course retains ISC. No IdentityIQ behavior is imported. Default accountAttribute sorting is not generalized to every source-field mapping. Missing or unusable input breaks the supplied successful trace; no fabricated fixed output/error/UI message is supplied. Existing-object mutability and API operations remain distinct from reasoning about alternative definitions.
 
-### Diagrams, JSON and assessment mapping
+#### Diagrams, JSON and assessment mapping
 
 - Sources: ../assets/TRN-002_nested_input_value_trace.txt and ../assets/TRN-002_implicit_and_explicit_input_comparison.txt. Inline blocks match exactly, widths 38 and 41 characters. First arrows trace returned values and final mapping result, not HR writes; second compares dependencies after the mapping selector changes. Neither guarantees application or downstream execution.
 - Both JSON blocks parse; main has root name/type/attributes and nested lower -> trim -> accountAttribute; only root named. Separate implicit definition contains empty attributes/no input. Exact raw spaces and quote distinctions are retained; no tenant upload performed.
@@ -3225,11 +4378,25 @@ Cloud sources may display Human Fabric/Identity Security naming; the course reta
 - Review includes independent context, first-use terms, causal trace, changed conditions, supported mechanism/source checks, consistent values, worked reasoning, no learner citations or methodology promises, and personal mentor narration. Beginner read-through and unfamiliar-case validation remain pending.
 
 
-## TRN-003
+## TRN-003: character boundaries, composition and preserved meaning
+
+### Current revision 2.0
+
+Module 8.3, **Which characters should this calculation keep?** Revised and documentation-checked October 27, 2026 under teaching specification 3.1. Author review complete; beginner validation and formal publication review remain pending. Local only, with no commit, push or deployment.
+
+Full retained coverage, exact assumptions, primary-source claim mapping, assessment reasoning and verification: [TRN-003 revision 2.0 record](revisions/TRN-003_Concept_Led_Revision_Record.md).
+
+Neutral HR-Primary supplies single givenName/familyName strings Ana/Rao, each with one surrounding ordinary space. Main concat explicitly retrieves and trims each component, inserts one literal space and returns Ana Rao for mapped displayName. Raw-first composition followed by outside trim leaves three interior spaces. The lesson completes reviewed Preview/application/current-value reasoning; HR data stays raw and no external result is supplied.
+
+Complete dynamic concat and fixed illustrative join remain. Explicit separator, join's comma default, array order versus multi-valued field handling, case-specific agreements, interior spaces/punctuation/accents/code zeros and information loss are explained. Blank versus null/empty, single-name policy, collisions, unique-login and email ownership boundaries retain their conditions. Eight original question purposes and family-first O'Neil, Ana transfer remain, without a fictional employee narrative.
+
+Ten fresh primary sources and their limits are mapped in the revision record. New [component comparison](../assets/TRN-003_component_boundaries_and_combination.txt) and [human evidence checks](../assets/TRN-003_display_value_and_target_checks.txt) exactly match inline sources, maximum 37 and 42 columns. Local JSON/string checks are illustrations, not tenant execution. The historical diagrams remain unchanged.
+
+### Historical revision 1.0 record
 
 Revision 1.0. Documentation checked October 22, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi 83003 has teaching identity I-83003 (not actual ISC ID), Employees profile and one correctly associated WorkforceBook Production account wb-83003. Account aggregation already collected givenName/familyName single strings, each with one surrounding ordinary space on each side of Devi/Rao. Other required identity attributes valid.
 - Approved displayName preserves letters/case/meaningful punctuation/interior spaces, removes surrounding spaces per component, and inserts one separator space. Main root concat values contain trim(explicit WorkforceBook/givenName accountAttribute), literal space, trim(explicit WorkforceBook/familyName accountAttribute). Final Devi Rao.
@@ -3240,7 +4407,7 @@ Revision 1.0. Documentation checked October 22, 2026. Documentation-based author
 - Family-first transfer supplies Ana/O'Neil surrounded by spaces, requires O'Neil, Ana with literal comma-and-space, preserves punctuation. No further person/account identifiers needed for these isolated supplied components.
 - No actual tenant/API/source/profile/mapping/transform/aggregation/processing/provisioning or target operation performed; local JSON/string checks are not ISC engine validation.
 
-### Official sources and claim mapping
+#### Official sources and claim mapping
 
 1. [Transforms](https://developer.sailpoint.com/docs/extensibility/transforms/) supports configurable operations, nested value dependencies and explicit versus implicit input. Mapped to main composition and mapping-selector/input distinction. No undocumented execution-service order, intermediate stored field or automatic writeback inferred.
 2. [Trim](https://developer.sailpoint.com/docs/extensibility/transforms/operations/trim/) supports beginning/ending whitespace removal and explicit input. Mapped to component versus final-only trace; interior spaces/punctuation/case retained. Worked character counts use ordinary ASCII spaces, not every Unicode-whitespace classification.
@@ -3255,7 +4422,7 @@ Revision 1.0. Documentation checked October 22, 2026. Documentation-based author
 
 Cloud pages can display Human Fabric/Identity Security branding; this course retains ISC. No IdentityIQ behavior included. Main input names/spelling, display format and population agreement are fictional. Null/error handling, multilingual case edge cases, code validity and target character/length/uniqueness requirements need their own validated design; they are not inferred from these examples. No recipe strips accents, interior spaces or punctuation indiscriminately.
 
-### Diagrams, JSON and assessment mapping
+#### Diagrams, JSON and assessment mapping
 
 - Editable sources: ../assets/TRN-003_component_trim_and_separator_comparison.txt and ../assets/TRN-003_string_result_and_consumer_evidence.txt. Inline blocks match exactly, maximum widths 31 and 43 characters. First traces selected string operations and exact spaces; second labels human evidence checks. Neither is a private backend architecture or guaranteed target write.
 - Main illustrative JSON parses with concat root and three values: two explicit accountAttribute/trim branches surrounding a literal space. Fixed join JSON parses with two strings and explicit separator. Local ordinary-string assertions verify character counts and outputs only, not the ISC engine.
@@ -3272,11 +4439,27 @@ Cloud pages can display Human Fabric/Identity Security branding; this course ret
 - Author review covers independent context/first-use terms, supported mechanism, causal traces, changed conditions, consistent identifiers/characters, worked reasoning, source verification and mentor narration with no learner citations or methodology promises. Beginner validation and formal publication approval remain pending.
 
 
-## TRN-004
+## TRN-004: approved alternatives, null selection and failed evaluation
+
+### Current revision 2.0
+
+Module 8.4, **A fallback returned a value. Is it the right value?** Revised and documentation-checked October 27, 2026 under teaching specification 3.1. Author review complete; beginner validation and formal publication review pending. Local only; no commit, push or deployment.
+
+Full preserved coverage, assumptions, source claims, assessment mapping and verification: [TRN-004 revision 2.0 record](revisions/TRN-004_Concept_Led_Revision_Record.md).
+
+HR-Primary already supplies one correctly correlated account to an existing Employees identity. PreferredName returns null successfully; givenName returns Ana. Main firstValid explicitly false, ordered explicit accountAttribute reads with true accountReturnFirstLink, returns Ana for custom displayGivenName. Reviewed Preview/application/current-field continuation is supplied, HR remains unchanged and no external/status/access/relationship result is inferred.
+
+The lesson completes the normal path before comparing null, empty, spaces, literal null text, UNKNOWN and errors. Blank/placeholder suitability requires separate implemented policy. False stops past a failed option; explicit true can consider successful next Ana, without repairing failure. All-null supplies no usable candidate; no fabricated exact runtime/state outcome. Later collected Anu Preview does not prove new application. Approved marker scope, priority, provenance, correction visibility, all eight original question purposes and unapproved department-default transfer remain.
+
+Eight primary sources are freshly mapped in the revision record. Historical omitted-default discussion remains historical; every new definition/case has an explicit boolean and no omitted-default reliance. Local JSON/value checks are illustrations, not tenant execution.
+
+Current [null/alternative diagram](../assets/TRN-004_null_result_and_ordered_alternative.txt) and [reason/defect checks](../assets/TRN-004_fallback_reason_and_unresolved_defect.txt) exactly match inline sources, maximum widths 36 and 41. Historical assets remain unchanged.
+
+### Historical revision 1.0 record
 
 Revision 1.0. Documentation checked October 22, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi 84004 has teaching identity I-84004 (not actual ISC ID), Employees profile and one correctly associated StaffBase Production account sb-84004. Already collected preferredName evaluates successfully to null, givenName to Devi. Other required identity attributes valid; custom displayGivenName is not an access/status/ownership driver.
 - Owner's input contract supplies null for unrecorded preference, otherwise usable name; approved priority preferredName then givenName, not arbitrary failure suppression or invented name. Main firstValid explicitly sets ignoreErrors false; two explicit accountAttribute reads set accountReturnFirstLink true to return first selected account's field even when null. No alternative account competes.
@@ -3287,7 +4470,7 @@ Revision 1.0. Documentation checked October 22, 2026. Documentation-based author
 - Transfer: unapproved null-to-Finance department default can fabricate access-relevant facts; UNKNOWN is selected rather than rejected by bare firstValid. Approved alternative requires matching authority/meaning/person/account/freshness/priority.
 - No actual tenant/API/source/profile/mapping/transform/aggregation/processing/provisioning or target operation performed. Local JSON and non-null/space reasoning checks are illustrative, not ISC engine validation.
 
-### Official sources, applicability and claim mapping
+#### Official sources, applicability and claim mapping
 
 1. [First Valid](https://developer.sailpoint.com/docs/extensibility/transforms/operations/first-valid/) defines first non-null result in ordered values, strings/nested results and ignoreErrors continuation. Its empty-string fallback example establishes empty is selectable. Mapped to main priority, literal-first issue, empty/placeholder distinctions and explicit false/true error cases. The page currently lists default false, but this lesson does not rely on an omitted default.
 2. [Account Attribute](https://developer.sailpoint.com/docs/extensibility/transforms/operations/account-attribute/) supports associated-account sourceName/attributeName retrieval and accountReturnFirstLink true returning first account value even if null. Mapped to main explicit reads and two levels of selection. Source absence/failed reads are not universally equated with successful null.
@@ -3300,7 +4483,7 @@ Revision 1.0. Documentation checked October 22, 2026. Documentation-based author
 
 Core technical claims use current official cloud references. The dated firsthand default report only explains why no omitted-default behavior is assumed. Pages can display Human Fabric/Identity Security naming; course retains ISC. No IdentityIQ behavior imported.
 
-### Scope limits, diagrams and assessment mapping
+#### Scope limits, diagrams and assessment mapping
 
 - Main firstValid is intentionally null-based under an explicit producer contract, not a comprehensive blank/placeholder validator. Additional suitability logic is described as a required implemented decision, not silently attributed to firstValid. No unsupported blank-to-null recipe or untested Velocity code is supplied.
 - All-null outcome is bounded to no selectable non-null candidate and unresolved business requirement; exact engine/error/state effects require the actual evaluation context. This is not a tenant-tested reproduction.
@@ -3318,11 +4501,27 @@ Core technical claims use current official cloud references. The dated firsthand
 - Author review covers independent context, first-use terms, supported mechanism and source limits, supplied values, causal variants/worked reasoning, narration and no learner citations/methodology promises. Real beginner read-through and formal publication approval remain pending.
 
 
-## TRN-005
+## TRN-005: translating known codes and selecting conditional outputs
+
+### Current revision 2.0
+
+Module 8.5, **Are we translating a code or choosing an outcome?** Revised and documentation-checked October 27, 2026 under teaching specification 3.1. Author review complete; beginner validation and formal publication review pending. Local only; no commit, push or deployment.
+
+Full coverage, exact assumptions, primary-source claims, assessment reasoning and verification: [TRN-005 revision 2.0 record](revisions/TRN-005_Concept_Led_Revision_Record.md).
+
+Neutral HR-Primary supplies one correctly correlated collected account to an existing Employees identity, departmentCode FIN and workerType Employee. Independent custom review-only mappings use explicit lookup FIN/Finance, ENG/Engineering, OPS/Operations/default UNMAPPED and conditional variable workerType, expression `$workerType eq Employee`, Standard review/Manual review strings. Each retrieval has true accountReturnFirstLink. Reviewed Preview/processing/current fields establish Finance/Standard review; HR stays unchanged and no external/task/access/status/ownership result is supplied.
+
+Normal mechanism/application is completed before unknown-code maintenance, approved normalization, successful wrong input, false-branch meaning, case sensitivity and null/error handling. Usable populated worker-type examples are separated from absent/blank handling, correcting the original every-non-null scope ambiguity. All eight question purposes, changed Contractor Preview-only evidence and NYC/LON/unknown SGP transfer remain.
+
+Eight primary sources freshly mapped in revision record. No lookup-null-to-default, every-blank negative result, generic expression programming, automatic task or exact error/log claim. Local JSON/value checks illustrate consistency, not ISC execution.
+
+Current [lookup dependency](../assets/TRN-005_lookup_key_value_and_unknown_path.txt) and [conditional boundary](../assets/TRN-005_equality_result_and_null_boundary.txt) diagrams exactly match inline sources, maximum 38 and 42 columns. Historical assets and source qualifications remain.
+
+### Historical revision 1.0 record
 
 Revision 1.0. Documentation checked October 23, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi 85005 has teaching identity I-85005 (not actual ISC object ID), Employees profile and one correctly associated PeopleMap Production account pm-85005. Collected departmentCode FIN and workerType Employee are single strings; other required fields valid.
 - HR approves FIN/Finance, ENG/Engineering and OPS/Operations. Review-process owner approves exact Employee to Standard review and other non-null strings to Manual review. Custom departmentReviewLabel and workerReviewLabel are review-screen-only fields, not access/status/ownership drivers. UNMAPPED is not a department; Manual review does not establish task creation.
@@ -3332,7 +4531,7 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 - Facilities transfer supplies NYC/New York and LON/London with unknown SGP and no approved location. Neither majority-site default nor binary NYC/otherwise London establishes location. Approved review-only unknown marker is a possible scoped alternative; missing/error handling remains separate.
 - No actual tenant/API/source/profile/mapping/transform/aggregation/processing/provisioning or target operation performed. Local JSON and example reasoning checks are illustrative, not ISC engine tests.
 
-### Official sources, applicability and claim mapping
+#### Official sources, applicability and claim mapping
 
 1. [Lookup](https://developer.sailpoint.com/docs/extensibility/transforms/operations/lookup/): incoming strings, configured key/value table, matched output, unmatched default, no-default miss error and optional explicit input versus mapping-supplied input. Mapped to first definition, branch diagram, RND/ZZZ cases and translation maintenance. Null input/retrieval/configuration failures are not assumed to take the ordinary string-miss path.
 2. [Conditional](https://developer.sailpoint.com/docs/extensibility/transforms/operations/conditional/): eq-only comparison, case-sensitive strings, non-null operands, positive/negative output strings and additional dynamic properties referenced with $variableName. Mapped to second definition, true/false/null branches, Intern/employee/empty distinctions and unsupported gt boundary. The page documents IllegalArgumentException for null operands/invalid comparison; learner text claims evaluation error without asserting exact UI/error presentation.
@@ -3345,7 +4544,7 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 
 Current official cloud sources govern technical claims. Product pages may display Human Fabric/Identity Security naming; course retains ISC. No IdentityIQ behavior imported.
 
-### Source qualifications and review boundaries
+#### Source qualifications and review boundaries
 
 - Lookup documentation's second example describes multiple input keys sharing an output but also includes an error statement about duplicate keys; displayed keys are distinct. This lesson does not repeat that inconsistent error explanation or rely on duplicate-output behavior. Its tables use distinct keys and outputs.
 - No lookup case-folding, null-to-default, arbitrary object/list coercion or failed-read-to-default behavior is assumed. Non-null string matching/default paths are separated from these unresolved runtime contexts.
@@ -3354,7 +4553,7 @@ Current official cloud sources govern technical claims. Product pages may displa
 - Diagrams: ../assets/TRN-005_lookup_match_default_and_error.txt and ../assets/TRN-005_conditional_true_false_and_null.txt, exact inline copies, maximum widths 39 and 43 characters. Arrows describe value/branch dependencies rather than private service boundaries; lookup diagram begins after non-null string retrieval, and conditional diagram does not promise engine validation order.
 - Two complete JSON definitions, two two-column tables, eight worked cases and transfer are retained. Local syntax/example/source synchronization checks are distinct from live rendering, accessibility and navigation verification. Prior lessons, tracing aid and UI code remain unchanged.
 
-### Assessment mapping
+#### Assessment mapping
 
 - Case 1 tests key/value/destination and source-write distinction. Supplied FIN/table/mapping yields Finance without changing HR. Accept an explicit observation that application still needs evidence. Misconception: returned label writes back or root name selects destination. Sources 1, 3-4, 6-7.
 - Case 2 tests business authority versus deployed configuration. Supplied RND/Research approval with unchanged table yields UNMAPPED, then controlled update and evidence. Accept correction of the producing feed instead only if the owner establishes the incoming code was wrong, which these facts do not. Misconception: HR approval updates a transform table automatically. Sources 1, 6-7 and approved example contract.
@@ -3367,23 +4566,39 @@ Current official cloud sources govern technical claims. Product pages may displa
 - Transfer tests generalization and classification authority. NYC/LON table and unexplained SGP make both proposed fabricated labels unjustified. Accept approved unknown marker restricted to suitable consumers, or explicit failure/correction design. Missing/null/error treatment must remain separate. Misconception: default/otherwise supplies an unproven business fact. Sources 1-2 and supplied facilities contract.
 - Author review checks independent context, first-use meaning, supported mechanisms, causal variants, exact records/diagrams/answers and warm narration without learner citations or teaching-method promises. Actual beginner read-through and formal publication review/approval remain pending.
 
-## TRN-006
+## TRN-006: interpreting instants, date contracts and time-dependent evaluation
+
+### Current revision 2.0
+
+Module 8.6, **Which moment does this date actually mean?** Revised and documentation-checked October 27, 2026 under teaching specification 3.1. Author review complete; beginner validation and formal publication review pending. Local only; no commit, push or deployment.
+
+Full coverage, assumptions, primary-source claim mapping, assessments and executed checks: [TRN-006 revision 2.0 record](revisions/TRN-006_Concept_Led_Revision_Record.md).
+
+Neutral HR-Primary/Employees supplies one correctly correlated collected assignmentEnd string 10/23/2026 17:00:00 +0000, approved project boundary 17:00 UTC inclusive reached. DateFormat explicit input/pattern/ISO feeds dateCompare now gte end and custom review-only assignmentBoundaryReview. Main 16:59/17:00/17:01 evaluations and supplied 17:03 processing evaluation/current result remain; HR unchanged and no employment/access/account/target outcome inferred.
+
+The revision completes normal mechanism/application before deeper date-only, offset/zone/DST, pattern/epoch, arithmetic/output-contract, missing-data and reevaluation cases. Independent static dateMath -24h yields October 22 17:00 UTC with documented short text requiring supported ISO adaptation and verified UTC. No exact serialization, parser leniency/default zone, arbitrary conversion setting or automatic schedule is invented. Evaluation time is not inferred merely from completion time.
+
+All eight question purposes and inclusive-November1 partner-zone transfer remain. Thirteen primary sources are freshly mapped in revision record; Java/standards establish notation and general time concepts rather than ISC internals. Local JSON/instant arithmetic checks illustrate consistency, not ISC execution.
+
+Current [representation/comparison](../assets/TRN-006_date_representation_and_boundary_result.txt) and [clock/evaluation evidence](../assets/TRN-006_clock_passage_and_verified_evaluation.txt) sources exactly match inline blocks, maximum 38 and 39 columns. Original assets remain historical.
+
+### Historical revision 1.0 record
 
 Revision 1.0. Documentation checked October 23, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi 86006 has teaching identity I-86006 (not actual ISC object ID), Employees profile and exactly one correctly associated AssignmentLedger Production account al-86006. Already collected assignmentEnd is the single string 10/23/2026 17:00:00 +0000, approved as a project assignment boundary on October 23, 2026 at 17:00 UTC. Other required fields valid; not an employment-termination scenario.
 - Custom assignmentBoundaryReview is review-only, not access/status/account-action configuration. Approved outputs are Before boundary before the instant, Boundary reached at or after it.
 - First JSON illustrates explicit accountAttribute sourceName/attributeName/return-first true under dateFormat inputFormat MM/dd/yyyy HH:mm:ss Z, outputFormat ISO8601. Second JSON embeds the same retrieval/formatting as secondDate under dateCompare, firstDate now/operator gte/positive Boundary reached/negative Before boundary. The first standalone definition need not be saved or invoked separately; no intermediate identity attribute is implied.
-- Expected interpreted instant is 2026-10-23 17:00 UTC; equivalent ISO representation with milliseconds and Z is shown, not a promise of exact tenant output spelling. Main supplied evaluations at16:59/17:00/17:01 yield Before/reached/reached.
-- Third JSON is independent fixed static UTC input 2026-10-23T17:00:00.000Z to dateMath expression -24h. Arithmetic point is October22 17:00 UTC; documented short output 2026-10-22T17:00 needs adaptation before dateCompare. This is not dynamic retrieval, a reminder schedule or tenant-engine validation.
-- Other numerical reasoning: 22:30 +05:30 equals17:00 UTC; 17:00 +02:00 equals15:00 UTC and precedes16:00Z; interpreting date-only October23 as midnight moves17:00 deadline17hours earlier; day/month March-text03/04 meansApril3 versus month/day March4.
-- Supplied authorized processing at17:03 UTC establishes current custom label Boundary reached; no exact17:00 run is supplied. Collected HR unchanged, no employment/account/access/target-write or reminder outcome.
-- Transfer supplies inclusive November1 as last permitted calendar day in unspecified partner zone. First excluded boundary is start ofNovember2 in that zone, subject to actual rules. No location-specific offset or DST transition date is invented; distinguish elapsed24hours from previous local calendar day.
+- Expected interpreted instant is 2026-10-23 17:00 UTC; equivalent ISO representation with milliseconds and Z is shown, not a promise of exact tenant output spelling. Main supplied evaluations at 16:59/17:00/17:01 yield Before/reached/reached.
+- Third JSON is independent fixed static UTC input 2026-10-23T17:00:00.000Z to dateMath expression -24h. Arithmetic point is October 22 17:00 UTC; documented short output 2026-10-22T17:00 needs adaptation before dateCompare. This is not dynamic retrieval, a reminder schedule or tenant-engine validation.
+- Other numerical reasoning: 22:30 +05:30 equals17:00 UTC; 17:00 +02:00 equals15:00 UTC and precedes16:00Z; interpreting date-only October 23 as midnight moves17:00 deadline17hours earlier; day/month March-text03/04 meansApril3 versus month/day March 4.
+- Supplied authorized processing at 17:03 UTC establishes current custom label Boundary reached; no exact 17:00 run is supplied. Collected HR unchanged, no employment/account/access/target-write or reminder outcome.
+- Transfer supplies inclusive November1 as last permitted calendar day in unspecified partner zone. First excluded boundary is start ofNovember2 in that zone, subject to actual rules. No location-specific offset or DST transition date is invented; distinguish elapsed 24 hoursours from previous local calendar day.
 - No actual tenant/API/source/profile/mapping/transform/aggregation/processing/provisioning or target operation performed. Local datetime/JSON checks validate illustrative arithmetic and structure only, not ISC runtime.
 
-### Official sources, applicability and claim mapping
+#### Official sources, applicability and claim mapping
 
 1. [Date Format](https://developer.sailpoint.com/docs/extensibility/transforms/operations/date-format/): parse/reformat by input/output patterns, named ISO8601 and epoch formats, explicit input and lack of now-keyword support. Mapped to first/nested JSON, format/epoch discussion and output-contract boundaries. No arbitrary timezone setting, default-zone guarantee or identical output spelling asserted.
 2. [Date Compare](https://developer.sailpoint.com/docs/extensibility/transforms/operations/date-compare/): supported ISO dates/now, firstDate/secondDate direction, lt/lte/gt/gte and positive/negative output strings. Mapped to main definition, equality table and cases2-3. Null/malformed/retrieval errors are not classified as ordinary false outcomes or assigned an invented exact error text.
@@ -3401,7 +4616,7 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 
 Current official cloud sources govern ISC claims; Java/standards references establish notation and time concepts, not undocumented ISC internals. Current product pages can use Human Fabric/Identity Security naming; course retains ISC. No IdentityIQ behavior imported.
 
-### Scope and rendering boundaries
+#### Scope and rendering boundaries
 
 - Date-only value is not silently converted into an approved instant. Main input explicitly includes zero offset and time. No named-zone conversion recipe is offered without supported configuration/context verification.
 - ISO representation is taught by contract rather than asserting every ISO variant is accepted. DateMath output omits seconds/offset; outer adaptation is required and described, not replaced by appending a literal Z or invented timezone attribute.
@@ -3410,24 +4625,40 @@ Current official cloud sources govern ISC claims; Java/standards references esta
 - Diagrams: ../assets/TRN-006_date_input_format_and_comparison.txt and ../assets/TRN-006_boundary_reevaluation_and_applied_evidence.txt; exact inline copies, maximum widths41 and44characters. First describes value dependencies, not private services; second shows supplied evidence over time and explicitly denies exact-cutoff execution.
 - Three full JSON definitions, two two-column tables, eight worked cases and local-end transfer retained. Local syntax/example/synchronization checks are separate from live complete-text, visual code/diagram/table and navigation verification. Prior lessons, tracing aid and UI code unchanged.
 
-### Assessment mapping
+#### Assessment mapping
 
-- Case1 tests representation versus semantic correctness. Supplied day/month agreement and wrong month/day pattern produce April3 versus March4. Accept configuration/producer correction consistent with authority, not selecting a convenient interpretation. Misconception: parse success proves business correctness. Sources1,9,11.
+- Case1 tests representation versus semantic correctness. Supplied day/month agreement and wrong month/day pattern produce April3 versus March 4. Accept configuration/producer correction consistent with authority, not selecting a convenient interpretation. Misconception: parse success proves business correctness. Sources1,9,11.
 - Case2 tests inclusive equality. Supplied equal17:00 instants/approved inclusive policy require gte; gt returns false. Accept mathematically equivalent reversed lte with corresponding operands, not gt unchanged. Sources2 and approved contract.
-- Case3 tests operand direction. Supplied end17:00/now16:59 with end gte now returns reached too early. Accept corrected direction/operator preserving full statement. Misconception: operator name alone determines meaning. Source2.
+- Case3 tests operand direction. Supplied end17:00/now 16:59 with end gte now returns reached too early. Accept corrected direction/operator preserving full statement. Misconception: operator name alone determines meaning. Source2.
 - Case4 tests offset equivalence. Supplied17Z and22:30+05:30 are same instant. Accept explicit UTC arithmetic; no named-zone lookup is needed for supplied offsets. Misconception: local-clock difference implies elapsed-time difference. Source11.
 - Case5 tests information loss. Supplied17:00 boundary reduced to date and reconstructed midnight shifts17hours early. Accept preserving full instant alongside separate display field. Misconception: shorter display preserves every consumer's meaning. Sources1,9,11.
 - Case6 tests arithmetic versus output compatibility. Supplied fixed -24h and short returned string require supported adaptation/verified UTC before dateCompare. Accept source-based alternative composition respecting contracts, not direct string passthrough or cosmeticZ. Sources1-3,5.
 - Case7 tests missing evidence and fallback authority. Blank display lacks actual retrieval/result; establish null/empty/space/error and approved absence policy. Accept explicit refusal to classify until that evidence exists. Misconception: distant-future default repairs missing deadline. Sources1-4,13 and scoped contract.
 - Case8 tests time-dependent evaluation/application. Supplied16:59 stored label/17:01 observation/no later checked processing proves neither comparison failure nor exact-time application. Need processing eligibility/time/result/current value. Sources2,7-8.
-- Transfer tests unfamiliar local inclusive date, zone authority and calendar versus elapsed arithmetic. Supplied throughoutNov1/partner zone requires approved first-excluded localNov2 instant under actual zone rules; warning lead needs elapsed24hours versus prior-calendar-day agreement, then evaluation/application/delivery evidence. Accept request for missing named-zone rules and supported conversion rather than numeric guessing. Sources1-3,8-12.
+- Transfer tests unfamiliar local inclusive date, zone authority and calendar versus elapsed arithmetic. Supplied throughout November 1/partner zone requires approved first-excluded localNov2 instant under actual zone rules; warning lead needs elapsed 24 hoursours versus prior-calendar-day agreement, then evaluation/application/delivery evidence. Accept request for missing named-zone rules and supported conversion rather than numeric guessing. Sources1-3,8-12.
 - Author review checks independent context, first-use definitions, source contracts, exact examples/diagrams/answers, causal changes and mentor voice without visible citations or teaching-method promises. Actual beginner validation and formal publication approval remain pending.
 
-## TRN-007
+## TRN-007: returned values, composed contracts and referenced logic
+
+### Current revision 2.0
+
+Module 8.7, **What does each operation pass to the next one?** Revised and documentation-checked October 27, 2026 under teaching specification 3.1. Author review complete; beginner validation and formal publication review pending. Local only; no commit, push or deployment.
+
+Full preserved coverage, exact assumptions, primary-source mapping, assessment reasoning and verification: [TRN-007 revision 2.0 record](revisions/TRN-007_Concept_Led_Revision_Record.md).
+
+Neutral HR-Primary/Employees supplies one correctly correlated account with raw spaced fin. Inline concat uses literal Department prefix and lookup fed by explicit upper/trim/accountAttribute, yielding fin -> FIN -> Finance -> Department: Finance. Reviewed Preview/application/current field are supplied, HR stays raw and no intermediate fields or external/access/status/ownership result is inferred.
+
+Proposed shared HR department code returns FIN with explicit HR input; complete alternative caller uses reference attributes.id containing that existing name. Reference shares logic in current identity context, not stored FIN/cache. Caller/output/source contracts, explicit versus implicit inputs, copied versus shared maintenance, dependency errors and excluded cycles are explained. Directory-Primary Legal selector does not replace explicit HR retrieval.
+
+All eight original question purposes and facilities lon/London/Office transfer remain. Eleven fresh primary sources mapped in revision record; no private order, per-step stored trace, universal list/null/error behavior or unverified generic reference-input override. Local JSON/string checks are illustrations, not ISC execution.
+
+Current [value chain](../assets/TRN-007_input_preparation_translation_and_label.txt) and [caller dependencies](../assets/TRN-007_named_logic_and_caller_dependencies.txt) exactly match inline sources, maximum 35 and 40 columns. Historical source content and assets remain.
+
+### Historical revision 1.0 record
 
 Revision 1.0. Documentation checked October 23, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi 87007 has teaching identity I-87007 (not actual ISC object ID), Employees profile and one correctly associated PeopleCore Production account pc-87007. Collected departmentCode is a single string with one ordinary space on each side of fin. Other required identity fields valid.
 - HR approves surrounding-space and letter-case equivalence for these department codes, FIN/Finance, ENG/Engineering and OPS/Operations. Custom departmentReviewLabel is review-only; UNMAPPED marker is not a department or access/status/ownership driver.
@@ -3439,7 +4670,7 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 - Facilities transfer supplies spaced lon, approved cleanup, LON/London table and Office prefix. Expected Office: London needs actual facilities input, not reuse of explicit PeopleCore department retrieval.
 - No actual tenant/API/source/profile/mapping/transform/aggregation/processing/provisioning or target operation performed. Local parsing/value-reasoning checks are illustrative, not ISC engine execution.
 
-### Official sources, applicability and claim mapping
+#### Official sources, applicability and claim mapping
 
 1. [Transforms](https://developer.sailpoint.com/docs/extensibility/transforms/): configurable JSON operations, nested returned-value dependencies, root-only names, explicit versus implicit input and distinct identity/account use contexts. Mapped to complete inline composition, structure/order explanations and actual source provenance. No undocumented execution service/order/intermediate-history/caching claim.
 2. [Account Attribute](https://developer.sailpoint.com/docs/extensibility/transforms/operations/account-attribute/): associated-source sourceName/attributeName retrieval and accountReturnFirstLink true including null. Mapped to explicit PeopleCore inputs and one-account assumption; no error suppression or arbitrary-account selection inferred.
@@ -3455,7 +4686,7 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 
 Current official cloud references govern technical claims. Product pages can display Human Fabric/Identity Security naming; course retains ISC. No IdentityIQ behavior imported.
 
-### Scope limits and rendering boundaries
+#### Scope limits and rendering boundaries
 
 - Main data contract is one non-null code string and owner-approved normalization. Missing, empty, multi-value, wrong-account and error inputs require their own verified handling; no one-chain promise for all representations.
 - Source-bound helper deliberately includes PeopleCore accountAttribute. Reference's optional input does not justify claiming an outer selector replaces every deeper explicit read. No untested generic implicit-input reference recipe provided.
@@ -3465,7 +4696,7 @@ Current official cloud references govern technical claims. Product pages can dis
 - Sources: ../assets/TRN-007_nested_value_dependencies.txt and ../assets/TRN-007_shared_definition_and_callers.txt, exact inline copies, maximum widths36 and45characters. First is returned-value dependency trace; second is caller-definition dependency map, not shared cached result flow.
 - Three full JSON definitions, two two-column tables, eight worked cases and facilities transfer retained. Local source/JSON/example checks are distinct from live complete-text, visual/accessible code/diagram/table and navigation checks. Prior lessons, tracing aid, UI and tests unchanged.
 
-### Assessment mapping
+#### Assessment mapping
 
 - Case1 tests instructions versus values. Supplied upper/trim/accountAttribute chain and raw spaced fin produce FIN for lookup, not JSON object data. Accept full value trace. Misconception: nested operation objects are the raw business value. Sources1-5.
 - Case2 tests array order and literal characters. Supplied Finance result and reversed two-item concat yield FinanceDepartment: with final space; no separator is inferred. Accept exact equivalent character explanation. Misconception: concat/list order behaves like arbitrary object property order. Sources6,11.
@@ -3478,23 +4709,39 @@ Current official cloud references govern technical claims. Product pages can dis
 - Transfer tests generalization without source/meaning confusion. Facilities spaced lon/approved normalization/LON London/Office display yield Office: London, but PeopleCore source-bound helper retrieves wrong subject matter. Accept properly designed input-driven reuse with verified context/error contract or distinct facilities definition. Misconception: matching operation names prove interchangeable business inputs. Sources1-7 and facilities agreement.
 - Author review checks independent context, first-use definitions, supported operation contracts, exact records/values/diagrams/answers, failure boundaries and personal mentor narration without learner citations or teaching-method promises. Actual beginner validation and formal publication approval remain pending.
 
-## TRN-008
+## TRN-008: evaluation context, available dependencies and applied evidence
+
+### Current revision 2.0
+
+Module 8.8, **What has to change before this value is calculated again?** Revised and documentation-checked October 27, 2026 under teaching specification 3.1. Author review complete; beginner validation and formal publication review pending. Local only; no commit, push or deployment.
+
+Full coverage, assumptions, primary-source mapping, assessments and executed checks: [TRN-008 revision 2.0 record](revisions/TRN-008_Concept_Led_Revision_Record.md).
+
+Neutral HR-Primary/Employees supplies one correctly correlated account per compared identity. Same explicit trim returns 0042/0088 from their own spaced strings. Main October 23 observation timeline separates HR publication, available account data, selected Preview and checked applied field; historical 08:50 evidence does not prove stale current 0042 at 09:06. Processing/current 0090 verified 09:10, without a fixed latency or mandatory manual gap.
+
+IdentityAttribute peer-field reads during identity calculations retain the documented concurrency/no-guarantee restriction; visible list order is not sequencing. Separate proposed directory create-field read consumes available identity data. Current identity 0090 does not update an existing directory account 0042 with no ongoing mechanism. Context variables and independent time-field now/gte/reviewAt behavior are explained with distinct evidence and scheduling limits.
+
+All eight question purposes and circular login/email transfer retained. Eleven primary sources mapped, including actual create-profile and sync scope. No race reproduction, private ordering or automatic target acceptance claimed. Local JSON/value/time checks illustrate consistency, not ISC execution.
+
+Current [two identity contexts](../assets/TRN-008_same_instructions_separate_identity_inputs.txt) and [observation timeline](../assets/TRN-008_published_collected_previewed_and_applied.txt) sources exactly match inline blocks, maximum 39 and 41 columns. Historical source content/assets remain.
+
+### Historical revision 1.0 record
 
 Revision 1.0. Documentation checked October 23, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi88008 has teaching identity I-88008 (not actual ISC object ID), Employees profile and one correctly associated WorkforceRecord Production account wr-88008. Account costCenter initially has one ordinary space around0042; identity field costCenter is a separate record value. Other required fields valid; costCenter is metadata/proposed new-account data, not an access/status criterion in this example.
 - Main trim definition explicitly retrieves sourceName WorkforceRecord Production/attributeName costCenter with accountReturnFirstLink true. It returns text0042 preserving zeros. Same definition for employee88009/teaching I-88009/account wr-88009 with spaced0088 returns0088; no copied person value or live HR query.
-- October23 UTC08:50 current identity0042 verified;09:00 HR publishes spaced0090;09:02 available account still spaced0042 and Preview0042;09:05 available account spaced0090 verified;09:06 Preview0090, with last checked applied evidence from08:50;09:10 relevant processing/current0090 verified. Account changes can initiate event-based processing; no claim that no application occurred before09:10, that 09:06 current value remained0042, or that timing is an SLA.
+- October 23 UTC08:50 current identity 0042 verified; 09:00 HR publishes spaced 0090; 09:02 available account still spaced 0042 and Preview 0042; 09:05 available account spaced 0090 verified; 09:06 Preview 0090, with last checked applied evidence from08:50; 09:10 relevant processing/current 0090 verified. Account changes can initiate event-based processing; no claim that no application occurred before09:10, that 09:06 current value remained0042, or that timing is an SLA.
 - Proposed custom costCenterReviewText is used only to expose an invalid assumption that identityAttribute can consume newly recalculated costCenter during concurrent identity-field calculations by list order. No such unsafe definition is supplied as a recommended recipe.
 - Second complete JSON is identityAttribute/attributes.name costCenter for a proposed future ProjectDirectory new-account field. It is not a complete create profile or actual event. Consumes the available identity field rather than recollecting/applying HR first.
-- Existing ProjectDirectory pd-88008 has0042 and no ongoing cost-centre update configured. Main applied identity0090 does not change that account. No create/update/write is executed; separate attribute sync is explanatory context only.
-- Third JSON dateCompare uses now gte explicit WorkforceRecord reviewAt2026-10-23T17:00:00.000Z with return-first true; review-only assignmentBoundaryReview returns Before review point at16:59 and Review point reached at17:01, unchanged source timestamp. No scheduling configured by the definition.
+- Existing ProjectDirectory pd-88008 has0042 and no ongoing cost-centre update configured. Main applied identity 0090 does not change that account. No create/update/write is executed; separate attribute sync is explanatory context only.
+- Third JSON dateCompare uses now gte explicit WorkforceRecord reviewAt 2026-10-23T17:00:00.000Z with return-first true; review-only assignmentBoundaryReview returns Before review point at16:59 and Review point reached at17:01, unchanged source timestamp. No scheduling configured by the definition.
 - Login/email transfer supplies mutual unavailability across identity and account creation and a proposed list-order/two-run workaround. Need approved independent initial input or redesign, not a guessed runtime schedule or made-up fallback.
 - No actual tenant/API/source/profile/mapping/transform/aggregation/processing/provisioning or target operation performed. Local JSON/value/time checks validate illustrative reasoning only, not ISC runtime.
 
-### Official sources, applicability and claim mapping
+#### Official sources, applicability and claim mapping
 
 1. [Transforms](https://developer.sailpoint.com/docs/extensibility/transforms/): root/nested instruction structure, explicit versus implicit input, identity attribute versus account-profile template context and separately configured account-create transforms/testing. Mapped to evaluation context, nested provenance, available identity/attribute/previous-value versus field/application/current information, and create-context evidence. Not a promise that code/configuration transfers unchanged between contexts.
 2. [Account Attribute](https://developer.sailpoint.com/docs/extensibility/transforms/operations/account-attribute/): associated-account lookup on evaluated identity, sourceName display-name dependency, attributeName and accountReturnFirstLink true including null. Mapped to main costCenter input, second identity and unavailable/multiple-account qualifications. No fresh connector read, generic error suppression or cross-person cached result asserted.
@@ -3509,10 +4756,10 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 
 Current official cloud sources govern technical claims. Product pages can display Human Fabric/Identity Security naming; course retains ISC. No IdentityIQ behavior imported.
 
-### Scope and rendering boundaries
+#### Scope and rendering boundaries
 
 - Main mapping uses current associated account data available in ISC, not producer publication alone. Collection can start identity processing; separating evidence does not assert unrelated execution or an obligatory manual step after every aggregation.
-- Only observed historical identity evidence is supplied at09:06. Current0090 is confirmed at09:10; no artificial stale-value/runtime failure is inferred during the interval.
+- Only observed historical identity evidence is supplied at 09:06. Current0090 is confirmed at 09:10; no artificial stale-value/runtime failure is inferred during the interval.
 - Concurrent identity calculation warning is a documented operation restriction, not a guessed race reproduction. Shared independent-source logic can avoid the cross-field read but must retain approved authority/context/contracts. No exact scheduler, internal service or circular-error class claimed.
 - Account-create transform is a complete field calculation, not a full policy or deployed configuration. Identity Preview cannot validate actual account creation; existing account update and target acceptance remain separate.
 - DateCompare's now changes between evaluations even when source reviewAt does not. RequiresPeriodicRefresh and nextProcessing are supporting context with real eligibility/future-time constraints; no exact schedule recipe or deadline SLA asserted.
@@ -3520,24 +4767,42 @@ Current official cloud sources govern technical claims. Product pages can displa
 - Diagrams: ../assets/TRN-008_same_definition_different_contexts.txt and ../assets/TRN-008_data_preview_and_application_evidence.txt, exact inline copies, maximum widths42 and41characters. First compares independent per-identity evaluations; second is a supplied observation timeline, not internal job order.
 - Three JSON definitions, one two-column evidence table, eight worked cases and circular-input transfer retained. Source/JSON/arithmetic checks are separate from full live-text, visual code/diagram/table and native navigation verification. Prior lessons, tracing aid, UI and tests unchanged.
 
-### Assessment mapping
+#### Assessment mapping
 
-- Case1 tests evaluated-person context. Supplied one-account0042/0088 records and same definition yield respective trimmed strings. Accept explicit identity/account trace. Misconception: reused definition captures one person's result. Sources1-3.
-- Case2 tests data availability versus calculation logic. Supplied HR0090 publication and available0042/Preview0042 do not establish trim error. Need collection/selection evidence. Accept any cause investigation consistent with supplied exact record, not corrupting valid trim. Sources1-3,5-6.
-- Case3 tests historical versus current evidence. Supplied Preview0090 and only08:50 applied0042 cannot establish current stale0042 or absent processing. Recheck current identity and relevant execution. Misconception: no checked application evidence means proven failed application. Sources5-6.
+- Case1 tests evaluated-person context. Supplied one-account 0042/0088 records and same definition yield respective trimmed strings. Accept explicit identity/account trace. Misconception: reused definition captures one person's result. Sources1-3.
+- Case2 tests data availability versus calculation logic. Supplied HR0090 publication and available0042/Preview 0042 do not establish trim error. Need collection/selection evidence. Accept any cause investigation consistent with supplied exact record, not corrupting valid trim. Sources1-3,5-6.
+- Case3 tests historical versus current evidence. Supplied Preview 0090 and only08:50 applied0042 cannot establish current stale0042 or absent processing. Recheck current identity and relevant execution. Misconception: no checked application evidence means proven failed application. Sources5-6.
 - Case4 tests unsupported cross-field readiness assumptions. Supplied identityAttribute peer read during profile calculations/list order is not sufficient; use independently available input and supported shared composition. Accept explicit reference to concurrent/no-guarantee constraint rather than a claimed universal sequence. Sources1,4,8.
-- Case5 tests account-create consumption versus refresh. Supplied available identity0042 and approved HR0090 still do not make identityAttribute a collect/apply instruction. Establish readiness before the proposed event. Accept refusal to claim new-account output/delivery without actual context. Sources1,4-6.
+- Case5 tests account-create consumption versus refresh. Supplied available identity 0042 and approved HR0090 still do not make identityAttribute a collect/apply instruction. Establish readiness before the proposed event. Accept refusal to claim new-account output/delivery without actual context. Sources1,4-6.
 - Case6 tests new-account versus existing-account update. Supplied applied0090/existing pd-88008 0042/no ongoing update does not establish identity-transform failure. Need separately authorized/configured update and acceptance. Sources1,4,6,9.
 - Case7 tests time dependency. Supplied same17:00 reviewAt and16:59/17:01 evaluation instants yield Before/reached through now gte; no schedule/application inferred. Accept identification of now as changed input. Sources6-7.
 - Case8 tests shared change scope. Supplied saved shared definition/one Preview do not prove caller compatibility, population coverage, current mapped results or external delivery. Need scoped representative checks and actual processing/outcomes. Sources5-6,8-9.
 - Transfer tests independent starting data across circular identity/account creation requirements. Supplied unavailable login/email and list-order/two-run proposal need authority for initial input or supported redesign, then separate collection/evaluation/application/creation evidence. Accept approved temporary value only with explicit meaning, consumers and correction policy, not invented availability. Misconception: screen order or repeated runs makes absent inputs exist. Sources1,4,6.
 - Author review checks independent context, first-use terms, documented operation constraints, accurate source/timeline/type facts, exact diagrams and worked reasoning, and mentor voice without learner citations or teaching-method promises. Actual beginner validation and formal publication approval remain pending.
 
-## TRN-009
+## TRN-009: failing candidates, misleading substitutes and verified correction
+
+### Current revision 2.0
+
+Module 8.9, **The calculation returned a value. What actually went wrong?** Revised and documentation-checked October 27, 2026 under teaching specification 3.1. Author review complete; beginner validation and formal publication review pending. Local only; no commit, push or deployment.
+
+Full coverage, assumptions, primary-source claims, assessment reasoning and verification: [TRN-009 revision 2.0 record](revisions/TRN-009_Concept_Led_Revision_Record.md).
+
+Neutral HR-Primary/Employees supplies one correctly correlated account with spaced ENG, approved Engineering expected, initial Preview Finance only. Saved firstValid true wraps untrimmed no-default ENG/FIN lookup plus literal Finance. Supplied unmatched-key candidate diagnostic and outer result explain missing preparation and unapproved masking; no branch inferred merely from Finance or exact engine error fabricated.
+
+Complete proposed replacement trims before lookup and removes substitute: ENG/Engineering, FIN/Finance, OPS remains unresolved/error with no default. Corrected Preview, relevant processing and current Engineering are supplied separately. Existing Directory-Primary remains Finance/no ongoing update, with no target/access result. Null/empty/list/stored-state handling still needs approved actual-context policy.
+
+Competing causes, evidence preservation/history limits, known versus unknown meanings, two full definitions, all eight question purposes and facilities DAL/AUS/BOS transfer remain. Ten fresh primary sources mapped in revision record; local JSON/value checks are illustrations, not ISC execution or replay.
+
+Current [candidate/outcome diagram](../assets/TRN-009_candidate_failure_and_returned_substitute.txt) and [human verification path](../assets/TRN-009_preserve_explain_correct_and_verify.txt) exactly match inline blocks, maximum 38 and 36 columns. Historical assets remain.
+
+All nine Module 8 lessons are now individually revised. Existing PRC-001 is next for revision; original authoring reservations below are historical.
+
+### Historical revision 1.0 record
 
 Revision 1.0. Documentation checked October 23, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi89009 works in Engineering. Employees profile maps department; one correctly associated WorkforceLedger Production account wl-89009 supplies departmentCode string with one ordinary space around ENG. I-89009 is a teaching label, not an actual ISC object ID. All other required identity information is assumed valid; the lesson investigates department calculation, not identity creation.
 - Owner approves ENG-to-Engineering, FIN-to-Finance and removal of surrounding ordinary spaces; no Finance/Unknown/empty fallback is approved. Initial observation is selected Preview Finance only; no current applied or target outcome is inferred.
@@ -3549,7 +4814,7 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 - Evidence preservation advice requires relevant authorized data only, records missing historical evidence rather than inventing it, and does not assume all intermediate values are exposed in a supported UI/log.
 - Local JSON and value checks are illustrative reasoning checks, not ISC runtime tests. No actual tenant/API/source/profile/mapping/transform/aggregation/processing/provisioning or target operation occurs.
 
-### Official sources, applicability and claim mapping
+#### Official sources, applicability and claim mapping
 
 1. [Transforms](https://developer.sailpoint.com/docs/extensibility/transforms/): nested definitions and explicit versus implicit inputs; separately configured identity-mapping/account-create contexts. Mapped to saved root/nested instructions, nested source selection overriding surrounding implicit input and intended-context tests. No undocumented execution services or universal workflow order.
 2. [Account Attribute](https://developer.sailpoint.com/docs/extensibility/transforms/operations/account-attribute/): retrieves associated source-account field for evaluated identity; attributeName matches schema, sourceName depends on display name; filters/sorting/return-first behavior. Mapped to exact-account provenance, true including null, multiple-account investigation, stale available data and rename dependencies. Not a fresh producer query.
@@ -3564,7 +4829,7 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 
 Current official cloud sources govern the lesson's technical claims. Some product pages display Human Fabric/Identity Services naming; course retains ISC. No IdentityIQ behavior imported. Source availability checked separately from correctness and learner validation.
 
-### Investigation and publication boundaries
+#### Investigation and publication boundaries
 
 - Final Finance alone is not proof of fallback selection. Actual selected input, saved instructions and supplied candidate diagnostic jointly support the worked diagnosis. A successful wrong lookup can be an authority/selection/table defect rather than an execution error.
 - The replacement is complete illustrative calculation JSON, not a complete population-ready missing/exception handling design or a tenant/API exercise. Before deployment, approve and test actual null/empty/multiple-account cases. An exposed lookup error is not an approved final data correction.
@@ -3574,7 +4839,7 @@ Current official cloud sources govern the lesson's technical claims. Some produc
 - Two JSON definitions, two two-column tables, eight numbered worked cases and facilities transfer retained. Validate complete live text/fenced blocks/table rendering and existing navigation separately from source/JSON/value checks.
 - All nine Module 8 lessons authored. Module9.1 reserved PRC-001 remains planned, with no file or ninth navigation module. Preserve previous63lessons, teaching specification, templates, CSS, tests and tracing aid.
 
-### Assessment mapping
+#### Assessment mapping
 
 - Case1 tests evidence versus inferred branch. Supplied Finance Preview/definition but unchecked input cannot prove fallback. Accept FIN match, bad translation or skipped error as competing causes requiring actual-account/input evidence. Misconception: literal presence proves its selection. Sources1-4,7.
 - Case2 tests nested failure versus enclosing value. Supplied spaced ENG, no-default keys, confirmed candidate error, explicit error skipping and literal Finance explain outer result but not correctness. Accept exact step tracing; reject assertion lookup translated ENG to Finance. Sources2-4.
@@ -3587,11 +4852,47 @@ Current official cloud sources govern the lesson's technical claims. Some produc
 - Transfer tests cause-based investigation with unfamiliar labels. Supplied spaced DAL/no default/error skipping/Austin demonstrates same mismatch and masking; correction must prepare approved input, remove/redesign unsupported substitute, test DAL/AUS/BOS and distinguish Preview/current/consumer evidence. Accept owner-approved alternative error handling with defined meaning and visibility; reject replacing Austin with Dallas as a generic fix. Sources1-5,7-9.
 - Author review covers independent context, terminology before reliance, documented operation behavior, competing causes, exact diagram/value/answer consistency, practical evidence and mentor narration. Beginner comprehension and formal publication approval remain untested.
 
-## PRC-001
+## PRC-001 - revision 2.0, local concept-led comparison
+
+Revision 2.0. Documentation checked October 27, 2026 under teaching specification 3.1. Documentation-based author content/first-use/source/flow/narration review complete; tenant execution, observed beginner validation, full graphical publication review and formal approval not performed.
+
+### Current scope and evidence
+
+Neutral HR-Primary department Finance -> Engineering reaches the exact collected account, then Employees' direct mapping supplies identity department. Existing correlated Directory-Primary department sync requires a field update; the separate enabled Engineering role/access profile requires ordinary ENG-BASE membership. Archive-Primary has no ongoing department update. No biography, fictional brand or arbitrary account/identity IDs are required.
+
+Six supplied October 23 UTC observations at10:00/05/06/07/08/09 preserve producer, collected-input, relevant processing/current identity/role, successful target department, failed group permission and absent target membership evidence. No fixed duration, private job sequence or mandatory relative write order is inferred. Relevant aggregation/provisioning identity modification can initiate processing; narrower UI Aggregate Account is distinguished.
+
+### Coverage, sources and assessment
+
+[Complete revision and verification record](revisions/PRC-001_Concept_Led_Revision_Record.md) maps all 63 retained coverage purposes, eight original question purposes and workPhone transfer to revised locations, supplied facts, reasoning, misconceptions and official documentation.
+
+- [Loading account data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html): Connected/file account reads, collection scope/modes and specific UI account reload. Collection, narrow Aggregate Account action and evidence; not all aggregation APIs equated.
+- [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html): Event identity modification, mapped/manager/lifecycle/role evaluation, initiation paths and delivery-completion limit; service visibility. Main identity result, conditional paths and Search distinction; no schedule times, state-eligibility recipe or private execution order inferred.
+- [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html): External account/access changes, multiple initiators, direct/manual delivery and configuration. Sync versus provisioning, requests/reviews, supported enabled operations; no generic retry timing or source update performed.
+- [Synchronizing attributes](https://documentation.sailpoint.com/saas/help/provisioning/attr_sync.html): Eligible mapped Create Account fields, mapped identity attributes, existing/all correlated accounts, mapped-null propagation and native-change enforcement. Established department policy and variations; eligibility not arbitrary write authorization, no initial bulk action or multi-valued-rule procedure.
+- [Configuring source account provisioning](https://documentation.sailpoint.com/saas/help/provisioning/create_profile.html): Creation configuration versus existing updates, supported direct versus flat-file task path. Creation/sync distinction and phone transfer; no actual create/update or field policy edited.
+- [Creating identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html): Authoritative worker accounts, shared profile mappings and separate selected Preview/application. Employees direct department and sample/population distinction; not tenant-tested.
+- [Assigning source accounts to identities](https://documentation.sailpoint.com/saas/help/accounts/correlation.html): Account/identity association meaning. Already correct associated accounts, not correlation correction or automatic field copying.
+- [Automating role assignment](https://documentation.sailpoint.com/saas/help/provisioning/role_assignment.html): Enabled attribute-driven role criteria, associated access profiles/entitlements, application and multi-account selection. Engineering requirement and separate sync scope; no Finance removal or generic deprovisioning guarantee.
+- [Managing access profiles](https://documentation.sailpoint.com/saas/help/access/access-profiles.html): Source-specific bundles and ordinary versus activation-dependent entitlement delivery. Enabled Engineering profile contains ordinary standing ENG-BASE, no activation needed; detection/removal/JIT behavior not generalized.
+- [Monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html): Precise provisioning events, activity/errors and manual task details/completion. Separate department and group outcomes, authorized recovery/target evidence; permission error is supplied hypothetical, not actual quoted ISC error.
+- [Aggregating entitlements](https://documentation.sailpoint.com/saas/help/loading_entitlements/aggregating_entitlements.html): Access-object collection on supported integrations. Reading group existence is not granting membership; no entitlement procedure or license limit introduced.
+
+Current official claim bodies were checked, including single-account reload, event/manager/lifecycle/role evaluation and delivery limit, sync eligibility/accounts/null/drift, selected Preview/application, role/profile ordinary access and operation/task evidence. No actual tenant/connector behavior was measured; cloud naming differences do not import IdentityIQ behavior.
+
+### Artifacts and status
+
+New [department path](../assets/PRC-001_collected_department_identity_and_account_update.txt) and [group path](../assets/PRC-001_role_requirement_and_separate_group_delivery.txt) exactly match inline diagrams, maximum widths 33/38. Original two diagram sources remain unchanged.
+
+The complete [processing comparison guide](../assets/PROCESSING_COMPARISON_GUIDE.txt) is local revision 2.0, with synchronized four-process summaries, neutral complete trace, boundaries and investigation/phone transfer. Published guide remains 1.0. Source/value checks are separate from full graphical publication review.
+
+Existing PRC-002 is next for local revision; its learner body was not opened. ROL-007 remains paused new authoring. No commit, push or deployment.
+
+### Historical revision 1.0 record
 
 Revision 1.0. Documentation checked October 23, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi91001 already has valid identity information under Employees and three correctly associated accounts: authoritative WorkerHub Production wh-91001, ProjectDirectory pd-91001 and ArchiveDirectory ad-91001. I-91001 is a teaching label, not an actual ISC object ID. Identity department maps directly from WorkerHub department; no calculation/substitute intervenes.
 - HR changes Finance to Engineering. ProjectDirectory supports department update/group add with provisioning enabled, but operation-specific executing permissions remain necessary. An already established eligible department-sync configuration maps its Create Account department directly from identity department and selects it for sync. This is not first-time bulk configuration.
@@ -3602,7 +4903,7 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 - Transfer: approved HR phone has reached exact account and identity workPhone; existing contact account remains old; Create Account mapping exists but ongoing phone sync is not configured. Need approved supported update mechanism and outcome, not repeated HR reads or invented role/membership change.
 - All configurations, timestamps, observations and outcomes are fictional. No actual tenant/API/source/profile/mapping/aggregation/processing/provisioning or target operation occurs. No JSON/runtime/connector lab execution is claimed.
 
-### Official sources, applicability and claim mapping
+#### Official sources, applicability and claim mapping
 
 1. [Loading account data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html): configured account collection, file imports, scope/modes/optimization, history and narrower UI Aggregate Account behavior. Mapped to collected-account evidence, producer/collection distinction and case2's no identity-attribute synchronization/provisioning claim. Do not generalize that UI action to all aggregation APIs or all source runs.
 2. [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html): relevant event initiation, identity mapping/manager/lifecycle/role reevaluation, scheduled/time/manual paths, configuration application, delivery-completion limit and separate platform service-data synchronization. Mapped to identity responsibilities, not a universal mandatory stage order or exact timing. No schedule times, broad eligibility recipe or internal services invented.
@@ -3618,7 +4919,7 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 
 Current official cloud documentation governs claims. Product pages may say Human Fabric or Identity Services; course retains ISC. No IdentityIQ behavior imported. Documentation availability checks do not establish real source/tenant execution.
 
-### Scope, reference aid and publication boundaries
+#### Scope, reference aid and publication boundaries
 
 - Primary subject is four connected responsibilities, not exhaustive scheduling, role provisioning/removal, lifecycle or sync setup. Scheduled/time/manual initiation is introduced only enough to avoid universal source-read pipelines. Later lessons retain their own primary coverage.
 - A completed source job, one identity's current field, a role assignment, a successful department write and a failed group write are separate facts. No stale current state is inferred at10:05 from absent processing evidence.
@@ -3629,7 +4930,7 @@ Current official cloud documentation governs claims. Product pages may say Human
 - Two diagrams, two two-column tables, eight worked cases and phone transfer retained. Verify complete live body, exact accessible diagram/table rendering and download target separately from local source/value checks.
 - Module9 now enters navigation with one complete lesson. PRC-002 reserved/planned only. Preserve all64previous lessons, templates, CSS, navigation tests, teaching specification and attribute tracing aid. Actual beginner validation and formal publication approval remain pending.
 
-### Assessment mapping
+#### Assessment mapping
 
 - Case1 tests upstream availability. Supplied HR Engineering/collected Finance/direct mapping requires collection/selection evidence before assuming new role requirement or changing provisioning. Accept investigating additional faults without claiming they are established. Misconception: producer change already exists everywhere. Sources1-3,6.
 - Case2 tests operation-specific boundaries. Supplied UI Aggregate Account reload does not synchronize identity fields or affect provisioning. Need relevant supported processing and current/target evidence; accept distinguishing other aggregation paths rather than generalizing. Misconception: all actions named aggregate have identical downstream scope. Sources1-2.
@@ -3642,11 +4943,46 @@ Current official cloud documentation governs claims. Product pages may say Human
 - Transfer tests existing field update with unfamiliar workPhone. Supplied correct collected/identity values and create-only contact mapping require ongoing authorized supported delivery mechanism and target evidence, not repeated HR aggregation. Accept approved alternate update mechanism rather than sync if justified. Misconception: new-account template maintains existing fields. Sources1-6,10.
 - Author review checks independent scenario, first-use terms, actual-operation distinctions, configuration/record/time consistency, exact diagrams/reference summaries, reasoning and mentor voice. No actual beginner read-through or formal publication approval occurs.
 
-## PRC-002
+## PRC-002 - revision 2.0, local event-based processing explanation
+
+Revision 2.0. Documentation checked October 27, 2026 under teaching specification 3.1. Documentation-based author content/first-use/flow/source/narration review complete; no tenant execution, observed beginner validation, full graphical publication review or formal approval.
+
+### Current scope and supplied evidence
+
+One valid identity with correctly associated HR-Primary and existing Directory-Primary accounts. Employees maps location directly from HR, no calculation/substitute. Austin -> Dallas meets the enabled Dallas role's location condition; enabled Dallas Tools includes ordinary DL-TOOLS membership, with no activation, account creation, Austin-access removal or directory-location sync.
+
+Six October23 UTC observations at11:00/03/05/06/07/12 preserve producer change, old collected input, explicit qualifying aggregation/identity modification, processed current Dallas/role, pending add and completed add/fresh membership evidence. These are supplied hypothetical facts, not measured latency or a required sequence of private jobs.
+
+A separate mapped text costCenter0088 ->0090 variation modifies identity data while location/role/presentgroup remain correct. Provisioning initiation depends on the supplied identity modification, not every attempted request or target update. Workflow notification and clock/configuration application have different evidence and responsibilities.
+
+### Coverage, sources and assessments
+
+[Complete revision and verification record](revisions/PRC-002_Concept_Led_Revision_Record.md) maps all 63 preserved coverage purposes, eight original question purposes and the phone transfer to the revised locations, supplied facts, worked reasoning, misconceptions and official documentation.
+
+- [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html): Identity modification in aggregation/provisioning initiates evaluation; mappings, manager/lifecycle/roles and delivery limit; separate configuration/time/manual reasons. Main normal mechanism, two initiation branches and clock/configuration variations. No mandatory job order/count, timing SLA or omitted eligibility recipe.
+- [Loading account data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html): Configured collection/file input, optimized/unoptimized account handling and exact UI Aggregate Account boundary; Search visibility. Producer/collected distinction, unchanged/skipped records and narrow reload. Not all single-account APIs treated like UI action; skip does not exclude other processing.
+- [Creating identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html): Shared mapped identity fields, selected Preview and separate saved-configuration application. Employees direct location/costCenter, sample/current/population separation. No transform/identity-creation correction performed.
+- [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html): External account/access changes, direct/manual paths and configuration. Provisioning can be outcome and identity-modifying initiator. Request/acceptance/target result does not by itself establish an identity modification.
+- [Automating role assignment](https://documentation.sailpoint.com/saas/help/provisioning/role_assignment.html): Enabled automatic attribute conditions and bundled entitlement delivery. Dallas role depends on location, unchanged location can leave correct membership unchanged; no removal or retry policy generalized.
+- [Managing access profiles](https://documentation.sailpoint.com/saas/help/access/access-profiles.html): Source-specific bundles and standing versus activation-dependent delivery. Enabled Dallas Tools contains ordinary DL-TOOLS membership; activation excluded explicitly.
+- [Monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html): Individual operations, stages/status/results/errors and task/account context. Pending versus verified group result; no fixed pending delay or every-stage trace asserted.
+- [Workflow triggers](https://documentation.sailpoint.com/saas/help/workflows/workflow-triggers.html): Identity Attributes Changed configurable trigger with basic attribute or advanced filtering. Workflow automation versus platform processing and notification boundary. Main example has no workflow; none created.
+- [Synchronizing attributes](https://documentation.sailpoint.com/saas/help/provisioning/attr_sync.html): Configured identity-to-account field alignment through provisioning and eligible existing correlated accounts. Phone-transfer support only; current workPhone alone proves neither sync configuration nor delivery.
+- [Aggregating entitlements](https://documentation.sailpoint.com/saas/help/loading_entitlements/aggregating_entitlements.html): Access-object collection rather than membership changes. Entitlement aggregation is not granting DL-TOOLS or proof of location change.
+
+Official claim bodies, including the event condition, optimized/unoptimized modes, exact UI reload limitation, workflow trigger body and specific-operation evidence, were freshly reviewed. No private event bus, required subscription, universal job count/order or delivery guarantee is inferred.
+
+### Artifacts and status
+
+New [location evidence](../assets/PRC-002_location_change_initiation_and_delivery_evidence.txt) and [two initiation paths](../assets/PRC-002_identity_modification_from_aggregation_or_provisioning.txt) exactly match inline blocks, maximum widths36/34. Original diagrams remain unchanged.
+
+Both reference guides remain local revision2.0 and published1.0, unchanged here. The learner has no source/course links or fictional biography. PRC-003 exists and is next for local revision; its body was not opened. ROL-007 remains paused new authoring. No commit, push or deployment.
+
+### Historical revision 1.0 record
 
 Revision 1.0. Documentation checked October 23, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi92002 has valid Employees identity and one correctly associated authoritative PeopleLedger Production pl-92002 account; I-92002 is a teaching label, not an actual ISC object ID. Location maps directly from the associated source account. No transform/default, ownership correction or identity-creation issue.
 - HR location changes Austin-to-Dallas. Existing WorkDirectory wd-92002 is correctly associated and lacks DL-TOOLS. Group-add supported/provisioning enabled; no location sync is configured. Enabled Dallas Starter role tests identity location equals Dallas and contains enabled Dallas Tools access profile/ordinary standing DL-TOOLS entitlement with no separate activation.
@@ -3659,7 +4995,7 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 - Phone transfer supplies collected/qualifying identity modification and verified processed workPhone, but old external phone; must inspect approved ongoing update mechanism and delivery rather than manufacturing another HR event.
 - All records, requirements, configurations, activity and results are fictional. No actual tenant/API/source/profile/mapping/aggregation/processing/provisioning/workflow or target operation performed. Local source/value checks are not runtime execution.
 
-### Official sources, applicability and claim mapping
+#### Official sources, applicability and claim mapping
 
 1. [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html): event-based initiation when aggregation/provisioning modifies identity; mapped information and manager/lifecycle/role responsibilities; separate manual/configuration, scheduled/time paths and provisioning-completion limit. Mapped to initiation condition, unchanged outcome reasoning and separate current/target evidence. No invented internal event names, subscription or universal timing/job count.
 2. [Loading account data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html): configured account collection/file input, optimization and unoptimized reexamination, exact UI Aggregate Account scope. Mapped to producer/collection distinction, completed run versus changed record, skipped-record qualification and case5. No generic claim that all single-account APIs have this UI action's limitations or unchanged record prevents all other processing.
@@ -3674,7 +5010,7 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 
 Current official cloud documentation governs technical claims. Pages may use Human Fabric/Identity Services names; course retains ISC. No IdentityIQ behavior imported. Availability checks do not substitute for source review or real tenant tests.
 
-### Scope and rendering boundaries
+#### Scope and rendering boundaries
 
 - The lesson teaches documented initiation and its evidence, not a private event-bus implementation or a complete taxonomy of every field/connector operation. It does not claim every account change, source-save or write request modifies an identity.
 - Supplied11:05 modification and11:06 current results are explanatory observations, not required separate engine jobs. HR11:00 publication alone is not proof of either.
@@ -3685,7 +5021,7 @@ Current official cloud documentation governs technical claims. Pages may use Hum
 - Two two-column tables, eight worked cases and phone-change transfer retained. Verify complete live text, exact accessible diagram/table rendering and existing native navigation separately from local source checks.
 - Existing processing comparison guide revision1.0 and attribute tracing guide revision1.0 unchanged. PRC-003 reserved/planned only, with no lesson file or additional navigation module. Learner validation and formal publication approval remain pending.
 
-### Assessment mapping
+#### Assessment mapping
 
 - Case1 tests producer versus qualifying collected modification. Supplied external Dallas/available Austin establishes no new input or identity event. Need correct-account collection/modification evidence. Accept narrow uncertainty, not a proven processing failure. Sources1-3.
 - Case2 tests source-run status versus per-record modification. Supplied successful optimized run/skipped unchanged record cannot prove fresh processing and cannot exclude other paths. Accept explicit need for record/processing evidence. Misconception: completed run means one event for every identity. Sources1-2.
@@ -3698,11 +5034,46 @@ Current official cloud documentation governs technical claims. Pages may use Hum
 - Transfer tests proven identity update versus external field delivery. Supplied collection/identity modification/currentworkPhone establishes identity path; old contact phone requires configured mechanism/eligibility/result investigation, not another producer edit. Accept discovering missing design or separate delivery failure without assuming either. Sources1-4,7,9.
 - Author review checks independent context, first-use meanings, conditional documented behavior, exact records/values/times/diagrams, causal exercises and mentor voice. Actual beginner read-through and formal publication approval not performed.
 
-## PRC-003
+## PRC-003 - revision 2.0, local scheduled and time-based explanation
+
+Revision 2.0. Documentation checked October 27, 2026 under teaching specification3.1. Documentation-based author content/first-use/source/flow/narration review complete; no tenant execution, observed beginner validation, full graphical publication review or formal approval.
+
+### Current scope and supplied evidence
+
+One valid Active identity/Employees profile and one correctly associated HR-Primary account with already collected reviewAt2026-10-23T16:00:00.000Z. Custom assignmentReviewStatus independently compares evaluation now with reviewAt, returnsBefore before andDue at/after. No employment, disable, removal or notification action is attached.
+
+Recurring-only design: explicitUTCtenant, no roles, no sync-configured source account foridentity, periodic requirementtrue,no nextProcessing. Morning condition absent; evening profile condition present. Supplied initialapplication/currentBefore13:00,selectedPreviewDue/currentBefore16:01,queue20:00/start20:04/currentDue20:06 are one hypothetical history.
+
+Separate per-identity alternative: per-profile appliednextProcessing16:00 after13:30update supplies2h30lead; relevantprocessing/currentDue16:02. No two-minute or exact-second guarantee. First15:30update supplies30min despiteHR09:00approval. Next business/processing milestones, offset equivalence, postponed18:00 boundary and target cutoff remain distinct responsibilities.
+
+### Coverage, official sources and assessments
+
+[Complete revision and verification record](revisions/PRC-003_Concept_Led_Revision_Record.md) maps all 77 preserved purposes, eight original question purposes and local09:00 reminder transfer to revised locations, supplied facts, causal reasoning, misconceptions and official references.
+
+- [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html): Recurring08:00/20:00 tenant-zone selection, defaultCST/CDT/queued start; per-profile futureISO nextProcessing and hour lead; additional processing; application/delivery limit. Two separate timing designs and evidence. No universal eligibility, exact finish promise or private per-identity queue inferred.
+- [Date Compare](https://developer.sailpoint.com/docs/extensibility/transforms/operations/date-compare/): now at evaluation, ISO date comparison, directed greater-or-equal, periodic-refresh boolean. Before/at/after review rule; periodic true is not a personal deadline timer. No JSON placement recipe/runtime asserted.
+- [Account Attribute](https://developer.sailpoint.com/docs/extensibility/transforms/operations/account-attribute/): Associated source-account field input. One correctly associated HR account supplies reviewAt, not live producer/peer-identity data.
+- [Identity Attribute](https://developer.sailpoint.com/docs/extensibility/transforms/operations/identity-attribute/): Peer identity-field calculation concurrency/current-data limitation. Independent available inputs; UI list order does not guarantee new peer data. No unsafe dependency prescribed.
+- [Creating identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html): Shared mappings, selected Preview and separate application. Current versus proposed review/nextProcessing, initial application and profile-wide scope.
+- [Setting up lifecycle states](https://documentation.sailpoint.com/saas/help/provisioning/lifecycle.html): Lifecycle business actions and identity-state participation distinctions. Active/short-term/long-term supporting explanation and separate target-cutoff case; not universal time-based selection rule.
+- [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html): Configured account/access provisioning through direct/manual paths, roles and field sync. First-use supporting terms and target-outcome boundary; review-only label has no actions.
+- [Monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html): Specific-operation stage/results/errors and manual tasks. Failed target disable/actual state separate from identity completion; no actual error text claimed.
+- [RFC 3339](https://www.rfc-editor.org/rfc/rfc3339): UTC Z, offset correspondence and date-time representations, local-time limitations. 11:00-05:00/16:00Z and date-only contract. Not proof every RFC3339 syntax accepted by every transform.
+- [IANA time-zone database theory](https://data.iana.org/time-zones/tzdb/theory.html): Named civil-zone rulesets and changing DST/offset rules across dates. Per-location09:00 transfer uses rules applicable to relevant date, not fixed offset carried indefinitely. No named-zone library execution claimed.
+
+Claim-bearing schedule/selection/queue, nextProcessing and lead, now/inclusive/periodic, independent inputs/concurrency, Preview/application, identity states, target delivery and timezone bodies were read. No page availability check is treated as runtime verification; no private job topology, automatic timestamp recurrence/clearing or delivery guarantee inferred.
+
+### Artifacts and status
+
+New [boundary and applied label](../assets/PRC-003_business_boundary_evaluation_and_applied_label.txt) and [two timing responsibilities](../assets/PRC-003_recurring_selection_and_additional_identity_time.txt) exactly match inline blocks, maximum widths37/40. Original diagrams unchanged. Both reference guides remain local2.0/published1.0 unchanged.
+
+Existing PRC-004 is next for local revision; its body was not opened. ROL-007 remains paused new authoring. No commit, push or deployment.
+
+### Historical revision 1.0 record
 
 Revision 1.0. Documentation checked October 23, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi93003 has valid Active identity, Employees profile and one correctly associated AssignmentRegister Production ar-93003 account. I-93003 is a teaching label, not an actual ISC object ID. Already collected reviewAt2026-10-23T16:00:00.000Z is an exact UTC moment.
 - Custom assignmentReviewStatus independently reads associated account reviewAt and compares evaluation time with it: before returns Before review, equality/after returns Review due. Review-only metadata has no employment, account-disable, access-removal, email or notification action.
@@ -3715,7 +5086,7 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 - Transfer: business wants09:00 per employee's location from date-only input and periodic option; need approved local zone/instant, recurrence versus per-identity plan, lead/application and separate email mechanism if required.
 - No actual tenant/API/source/profile/mapping/aggregation/processing/provisioning/notification or target operation performed. Local date/offset/lead calculations are illustrative arithmetic, not ISC runtime/tenant scheduling tests.
 
-### Official sources, applicability and claim mapping
+#### Official sources, applicability and claim mapping
 
 1. [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html): scheduled08:00/20:00 tenant-zone population rules, defaultCST/CDT, queued scheduled start, per-profile nextProcessing/future ISO/one-hour lead from identity update, additional versus recurring processing, configuration application and provisioning completion limit. Mapped to both designs and timing investigation. No unverified time-based internal queue architecture, universal identity eligibility or exact-second target-delivery promise.
 2. [Date Compare](https://developer.sailpoint.com/docs/extensibility/transforms/operations/date-compare/): now at evaluation, ISO input, directed inclusive comparison and periodic-refresh option. Mapped to independent Before/Due rule and time-dependent truth versus stored result. No operation JSON or flag-placement recipe supplied; periodic marking is not a minute timer.
@@ -3729,7 +5100,7 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 
 Current official cloud documentation governs technical claims. Some pages use Human Fabric/Identity Services names; course retains ISC. No IdentityIQ behavior imported. Source availability is checked separately from correctness and learner validation.
 
-### Scope and rendering boundaries
+#### Scope and rendering boundaries
 
 - Documented recurring population table is necessary to explain selection, not an exhaustive identity-state lesson. Main Active/no-roles/periodic/no-sync/UTC assumptions are explicit before relying on them.
 - Scheduled jobs are queued at configured times and can start later. Per-identity16:00 is a requested processing time with supplied16:02 observed result, not an asserted identical queue implementation or delay bound. Diagrams are conceptual responsibilities.
@@ -3740,7 +5111,7 @@ Current official cloud documentation governs technical claims. Some pages use Hu
 - Two two-column tables, eight worked cases and local09:00 reminder transfer retained. Verify complete live body, exact accessible diagrams/tables and native navigation separately from local time/source checks.
 - Existing processing comparison guide and attribute tracing guide remain revision1.0 unchanged. PRC-004 reserved/planned only, no file or new navigation module. Beginner validation and formal publication approval remain pending.
 
-### Assessment mapping
+#### Assessment mapping
 
 - Case1 tests rule versus recurring timing. Supplied UTC/no-role/no-sync/Active/periodic design, correctPreview/currentBefore16:01 means evening path not yet due, not necessarily comparison failure. Accept need for actual execution and approved latency. Sources1-2,5-6.
 - Case2 tests evening no-role profile eligibility. Supplied Active/no-role/no periodic field does not establish inclusion in that documented population. Accept identifying missing selection condition and appropriate timing need, not inventing another trigger. Sources1-2,6.
@@ -3753,11 +5124,48 @@ Current official cloud documentation governs technical claims. Some pages use Hu
 - Transfer tests per-location business timing versus tenant recurrence. Supplied date-only/local09:00/periodic option needs approved zones/instants and accepted delay or valid applied nextProcessing with lead, plus updated future plan and independent email delivery if required. Accept supported alternative design meeting explicit business timing; reject one tenant job as every person's local timer. Sources1-2,5,7-9.
 - Author review checks independent context, first-use terms, population/lead/time conditions, exact values and alternative histories, diagrams/answers, missing-evidence discipline and mentor voice. Actual beginner read-through and formal publication approval not performed.
 
-## PRC-004
+## PRC-004 - revision 2.0, local manual application explanation
+
+Revision 2.0. Documentation checked October 27, 2026 under teaching specification3.1. Documentation-based author content/first-use/source/flow/narration review complete; tenant execution, observed beginner validation, full graphical publication review and formal approval not performed.
+
+### Current scope and supplied evidence
+
+Existing valid identity/associated HR-Primary and directory account. Employees old costCenter mapping reads legacy0088; approved direct replacement selects current0042. Text leadingzeros matter. Enabled Finance Baseline role tests0042 and includes enabled Finance Tools/ordinaryFT-BASE, group-add supported/provisioning enabled. No activation, creation, field sync or0088role-removal complication.
+
+Twelve Active identities: four correctionneeded0088->0042,twocorrect0042withvalidpriorrole/group,six0090. Six qualified/four newly eligible is a prediction, not six new writes or verified target memberships.
+
+October23 UTC12:00saveselectedfield/12:05Preview0042 current0088/12:10selected processing/12:12current0042 role/12:13permissionfailure/12:14freshgroupabsent/12:15otherthreeold,two0042,six0090. Reviewed profile application12:20 and verified12:25allcurrentvalues/sixroles establish population results. No new target result after12:14; neither currentpresence nor absence assumed. Selected scope is not saved shared-configuration isolation.
+
+### Coverage, official sources and assessments
+
+[Complete revision and verification record](revisions/PRC-004_Concept_Led_Revision_Record.md) maps all 75 preserved purposes, eight original question purposes and manager/approval transfer to revised locations, supplied facts, reasoning, misconceptions and official sources.
+
+- [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html): Manual entry points, profile-associated versus list-page Active/short-term scope, selected processing, recent-change review, resource coordination and Apply Changes audit evidence; delivery limit. Action table/main application/evidence. Specific scope qualifies broad all-identities language; no field-only fine-grained processing control invented.
+- [Creating identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html): Source-field selection, mappings, selected Preview and separate application. Direct costCenter versus legacy, current/sample/population distinction. No private draft or external dry-run inference.
+- [Automating role assignment](https://documentation.sailpoint.com/saas/help/provisioning/role_assignment.html): Enabled equality role criteria and access-profile entitlement requirements evaluated during identity processing. Finance Baseline matches0042, expected six/four counts and unchanged correct access.
+- [Managing roles](https://documentation.sailpoint.com/saas/help/access/roles.html): Role changes applied through subsequent identity analysis/manualprocessing, list application processes roles/profiles/apps together, overlapping assignment considerations. Selected run not configuration isolation; no single-edited-role boundary; review legitimate grants before compensation. No blanket removal/rollback recipe.
+- [Managing access profiles](https://documentation.sailpoint.com/saas/help/access/access-profiles.html): Source-specific bundles, enabled ordinary standing versus activation-dependent access and coherent model changes. Finance Tools/FT-BASE ordinary delivery, no activation or forced duplicate writes.
+- [Reference](https://developer.sailpoint.com/docs/extensibility/transforms/operations/reference/): Shared named-transform instructions reused by callers. Additional dependency-scope explanation only; no reference used in main direct mapping.
+- [Loading account data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html): Optimized skip for existing unchanged account and exact UI Aggregate Account scope. Wrong selection versus stale input and configuration application; not blanket all single-account API limits.
+- [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html): Required supported direct/manual account/access delivery and appropriate test environment. Role requirement versus actual delivery and scoped authorized correction; no tenant action executed.
+- [Monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html): Specific source/account/activity stage/status/results/errors. Permission failure/current target versus historical evidence; hypothetical error not actual message or universal recovery policy.
+- [Setting up lifecycle states](https://documentation.sailpoint.com/saas/help/provisioning/lifecycle.html): Business lifecycle and identity-state feature/processing participation. Supporting meanings and Active/short-term scopes; not exhaustive lifecycle or eligibility lesson.
+- [Configuring manager correlation](https://documentation.sailpoint.com/saas/help/sources/manager_correlation.html): Manager Name mapping plus source manager-correlation comparisons/resolved relationships. Transfer requires actual current resolved manager and missing/unmatched review; no correlation correction performed.
+- [Managing requests for roles and access profiles](https://documentation.sailpoint.com/saas/help/requests/config_ap_roles.html): Configured manager approver is manager of access recipient and request-specific review flow. Separate approval consumer; no automatic reroute or universal immutable-approver claim.
+
+Specific manual scope/selected set, all-three list-page processing, recent-change search, audit/monitoring, Preview/application, shared saved-role evaluation, direct data/optimized reload boundaries and manager/recipient approval bodies freshly read. No private staging, field-only action, universal retry, transactional rollback or automatic approval reroute inferred.
+
+### Artifacts and status
+
+New [selection and result boundaries](../assets/PRC-004_saved_selection_preview_current_value_and_delivery.txt) and [selected-to-profile chronology](../assets/PRC-004_selected_then_profile_application_evidence.txt) exactly match inline blocks, maximum widths40/41. Original diagrams unchanged. Both guides local2.0/published1.0 unchanged.
+
+Existing PRC-005 is next locally; its learner body was not opened. ROL-007 remains paused new authoring. No commit, push or deployment.
+
+### Historical revision 1.0 record
 
 Revision 1.0. Documentation checked October 23, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi94004 has a valid Active Employees identity, correctly associated StaffLedger Production sl-94004 and existing FinanceDirectory fd-94004. I-94004 is a teaching label, not an actual ISC object ID. Collected account costCenter string0042 is current/approved; legacyCostCenter string0088 is historical.
 - Old direct identity costCenter mapping selects legacyCostCenter. Approved replacement selects current costCenter, no transform/fallback or producer edit. Owner approves field correction and access consequences.
@@ -3770,7 +5178,7 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 - Manager transfer supplies one correct Preview and proposed profile/approval closure; must verify population/current resolved manager and the separate already-created approval's selected approver/repair mechanism. No automatic reroute or universal immutable approver claim.
 - No actual tenant/API/source/profile/mapping/aggregation/processing/provisioning/approval or target operation performed. Local set/count/source checks are illustrative reasoning, not an ISC runtime lab.
 
-### Official sources, applicability and claim mapping
+#### Official sources, applicability and claim mapping
 
 1. [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html): supported manual Apply Changes and Process Identity/Identities; profile-associated scope versus Active/Inactive short-term list-page scope; recent-change review, resource coordination, Active Jobs and Apply Changes audit records; processing does not verify provisioning completion. Mapped to actual action table, scope/monitoring and no fabricated fine-grained controls.
 2. [Creating identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html): selected source/attribute mappings, Preview and separate application. Mapped to current-versus-legacy input selection, proposed/current evidence and associated population; no guarantee saving is a private draft or Preview is a whole-change dry run.
@@ -3787,7 +5195,7 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 
 Current official cloud sources govern claims. Pages may use Human Fabric/Identity Services naming; course retains ISC. No IdentityIQ behavior imported. Source availability does not establish source/tenant runtime testing.
 
-### Scope and rendering boundaries
+#### Scope and rendering boundaries
 
 - Primary topic is supported manual application/scope/evidence, not click-by-click UI/API procedure, complete role-removal logic or all processing-eligibility rules. Named actions explain the object/population they operate on.
 - Profile-associated scope is not automatically replaced by the broader list-page state filter; selected-set scope is not equivalent to all affected people. Broad list-page application processes all three configuration areas, not one edited object only.
@@ -3799,7 +5207,7 @@ Current official cloud sources govern claims. Pages may use Human Fabric/Identit
 - Two two-column tables, eight worked cases and manager/approval transfer retained. Verify full live text, exact accessible diagram/table rendering, native navigation and unchanged aids separately from local source/set checks.
 - Existing processing comparison guide and attribute tracing guide remain revision1.0 unchanged. PRC-005 reserved/planned only, no file/new module. Beginner validation and formal publication approval pending.
 
-### Assessment mapping
+#### Assessment mapping
 
 - Case1 tests save/selected Preview/current evidence. Supplied savedcorrect/Preview0042/current0088 has not established applied identity correction or target write. Need relevant processing/current results. Accept narrow current observation, not guessing absent future events. Sources1-2,8-9.
 - Case2 tests selected versus population completion. Supplied currentDevifixed/otherthreeold establishes incomplete application; need reviewed wider scope. Accept evidence-based correction, reject private-pilot assumption or unobserved automatic application. Sources1-4.
@@ -3812,11 +5220,48 @@ Current official cloud sources govern claims. Pages may use Human Fabric/Identit
 - Transfer tests current manager resolution versus approval consumer. Supplied one correct Preview needs actual population mapping/resolution and currentrelationship checks, then approval's selection/record/repair evidence. Accept consumer-specific investigation, reject automatic reroute and universal unchanged-approver claims. Sources1-2,10-12.
 - Author review checks independent context, first-use terms, documented scope, correct inputs/population arithmetic, historical/current evidence, exact diagrams/exercises and mentor narration. No actual beginner read-through/formal approval performed.
 
-## PRC-005
+## PRC-005 - revision 2.0, local connected processing responsibilities
+
+Revision2.0. Documentation checked October27,2026 under teaching specification3.1. Documentation-based author content/first-use/source/flow/narration review complete; tenant execution, observed beginner validation, full graphical publication review and formal approval not performed.
+
+### Current scope and supplied evidence
+
+One valid identity/associated HR-Primary and existing Directory-Primary account. Collected departmentSupport->Engineering, managerReferenceM-OLD->M-NEW and stagePRE->EMP; mapped workerCategoryEmployee unchanged. Stable category replaces arbitrary worker-number equality for retained CompanyCore; required managerreference/candidateidentificationNumber comparison remains, with applied unique candidates and one supplying profile/source.
+
+Enabledprehire/active both use identitystateActive and WorkerPortal/PORTAL; active additionally EmployeeBase/STAFF-BASE. Core/COMMON remains, SupportTools(SUPPORT-BASE+COMMON) ends, EngineeringTools/ENG-BASE applies. Ordinary access, existing account, supported groupadd/remove; no activation, account actions/creation/deletion, wipe or field sync.
+
+Initialtarget{PORTAL,COMMON,SUPPORT-BASE};intended{PORTAL,COMMON,STAFF-BASE,ENG-BASE}. October23UTC14:00collected/initiatingidentitymodification,14:04currentfields/managerM-NEW/active/roles,14:06STAFFadd/SUPPORTremovecompletebutENGpermissionfailed,14:07freshactual{PORTAL,COMMON,STAFF-BASE}. Decisions correct, delivery incomplete; no latency/order guarantee.
+
+### Coverage, official sources and assessments
+
+[Complete revision and verification record](revisions/PRC-005_Concept_Led_Revision_Record.md) maps all 71 preserved purposes, eight original question purposes and Leeds/Bristol AND-active transfer to revised locations, supplied facts, reasoning, misconceptions and official sources.
+
+- [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html): Aggregation/provisioning identity modification initiates evaluation; identity mappings/manager/lifecycleaccess/roles; delivery-completion limit. Four responsibilities and actual evidence, not fixed/atomic backend order.
+- [Creating identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html): Shared source mappings/calculations, custom fields, selected Preview versus application. Department/category and independent stage translation; workerCategory replaces arbitrary workeridentifier while retaining stable mapped-value purpose.
+- [Configuring manager correlation](https://documentation.sailpoint.com/saas/help/sources/manager_correlation.html): Manager Name plus source comparison, candidate identity resolution, selected-null clearing versus unmatched-reference retention. M-OLD/M-NEW/M-MISSING are necessary HR reference test values; one supplying profile/source and applied unique candidates, no global multi-profile simplification.
+- [Setting up lifecycle states](https://documentation.sailpoint.com/saas/help/provisioning/lifecycle.html): Enabled technical state names, state profiles/identity state, same profile retained across lifecycle change. PRE/prehire EMP/active, sharedPORTAL/newSTAFF, no implied wipe/accountaction. No unknown-stage fallback invented.
+- [Automating role assignment](https://documentation.sailpoint.com/saas/help/provisioning/role_assignment.html): Enabled identity criteria, data-driven qualification/loss, related access, criteria combinations and conditional retries. CoreEmployee/category unchanged, department roles change; AND transfer and no account deletion from role loss; no all-error retry guarantee.
+- [Managing roles](https://documentation.sailpoint.com/saas/help/access/roles.html): Assigned-role overlap retained, assignment loss versus editing/disable/deletion propagation distinctions. COMMON retained via Core, exclusiveSUPPORTremoved. No role-definition propagation recipe imported into this data-change case.
+- [Managing access profiles](https://documentation.sailpoint.com/saas/help/access/access-profiles.html): Source bundles and ordinary standing versus activation-dependent access. Enabled profiles/ordinary memberships on single existing account, no activation dependency.
+- [Identity Attribute transform](https://developer.sailpoint.com/docs/extensibility/transforms/operations/identity-attribute/): Peer identity-profile attribute calculations can overlap and do not guarantee current/existing peer field. Lifecycle uses accountworkerStage independently; supported rolecriteria use not equated to unsafe peer transform.
+- [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html): External account/access changes, direct/manual paths and conditional retryable errors. Supported direct groupoperations, permission-dependent partial delivery, actual authorized recovery. No real connector error classification claimed.
+- [Monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html): Specific source/account/action/status/stage/error information. 14:06operation results versus14:07fresh target and later-state limits; no fake fine-grained platform trace.
+- [Identity states overview](https://documentation.sailpoint.com/saas/help/provisioning/identity_states.html): Identity participation state distinct from lifecycle business label. Bothprehire/active use Active; exhaustive participation comparison belongs to PRC-006.
+- [Managing requests for roles and access profiles](https://documentation.sailpoint.com/saas/help/requests/config_ap_roles.html): Manager-dependent request approval. Current manager relationship versus separate alreadycreated approval; no automatic reroute or universal immutability assertion.
+
+Null/unmatched manager changes retain their distinct documented outcomes under one supplying source. Shared-profile/role requirements preserve PORTAL/COMMON. No all-field ordering, peer readiness, role-definition propagation, automatic rerouting, generic wipe or universal retry behavior inferred.
+
+### Artifacts and status
+
+New [independent result checks](../assets/PRC-005_account_inputs_and_independent_result_checks.txt) and [membership reconciliation](../assets/PRC-005_continuing_required_and_verified_memberships.txt) exactly match inline blocks, maximum widths37/40. Original diagrams and both local2.0/published1.0 reference guides unchanged.
+
+Existing PRC-006 is next locally; its learner body was not opened. ROL-007 remains paused new authoring. No commit, push or deployment.
+
+### Historical revision 1.0 record
 
 Revision 1.0. Documentation checked October 23, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi95005, teaching I-95005 (not actual ISC object ID), valid Active Employees identity with correctly associated WorkforceLedger Production wl-95005 and existing WorkDirectory wd-95005. Collected department Support-to-Engineering, managerNumber95090-to95091 and workerStagePRE-toEMP; workerNumber95005 unchanged.
 - Direct identity department/identificationNumber mappings, Manager Name mapping from managerNumber, source manager-correlation match to identificationNumber. Only this profile/source supplies Devi's manager; unique intended managers95090/95091 already have applied candidate values. No cross-profile candidate-preparation or peer-field ordering assumption.
@@ -3828,7 +5273,7 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 - Transfer uses unnamed Leeds-to-Bristol employee, unchanged uniquely resolved manager, active lifecycle Staff Portal, Bristol Tools role with locationBristol AND lifecycletechnicalactive; correct Preview only, appliedLeeds/no role or target evidence. No real system operation or beginner test performed.
 - Source/set assertions check teaching consistency, not actual tenant execution. No actual tenant/API/source/profile/mapping/aggregation/processing/provisioning/approval or target changes made.
 
-### Official sources and claim mapping
+#### Official sources and claim mapping
 
 1. [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html): event-based initiation on identity modification during aggregation/provisioning; mapped attributes, manager correlation, lifecycle access and role assignments; identity processing does not validate provisioning success. Mapped to opening, input trigger, responsibility table and delivery boundary. The enumerated documentation list is not treated as a cross-field atomic execution guarantee.
 2. [Creating identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html): profile mapping of source fields/calculations and Preview versus applied values. Mapped to selected WorkforceLedger fields, shared profile instructions, unchanged identificationNumber and transfer requiring actual application. No undocumented generic unknown-workerStage handling asserted.
@@ -3845,7 +5290,7 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 
 Official cloud sources govern claims. Current documentation may use Human Fabric/Identity Services names; course retains ISC. No IdentityIQ behavior imported. Availability of documentation is not proof of tenant testing.
 
-### Scope, reasoning and rendering review
+#### Scope, reasoning and rendering review
 
 - Scope integrates four processing responsibilities. It does not duplicate full manager matching design, all lifecycle scenarios, complete assignment/removal exceptions, connector setup, scheduling, or a hands-on procedure.
 - Main expected outcomes are calculated from explicitly selected current inputs and enabled configuration. Corresponding applied relationships/assignments and target observations are supplied separately. No assumption that a field update proves every responsibility completed.
@@ -3855,7 +5300,7 @@ Official cloud sources govern claims. Current documentation may use Human Fabric
 - Verify full ordered live text/headings, exact diagram rendering/accessibility, two accessible tables and all69routes/native navigation. Preserve prior68lessons, all earlier assets/templates/tests/specs and both reference aids byte-equivalent.
 - PRC-006 reserved planned only. Author review and working-edition deployment do not establish beginner validation or formal publication approval.
 
-### Assessment mapping
+#### Assessment mapping
 
 - Case1: tests independent consumers. Facts alter only department, keeping PRE/95090; expected Engineering role/Support loss but prehire and old manager retained. Accept separate applied/delivery verification; reject one changed field necessarily changing every result. Sources1-5.
 - Case2: tests unmatched reference versus actual manager. Non-null95999 has no candidate and prior95090 exists; documented retention applies. Accept correcting reference or preparing intended candidate based on evidence, not fabricating identity or claiming no processing. Source3.
@@ -3868,11 +5313,45 @@ Official cloud sources govern claims. Current documentation may use Human Fabric
 - Transfer: tests Preview/application, two-condition role, unchanged manager/state and delivery. AppliedLeeds despite PreviewBristol leaves application unverified; must check relevant processing/currentlocation, actual role under locationANDactive, provisioning and target. Accept unknown completion until evidence supplied; reject location-only condition or continuingStaffPortal deletion. Sources1-2,4-5,7,9-10.
 - Author review checks meaning, first-use context, set arithmetic, prepared manager candidates, independent mapping input, state/profile retention, actual/historical evidence, exact assets and mentor narration. No beginner learner or formal publication test performed.
 
-## PRC-006
+## PRC-006 - revision 2.0, local identity-state participation explanation
+
+Revision2.0. Documentation checked October27,2026 under teaching specification3.1. Documentation-based author content/first-use/source/flow/narration review complete; no tenant execution, observed beginner validation, full graphical publication review or formal approval.
+
+### Current scope and supplied evidence
+
+Valid identity/associatedHR-Primary and existingDirectory-Primary account. ApprovedEMP/employed/Active,LEAVE/leave/short-term,EXIT/retained/long-term mappings; actualIdentityStatesettings governparticipation, notnames. DirectidentityemploymentCode and establishedeligibleworkerCode sync. Field/disableoperationssupported/provisioningenabled,permissionsstillrequired.
+
+Leave has noenable/disableaction and preservesenabledtarget. retained has explicitDirectorydisable,no conflictingDirectoryprofile/sourceexclusion, noRemoveallaccess/newroles/accessremoval/create/delete. Tenantroleselsewhere and establishedsyncaccount supply evening/morningadditionalconditions.
+
+October23UTC15:00employed/Active/enabledEMP;15:12leave/short/enabledLEAVEafterverifiedsync;16:03retained/long/currentEXIT;16:04finalEXITsyncsuccess/disablepermissionfailure;16:05freshtargetenabledEXIT. LatercollectedEXIT-CORRpromotescurrentidentitywhilelong,ordinaryautosyncnotongoingpath;authorizedmanualsync/freshtargetEXIT-CORRverifyfieldbutnotdisable recovery. No latecorrectiontime or runtime/order promise.
+
+### Coverage, official sources and assessments
+
+[Complete revision and verification record](revisions/PRC-006_Concept_Led_Revision_Record.md) maps all 73 preserved purposes, eight original question purposes and contractor email transfer to revised locations, facts, reasoning, misconceptions and official references.
+
+- [Identity states overview](https://documentation.sailpoint.com/saas/help/provisioning/identity_states.html): Operation matrix: recipient/MyTeam; recurring/list excludeslong;profile/selected/promotionincludeall;ordinarysyncActive/short. ReadfullHTMLmatrixrows, qualifyinclusion withotherconditions and documentedtransition/manualexceptions, not absolute longtermfreeze.
+- [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html): Recurringstateplusmorningaccount/eveningrole-or-periodic conditions,08/20tenantqueue;manualscopes;separate service reconcilerlongexclusion. Process-specificselection, no exactfinish or fullnextProcessingstate rule inferred.
+- [Setting up lifecycle states](https://documentation.sailpoint.com/saas/help/provisioning/lifecycle.html): Enabledtechnicalstates/IdentityState/defaultActive; finalsynconlongentry/latermanualsync; specificsourceaction andone-timeenable/disable. Three approvedstages, leaveenabledpolicy andretainedfailed disable; conflictingstateprofile/sourceexclusion absent. No defaultforarbitraryinvalidvalue asserted.
+- [Synchronizing attributes](https://documentation.sailpoint.com/saas/help/provisioning/attr_sync.html): EligibleCreateAccountdirectidentityfields/profilemapping, existingcorrelatedaccounts,manualsingleidentityanalyzesallaccounts. EstablishedworkerCodealignment andlatermanualcorrection;notfield-onlyoridentity-recompute/create guarantee.
+- [Creating identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html): Profilemappings,selectedPreviewandseparateapplication. DirectemploymentCode/lifecycletranslation, appliedvaluebeforetargetsyncandcontractortransfer.
+- [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html): Account/accesschangesrequireconfiguredenabledsupportedintegration;auto/manualdelivery. Field/disableoperationpermissiondistinction, no actualwrite, no universalretryclaim.
+- [Monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html): Exactsource/account/action/stage/result/errorinformation. 16:04attemptversus16:05freshstatus/field;laterfieldsyncnotdisableproof. Error hypotheticalnotrealmessage/class.
+- [Managing access profiles](https://documentation.sailpoint.com/saas/help/access/access-profiles.html): Source-specificaccessbundles. SupportingdefinitionandretainednoconflictingDirectoryprofile; no accessassignmentperformed.
+- [Managing roles](https://documentation.sailpoint.com/saas/help/access/roles.html): Rolesgroupconfiguredaccessandparticipateinidentityanalysis. Supportingdefinition/roleselsewherefortenantselection, not newroleexample or broadremoval.
+
+Fullmatrix and exceptions, manualscope, sourcepromotion/defaultActive and separateSearchreconciler were reviewed. No universalInactiveexclusion, longtermfreeze, automatictargetdisable, stateflipworkaround, allfailure retry or assumednextProcessingstate rule.
+
+### Artifacts and status
+
+New [participation/account branches](../assets/PRC-006_participation_and_target_action_are_separate.txt) and [applied state/target observations](../assets/PRC-006_applied_state_field_update_and_failed_disable.txt) exactly match inline blocks, maximum widths37/41. Original diagrams and both local2.0/published1.0 guides unchanged.
+
+Existing PRC-007 is next locally; its learner body was not opened. ROL-007 remains paused new authoring. No commit, push or deployment.
+
+### Historical revision 1.0 record
 
 Revision 1.0. Documentation checked October 23, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi96006, teaching I-96006 (not actual ISC object ID), Employees identity with correctly associated PeopleRegister Production pr-96006 and existing WorkDirectory wd-96006. PeopleRegister authoritative for population; independent direct identity employmentCode mapping.
 - All lifecycle states enabled: workerStageEMP selects technicalemployed/identityActive; LEAVE selects leave/Inactive(short-term); EXIT selects retained/Inactive(long-term). These are exact approved fictional translations. No claim labels determine participation, or state duration auto-advances.
@@ -3883,7 +5362,7 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 - Eight independent cases cover screen-selection limits, morning account condition, list versus profile scope, failed disable, later sync, unsetstate/defaultActive and unjustified identity recreation. Contractor transfer has enabled ContractEnded/explicitlong-term, existing associated account/mail sync, corrected Preview but old appliedemail, and a proposed broad-AP/automatic-sync path to critique.
 - No actual tenant/API/source/profile/mapping/aggregation/processing/provisioning/synchronization or target operation performed. Local assertions validate teaching consistency, not ISC runtime execution.
 
-### Official sources and claim mapping
+#### Official sources and claim mapping
 
 1. [Identity states overview](https://documentation.sailpoint.com/saas/help/provisioning/identity_states.html): exact operation matrix. Active versus short-term/long-term Request Center and My Team selection; recurring and role/AP/app list application exclude long-term; profile application, selected processing and account-update identity-attribute promotion include all three. Mapped to participation table/cases1-4,8/transfer. Matrix's ordinary Attribute Sync exclusion for long-term is read with explicit lifecycle transition/manual exceptions in source3, not as an absolute prohibition.
 2. [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html): morning eligible-state plus sync-account condition, evening roles versus no-role periodic requirement, tenant-zone08:00/20:00 queue times; manual profile versus list scopes, selected identity processing, current results versus delivery, and separate SYNCHRONIZE_IDENTITIES reconciliation excluding long-term. Mapped to process scopes, recurring qualification and reconciliation distinction. No per-identity nextProcessing state guarantee derived from recurring exclusion.
@@ -3897,7 +5376,7 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 
 Current official cloud documentation governs claims, even where pages use Human Fabric/Identity Services terminology; course retains ISC. No IdentityIQ behavior imported. Source availability and author review do not establish actual tenant testing.
 
-### Scope and rendering boundaries
+#### Scope and rendering boundaries
 
 - Primary topic is identity-state participation. Explains necessary lifecycle/account distinction and selected sync conditions without becoming full lifecycle design, offboarding orchestration, event/scheduling implementation or a hands-on click sequence.
 - State eligibility is not sufficient proof of scheduled inclusion: morningaccount and eveningrole/profile conditions remain. Active selection does not guarantee access request availability/approval. Both Inactive states can be absent from recipient lists without deleting identity/account/manager relation.
@@ -3909,7 +5388,7 @@ Current official cloud documentation governs claims, even where pages use Human 
 - Verify all70live routes/native9module defaults/current links, full ordered article, exact diagram/table accessibility and visual rendering separately from local source tests. Preserve all prior69lessons/assets/UI/tests/specs and both reference aids.
 - PRC-007 reserved planned only. Author review/deployment are not beginner validation or formal publication approval.
 
-### Assessment mapping
+#### Assessment mapping
 
 - Case1: tests feature-specific exclusion versus processing. Supplied short-term/sync-account and absentrecipient supports request exclusion but not morning exclusion. Accept process-specific checks; reject universalstop. Sources1-3.
 - Case2: tests necessary versus sufficient state condition. Active without sync-source account does not establish morning inclusion. Accept selection investigation; reject mappingfailure from noninclusion. Source2.
@@ -3922,11 +5401,45 @@ Current official cloud documentation governs claims, even where pages use Human 
 - Contractor transfer: tests correctPreview versus appliedemail, broadAPexclusion versus profile/selectedinclusion, and laterlong-termmanualsync delivery onexistingassociatedaccount. Accept coordinatedauthorizedscope and fresh email/targetevidence; reject making contractActive or broadAP/automaticdeliveryassumption. Sources1-5,7.
 - Author review checks independentexample, first-use meanings, supported processmatrix, final/manual exceptions, no invented timebasedstate rule, exact diagram/timeline/table/case agreement and mentor narration. No actual beginnerreadthrough or formalpublication test performed.
 
-## PRC-007
+## PRC-007 - revision 2.0, local dependency and evidence timing
+
+Revision2.0. Documentation checked October27,2026 under teaching specification3.1. Documentation-based author content/first-use/source/flow/narration review complete; tenant execution, observed beginner validation, full graphical publication review and formal approval not performed.
+
+### Current scope and supplied evidence
+
+Valididentity/associatedHR-Primary/existingDirectory-Primaryaccount. CollectedassignmentStart2026-10-23T20:00:00.000Z independentlycalculates Scheduledbefore/Ondutyat-after. Applied/reviewedconfigbeforeevening,nocompetingchanges;Active/UTC/rolesimplemented/periodicrequirement. EnabledNightSupport exactOnduty ->enabledNightTools/ordinaryNIGHT-BASE,supportedgroupadd/provisioningenabled,noactivation/create/remove/fieldsync.
+
+October23UTC19:58currentScheduled/norole,20:00queue,20:04running,20:06currentOnduty/role,20:07SearchScheduled,20:08overallStatusPending/notattempted,20:09specificadd/freshtargetgroup,20:12SearchOnduty,20:21freshaccountgroup. Notruntime/SLA/globalcompletion/orderguarantee. Reportcapture19:50/open20:10notnewertargetevidence.
+
+### Coverage, official sources and assessments
+
+[Complete revision and verification record](revisions/PRC-007_Concept_Led_Revision_Record.md) maps all 66 preserved purposes, eight original question purposes and urgentdisabletransfer to revised locations, facts, reasoning, misconceptions and primaryreferences.
+
+- [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html): Scheduledeligibility/tenantqueue/delays,ActiveJobs,identity/Searchsynchronization and delivery-completionlimit. 20:00queue/current/visibilityseparate,notprivatetopology orwholetenantcompletionfromoneidentity.
+- [Loading account data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html): Collection/Searchfreshness,aggregationterminationdetailsretaincollecteddata. Historicalreport/newread/missinginput/partialeffects,notfixedvisibilitylatency oruniversalaccountupdatepath.
+- [Search overview: account activity statuses](https://documentation.sailpoint.com/saas/help/search/index.html): OverallPending versus individualPending/Committed/Finished;Stageprogress;Completedbadgerejectedrequestexample. Exactfieldtable/20:08/cases4-5. No APIenumcontract or statuswordwithoutscope.
+- [Monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html): Activitysource/account/action/stage/status/error evidence. Specificoperation/result/targetchecks, notgreenjob/noactivityshortcut.
+- [Automating role assignment](https://documentation.sailpoint.com/saas/help/provisioning/role_assignment.html): Enabledidentitycriteriaroles and accessprofiledelivery. NightSupportexactOndutycondition; no actualroleassignmentorremoval.
+- [Managing access profiles](https://documentation.sailpoint.com/saas/help/access/access-profiles.html): Sourcebundles and standingversusactivation-dependent access. NightTools/NIGHT-BASEordinarymembershipexistingaccount, activationexplicitlyexcluded.
+- [Identity Attribute transform](https://developer.sailpoint.com/docs/extensibility/transforms/operations/identity-attribute/): Peeridentityprofilecalculationnotintended,current/existingvaluesnotguaranteedduringoverlap. Independentaccountinputversusunsupportedpeerorder,onePreview/repeatrunnotsafetyproof.
+- [Creating identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html): Mapped/customidentityvalues,selectedPreviewandseparateapplication. supportWindow/sourceinstructions and saved/proposed/current distinctions.
+- [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html): Supportedexternalwrites,direct/manualpaths and conditionalretryableerrorssubjecttoqueues. Actualtargetboundary,process-specificrecovery/notfixedsleeppromise.
+- [Date Compare transform](https://developer.sailpoint.com/docs/extensibility/transforms/operations/date-compare/): now at evaluation, ISOinstants,inclusivecomparisonbranches,periodicoption. Scheduledbefore/Ondutyat-after20:00, notclockaloneappliedfield or implementationJSON.
+- [Setting up lifecycle states](https://documentation.sailpoint.com/saas/help/provisioning/lifecycle.html): Configuredbusiness-stageaccountactions. UrgentTerminated/currentassignment versus failedspecificdisable; notsessionterminationorlabel=disabledclaim.
+
+Exactstatusfield semantics freshlyread; noenumgeneralization or Finished=success. Currentidentityproof precedesvisibilitydiagnosis; oldreport/partialcancelledread/failedtarget requireown investigation. No privatequeues, universalconnectorupdatepath, forcedsleepcompletiontest or universalretryclaim.
+
+### Artifacts and status
+
+New [dependency/evidence paths](../assets/PRC-007_inputs_results_and_separate_observation_paths.txt) and [observed times](../assets/PRC-007_observed_queue_identity_target_and_search_times.txt) exactly match inline blocks, maximum widths38/41. Original diagrams and both local2.0/published1.0 guides unchanged.
+
+Existing PRC-008 is next locally; its learnerbody was not opened. ROL-007 remains paused new authoring. No commit, push or deployment.
+
+### Historical revision 1.0 record
 
 Revision 1.0. Documentation checked October 23, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi97007, teaching I-97007 (not actual ISC object ID), valid Active Employees identity with correctly associated StaffingRegister Production sr-97007 and existing OperationsDirectory od-97007. Worker source authoritative for population; selected assignmentStart2026-10-23T20:00:00.000Z already collected before the timeline.
 - Approved supportWindow calculation independently retrieves accountassignmentStart and compares evaluationtime; Scheduled before start, On duty at/after. Periodic reevaluation configured. TenantUTC/rolesimplemented/Active establishes evening recurring population. No peer-field dependence, per-identity nextProcessing, actual JSON or runtime supplied.
@@ -3937,7 +5450,7 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 - Transfer has departing employee/currentTerminated lifecycle assignment, reviewed existing-account disable requirement, oldSearchstage, specificpermissionfailure andfreshenabledtarget. Approvedurgent recovery/escalation requires independent outcome, not waitingforSearch or guessedretry.
 - No actual tenant/API/source/profile/mapping/aggregation/processing/provisioning/Search update/cancellation or target operation performed. Local source/timestamp checks validate fictional consistency, not an ISC runtime test.
 
-### Official sources and claim mapping
+#### Official sources and claim mapping
 
 1. [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html): recurring tenant-zone queue times and possible delayed start; eligible evening roles/Active population; running-work monitoring; application boundaries and cross-service identity/Search synchronization; identity processing does not verify provisioningsuccess. Mapped to queue/current/visibility distinctions and safe monitoring. Enumerated responsibilities are not universal internal service-order guarantees.
 2. [Loading account data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html): collection and account observation, aggregation start/stop/details, Search visibility delays and termination retaining evidence of data aggregated before termination. Mapped to historicalreport/freshcollection, missinginput and case8. No promise all updates visible within a fixed minute limit or blanket claim account representation always waits for aggregation.
@@ -3953,7 +5466,7 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 
 Current official cloud documentation governs claims; some pages use Human Fabric/Identity Services naming, course retains ISC. No IdentityIQ implementation imported. An attempted unrelated generic Search API documentation URL returned404 and is not used as evidence; no API response/schema claim relies on it. Source availability does not establish tenant testing.
 
-### Scope and rendering boundaries
+#### Scope and rendering boundaries
 
 - Main subject is dependency, asynchronous execution and evidence freshness, not all scheduling rules, connector configuration, complete errorcatalogue or hands-on polling/API implementation.
 - Clock boundary changes correct calculation without newHRedit. Main rolesimplemented/Active/UTC/periodic assumptions explicit; no exactdeadline guarantee from recurringqueue. All depicted times are observations, not performance measurements or SLAs.
@@ -3966,7 +5479,7 @@ Current official cloud documentation governs claims; some pages use Human Fabric
 - Preserve all prior70lessons, all assets/templates/tests/specs and both reference aids. PRC-008 reserved planned only. Verify71live routes/native9module/current defaults, complete orderedarticle and exact accessible diagrams/tables.
 - Documentation-based author review and working-edition deployment are not beginner validation or formal publication approval.
 
-### Assessment mapping
+#### Assessment mapping
 
 - Case1: tests queue versuscompletion. Queued20:00/noexecution/currentresult20:02 needs jobstate/inclusion/current evidence. Accept explicitunknown, reject failedtransform or timingguarantee. Source1.
 - Case2: tests verifiedcurrent versusSearch. CurrentOn duty20:06/SearchScheduled20:07 supports exactview/query/propagation investigation. Accept evidencebounded explanation; reject asserting viewdelay without independentcurrent. Sources1-3.
@@ -3979,11 +5492,47 @@ Current official cloud documentation governs claims; some pages use Human Fabric
 - Transfer: tests simultaneous oldview and realfailedoperation. VerifiedTerminated plusoldSearch doesnot negate permissionfailed/freshenabledtarget; approvedurgenthandling required with separate recoveryevidence. Accept processspecificescalation/unknownrepairoutcome; reject waitingforSearchasdisable. Sources1,3-4,9,11.
 - Author review checks independentDevi facts, first-use meanings, configuredlogic/inputs, UTC/timeline consistency, scope/status distinctions, diagrams/exercises and mentor narration. No beginner learner or formalpublication test performed.
 
-## PRC-008
+## PRC-008 - revision 2.0, local integrated processing investigation
+
+Revision2.0. Documentation checked October27,2026 under teaching specification3.1. Documentation-based author content/first-use/source/flow/narration review complete; tenant execution, observed beginner validation, full graphical publication review and formal approval not performed.
+
+### Current scope and supplied evidence
+
+ValidActiveEmployeesidentity/associatedHR-Primary. ApprovedcurrentOfficeBristol and historicallegacyOfficeLeeds collected;workerTypeEMP independentlymapped. EnabledBristolWorkspace requiresBristolAND_EMP,enabledBristolTools/ordinaryBR-WORK. Two associatedDirectoryaccounts typePrimary/Admin, automaticcriteriauniquelyPrimary;bothinitiallygroupabsent,supportedadd/provisioningenabled. Noactivation/create/fieldsync/oldofficecleanup.
+
+October23UTC18:00producer,18:05collectedboth,18:06explicitselectedprocessing/currentLeedsEMP/norole withsavedlegacyselection. ApprovedcurrentOfficecorrection18:10save,18:11PreviewBristol/currentLeeds,18:12selectedstart,18:15currentBristolEMP/role.18:16SearchLeeds,18:17primarypermissionfailure,18:18bothgroupabsent,18:24SearchBristol;authorizedrecovery18:34complete/18:35freshPrimarypresent/Adminabsent/roleretained. No inferredautomatictrigger, privateorder or latencyguarantee.
+
+Sharedmap/widerpopulationreview trackedseparately. Managertransfer uses necessaryM-OLD/M-NEW referencevalues,single supplier/correctconfig/nocandidate/currentoldafterselectedrun, notguessedmanageroractualworkerIDs.
+
+### Coverage, official sources and assessments
+
+[Complete revision and verification record](revisions/PRC-008_Concept_Led_Revision_Record.md) maps all 73 preserved purposes, eight original question purposes and managertransfer to revised locations, facts, reasoning, misconceptions and primarysources.
+
+- [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html): SelectedProcessIdentity/profile/listscopes, identityreevaluation versuscorrectness/delivery,Searchpropagation/queuedwork. Explicit18:06selectedrun,18:12correctionapplication,sharedscope. No automatictrigger inferredfrom otherwiseunmappedcurrentOfficechange.
+- [Creating identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html): Source/fieldmapping, custom/standardidentityvalues,Save/Preview/application andprofile-sharing. DirectcurrentOfficeversuslegacyOffice,correctselectedsample/currentLeeds,populationinputreview. No unnecessarytransformimplementation.
+- [Loading account data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html): Exactaccountcollection/scope/history/freshness. 18:00producer versus18:05collectedfield, missinginput and oldreport limits.
+- [Automating role assignment](https://documentation.sailpoint.com/saas/help/provisioning/role_assignment.html): Enabledmappedidentitycriteria/AND and separateentitlementdelivery. BristolAND_EMP versusCONT, actualrolebeforemembership. No droppingconditiontoforcegrant.
+- [Managing access profiles: multiple account options](https://documentation.sailpoint.com/saas/help/access/access-profiles.html): Sourcebundles/ordinaryaccess and automaticrole/lifecyclemultipleaccountcriteria, uniquematch. Two existingtypePrimary/Adminaccounts withonePrimarymatch. Notaccessrequestselection or only-one-accountcriteria behavior.
+- [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html): Supportedexternaloperation/configuration and error-specificrecovery/retry. Capabilityversusactualpermission,approvedspecificrecovery; no universalreprocessingretry or real connectorerrorclassclaim.
+- [Monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html): Specificaccount/source/action/status/stage/error/result. 18:17failure/18:18absence/18:34completion/18:35freshtarget; absence or emptyquery notcauseproof.
+- [Search overview](https://documentation.sailpoint.com/saas/help/search/index.html): Searchrepresentations/queryfilters/operationevidence. IndependentcurrentBristolbeforeviewdelay, no fixedlatenesspromise/noresultnotfailure.
+- [Identity states overview](https://documentation.sailpoint.com/saas/help/provisioning/identity_states.html): Role/AP/app list excludeslongterm;profile/selectedincludeallstates. Q5 only,mainActive no workaroundneeded.
+- [Configuring manager correlation](https://documentation.sailpoint.com/saas/help/sources/manager_correlation.html): ManagerNamemapping+sourcecomparison,non-nullunmatchedretainscurrent,nullchangeclears. TransfernecessaryM-OLD/M-NEWreferences replacearbitrarynumbers,one supplier/candidateabsence explicit; no guessedidentity creation.
+- [Managing requests for roles and access profiles](https://documentation.sailpoint.com/saas/help/requests/config_ap_roles.html): Configured manager-approval responsibility. Existingapprovalrecord separatefrom currentmanagerrelationship, no reroute or immutableapprover guarantee.
+
+No broadrefreshdefault, privateconfigurationisolation, ANDshortcut, allassociatedaccountgrant, emptysearch=failure, unconditionalretry or currentmanager=oldapprovalreroute claim.
+
+### Artifacts and status
+
+New [inputselection and correction](../assets/PRC-008_selected_input_defect_and_applied_correction.txt) and [uniqueaccount delivery/recovery](../assets/PRC-008_unique_account_selection_failure_and_recovery.txt) exactly match inline blocks, widths41/41. Original diagrams and both local2.0/published1.0 guides unchanged.
+
+All eight Module9 lessons individually revised. Existing ENT-001 is next locally; its learnerbody was not opened. ROL-007 remains paused new authoring. No commit, push or deployment.
+
+### Historical revision 1.0 record
 
 Revision 1.0. Documentation checked October 23, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi98008, teaching I-98008 (not actual ISC object ID), valid Active Employees identity with correctly associated authoritative PeopleRecord Production pp-98008. Businessapprovedlocationinput is accountcurrentOffice; legacyOffice is historical. Current workerTypeEMP independently mapped directly.
 - Enabled Bristol Workspace role requires identitylocationBristol AND workerTypeEMP; enabled Bristol Tools accessprofile contains ordinary standingOfficeDirectoryBR-WORK, no JITactivation. Two existingcorrectassociatedaccounts: od-98008/typePrimary, oda-98008/typeAdmin. Automatic multiple-account criteria typeEqualsPrimary uniquely selectsod-98008. Supportedgroupadd/provisioningenabled; bothinitiallylackgroup.
@@ -3995,7 +5544,7 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 - Manager transfer uses reference71001-to-nonnull71002, one supplyingprofile/source, correctManagerName/sourcecorrelationsetup, existingresolved71001 butnoidentitycandidateidentificationNumber71002. Selectedprocessingcomplete/oldmanagerretained is consistent with documented unmatchedbehavior. No inventedmanager creation, nullclearing fornonnull or existingapprovalreroute guarantee.
 - No actual tenant/API/source/profile/mapping/aggregation/processing/provisioning/permission change/Search update or target operation performed. Local comparisons validate fictional consistency, not tenant execution.
 
-### Official sources and claim mapping
+#### Official sources and claim mapping
 
 1. [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html): selectedProcessIdentity and broaderprofile/list scope, actualreevaluation versuscorrectresult, separateprovisioningsuccess and Search propagation, queued/running visibility. Mapped to initial18:06manualevidence, corrected18:12application, sharedscope and missingboundary questions. No automatictrigger guaranteed for unmappedcurrentOffice change or finegrainedprivate log invented.
 2. [Creating identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html): selectedsource/field mappings and custom/standardidentityvalues; Save/Preview/application distinctions and sharedprofile configuration. Mapped to currentOfficeversuslegacyOffice, no unnecessarytransform, correctPreview/currentLeeds and broaderinputcoverage review.
@@ -4011,7 +5560,7 @@ Revision 1.0. Documentation checked October 23, 2026. Documentation-based author
 
 Current official cloud documentation governs claims, including pages using Human Fabric/Identity Services names; course retains ISC. No IdentityIQ implementation imported. Authorreference availability is not tenant testing.
 
-### Scope and rendering boundaries
+#### Scope and rendering boundaries
 
 - Integrates Module9 processing investigation rather than replacing source-specificdeepdives, fullprojecttemplates, fullmover/offboarding orchestration or hands-on repairprocedures. Businessexpectation, evidence, hypothesis and cause-basedcorrection remain distinct.
 - Initialselectedprocessing is alreadyverified; wrongmap explains unchangedvalue. No needto editapproveddata or repeatunchangedlogic to manufacture result. Laterapplication aftersavedconfig is explicitlyneeded/verified for currentcase.
@@ -4024,7 +5573,7 @@ Current official cloud documentation governs claims, including pages using Human
 - All eight Module9 lessons nowauthored, not learnervalidated. Preserve prior71lessons/assets/site/templates/tests/specs and bothreferenceaids. ENT-001 planned only; no tenth navigationmodule untilfirstcompleteModule10lesson.
 - Verify72live routes/native9module defaults/current links/fullorderedarticle and exact accessible diagram/table rendering. Authorreview and workingeditiondeployment not formalpublicationapproval.
 
-### Assessment mapping
+#### Assessment mapping
 
 - Case1 tests producer/collected/selectedinput. Correctmap/currentISCLeeds despiteproducerBristol callsfor collection/scope/freshness inspection, not incorrectmapcompensation. Accept exactaccountcause investigation; reject processorproducingunavailableBristol. Sources1-3.
 - Case2 tests executed versusbusinesscorrect. CurrentBristol/legacyLeeds maplegacy yieldsLeeds afterverifiedprocess; fixreviewedinstruction, not denyexecution. Accept configuredversusapproveddistinction; reject repetitionasrepair. Sources1-2.
@@ -4039,9 +5588,25 @@ Current official cloud documentation governs claims, including pages using Human
 
 ## ENT-001
 
+Revision 2.0. Documentation checked October 27, 2026. One complete concept-led revision saved locally under teaching specification 3.1.
+
+### Current revision evidence and source mapping
+
+See the [ENT-001 concept-led revision record](revisions/ENT-001_Concept_Led_Revision_Record.md) for the full 72-purpose preservation map, eleven official source claim mappings, nine assessment mappings including transfer, diagram sources and executed verification.
+
+The example is neutral: Invoice Production directly represents an invoice application; an enabled account, successful sign-in, correct identity association, West business unit and only Readers membership are supplied. groups is both the account attribute and supported native type; Entitlement and Multi-Valued are set, Type selects groups, id is Entitlement ID and displayName is Entitlement Name. The same native reference invoice-readers connects the account's membership and group details. This is not an ISC object ID or a universal connector payload. Readers permits West reading only; Approvers permits scoped approval without payment release. No alternative invoice grant exists in the normal example. Independent questions explicitly change facts, including the separately supplied remaining grant in Q8.
+
+Fresh official bodies reviewed for representation, account collection/simple catalog creation, separate object enrichment, native type/schema/ID matching, account correlation, authentication/authorization, separate requestability, profiles/roles, standing/JIT, provisioning and certification. Source URLs and limits are mapped in the linked revision record. No IdentityIQ mechanics, mandatory entitlement-aggregation order, native write inferred from a read, source permission edit inferred from metadata, or universal backend/timing behavior claimed.
+
+Two new editable sources exactly match the learner blocks: [native reference and account membership](../assets/ENT-001_native_reference_and_account_membership.txt), maximum 36 columns, and [permission scope and application decision](../assets/ENT-001_permission_scope_and_application_decision.txt), maximum 39 columns. The first is relational; the second is a hypothetical application policy, not ISC runtime enforcement. Historical assets remain unchanged.
+
+Author content review is complete. Real beginner read-through/teach-back/transfer validation, full graphical publication review and formal approval remain pending. Revision 2.0 is local; published lesson remains 1.0. No tenant/API/source/schema/aggregation/correlation/request/approval/certification/provisioning/application policy or target operation performed. No commit, push or deployment.
+
+### Historical revision 1.0 reference, preserved
+
 Revision 1.0. Documentation checked October 24, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi employee100101, InvoiceDesk Production/accountiv-100101, businessUnitWest, enabled account and successful sign-in. Correct account-to-identity association is supplied, except case7 explicitly varies it. No actual ISC object ID is invented.
 - Supported account/group reads and correct schema linkage are supplied. Account membership attribute groups is Entitlement/Multi-Valued with Typegroups; native entitlement type groups. Entitlement schema selects id for Entitlement ID and displayName for Entitlement Name. Account groups[G-4101] matches the group idG-4101/InvoiceReaders. These selected teaching records are not a required connector payload, API shape or default configuration.
@@ -4051,7 +5616,7 @@ Revision 1.0. Documentation checked October 24, 2026. Documentation-based author
 - Transfer ProjectReviewernativerole/R-82/proj-501, correctlycorrelated supportedroleentitlement, assignedprojectreportread only/noedit, requestabilitynotconfigured. No specific real connector or same-system ISC role assumed.
 - No actual tenant/API/source/schema/aggregation/provisioning/application policy change, grant, revoke, sign-in or target operation performed.
 
-### Official sources and claim mapping
+#### Official sources and claim mapping
 
 1. [Managing entitlements](https://documentation.sailpoint.com/saas/help/access/entitlements.html): source access rights, supported entitlement types/permissions, display and owner metadata, direct requests, profiles/roles and certification use. Mapped to the initial entitlement meaning, metadata/evidence table and supporting governance connections. No entitlement represents a universal single atomic permission, no arbitrary permission type created and no catalog-to-holder inference.
 2. [Loading entitlement data](https://documentation.sailpoint.com/saas/help/loading_entitlements/index.html): account membership representation versus separate object-detail collection; supported full catalog can include unheld access items. Mapped to collection explanation, diagram1 and cases1/6. No claim entitlement aggregation alone changes account membership or creates target groups.
@@ -4067,7 +5632,7 @@ Revision 1.0. Documentation checked October 24, 2026. Documentation-based author
 
 Official cloud documentation may use Identity Services or Human Fabric names; the course retains ISC. No IdentityIQ mechanics imported. Source references are author-only, absent from the learner body.
 
-### Scope and rendering boundaries
+#### Scope and rendering boundaries
 
 - This lesson teaches what an entitlement represents and how to reason about its holder and native permission effect. Detailed identifier management is reserved for10.2, catalog freshness10.3/10.6, inheritance10.4 and sensitivity/ownership10.5. Necessary supporting meanings are still explained in place.
 - Two editable text diagrams exactly match assets/ENT-001_account_membership_and_entitlement.txt and assets/ENT-001_application_authorization_boundary.txt, each maximum40columns. Diagram1 is relational, not a claimed execution schedule. Diagram2 is an expressly supplied fictional application decision path, not ISC backend internals.
@@ -4077,7 +5642,7 @@ Official cloud documentation may use Identity Services or Human Fabric names; th
 - Keep learner source links/course links absent. Preserve prior72lessons, all previous assets including both reference aids, templates/CSS/tests/specifications. Module10 is added only with this complete lesson. ENT-002 is planned without a stub.
 - Verification covers authored consistency, preservation, source URLs, navigation and exact deployed article/diagrams/tables, not tenant execution or beginner learning outcomes.
 
-### Assessment and alternative reasoning
+#### Assessment and alternative reasoning
 
 | Item | Understanding tested | Misconception or unsupported alternative rejected |
 |---|---|---|
@@ -4095,9 +5660,27 @@ Author review checked first-use meanings, person/account/group identifiers, corr
 
 ## ENT-002
 
+Revision 2.0. Documentation checked October 27, 2026. One complete concept-led revision saved locally under teaching specification 3.1.
+
+### Current revision evidence and source mapping
+
+See the [ENT-002 concept-led revision record](revisions/ENT-002_Concept_Led_Revision_Record.md) for the full 88-purpose preservation map, twelve official source claim mappings, assessment mappings including license transfer, diagrams and executed verification.
+
+The neutral example uses Case Files Production, groupKey selecting case-readers and label selecting Case Review Readers. groups is the account attribute and supported native type, Entitlement and Multi-Valued are set, and Type explicitly points to groups. Current account membership matches the native value, with correct account-to-identity association supplied. Source-maintained label has not been manually overridden in the normal rename case. Same native object/key/members/assigned-case-read-only permissions, later collection, same actual ISC record ID/new name and fresh account membership are explicitly verified hypothetical facts. No universal rename continuity, overwrite or timing guarantee follows.
+
+Descriptive placeholders mark source/schema/entitlement record kinds without fabricating tenant IDs. Replacement case-readers-v2, shared-code across native groups/roles, schema selector versus value, display selection, protected manual description and configured future owner-review routing are independent alternatives. License transfer preserves licenseCode/title, report-edit continuity and different-feature report-advanced replacement review.
+
+Fresh official model and admin bodies verify field meanings, native type/schema linkage, duplicate risk from changed ID/Name selections, protected manual fields, managed access-model metadata, requestability/owner review, profiles/roles/correlation and provisioning. Detailed claim/source mapping and interface-spelling limits are in the linked record. No IdentityIQ mechanics or private deduplication model asserted.
+
+New editable sources exactly match learner blocks: [schema selection and native value](../assets/ENT-002_schema_selection_and_native_value.txt) and [verified label change and new key](../assets/ENT-002_verified_label_change_and_new_key.txt), both maximum 38 columns. Relationships and supplied before/after evidence are separate from hidden backend schedules or actual tenant operations. Original diagrams remain unchanged.
+
+Author content review complete. Real beginner read-through/teach-back/transfer validation, full graphical publication review and formal approval remain pending. Revision 2.0 local only; published version remains 1.0. No tenant/API/source/schema/aggregation/provisioning/metadata/owner/native permission or target operation, commit, push or deployment.
+
+### Historical revision 1.0 reference, preserved
+
 Revision 1.0. Documentation checked October 24, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi employee100202, correctly associated RecordsVault Production accountrv-100202/groups[G-6202]. Source S-102, schema SC-102 and entitlement E-102 are expressly short teaching labels, not real tenant IDs or valid API values.
 - Supplied supported native type groups, account entitlement attribute groups/Multi-Valued/Typegroups; schema identityAttributegroupKey and displayAttributelabel. Selected sourcegroupfields groupKeyG-6202, technicalNamecase.review, labelCaseReviewReaders, descriptionReadassignedcasefiles/noediting.
@@ -4107,7 +5690,7 @@ Revision 1.0. Documentation checked October 24, 2026. Documentation-based author
 - License transfer has supportedlicenserepresentation, nativeLIC-17, ISCteachingE-L17, identityfieldlicenseCode/displayfieldtitle, ReportEditor-to-ReportAuthor with samecapabilities/key/record/holding verified. SeparateLIC-29 has differentfeatures and needs its own requirement/references/fulfillment review.
 - No actual tenant/API/source/schema/aggregation/provisioning/metadata/owner/application permission or target operation performed.
 
-### Official sources and claim mapping
+#### Official sources and claim mapping
 
 1. [Entitlement model, official Angular SDK](https://developer.sailpoint.com/docs/tools/sdk/angular/entitlements/models/entitlement/): distinct id/name/attribute/value/sourceSchemaObjectType/source fields, source attributes, accessModelMetadata and manual-update map. Mapped to record-context explanation and metadata distinction. These are selected model meanings, not a complete payload, API request shape, universal UI labels or a claim all fields are required.
 2. [Schema model, official Angular SDK](https://developer.sailpoint.com/docs/tools/sdk/angular/sources/models/schema/): schema id, nativeObjectType, identityAttribute and displayAttribute. Mapped to schema-record ID versus selected field versus individual object's value. No identityAttribute/person-correlation equivalence.
@@ -4123,7 +5706,7 @@ Revision 1.0. Documentation checked October 24, 2026. Documentation-based author
 
 Official cloud documentation may use Identity Services or Human Fabric names; course retains ISC. SDK source models are primary reference definitions, not IdentityIQ implementations. Source references remain author-only.
 
-### Scope and rendering boundaries
+#### Scope and rendering boundaries
 
 - Primary coverage is identifiers, display selections, types and metadata. Full catalog reconciliation/freshness is reserved for10.3/10.6, inherited access10.4 and sensitivity/ownership design10.5. Supporting explanations remain self-contained.
 - Two editable text diagrams exactly match assets/ENT-002_identifiers_schema_and_membership.txt and assets/ENT-002_verified_rename_and_replacement_boundary.txt, maximum40/39columns. First separates schema interpretation from the membership-to-entitlement reference; neither arrow is a hidden backend sequence. Second compares supplied verified before/after records, not a universal rename-state guarantee.
@@ -4133,7 +5716,7 @@ Official cloud documentation may use Identity Services or Human Fabric names; co
 - Manual description protection and maintenance authority are distinguished from failed collection. Owner/requestability can affect configured processes, while description/classification does not itself rewrite target permissions.
 - Keep all prior73lessons, assets/reference aids, templates/CSS/tests/specification byte-equivalent. ENT-003 remains a plan without a learner stub. Working edition has74lessons/10modules.
 
-### Assessment and acceptable alternatives
+#### Assessment and acceptable alternatives
 
 | Item | Understanding tested | Misconception or unsupported alternative rejected |
 |---|---|---|
@@ -4151,9 +5734,29 @@ Author review checked independent context, first-use meanings, field/value/recor
 
 ## ENT-003
 
+Revision 2.0. Documentation checked October 27, 2026. One complete concept-led revision saved locally under teaching specification 3.1.
+
+### Current revision evidence and source mapping
+
+See the [ENT-003 concept-led revision record](revisions/ENT-003_Concept_Led_Revision_Record.md) for the complete 77-purpose preservation map, nine official source claim mappings, assessment mappings including license transfer, diagrams and executed verification.
+
+Equipment Production supplies exactly three accounts/four groups with complete baseline direct standing membership and correct identity associations. First employee ordinary/admin accounts hold Readers and Readers/Approvers respectively; second employee account holds Approvers. Native asset-readers/asset-approvers/exception-reviewers/export-operators distinguish objects. Four pairs connect to two held groups; Readers has two account holders but one identity. This arithmetic is not an asserted UI-counter algorithm or private platform representation.
+
+Supported account groups attribute is Entitlement/Multi-Valued with Type groups; native type is groups, groupKey selects identification and label selects display. Exact native reference agreement links holder and object details. No generic connector request/field/collection order is asserted.
+
+Same-day UTC observations supply unchanged 09:00-09:05 baseline, confirmed approved 10:00 native admin Approvers removal, 10:02 four-definition read without account groups lists, and 10:10 supported account collection/inspection confirming three pairs. No other group/membership changes occur. All four definitions and two held groups remain; second employee retains Approvers. These are hypothetical observations, not actual operations or latency guarantees.
+
+Fresh official bodies verify account-derived/simple entitlement representations, separate object enrichment, run-discovered versus inventory totals, schema/type matching, account evidence/correlation, retained unheld catalog objects, requestability and provisioning boundaries. Source URLs and limits are mapped in the linked record. Missing detail, missing field, incomplete pagination and uncorrelated access do not establish broader absence.
+
+New editable sources exactly match learner blocks: [definitions, accounts and distinct holders](../assets/ENT-003_definitions_accounts_and_distinct_holders.txt), maximum 38 columns, and [native removal and separate read evidence](../assets/ENT-003_native_removal_and_separate_read_evidence.txt), maximum 40 columns. Original diagrams and historical references remain unchanged.
+
+Author content review complete. Observed beginner read-through/teach-back/transfer validation, full graphical publication review and formal approval remain pending. Revision 2.0 local only; published version remains 1.0. No tenant/API/source/schema/aggregation/provisioning/native removal/application or target operation, commit, push or deployment.
+
+### Historical revision 1.0 reference, preserved
+
 Revision 1.0. Documentation checked October 24, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi employee100303 has ordinaryal-100303 and administrativeala-100303, both correctly associated with her identity. Otheremployeeal-20402 is correctly associated with another identity. AssetLedger Pilot Production is deliberately bounded to exactly3accounts/4groups, not a company-wide population.
 - Initial complete records: al-100303[G-7301], ala-100303[G-7301,G-7302], al-20402[G-7302]. Native group definitions G-7301AssetReaders/read-equipment, G-7302AssetApprovers/approve-equipmentrequests, G-7303ExceptionReviewers andG-7304ExportOperators. Supplied policy is per-account; membership onadmin doesnot authorizeordinary. No inherited or activation-dependent paths included.
@@ -4164,7 +5767,7 @@ Revision 1.0. Documentation checked October 24, 2026. Documentation-based author
 - License transfer has Basic/Editor/Analytics definitions, twoBasicholdingaccounts/oneperson, completecurrentboundedcoverage/nootherpaths; authorizedremovalfromoneconfirmedaccount leaves1pair/1helddefinition/1person/3catalogitems.
 - No actual tenant/API/source/schema/aggregation/provisioning/nativeaccess removal/application or target operation performed.
 
-### Official sources and claim mapping
+#### Official sources and claim mapping
 
 1. [Loading entitlement data](https://documentation.sailpoint.com/saas/help/loading_entitlements/index.html): account-derived simple entitlement representations versus separate collection of details and unheld objects. Mapped to the core catalog/membership distinction and collection explanation. A represented native group is not created in the external application by collecting it.
 2. [Aggregating entitlements](https://documentation.sailpoint.com/saas/help/loading_entitlements/aggregating_entitlements.html): supported definition collection and selected-type scope; discovered-run totals can differ from accumulated catalog totals. Mapped to count interpretation, scope and10:02definition-only evidence. The stated account/group-read separation is supplied for this connector model, not universal connector membership behavior.
@@ -4178,7 +5781,7 @@ Revision 1.0. Documentation checked October 24, 2026. Documentation-based author
 
 Official cloud documentation may use Identity Services or Human Fabric names; course retains ISC. No IdentityIQ implementation imported. Source citations remain author-only.
 
-### Scope and rendering boundaries
+#### Scope and rendering boundaries
 
 - Primary coverage compares access-object inventory, holder relationships and evidence scope. Module5.2 covers account/entitlement aggregation mechanisms; this lesson's deeper focus is relational accounting, per-account versus per-identity holder meaning and independent freshness after a real relationship change. Supporting concepts are explained in place.
 - Direct standing relationships only in mainexample. Effective permission can depend on other grants/inheritance; complete inheritance teaching is reserved for10.4. Native AssetLedger policy is fictional, not derived from a label.
@@ -4188,7 +5791,7 @@ Official cloud documentation may use Identity Services or Human Fabric names; co
 - Unheldexistingobject can validlyremain; zeroobservedholders alone doesnot prove appropriateness, requestability, invalidity or safedeletion. Recorded/currentnative/effectivepermission are distinct evidence.
 - Preserve prior74lessons, all assets/referenceaids, templates/CSS/tests/specification byte-equivalent. ENT-004 remains planned without a stub. Working edition has75lessons/10modules.
 
-### Assessment and acceptable alternatives
+#### Assessment and acceptable alternatives
 
 | Item | Understanding tested | Misconception or unsupported alternative rejected |
 |---|---|---|
@@ -4206,9 +5809,29 @@ Author review checked first-use meanings, independent context, supplied complete
 
 ## ENT-004
 
+Revision 2.0. Documentation checked October 27, 2026. One complete concept-led revision saved locally under teaching specification 3.1.
+
+### Current revision evidence and source mapping
+
+See the [ENT-004 concept-led revision record](revisions/ENT-004_Concept_Led_Revision_Record.md) for the 83-purpose preservation map, ten official source claim mappings, assessment mappings including native-role transfer, diagrams and executed verification.
+
+Reports Production directly represents the reporting application. A selected account correctly associated with its owner directly holds Support Team and Exception Readers, not Report Readers. Team is a member of Readers. The complete supplied policy accepts reachable Readers OR direct Exception, AND enabled/sign-in/West-resource/read-action conditions. Neither route grants editing or bypasses region. All allow/deny results are fresh decisions on stated current relationships, not old-session evidence.
+
+The approved selected account-to-Team removal is confirmed natively. Exception, Team-to-Readers and other members remain unchanged, with no competing membership/policy/account-condition changes. A fresh West read remains allowed through Exception. Selected membership success differs from full capability removal.
+
+Supported account groups list is direct-only, Entitlement/Multi-Valued with Type groups; group schema uses groupKey/label. Native support-team/report-readers/exception-readers values link the records. parentGroups on Team lists containing Readers, and the supplied supported hierarchy interpretation uses that direction. These are example contract facts, not universal field names, parent/child conventions, connector features or a payload recipe.
+
+Fresh official bodies verify applicable hierarchy support, schema references/hierarchyAttribute, account linkage and collection, provisioning, profiles/roles/correlation and the specific Microsoft Entra enterprise-app group assignment non-cascading limitation. Real Entra boundary is not generalized to every Microsoft resource. Detailed source URLs/limits are in the linked record.
+
+Two new editable sources exactly match learner blocks: [indirect route and independent reading](../assets/ENT-004_indirect_route_and_independent_reading.txt), maximum 33 columns, and [representation and native decision](../assets/ENT-004_representation_and_native_decision.txt), maximum 40 columns. Original diagrams remain unchanged. Arrows distinguish membership direction from application policy and do not invent private backend jobs.
+
+Author content review complete. Observed beginner read-through/teach-back/transfer validation, full graphical publication review and formal approval remain pending. Revision 2.0 local only; published version remains 1.0. No tenant/API/source/schema/aggregation/provisioning/native group/permission/session or target operation, commit, push or deployment.
+
+### Historical revision 1.0 reference, preserved
+
 Revision 1.0. Documentation checked October 24, 2026. Documentation-based author review completed; tenant execution, beginner validation and formal publication approval not performed.
 
-### Independent fictional evidence
+#### Independent fictional evidence
 
 - Devi employee100404, correctly associated ReportDesk Production accountrd-100404. Native initial direct memberships G-8401SupportTeam and G-8403ExceptionReaders; no directG-8402ReportReaders.
 - Native G-8401 is a member of G-8402. Fictional group field parentGroups onG-8401 lists containingG-8402. Exact field and direction supplied as contract, not universal ISC names, UI parent/child semantics or actual connector payload.
@@ -4220,7 +5843,7 @@ Revision 1.0. Documentation checked October 24, 2026. Documentation-based author
 - Transfer doc-551 belongsProjectReviewers nestedinDocumentReaders and hasseparatenative-document-readerrole; ownerconfirmsbothsupportedroutes/selectedprojectconditions/noothergrants. VerifiedProjectReviewersremoval leavesnative-rolepermission. Alternative roleabsent/direct-onlyreading/nodirectDocumentReaders doesnotauthorize. Native roleexplicitlynotISCrole.
 - No actual tenant/API/source/schema/aggregation/provisioning/application group edit/nativepermission/session or target operation performed.
 
-### Official sources and claim mapping
+#### Official sources and claim mapping
 
 1. [Managing entitlements](https://documentation.sailpoint.com/saas/help/access/entitlements.html), Representing Nested Entitlements and account-target detail: hierarchical access-object relationships supported where applicable; configuration is not an application authorization proof. Mapped to conditional representation and exact selectedrelationship/removal boundaries. No automatic expansion, write capability or allpathsrevocation guarantee.
 2. [Creating and managing entitlement types](https://documentation.sailpoint.com/saas/help/loading_entitlements/entitlement_types.html), Linking Multiple Entitlement Types and Connecting Account Data: linked schema references can represent relationships between supported access types. Mapped to sourcecapability/schema support and explicitaccountType. DoesnotprescribeanestedgroupJSONmodel or importedIdentityIQalgorithm.
@@ -4233,7 +5856,7 @@ Revision 1.0. Documentation checked October 24, 2026. Documentation-based author
 
 Real Entra limitation is current official documentation; ReportDesk expansion, policy, outcomes and integration contract are expressly fictional. No IdentityIQ code/semantics imported. Official cloud pages may use Identity Services/Human Fabric names; course retains ISC. Learner body has no source citations or external/course links.
 
-### Scope and rendering boundaries
+#### Scope and rendering boundaries
 
 - Primary lesson teaches direct/nested/transitive membership and inherited permission accepted by an application, not resource-ACL inheritance, protocol claims, connector engineering or full access-removal orchestration. Supporting session caveat asks for evidence, not timing assumptions.
 - Two exact editable diagrams match assets/ENT-004_nested_and_independent_access_paths.txt (maximum31columns) and assets/ENT-004_collection_and_authorization_boundaries.txt (maximum38columns). First membership arrows point member-to-containinggroup; permission arrows explicitlyusefictionalpolicy, withWest/enabled/sign-in conditions in nearby prose. Second separates evidence lanes, not enginejob ordering.
@@ -4243,7 +5866,7 @@ Real Entra limitation is current official documentation; ReportDesk expansion, p
 - MissingISC hierarchy doesnotremove confirmednativeedge. Historicalview/policy/session evidence cannot automatically provecurrentnativeabsence or a new grant. No universal delay, token/cache behavior or total-capability lossguarantee.
 - Preserve prior75lessons, all assets/referenceaids, templates/CSS/tests/specification byte-equivalent. ENT-005 remains planned without a stub. Workingedition has76lessons/10modules.
 
-### Assessment and acceptable alternatives
+#### Assessment and acceptable alternatives
 
 | Item | Understanding tested | Misconception or unsupported alternative rejected |
 |---|---|---|
@@ -4261,12 +5884,34 @@ Author review checked first-use meanings, independent context, direction/policy/
 
 ## ENT-005
 
+Revision 2.0. Documentation checked October 27, 2026. One complete concept-led revision saved locally under teaching specification 3.1.
+
+### Current revision evidence and source mapping
+
+See the [ENT-005 concept-led revision record](revisions/ENT-005_Concept_Led_Revision_Record.md) for the 92-purpose preservation map, eleven official source claim mappings, assessment mappings including changed-native-permission transfer, diagrams and executed verification.
+
+Payroll Production supplies an employee with confirmed summary headcount need and a group permitting all-region salary/bank-detail view/export, not editing or payroll release. A separate summary permission exists. Primary Owner is an accepted responsible payroll contact, not a membership or administrator grant. No biography, arbitrary account/group key or fictional owner-identity ID is required.
+
+The revised main example extends the original verification purpose with completed hypothetical outcome evidence: approved selected replacement, summary permission present, detailed-group membership absent, fresh summary success and detailed view/export denial. No other detailed-data grant, changed native definitions or changed work need occurs. These are teaching observations, not real tenant results.
+
+Direct classification, effective hierarchy information, data sensitivity and business need remain distinct. Direct None can mean unset; it is not transferred to every effective None context or treated as no native permission. Custom Data sensitivity/Restricted payroll is organization-defined. Manual High retains priority over method Medium; automatic method application requires enablement. Native capability is not changed by classification.
+
+Fresh official bodies verify owner/additional-owner records, source-independent descriptions/protected manual fields, current privilege methods/override/effective hierarchy, custom metadata, effective request options and All Owners any-one approval, separate administrative authorization, applicable certification sign-off/remediation and provisioning/task evidence. Source URLs and interface/process limits are mapped in the linked record. No default metadata deny, universal owner fallback or existing-work rerouting is assumed.
+
+The eight independent questions retain owner-not-holder, wording-only change, Low/sensitive need, Manager-only routing, manual override, All Owners logic, protected description and pending revoke purposes. Document transfer retains changed shared native action/scope with stable holding/active owner/stale description/new custom value, but unknown holder work requirement and distinct account/shared correction targets.
+
+New editable sources exactly match learner blocks: [responsibility and access holder](../assets/ENT-005_responsibility_and_access_holder.txt) and [capability, review, delivery and verification](../assets/ENT-005_capability_review_delivery_and_verification.txt), both maximum 37 columns. Original diagrams remain unchanged. Human responsibilities and collected explanations are not invented backend jobs or metadata-triggered automation.
+
+Author content review complete. Observed beginner read-through/teach-back/transfer validation, full graphical publication review and formal approval remain pending. Revision 2.0 local only; published version remains 1.0. No tenant/API/source/owner/metadata/classification/provisioning/native permission/review/sign-off/task or target operation, commit, push or deployment.
+
+### Historical revision 1.0 reference, preserved
+
 - Current lesson: [ENT-005](../lessons/ENT-005_Entitlement_Ownership_Descriptions_and_Sensitive_Access.md), revision 1.0, Module 10.5.
 - Documentation checked: October 24, 2026. Current official content consulted for the mechanisms below; earlier lessons' verification dates are not renewed.
 - Documentation-based author review: complete within stated scope. Learner validation and formal publication review/approval: pending. Working-edition deployment is not beginner testing.
 - No tenant, API, source, schema, aggregation, provisioning, owner, metadata, native permission or target operation was executed. Records and observations are fictional teaching evidence.
 
-### Example contract and scope
+#### Example contract and scope
 
 Devi100505/pay-100505 holds PayLedger Production G-9501; ISC display PayrollReports/Basicreportingaccess. Confirmed fictional native permission grants allregion employee salary/bankdetail view/export, notedit/release. Devi's only supplied workneed isheadcounttotals; separatenarrowersummarypermissionexists. PrimaryOwner payroll-owner-505 is expressly a teaching identity label, not literalISCID orgrantholder. Organization accepted ownerresponsibility is distinctfromfieldpresence. CustomDataSensitivity/Restrictedpayroll is fictionalorganizationalmetadata, notdefaultISCpolicy/value orlegalclassification. No universal native permission policy, automatic metadata-driven denial, owner fallback or pendingworkreroute asserted.
 
@@ -4274,7 +5919,7 @@ Independent cases cover ownernotmember, description-onlyedit, Low-but-sensitived
 
 Transfer R-605/ExternalReviewers/doc-605: confirmedsharednativepermissionchange expands assignedread/noexport toallprojectexport withoutmembershipchange; manualISCdescriptionstale/newcustomSensitiveDocumentsmetadata/noaccesschangeoperation; holderworkneednotprovided. Differentpossiblecorrectiontargets require scopeddecisions.
 
-### Primary source claim map
+#### Primary source claim map
 
 | Official reference | Claims and boundaries checked |
 |---|---|
@@ -4290,7 +5935,7 @@ Transfer R-605/ExternalReviewers/doc-605: confirmedsharednativepermissionchange 
 | [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html) | Provisioning changes accounts/access separately from descriptive metadata; supported automatic/manual responsibilities depend on connection and configuration. General manual entitlement tasks versus certification-specific routing not collapsed into one universal owner rule. |
 | [Monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html) | Scoped operation/source/account results, activity/task evidence and supported work reassignment. Work-item completion and native capability confirmation are distinct; new owner field alone not proof of changed existing assignee. |
 
-### Diagrams and publication checks
+#### Diagrams and publication checks
 
 - [Ownership and membership relationships](../assets/ENT-005_ownership_and_membership_relationships.txt): exact inline source, maximum32columns. Relationship arrows distinguish ownerreference, explanatorymetadata and nativeaccountmembership; explicitly notanexecutionsequence.
 - [Evidence, decision and access change](../assets/ENT-005_evidence_decision_and_access_change.txt): exact inline source, maximum31columns. Human investigation/responsibility flow, conditional change branch and separate delivery/checks; notdocumentedbackendorder or metadata-triggeredautomation.
@@ -4298,7 +5943,7 @@ Transfer R-605/ExternalReviewers/doc-605: confirmedsharednativepermissionchange 
 - Preserve prior76learnerlessons/allpriorassets/templates/CSS/tests/specifications, including both reference guides. Only this complete lesson is authored; ENT-006 stays planned withoutstub.
 - Check all77routes, ten-module current/default states, exact fullarticle, diagramassets and adjacentENT004/005navigation. Record source/content checks separately from live visual checks; do not infer learner understanding from either.
 
-### Assessment map
+#### Assessment map
 
 | Exercise | Understanding tested | Expected reasoning and acceptable alternatives | Misconception exposed | Source support |
 |---|---|---|---|---|
@@ -4316,12 +5961,32 @@ Narration reviewed for contextual first-use meanings, independent Devi context, 
 
 ## ENT-006
 
+Revision 2.0. Documentation checked October 27, 2026. One complete concept-led revision saved locally under teaching specification 3.1.
+
+### Current revision evidence and source mapping
+
+See the [ENT-006 concept-led revision record](revisions/ENT-006_Concept_Led_Revision_Record.md) for the 87-purpose preservation map, eleven official source claim mappings, assessment mappings including license transfer, diagrams and executed verification.
+
+Cases Production supplies a selected correctly associated employee account holding case-reviewers for manager-confirmed assigned-case work. UTC09:00 account collection,09:05 CurrentTeams-only definition success and09:10 native group in LegacyTeams are same-day hypothetical observations. Group location/key/membership/permission and work need remain stable. groups is Entitlement/Multi-Valued with Type groups; groupKey/label selections and exact identifying values agree. Scope explains the omitted definition, not an assumed key defect.
+
+Approved scope correction includes the required container after impact review and returns the exact group, readable label and vague Support access text. Current native assigned-case-read/noedit/noexport meaning, accepted ownership and accurate description resolve the separate wording issue. Selected membership and native permission remain unchanged. Population checks are required for broader scope acceptance; selected-object verification is not an all-object guarantee.
+
+Fresh official bodies verify account-derived/simple representations, richer definition collection, operation scope/history/counts, matching schemas/types, changed ID/Name duplicate risk, type deletion retaining objects/stopping updates, protected manual fields, source-independent description edits, origin-qualified retirement synchronization, access-model references and scoped provisioning evidence. URLs and limits are mapped in the linked record. Account aggregation never deletes catalog entitlements; account-only-created items are not promised the general entitlement-aggregation cleanup path. No direct-delete/unknown-status API is invented.
+
+Independent questions preserve successful-but-limited scope, matching label/different native key, valid zero-holder periodic use, approved native deletion/prior entitlement-read origin/only account reads since, protected manual wording, incomplete page, type deletion and unmet account-removal outcome. License transfer retains distinct edit/export versus view-only Standard definitions, no current holders and approved future use without a retirement decision.
+
+New editable sources exactly match learner blocks: [account reference and excluded definition](../assets/ENT-006_account_reference_and_excluded_definition.txt), maximum 38 columns, and [native evidence and scoped correction](../assets/ENT-006_native_evidence_and_scoped_correction.txt), maximum 37 columns. Original diagrams remain unchanged. Evidence paths and human correction map are not private backend order or native change automation.
+
+Author content review complete. All six Module 10 lessons now individually revised. Observed beginner read-through/teach-back/transfer validation, full graphical publication review and formal approval remain pending. Revision 2.0 local only; published version 1.0. No tenant/API/source/schema/aggregation/provisioning/owner/description/native deletion/license/target operation, commit, push or deployment.
+
+### Historical revision 1.0 reference, preserved
+
 - Current lesson: [ENT-006](../lessons/ENT-006_Investigating_Unknown_Stale_or_Poorly_Described_Entitlements.md), revision 1.0, Module 10.6.
 - Documentation checked: October 24, 2026. Current primary sources below support the stated mechanisms, not all earlier lesson claims.
 - Documentation-based author review: complete within scope. Learner validation and formal publication review/approval: pending.
 - No tenant/API/source/schema/aggregation/provisioning/owner/description/native deletion or target operation was performed. Fictional evidence is explicitly identified.
 
-### Example contract and scope
+#### Example contract and scope
 
 CaseBridge Production/Devi100606/cb-100606 with currentmanager-confirmedassignedcasereviewwork. UTC09:00accountreadgroups[G-9601],09:05definitionreadsuccessforCurrentTeams,09:10nativeadministratorconfirmsG-9601existsLegacyTeams/CaseReviewers. AccountgroupsmarkedEntitlement/multiplevalues/Typegroups, groupKeyID/labelName andexactG-9601values are suppliedverifiedsettings. Container names, filter and source fields are fictional, not universal connector options or built-inCaseBridgebehavior.
 
@@ -4331,7 +5996,7 @@ Independentcases: G-9699 sameCaseReviewerslabeldifferentkey/noequivalenceevidenc
 
 TransferL-706Standard/edit-export/zeroaccounts/approvednextmonthproject andL-709Standard/view-only are distinctnativekeys; ambiguouslabelsnotduplicates/retirement. No actual licenseassignment, purchase or permissionchange.
 
-### Primary source claim map
+#### Primary source claim map
 
 | Official reference | Claims and scope checked |
 |---|---|
@@ -4347,7 +6012,7 @@ TransferL-706Standard/edit-export/zeroaccounts/approvednextmonthproject andL-709
 | [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html) | Target-access changes separate from collection or metadata maintenance; actual delivery depends on supported connection/configuration. No automatic removal from a clearer description or requestability change. |
 | [Monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html) | Correctsource/account/operation evidence, activity and manual-task outcomes; case8 identifies unmetnativeoutcome without inventing unobservedfailurestage. |
 
-### Diagram and publication checks
+#### Diagram and publication checks
 
 - [Evidence paths for an unknown entitlement](../assets/ENT-006_evidence_paths_for_an_unknown_entitlement.txt): exact inline source, maximum34columns. Two evidence paths plus independent nativepermission fact; not a mandatory backend order.
 - [Investigation and correction boundaries](../assets/ENT-006_investigation_and_correction_boundaries.txt): exact inline source, maximum33columns. Found/notfound investigation branches require fieldorigin/coverage checks; notfound is notdeletionauthorization. Human scopedcorrection/verification map, notISCengine.
@@ -4355,7 +6020,7 @@ TransferL-706Standard/edit-export/zeroaccounts/approvednextmonthproject andL-709
 - Preserve previous77lessons, all earlier assets/templates/CSS/tests/specification and both complete guides. Only ENT-006 authored; APF-001 plannedwithoutstub/emptyModule11.
 - Verify all78routes, ten-module defaults/current/orderedlinks, exact fullarticle/twodiagrams/twotables/assets and adjacentENT005/006links. Source checks, deployment and visual inspection do not establish beginner understanding or formalapproval.
 
-### Assessment map
+#### Assessment map
 
 | Exercise | Understanding tested | Expected reasoning and acceptable alternatives | Misconception exposed | Source support |
 |---|---|---|---|---|
@@ -4373,12 +6038,23 @@ Reviewed for contextual first-use meanings, independent Devi context, observed-v
 
 ## APF-001
 
+- Current lesson: [APF-001](../lessons/APF-001_The_Problem_an_Access_Profile_Solves.md), revision 2.0, Module 11.1; local only, published version remains 1.0.
+- Documentation checked: October 27, 2026; 13 official claim-bearing sources and their scoped limitations are mapped in the [revision record](revisions/APF-001_Concept_Led_Revision_Record.md).
+- Documentation-based author review: complete within stated scope; 93 preserved purposes, first-use meanings, eight questions and permission/license transfer checked. Beginner validation, full graphical review and formal approval remain pending.
+- Neutral example: one correctly associated, enabled Invoices Production account; Invoice intake references invoice-readers and invoice-draft-entry. Reading is limited to the assigned business unit; drafting requires both. Payment release is excluded and has no other grant route in the example.
+- Supplied UTC facts distinguish Save at 10:00, relevant configuration application at 10:05, manager approval at 10:10, write-credential rejection at 10:12, and fresh Readers-only/draft-denied evidence at 10:15. Later approved correction and supported recovery yield both memberships and in-unit drafting; payment release stays denied. No fixed timing, automatic retry, rollback or atomicity is inferred.
+- Independent full-set detection establishes current matching access, not request history, approval, business need or provisioning origin. A partial set does not create a grant requirement. Grant routes, requestability conditions, conditional automatic account selection, source versus application boundaries, definition changes and standing-access removal retain separate meanings.
+- New editable diagram sources: [bundle references and account memberships](../assets/APF-001_bundle_references_and_account_memberships.txt), maximum 38 columns, and [grant delivery and existing-set detection](../assets/APF-001_grant_delivery_and_existing_set_detection.txt), maximum 36 columns; exact learner-block matches. Original assets remain unchanged.
+- No tenant/API/source/account/aggregation/identity processing/provisioning/profile/request/approval/credential/native access/role/lifecycle/license or target operation was performed. Author checking and hypothetical reasoning are not beginner validation or runtime evidence. No commit, push or deployment.
+
+### Historical revision 1.0 reference, preserved
+
 - Current lesson: [APF-001](../lessons/APF-001_The_Problem_an_Access_Profile_Solves.md), revision 1.0, Module 11.1.
 - Documentation checked: October 24, 2026; current official pages/models below consulted for the scoped mechanisms. Earlier lesson verification dates are unchanged.
 - Documentation-based author review: complete within stated scope. Beginner validation and formal publication review/approval: pending.
 - No tenant/API/source/aggregation/identity processing/provisioning/profile/request/approval/credential/native access or target operation was performed.
 
-### Example contract and boundaries
+#### Example contract and boundaries
 
 ReceiptWorks Production/rw-110101 is Devi110101's only account on the source and is correctly associated with her identity. Application team confirms RW-1101InvoiceReaders assignedbusinessunitread, RW-1102InvoiceDraftEntry requiresreader forcreatedrafts, RW-1199paymentreleaseexcluded. Invoiceintake referencesfirsttwo/fromonesource; reference labels/nativekeys are illustrative, not executedISCAPIIDs/payload. Only standing entitlement delivery/removal is illustrated; separateactivation-basedaccess not included.
 
@@ -4386,7 +6062,7 @@ Configuredenabled/requestable/profilemanagerapproval andsupportedsourcewrite are
 
 Independent variation: bothgroupspreexist/collectedcurrent/enableddefinitionapplied/processingdetectsprofile, notnewgrantorapproval; partialsetdetectiondoesnotcompleteaccess. CrosssourceDocumentStore component versus sourceboundary, validenablednonrequestableautomaticrole configuration, disableprofilelabelremovalwhilemembershipsremain. DesignHub single-source ReportAuthors+Editorlicense forprojectreports, noapprovedgrant/automaticrequirement, licensecapacityconditional; crosssourcevariant requiresseparatecomponents. No actual licensepurchase/assignment or accesschange.
 
-### Primary source claim map
+#### Primary source claim map
 
 | Official reference | Claims and limitations checked |
 |---|---|
@@ -4404,7 +6080,7 @@ Independent variation: bothgroupspreexist/collectedcurrent/enableddefinitionappl
 | [Loading entitlement data](https://documentation.sailpoint.com/saas/help/loading_entitlements/index.html) | Aggregation supplies access representations to ISC; collected versus current native state distinguished. Detection is not taught as live application authorization. |
 | [Managing entitlements](https://documentation.sailpoint.com/saas/help/access/entitlements.html) | Source access rights and profile composition; grouppermissionmeaning/scoperequiresnativeevidence, descriptiondoesnotenforceexclusions. FictionalAND/dependency/unit/releasepolicy notclaimedISCpermissionsengine. |
 
-### Diagrams and publication checks
+#### Diagrams and publication checks
 
 - [Access profile and native groups](../assets/APF-001_access_profile_and_native_groups.txt): exact inline source, maximum36columns. ISCsource/entitlementreferences distinctfromnativeaccountmembership/applicationrule; notnewnativegroup orprocessingsequence.
 - [Request, delivery and detection paths](../assets/APF-001_request_delivery_and_detection_paths.txt): exact inline source, maximum34columns. Conditional approveddelivery and separatelyidentifieddetection route; notmandatorytwo-phasebackendorder or guaranteednewwrites.
@@ -4412,7 +6088,7 @@ Independent variation: bothgroupspreexist/collectedcurrent/enableddefinitionappl
 - Add eleventh navigation module only through data; preserve prior78lessons, allpreviousassets/templates/CSS/tests/specifications andbothreferenceguides. APF-002 remainsplannedwithoutstub.
 - Verify all79routes, elevenindependentmodule disclosures/current/defaults/orderedlinks, exactfullarticle/twodiagrams/onetable/assets andadjacentENT006/APF001links. Source checks, author review and deployment do not establish actual beginner understanding or formal approval.
 
-### Assessment map
+#### Assessment map
 
 | Exercise | Understanding tested | Expected reasoning and acceptable alternatives | Misconception exposed | Source support |
 |---|---|---|---|---|
@@ -4430,12 +6106,23 @@ Narration reviewed for independent Devi context, first-use meanings, practical c
 
 ## APF-002
 
+- Current lesson: [APF-002](../lessons/APF-002_Grouping_Related_Entitlements_from_One_Source.md), revision 2.0, Module 11.2; local only, published version remains 1.0.
+- Documentation checked October 27, 2026: 13 official claim-bearing pages/models read for scoped mechanisms. See the [revision record](revisions/APF-002_Concept_Led_Revision_Record.md) for source/claim limits, 90 preserved-purpose mappings, assessment intent and executed checks.
+- Neutral Orders Production supports the stated group/native-role/license reads and assignments. Readers, Creator and Editor are distinct represented records, with text 2201 deliberately repeated across groups/roles/licenses. Verified hypothetical schema linkage, correctly associated one-account main case, West unit, enabled/sign-in and no other approval/export route.
+- Complete main request trace distinguishes defined bundle, relevant configuration application, configured manager decision, standing delivery and current native/application outcome. Independent absent-license variation adds a supplied exact-account capacity rejection, approved allocation and supported recovery. No real license allocation, automated purchase, retry interval, fixed write order, transaction/rollback or all-account guarantee.
+- Definition-repair case now explicitly uses prior direct-profile-request origin without role/lifecycle requirement. The roles guide’s more specific enabled-role access removal propagation conditions qualify the profile guide’s general edit wording; profile edits are not taught as universally retaining or removing native access. Standing additions remain origin-sensitive.
+- Required dependencies versus alternative choices, source versus business-application boundary, native versus ISC role, native hierarchy, temporary need, account/resource scope, eight questions and directory/two-application transfer retained without a fictional company, named employee, account IDs or application brands.
+- New exact inline diagram sources: [typed records in one source bundle](../assets/APF-002_typed_records_in_one_source_bundle.txt), maximum 38 columns, and [account and resource requirements](../assets/APF-002_account_and_resource_requirements.txt), maximum 33 columns. Original assets unchanged. Relationships and supplied native conditions are not private backend order or a universal ISC authorization algorithm.
+- Documentation-based author review complete within scope. Observed beginner validation, full graphical publication review and formal approval pending. No tenant/API/source/schema/aggregation/processing/provisioning/profile/request/approval/credential/native access/role/lifecycle/license or target operations; no commit, push or deployment.
+
+### Historical revision 1.0 reference, preserved
+
 - Current lesson: [APF-002](../lessons/APF-002_Grouping_Related_Entitlements_from_One_Source.md), revision 1.0, Module 11.2.
 - Documentation checked: October 24, 2026. Current primary references below support the scoped product mechanisms; earlier verification dates are not renewed.
 - Documentation-based author review: complete within scope. Learner validation and formal publication review/approval: pending.
 - No actual tenant/API/source/schema/aggregation/processing/provisioning/profile/request/native access or target operation performed.
 
-### Fictional integration and permission contract
+#### Fictional integration and permission contract
 
 OrderWorks Production/Devi110202/ow-110202onlyaccount inmaincase. Supportedfictionalconnector collects/assignsgroups, nativeroles andlicenses; these are not promiseduniversalconnectortypes. Nativekeysaretext: groups2201OrderReaders, roles2201DraftCreator, licenses2201DraftEditor distinctISCobjects labelledE-G2201/E-R2201/E-L2201; labelsnotrealAPIIDformats/payload. Accountfields/mappingsverifiedcorrect, source/type/reference distinctionexplicit.
 
@@ -4443,7 +6130,7 @@ Native draft action requiresallthreeonthataccount plusenabled/successfulsign-in/
 
 IndependentEast/Westlicensechoicecase listsbothwithnoactualselector, same-nameTest/source distinction, DocumentStoreseparatesource, temporalreading/drafting andoverlapdesign caveats. Definitioncorrectionofoldapprover is notnativegrantremoval. Assignmentoriginsdefinedbeforedependentcomparison, no one-size-fits-allpropagation/removal. Case8twoaccountsusesper-accountnativepolicyonly, notassumedISCcrossaccountdetection. DirectorytransferDispatchDirectoryProductionD-25StockPortal+D-26ShipDesk requiredsamejob, D-29globaladminexcluded, ShipDeskAPIschedulingseparatesource; appconsumptionrequiresseparateevidence.
 
-### Primary source claim map
+#### Primary source claim map
 
 | Official reference | Claims and limits checked |
 |---|---|
@@ -4461,7 +6148,7 @@ IndependentEast/Westlicensechoicecase listsbothwithnoactualselector, same-nameTe
 | [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html) | Supportedsourcechange separatefromaggregation/definition, selectedaccount andconnection/credentialdependencies. Nouniversalatomicbundlewriteorrollbackguarantee. |
 | [Monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html) | Exactsource/account/operation/error andmanualdeliveryevidence, distinctfromcurrentnativeconditions. Hypotheticalabsentlicensealonecannotdiagnosecapacityorcredentialfailure. |
 
-### Diagrams and publication checks
+#### Diagrams and publication checks
 
 - [Source and typed entitlement references](../assets/APF-002_source_and_typed_entitlement_references.txt): exactinline source, maximum32columns. ThreeISCteachingrefs/oneSource/threenativekinds, not nativecreation, mergedkeys orprocessingorder.
 - [Native dependency and resource conditions](../assets/APF-002_native_dependency_and_resource_conditions.txt): exactinline source, maximum33columns. Fictionalper-accountALL3/enabled/sign-in/unitconditions, notISCengine, crossaccountunion orwriteorder.
@@ -4469,7 +6156,7 @@ IndependentEast/Westlicensechoicecase listsbothwithnoactualselector, same-nameTe
 - Preserve prior79lessons, allpreviousassets/templates/CSS/tests/specifications andbothreferenceaids. APF-003 plannedwithoutstub.
 - Verify all80routes, eleven-module defaults/current/orderedlinks, exactfullarticle/twodiagrams/twotables/assets and adjacentAPF001/002links. Sourcechecks/deployment/visualinspectiondonotestablishbeginnerunderstandingorformalapproval.
 
-### Assessment map
+#### Assessment map
 
 | Exercise | Understanding tested | Expected reasoning and acceptable alternatives | Misconception exposed | Source support |
 |---|---|---|---|---|
@@ -4487,12 +6174,24 @@ Reviewed for independent Devi context, first-use meaning, useful designjudgment,
 
 ## APF-003
 
+- Current lesson: [APF-003](../lessons/APF-003_Names_Descriptions_Owners_and_Bundle_Boundaries.md), revision 2.0, Module 11.3; local only, published version remains 1.0.
+- Documentation checked October 27, 2026: 14 official claim-bearing bodies/models read. See the [revision record](revisions/APF-003_Concept_Led_Revision_Record.md) for scoped source mapping, 103 preserved purposes, assessment intent and executed checks.
+- Neutral Cases Production and separate Test source. Correctly associated only Production account, enabled/sign-in, West queue; Readers initially. Readers and Notes supply assigned-queue review, no export/evidence deletion/admin; supported hypothetical group collection/assignment. Profile description explains native limits and separate queue maintenance rather than implementing them.
+- Primary/additional owners are identities with accepted responsibility; primary has no application account. Complete configured Manager then Primary Owner request/delivery example verifies both groups and intended outcome. Independent All Owners stage accepts any one eligible owner; global approval, role/lifecycle requests, certification and manual tasks retain separate scopes.
+- Same-identifier rename and unchanged-reference native capability expansion are independent changes. Definition-removal case explicitly uses direct-profile-request origin without role/lifecycle requirement; specific enabled-role removal propagation qualifies broad profile-guide retention wording.
+- Handover follows a supplied pending item still assigned to former owner through authorized supported reassignment to incoming owner, recorded result and still-pending decision. No universal retroactive owner-change routing contract. Other work and governance membership need separate inspection.
+- New exact inline sources: [description, references and enforcement](../assets/APF-003_description_references_and_enforcement.txt), maximum 38 columns, and [owner references and review stages](../assets/APF-003_owner_references_and_review_stages.txt), maximum 37 columns. Original assets unchanged. Relationship/decision arrows do not specify private backend order or guarantee native delivery.
+- No fictional person, employer, application brand, account/employee/object IDs or artificial ISC identifier labels in current learner. Names use colon/parentheses instead of literal vertical bars that could create unintended Kramdown tables.
+- Documentation-based author review complete within scope. Observed beginner validation, full graphical publication review and formal approval pending. No actual tenant/API/source/aggregation/processing/provisioning/profile/request/approval/ownership/reassignment/native permission/role/lifecycle/governance membership or target operation; no commit, push or deployment.
+
+### Historical revision 1.0 reference, preserved
+
 - Current lesson: [APF-003](../lessons/APF-003_Names_Descriptions_Owners_and_Bundle_Boundaries.md), revision 1.0, Module 11.3.
 - Documentation checked: October 24, 2026. These sources support scoped current product mechanisms; no earlier lesson verification dates are renewed.
 - Documentation-based author review: complete within scope. Real learner validation and formal publication review/approval: pending.
 - No actual tenant/API/source/aggregation/processing/provisioning/profile/request/approval/ownership/reassignment/native permission or target operation performed.
 
-### Fictional work, ownership and native contract
+#### Fictional work, ownership and native contract
 
 EvidenceHub Production and separate Test source, Devi110303/eh-110303 only Production account, correctly associated identity and assignedqueueWest. Native group EH-3301 CaseReaders permits assignedqueue read; EH-3302 ReviewNotes permits notes with reader, not evidence change/deletion; EH-3399 BulkExport permits allqueues export and is excluded. Enabledaccount/successfulsign-in prerequisites. Standingaccess; supplied supported fictional integration collects/assigns groups. E-3301/E-3302/AP-3303 are teaching labels, not real ID syntax/API payloads. Native rules are not an ISC permission engine.
 
@@ -4500,7 +6199,7 @@ Case support becomes EvidenceHub | Case review | Production, same supplied ID/re
 
 ChangednativeEH-3301 export case, oldEH-3399 grant after definition repair, pending item stillassignedLeela after primaryownerAnil handover are supplied observations. No general retroactive assignment/rerouting contract asserted. Additionalgovernancegroupmembership maintenance scoped to documented lifecycle/disable behavior. Transfer reporting source compares regional summaries versus allregiondetailexport and responsibleownership versus integrationcontact; jobtitle alone neither mandates nor prohibits owner assignment.
 
-### Primary source claim map
+#### Primary source claim map
 
 | Official reference | Claims and limits checked |
 |---|---|
@@ -4519,7 +6218,7 @@ ChangednativeEH-3301 export case, oldEH-3399 grant after definition repair, pend
 | [Approvals administration](https://documentation.sailpoint.com/saas/help/requests/approvals_admin.html) | Inspect actual assignees/pendingrequest and use authorized supported reassignment; no promise ownerfield retroactively changes all tasks/campaigns. |
 | [Understanding certifications](https://documentation.sailpoint.com/saas/help/certs/understanding_certifications.html) | Review of existing access distinct from new accessrequest; actual configured reviewers required, no profile-request-chain reuse claim. |
 
-### Diagrams and publication checks
+#### Diagrams and publication checks
 
 - [Profile meaning, references and native limits](../assets/APF-003_profile_meaning_references_and_native_limits.txt): exact inline source, maximum37columns. Relationship branches, not backendexecutionorder. E-to-group arrows mean representedaccessitem; applicationchecks independent of description.
 - [Ownership and configured request review](../assets/APF-003_ownership_and_configured_request_review.txt): exact inline source, maximum36columns. Main Manager-then-Leela chain versus independent alternativeAllOwners LeelaORAnil; positiveapprovalarrows and continuationtowarddelivery, not completednativegrant.
@@ -4528,7 +6227,7 @@ ChangednativeEH-3301 export case, oldEH-3399 grant after definition repair, pend
 - Preserve prior80lessons, all previous assets/templates/CSS/tests/specifications and both reference aids. APF-004 remains planned without stub.
 - Verify all81routes, eleven-module defaults/current/orderedlinks, exact completearticle/twodiagrams/twotables/assets, adjacentAPF002/003links and exactcommit Pagesbuild. Visual publication checks are distinct from source checks and beginner validation.
 
-### Assessment map
+#### Assessment map
 
 | Exercise | Understanding tested | Expected reasoning and acceptable alternatives | Misconception exposed | Source support |
 |---|---|---|---|---|
@@ -4546,12 +6245,24 @@ Reviewed for independent context, first-use meanings, connected cause/effect, ac
 
 ## APF-004
 
+- Current lesson: [APF-004](../lessons/APF-004_Enabled_Requestable_and_Automatically_Assigned_Access.md), revision 2.0, Module 11.4; local only, published version remains 1.0.
+- Documentation checked October 27, 2026: 11 official claim-bearing bodies/model tables read. See the [revision record](revisions/APF-004_Concept_Led_Revision_Record.md) for scoped sources, 112 preservation mappings, assessments and executed checks.
+- Neutral Work Orders Production, one correctly associated enabled North account/sign-in; both groups initially absent/no other grant. Readers permits site-scoped reading; Editors plus Readers permits update, noadmin. Supported group operations and standing access are supplied conditions.
+- Main enabled/nonrequestable profile has no recipient requirement until enabled Facilities technician includes it and evaluates applied Department Facilities AND Lifecycle State technical working. Configured Working state enabled in governing identity profile; labels are not API payloads or assumed defaults. Tenant-supported Request Center nonrequestability explicitly required.
+- Same-day UTC10:00 no route/native groups;10:15 reviewed role and relevant application initiated;10:17 role recorded/activity pending/groups absent;10:24 native both/North success/South denial/noadmin. No other relevant changes or fixed duration guarantee. Direct request/manager/start-date, identity-list and lifecycle designs remain separate.
+- UTC11:00 profile disable/11:06 after relevant processing association absent, both native groups and North update retained. Request toggle not native revocation or in-flight cancellation; retained references/certifications, reenable impact and all-entitlement-deletion disable behavior scoped explicitly. No universal overlap/removal rule or automatic source-write guarantee.
+- New exact inline diagrams: [settings, selection and native delivery](../assets/APF-004_settings_selection_and_native_delivery.txt), maximum 40 columns, and [profile pause/retained memberships](../assets/APF-004_profile_pause_and_retained_memberships.txt), maximum 39 columns. Original assets unchanged. Logical routes/state changes are not private backend architecture.
+- Eight original cases and license transfer retained without a fictional employee/company/application brand or arbitrary identifiers. License capacity, nonmatching employee and native reclamation require distinct evidence.
+- Documentation-based author review complete within scope. Observed beginner validation, full graphical publication review and formal approval pending. No actual tenant/API/source/aggregation/processing/provisioning/profile/role/lifecycle/request/approval/enablement/disablement/native access/credential/license or target operation; no commit, push or deployment.
+
+### Historical revision 1.0 reference, preserved
+
 - Current lesson: [APF-004](../lessons/APF-004_Enabled_Requestable_and_Automatically_Assigned_Access.md), revision 1.0, Module 11.4.
 - Documentation checked: October 24, 2026. These primary sources support the scoped mechanisms; no earlier lesson verification dates are renewed.
 - Documentation-based author review: complete within scope. Real beginner validation and formal publication review/approval: pending.
 - No actual tenant/API/source/aggregation/processing/provisioning/profile/role/lifecycle/request/approval/enablement/disablement/native access or target operation performed.
 
-### Fictional integration, assignment and permission contract
+#### Fictional integration, assignment and permission contract
 
 AssetRoute Production, Devi110404/ar-110404onlyaccount, enabled/successfulsign-in, assignedsiteNorth; native AR-4401Readers permits site-scoped read, AR-4402Editors withreader permitsupdate, noadmin. AP-4404 is a teaching label, not real ISC ID/APIpayload. Supplied writablegroupintegration/standingaccess, no JITactivation. Initialbothgroupsabsent/norequest/norole/noLCSrequirement; enabled/nonrequestableprofile alone selectsnone.
 
@@ -4561,7 +6272,7 @@ UTC10:00enablednoroute/groupsabsent;10:15reviewedroleconfig/applicationstarted;1
 
 Eightcases includeprehireANDfailure, futureapprovedrequest, disabledprofileinsideenabledrole, sourcepermissionrejection despitecompletedidentityprocessing, profileassociationlossversusnativeaccess. TransferDesigneditor license/ProductdesignerjobcodeDESIGN/insufficientcapacity versusnonmatchingemployee; suppliedfictionalerror not a verifiedrealconnectorerrorstring. Separateexceptionrouteifapproved, nofalsifiedidentitydata; disabledprofiledoesnotproveexistinglicensereclaimed.
 
-### Primary source claim map
+#### Primary source claim map
 
 | Official reference | Claims and limits checked |
 |---|---|
@@ -4577,7 +6288,7 @@ Eightcases includeprehireANDfailure, futureapprovedrequest, disabledprofileinsid
 | [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html) | Assignmentdrivers versus direct/manualsourcechanges, selectedoperation anddeliverycapacity/permission constraints; supportedconditionalrecovery notautomaticguaranteedretry. No actualsourceaccountcreationperformed. |
 | [Monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html) | Exactsource/account/operation/status/error/manualtask andcurrenttargetevidence; completedprocessing cannot overriderejectedwrite. No taskcompletion-as-proofallnativeaccess assumption. |
 
-### Diagrams and publication checks
+#### Diagrams and publication checks
 
 - [Request and automatic assignment routes](../assets/APF-004_request_and_automatic_assignment_routes.txt): exact inline source, maximum36columns. Alternative directprofile request and configuredautomaticrole/LCS requirement converge on neededaccountchange/delivery/verification. Mainprofileenabled; nohiddenengineorder, allroutesmustexecute, universalwriteorapproval promise.
 - [Disabled profile and retained native access](../assets/APF-004_disabled_profile_and_retained_native_access.txt): exact inline source, maximum37columns. Fictionalbefore/afterpause and relevantprocessing, no nativegroup removal shown. Account andprofile differentobjects.
@@ -4585,7 +6296,7 @@ Eightcases includeprehireANDfailure, futureapprovedrequest, disabledprofileinsid
 - Preserve prior81lessons, all previous assets/templates/CSS/tests/specifications and both reference aids. APF-005 remains planned without stub.
 - Verify all82routes, eleven-module defaults/current/orderedlinks, exact fullarticle/twodiagrams/twotables/assets, adjacentAPF003/004links and exactcommit Pagesbuild. RenderQA/documentationchecks/deployment do not establish beginner understanding or formal approval.
 
-### Assessment map
+#### Assessment map
 
 | Exercise | Understanding tested | Expected reasoning and acceptable alternatives | Misconception exposed | Source support |
 |---|---|---|---|---|
@@ -4603,12 +6314,24 @@ Reviewed for complete independent context, first-use meanings, correctstatusobje
 
 ## APF-005
 
+- Current lesson: [APF-005](../lessons/APF-005_Detecting_Existing_Access_and_Provisioning_New_Access.md), revision 2.0, Module 11.5; local only, published version remains 1.0.
+- Documentation checked October 27, 2026: 13 official claim-bearing bodies/model tables read. See the [revision record](revisions/APF-005_Concept_Led_Revision_Record.md) for scoped sources, 106 purpose mappings, assessment intent and executed checks.
+- Neutral Releases Production; only correctly associated enabled North account/sign-in; native Readers and Comments plus unrelated Approvers held before profile. Readers/Comments provide assigned-project review; Approvers outside need. Supported group operations/standing access supplied. Exact native-value/type linkage and separate ISC record references explained without fabricated IDs.
+- Main enabled/nonrequestable profile requires review pair, no new request/role/lifecycle requirement. Same-day UTC09:00 native prior holdings and working North review;09:10 collected same;09:20 saved/enabled;09:25 relevant model evaluation;09:28 associated profile/native unchanged. All required items held despite extra; neither extra cleanup nor new native membership follows from recognition. No original-grant date, processing latency or whole-run read-only guarantee.
+- Reader-only variation creates no completion requirement. Separate permitted now request/manager approval supplies Comments-add attempt; successful native/action checks versus permission rejection and approved supported correction/recovery are supplied alternatives. No universal minimal write/call count or actual credential operation.
+- Historical origin requires request/model/native audit evidence, not current label or missing request log alone. Stale09:10 holdings/09:15 removal, resource scope and per-account evidence remain separate. Detected-only Comparison Tools addition does not provision new content; revised full set required on evaluation. Certification and revocation retain applicable configuration/availability and native-removal/overlap limits.
+- New exact inline sources: [required set and existing memberships](../assets/APF-005_required_set_and_existing_memberships.txt), maximum 39 columns, and [recognition and authorized source change](../assets/APF-005_recognition_and_authorized_source_change.txt), maximum 35 columns. Original assets unchanged. Logical comparison and separate operation paths are not private backend execution order.
+- Eight original cases plus neutral directory full/partial/stale transfer retained. Documentation-based author review complete within scope; observed beginner validation, full graphical publication review and formal approval pending.
+- No actual tenant/API/source/aggregation/processing/provisioning/profile/request/approval/certification/native membership/credential/role/lifecycle or target operation; no commit, push or deployment.
+
+### Historical revision 1.0 reference, preserved
+
 - Current lesson: [APF-005](../lessons/APF-005_Detecting_Existing_Access_and_Provisioning_New_Access.md), revision 1.0, Module 11.5.
 - Documentation checked: October 24, 2026. These sources support the stated product mechanisms; earlier lesson verification dates are not renewed.
 - Documentation-based author review: complete within scope. Real beginner validation and formal publication review/approval remain pending.
 - No actual tenant, API, source, aggregation, identity processing, provisioning, profile, request, approval, certification, native membership or target operation performed.
 
-### Fictional example and limits
+#### Fictional example and limits
 
 Devi110505/bl-110505 is the single correctly correlated BuildLedger Production account. Its enabled/sign-in/North-project conditions are supplied facts. Native BL-5501 ReleaseReaders permits reading assigned-project evidence; BL-5502 ReviewComments requires reader on the same account; BL-5599 ReleaseApprovers is additional access outside Devi's stated need. All three initially held. AP-5505 references ISC teaching labels E-5501/E-5502 for the first two; labels are not real ID formats or an API payload. The fictional connector supports collecting and changing memberships; schema groups field, entitlement linkage and catalog definitions are correct. Standing access only; no JIT activation or undocumented multiple-account detection behavior assumed.
 
@@ -4616,7 +6339,7 @@ Main UTC09:00 native inspection/full set plus approver and successful North comm
 
 Independent partial-access variation has reader only and no grant route; detection supplies no missing entitlement. Separate enabled direct request/manager approval then attempts commenter addition; rejected versus delivered branches are alternatives, not two results for one operation. A real source need not issue exactly one minimal write. Stale09:10 full set/native09:15 commenter removal variation distinguishes recorded/current access without promising automatic remediation. Case8 detection-only definition change adds missing BL-5503/new comparison feature; no role/LCS requirement/new request, no automatic provision of added item. Directory transfer D-51 ticket read/D-52 internal notes compares catalog/full/partial/stale holdings; no actual account or group change.
 
-### Primary source claim map
+#### Primary source claim map
 
 | Official reference | Claims and limits checked |
 |---|---|
@@ -4634,7 +6357,7 @@ Independent partial-access variation has reader only and no grant route; detecti
 | [Lifecycle states](https://documentation.sailpoint.com/saas/help/provisioning/lifecycle.html) | Organizational stage and configured access requirements supply another grant route. No lifecycle state changed or general automatic repair contract asserted. |
 | [Understanding certifications](https://documentation.sailpoint.com/saas/help/certs/understanding_certifications.html) | Detected profiles can be reviewed under applicable certification configuration; profile/role encapsulation can affect review presentation. Review/remediation and native outcome differ. Availability conditions retained; no promise every item is independently visible in every campaign or historical approval reconstructed by detection. |
 
-### Diagrams and publication checks
+#### Diagrams and publication checks
 
 - [Existing holdings and detected profile](../assets/APF-005_existing_holdings_and_detected_profile.txt): exact inline source, maximum40columns. Full required pair plus independent approver; record comparison then profile association, not native writes, exact-set-only matching or cleanup.
 - [Partial holdings and separate provisioning](../assets/APF-005_partial_holdings_and_separate_provisioning.txt): exact inline source, maximum40columns. Partial comparison does not grant; a separate approved request supplies the operation. Rejected/delivered are alternative outcomes with native verification.
@@ -4642,7 +6365,7 @@ Independent partial-access variation has reader only and no grant route; detecti
 - Preserve all prior82lessons, all existing assets/templates/CSS/tests/specifications and both reference aids. APF-006 remains planned without stub.
 - Verify all83routes, eleven-module defaults/current/orderedlinks, exact complete article/two diagrams/two tables/assets, adjacentAPF004/005links and exact-commit Pages deployment. Publication rendering and source verification do not establish beginner understanding or formal approval.
 
-### Assessment map
+#### Assessment map
 
 | Exercise | Understanding tested | Expected reasoning and acceptable alternatives | Misconception exposed | Source support |
 |---|---|---|---|---|
@@ -4660,11 +6383,24 @@ Reviewed for independent Devi context, first-use meanings, exact object/record d
 
 ## APF-006
 
+- Current lesson: [APF-006](../lessons/APF-006_Changing_Access_Profiles_and_Assessing_Existing_User_Impact.md), revision 2.0, Module 11.6; local only, published version remains 1.0.
+- Documentation checked October 27, 2026: eight official claim-bearing bodies/model tables read. See the [revision record](revisions/APF-006_Concept_Led_Revision_Record.md) for scoped sources, 106 purpose mappings, assessment intent and executed checks.
+- Neutral Stock Production/Stock receiving, original Readers/Entry then Notes addition. Exact same-source references and stable profile identifier explained without fabricated ISC IDs. Supported membership operations/standing access, current recorded old pair, one correctly associated enabled account per identity, main role account North.
+- Four origins: current Receiving clerk role, current lifecycle requirement, past direct request for profile itself, detection. Current role/lifecycle additions versus revised-set retention without top-up for past direct-profile/detected holders. Requested role remains role origin. All four Active ISC processing status, profile/relevant role/state enabled; no other Notes/concurrent assignment change.
+- UTC10:00 save/10:05 agreed shared application/10:12 role-account-specific permission rejection/10:14 lifecycle success/10:20 separate native outcomes; later authorized permission correction and supported recovery close selected role-account result. No fixed latency/retry or whole-population success.
+- Removal/restoration explicitly set Enable Role Access Removal Propagation OFF. Separate ON/enabled-role path, no replay of disabled-time edits and no effect on additions taught from specific roles guide, qualifying profile-page general retention wording. Exact native outcome/other requirements separately checked.
+- Consumer/holder inventories, future eligible population, expected versus observed outcomes and pilot scope retained. Counts 180 holders, 12 delivered/three failed and license20-role/10-past-direct-request/unknown capacity preserve meaningful reasoning, not actual tenant facts. No automatic rollback/reclaimed capacity inferred.
+- New exact inline sources: [current requirements and definition additions](../assets/APF-006_current_requirements_and_definition_additions.txt), maximum 39 columns, and [restored definition/completed grants](../assets/APF-006_restored_definition_and_completed_grants.txt), maximum 36 columns. Original assets unchanged; arrows show comparison/correction dependencies, not private backend scheduling.
+- Eight original cases plus paid-license transfer retained without biographies, application brands or arbitrary IDs. Documentation-based author review complete within scope. Observed beginner validation, full graphical publication review and formal approval pending.
+- No actual tenant/API/source/aggregation/processing/provisioning/profile/role/lifecycle/request/approval/credential/license/native membership/propagation-setting or target operation; no commit, push or deployment.
+
+### Historical revision 1.0 reference, preserved
+
 - Current lesson: [APF-006](../lessons/APF-006_Changing_Access_Profiles_and_Assessing_Existing_User_Impact.md), revision 1.0.
 - Documentation check: October 24, 2026.
 - Review type: documentation-based author review only. No actual tenant actions or beginner validation performed. Formal publication review and approval remain pending.
 
-### Sources and boundaries
+#### Sources and boundaries
 
 | Official reference | Supported claims and lesson use |
 |---|---|
@@ -4681,7 +6417,7 @@ The access-profile page summarizes removed entitlements as retained independent 
 
 All account/group/permission/site/license examples and observations are supplied fictional conditions. StockLedger source writes are assumed supported, and the credential rejection is scoped to Devi's account so the independent lifecycle-account success is not contradictory. Current records and one correctly correlated account per identity are stated. Main addition has no concurrent changes or other grants.
 
-### Explanation and assessment review
+#### Explanation and assessment review
 
 - Two inline editable text diagrams match [addition/origin](../assets/APF-006_definition_addition_and_assignment_origin.txt) and [definition restoration](../assets/APF-006_restoring_definition_and_retained_access.txt), no wider than 42 columns. Arrows express dependencies, not private scheduling.
 - Two two-column tables distinguish native meanings and current-origin effects. Eight Facts/Reasoning cases test wording/reference mismatch, required-but-failed delivery, old direct request, complete revised detected set, removal with propagation off/on, unchanged-key native expansion and partial-delivery restoration.
@@ -4691,11 +6427,24 @@ All account/group/permission/site/license examples and observations are supplied
 
 ## APF-007
 
+- Current lesson: [APF-007](../lessons/APF-007_Overlapping_Profiles_and_Access_Removal_Behavior.md), revision 2.0, Module 11.7; local only, published version remains 1.0.
+- Documentation checked October 27, 2026: nine official claim-bearing bodies read. See the [revision record](revisions/APF-007_Concept_Led_Revision_Record.md) for source limits, 104 preservation mappings, assessments and executed checks.
+- Neutral Cases Production/one associated enabled North account/current rights. Readers permits queue read, Notes/Export require Readers on same account. Exact shared represented Readers record/source/type, separate native identifier; four reference paths/three rights/one Reader membership, not source-call count.
+- Main profiles completed direct requests, standing access, no role/lifecycle/other grant/concurrent change. UTC14:00 submit/14:04 required approval/14:09 reported Reader+Notes success/14:12 native Export-only/export denied. Revoked review profile removes overlap; other profile incomplete/association lost with Export individual and potentially reactivated by restored Reader.
+- Independent current assigned enabled Queue analyst role requires Readers, not Notes; role-required overlap retained, Reader+Export/native export remain/no notes. Mere definition or second direct profile not equivalent protection. Role-held direct revocation restrictions, assignment versus definition propagation and current lifecycle later enforcement separately scoped.
+- Partial Reader rejection/Notes success, current observations versus old records, manual task and per-operation evidence retained. Future baseline design separated from migration of existing direct overlaps; no dummy role, falsified data, universal safe split or automatic membership protection.
+- New exact inline sources: [shared reference/native removal](../assets/APF-007_shared_reference_and_native_removal.txt), maximum 37 columns, and [current role/retained capability](../assets/APF-007_current_role_and_retained_capability.txt), maximum 39 columns. Original assets unchanged; paths show stated conditions/results, not private backend steps.
+- Existing [assignment/removal comparison guide](../assets/ASSIGNMENT_REMOVAL_COMPARISON_GUIDE.txt), revision 1.0, read for consistency; accurate scoped content/file/version/date unchanged. Needed operation comparison remains inline. No new guide edition implied.
+- Eight cases and paid-license transfer retained without fictional people/company/application brands or arbitrary identifiers. All seven Module 11 lessons individually revised; ROL-001 next, learner body unopened.
+- Documentation-based author review complete within scope. Observed beginner validation, full graphical publication review and formal approval pending. No actual tenant/API/source/aggregation/processing/provisioning/profile/role/lifecycle/request/approval/revocation/license/credential/native membership or target operation; no commit, push or deployment.
+
+### Historical revision 1.0 reference, preserved
+
 - Current lesson: [APF-007](../lessons/APF-007_Overlapping_Profiles_and_Access_Removal_Behavior.md), revision 1.0.
 - Documentation verification: October 24, 2026; documentation-based author review only.
 - No tenant action, beginner validation or formal publication approval performed.
 
-### Primary sources and claim boundaries
+#### Primary sources and claim boundaries
 
 | Official reference | Supported explanation |
 |---|---|
@@ -4711,7 +6460,7 @@ All account/group/permission/site/license examples and observations are supplied
 
 Scope: one correctly correlated account per identity, current holdings, standing memberships, direct requested profiles and no current role/LCS/concurrent grants in main example. Separate enabled Queue analyst role directly requires Readers throughout role-protection variation. CaseDock Readers/Notes/Export and same-account reader dependency are fictional, as are source write support, approvals, UTC observations and reported/native outcomes. No real account action occurs. No automatic cross-account union, reference counting, atomic removals or universal mixed-origin/JIT algorithm inferred.
 
-### Assessment map and author review
+#### Assessment map and author review
 
 - Case 1 tests non-role set tracing. Supplied A/B pairs, successful removals and no other requirements yield only Export, incomplete B and denied export. Treating B as overlap protection is the misconception.
 - Case 2 changes the current requirement to an assigned role requiring Readers. Retain Readers/Export and remove Notes; actual role assignment/content and native note/export checks are evidence. A role definition alone is insufficient.
@@ -4730,11 +6479,42 @@ Scope: one correctly correlated account per identity, current holdings, standing
 
 ## ROL-001
 
+- Current lesson: [ROL-001](../lessons/ROL-001_Turning_Business_Responsibilities_into_Access_Requirements.md), revision 2.0.
+- Current record: [coverage and verification](revisions/ROL-001_Concept_Led_Revision_Record.md).
+- Documentation verification: October 27, 2026; fresh official claim-bearing bodies, author review only.
+- Beginner validation, full graphical review and formal approval pending; tenant execution not performed.
+- Revision 2.0 local only; published version remains 1.0.
+
+### Official sources by claim
+
+Fresh official claim-bearing page bodies checked October 27, 2026. Sources are author-only; no external source or course links in the learner. Hypothetical native rights, timings and policy are supplied teaching conditions, not claims about default ISC behavior.
+
+| Official reference | Verified claim and limit |
+|---|---|
+| [Managing roles](https://documentation.sailpoint.com/saas/help/access/roles.html) | Role purpose, cross-source scope, Provisioning requirement, standard role, access-profile/direct-entitlement contents, enabled/application and owner configuration. Does not establish native action success. |
+| [Automating role assignment](https://documentation.sailpoint.com/saas/help/provisioning/role_assignment.html) | Configured current criteria and identity-list routes, AND/OR, technical lifecycle value, relevant evaluation; no inference that automatic criteria universally filter requests. |
+| [Identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Population, source-backed mapped identity values and lifecycle configuration; not access-profile contents. |
+| [Identity processing](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Identity/configuration evaluation and requirements; not validation that every provisioning operation succeeded. |
+| [Provisioning](https://documentation.sailpoint.com/saas/help/provisioning/index.html) | Supported configured delivery and manual paths; existing-account case does not guarantee missing-account creation. |
+| [Tracking provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html) | Per-account/source/action results/errors and manual task evidence; role association is not native fulfillment. |
+| [Configuring role requests](https://documentation.sailpoint.com/saas/help/requests/config_ap_roles.html) | Requestable-role controls, requested assignment outside automatic match and role review configuration; no chained direct-profile approvals. |
+| [Managing access profiles](https://documentation.sailpoint.com/saas/help/access/access-profiles.html) | Related single-source entitlements, supported standing use; no cross-source profile. |
+| [Managing entitlements](https://documentation.sailpoint.com/saas/help/access/entitlements.html) | Represented source rights and direct role inclusion; names do not prove native capability. |
+
+No undocumented service topology, fixed processing interval, exact retry, all-or-nothing transaction, universal request eligibility, automatic approval, automatic deletion or unconditional creation/cleanup guarantee is inferred. Existing supported retention/removal caveats remain bounded; full removal mechanics are separate lessons.
+
+
+### Current supplied conditions
+
+Neutral existing enabled/correlated North Requests account and Knowledge account; initially required rights absent, no role/other grant. Same-account Requests Readers+Drafts dependency, Knowledge published read only. Enabled standard standing role contains single-source profile plus direct Knowledge entitlement, with supported Provisioning. Main nonrequestable automatic AND applied CustomerOps/SUP-INTAKE/working. Stale SUP-OBS input precedes supplied evaluation and assignment. Per-source Requests success versus Knowledge account permission rejection, then approved correction/supported recovery and positive/negative native task checks. Timings and native rules hypothetical, not platform defaults. Request-origin, Test-source and unrelated refund cases independent; laboratory license capacity unknown. No actual changes.
+
+### Historical revision 1.0 reference, preserved
+
 - Current lesson: [ROL-001](../lessons/ROL-001_Turning_Business_Responsibilities_into_Access_Requirements.md), revision 1.0.
 - Documentation verification: October 24, 2026; documentation-based author review only.
 - Beginner validation, tenant execution and formal publication review/approval: pending or not performed, not inferred from working-edition deployment.
 
-### Official sources by claim
+#### Official sources by claim
 
 | Official reference | Supported explanation and limits |
 |---|---|
@@ -4750,7 +6530,7 @@ Scope: one correctly correlated account per identity, current holdings, standing
 
 Scope: standard role, standing access, Provisioning supported and authorized administration. Existing single correctly correlated enabled/sign-in account per application, initial memberships absent/no role assignment/no other grant. Main automatic single-group AND policy uses mapped identity department/jobCode and lifecycle technical working; it is supplied business policy, not a platform default. Nonrequestable main role. No lifecycle access grant, account creation, role dimensions, cross-account union, generic role-removal propagation or full membership-builder mechanics claimed.
 
-### Assessment map
+#### Assessment map
 
 - Case 1: compare peer access with approved tasks/exclusions. Correct reasoning rejects copying refund approval; application permissions and approved responsibility are evidence. Same title is insufficient.
 - Case 2: supplied observer population exposes department-only overassignment. Correct reasoning tests all agreed AND inputs; a cosmetic role-name change cannot narrow matching. Alternative policies need business approval, not guessing.
@@ -4762,7 +6542,7 @@ Scope: standard role, standing access, Provisioning supported and authorized adm
 - Case 8: old unrelated refund membership tests least privilege versus actual total holdings. Assignment of narrow role does not prove cleanup. Investigate origin/need and authorized correction with retained requirements.
 - Laboratory transfer: exact native access and named-user license dependency/capacity remain unverified. Discovery can establish responsibility/exclusions, not final references or promised delivery. Accept different coherent packaging if verified rights/recipient policy/source boundaries and fulfillment evidence are maintained.
 
-### Consistency and presentation review
+#### Consistency and presentation review
 
 - Devi120101/rd-120101/ks-120101 reintroduced independently. RD-8101 Readers + RD-8102 Drafts with reader dependency; KS-8101 published guides; refunds/export/publishing/admin excluded. R-1201/AP-8101/E-prefixed identifiers are teaching labels, not API IDs.
 - Supplied UTC08:00 HRcorrect/currentSUP-OBS,08:10 current values,08:15 assignment,08:18 source successes/rejection,08:25 native actions. No actual source, identity-profile/mapping, aggregation, processing, provisioning, role/request/approval, credential, license or native action performed.

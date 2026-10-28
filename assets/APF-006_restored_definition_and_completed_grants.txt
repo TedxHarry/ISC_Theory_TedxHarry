@@ -1,0 +1,17 @@
+Profile: Readers + Entry
+          |
+          | add Notes to definition
+          v
+Notes delivered to an account
+          |
+          | restore old definition
+          v
+Removal propagation OFF here
+Profile: Readers + Entry
+Account: Readers + Entry + Notes
+          |
+          v
+Assess authorized corrective removal
+          |
+          v
+Verify native rights and capability

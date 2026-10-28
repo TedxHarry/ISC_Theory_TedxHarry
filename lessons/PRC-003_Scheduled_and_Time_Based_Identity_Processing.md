@@ -1,368 +1,310 @@
 # The date arrived. When will ISC process the identity?
 
-Devi's assignment is due for review at 16:00 UTC. At 16:01, her review label in SailPoint Identity Security Cloud (ISC) still says Before review.
+A review is due at 16:00 UTC. At 16:01, the person's stored review label in ISC still says Before review.
 
-Does that mean the date comparison is wrong?
+Would you change the date comparison?
 
-Not necessarily. A stored label is the result of a previous calculation. It does not keep running just because the clock moves.
+First, let's check what that label represents. A stored value records the result of an earlier calculation. Moving past the review time doesn't keep that calculation running or write a new answer into the field.
 
-We need to separate the rule for calculating the value from the mechanism that runs that rule again.
+We need both a rule that returns the right answer and a processing plan that evaluates it when required.
 
-**Scheduled identity processing** reevaluates eligible identities through recurring platform jobs. **Time-based identity processing** uses an identity's configured Next Processing Date to arrange another reevaluation at a particular future time.
+## What is being calculated?
 
-Neither name, by itself, proves that a result has already been applied or that a connected system has completed a change.
+In SailPoint Identity Security Cloud, or ISC, an **identity** is the record representing a person across their accounts. An **account** is a record for that person in a particular system. An **attribute** is a named field on either record.
 
-## Establish the person, input and intended result
+The person already has a valid identity and one correctly associated account on HR-Primary. A **source**, such as HR-Primary, is ISC's configured representation of a system's account data.
 
-Devi's employee number is 93003. She already has a valid ISC **identity**, the record representing her as a person. I-93003 is our teaching label for it, not an actual ISC object ID.
+The account contains this field, already collected into ISC:
 
-She has one correctly associated account, `ar-93003`, on AssignmentRegister Production.
+`reviewAt = 2026-10-23T16:00:00.000Z`
 
-A **source** is ISC's configured representation of a system's account data. An **account attribute** is a named field on a particular account. An **identity attribute** is a field on the identity.
+It identifies October 23, 2026, at 16:00 UTC. UTC means Coordinated Universal Time. The Z suffix identifies a zero UTC offset. This is an exact moment, rather than a date whose local time is still unspecified.
 
-The Employees **identity profile** supplies shared configuration for this identity population. Its **mappings** define how identity fields receive their values.
+The Employees **identity profile** supplies shared configuration for this identity population. Its **mappings** specify how identity attributes receive their values.
 
-The account field `reviewAt` contains `2026-10-23T16:00:00.000Z`. This value is already collected into ISC.
-
-ISO 8601 is a standard date-and-time representation. In this timestamp, Z means UTC, Coordinated Universal Time. The value identifies an exact moment, not an unspecified local “review day.”
-
-A custom identity field, `assignmentReviewStatus`, uses a **transform**, a calculation that prepares an attribute value. The business rule is:
+A custom identity attribute, `assignmentReviewStatus`, uses a **transform**, a calculation that prepares an attribute value. It reads reviewAt from the associated HR account and applies this business rule:
 
 - Before reviewAt, return Before review.
 - At or after reviewAt, return Review due.
 
-This is a review label only. It does not terminate employment, disable an account, remove access or send a notification.
+At 15:59 UTC, the first condition applies. At exactly 16:00, the second applies because equality belongs to "at or after." At 16:01, the answer is still Review due.
 
-The calculation explicitly reads reviewAt from Devi's associated AssignmentRegister account. It compares the evaluation's current time with that timestamp. It does not depend on another identity field finishing first.
+The `dateCompare` operation supports this comparison. With the evaluation time, `now`, on the left and reviewAt on the right, greater than or equal means "the evaluation time has reached or passed reviewAt."
 
-Devi's **identity state** is Active. Identity state controls participation in ISC features and processing; it is not the same thing as our review label. A lifecycle state is a separate business-stage configuration that can drive access and assign an identity state. We are not changing either state here.
-
-A **role** groups configured access and can assign it using identity conditions. **Attribute synchronization** keeps selected account fields aligned with identity fields through configured account updates.
-
-For the first design, the tenant's time zone is explicitly configured as UTC. No roles are implemented, and Devi has no account on a source configured for attribute synchronization.
-
-The review calculation is marked as requiring periodic refresh. No Next Processing Date is configured for her in this first design.
-
-These facts matter when we decide which recurring job includes her. They are not background details to guess from the word employee.
-
-All records, configuration and processing observations below are fictional. No tenant or external account is changed.
-
-## The clock can change the answer without changing the source
-
-At 15:59 UTC, an evaluation of the rule returns Before review.
-
-At 16:00 UTC, the comparison is true for “at or after,” so an evaluation returns Review due. At 16:01 it still returns Review due.
-
-The reviewAt field has not changed between these evaluations. The changing input is the evaluation time.
-
-ISC's dateCompare operation supports comparing a supplied date with `now`, meaning the moment the expression is evaluated. A greater-than-or-equal comparison includes the boundary itself.
-
-That explains the calculation. It does not arrange those evaluations.
-
-If the last applied result was Before review at 13:00, passing 16:00 does not by itself overwrite the stored identity field.
-
-**Account aggregation** reads account information into ISC. Another unchanged read of reviewAt is not the only way, or necessarily the right way, to address a time-dependent result.
-
-**Identity processing** reevaluates identity information and applicable requirements using available inputs and configuration. The recurring and per-identity paths supply reasons to perform that evaluation without requiring HR to edit the same date again.
-
-Here are the separate responsibilities:
+Here, `now` means the moment the expression is evaluated. It doesn't mean a field continuously changes after the calculation has returned.
 
 ```text
-Source input: reviewAt = 16:00 UTC
-                  |
-                  v
-Rule compares evaluation time
-with the supplied review moment
-                  |
-   BEFORE -> Before review
-   AT/AFTER -> Review due
+Collected reviewAt: 16:00 UTC
+              |
+compare evaluation time with reviewAt
+              |
+    +---------+---------+
+    |                   |
+  before             at/after
+    |                   |
+Before review        Review due
 
-A processing mechanism runs the rule.
-Application establishes the stored result.
-A clock boundary alone proves neither.
+The comparison determines the answer.
+Processing must run the calculation.
+A current check establishes the
+applied identity result.
 ```
 
-The diagram describes the calculation and its application boundary. It is not a background timer running continuously for every stored field.
+The review label has no employment, account-disable, access-removal or notification action configured. Review due means the label's condition is met. It doesn't mean someone has been disabled or emailed.
 
-## The recurring schedule has selection rules
+The configuration and observations in this lesson are hypothetical. They are supplied for reasoning, not measured results from an ISC tenant.
 
-ISC's documented scheduled identity processing has morning and evening jobs at 08:00 and 20:00 in the tenant's configured time zone.
+## Who will run the calculation again?
 
-Those are scheduled queue times, not a guarantee that every selected identity finishes processing at that instant. Other work can delay the job's start.
+Suppose the initial configuration application and a current identity check established Before review at 13:00 UTC. That was correct at 13:00.
 
-The job's population also matters:
+If no later evaluation has been applied, the stored value can still be Before review after 16:00. The business boundary changed the correct answer; it didn't itself apply that answer.
 
-| Scheduled job | Documented population rule |
+**Identity processing** reevaluates identity information and applicable requirements using the available data and configuration. A time-dependent field needs a reason for that evaluation to happen again.
+
+**Account aggregation** collects account information into ISC. The stored reviewAt needn't change when the clock reaches it. Waiting only for HR to edit the date again would miss the actual dependency: the calculation also uses evaluation time.
+
+ISC provides **scheduled identity processing**, recurring processing for eligible identities, and **time-based identity processing**, which uses an identity's configured next processing time.
+
+## Which identities does the recurring schedule include?
+
+ISC's documented recurring jobs are scheduled for 08:00 and 20:00 in the **tenant's configured time zone**. The tenant is the organization's ISC environment; its schedule zone isn't determined by the administrator's browser clock.
+
+Those times are when scheduled jobs are queued. Other work can delay their start, and being due isn't the same observation as starting or finishing.
+
+The jobs also have selection conditions. To understand them, we need two configuration meanings.
+
+An **identity state** controls an identity's participation in ISC features and processing. Active and Inactive (short-term) are identity states. This participation setting is different from our review label.
+
+A **lifecycle state** describes a business stage, such as active employment, and can drive configured access and assign an identity state. Neither state changes in our example.
+
+A **role** groups configured access around a business responsibility. **Attribute synchronization**, or attribute sync, keeps selected account fields aligned with identity fields through configured updates. Roles and sync matter here because they appear in the recurring jobs' selection rules.
+
+| Recurring job | Documented population |
 |---|---|
-| 08:00, morning | Active and Inactive (short-term) identities with an account on a source configured for attribute synchronization |
-| 20:00, evening, when the tenant has roles implemented | Active and Inactive (short-term) identities |
-| 20:00, evening, when the tenant has no roles defined | Active and Inactive (short-term) identities in profiles with an identity attribute marked as requiring periodic refresh |
+| 08:00 | Active and Inactive (short-term) identities with an account on a source configured for attribute sync |
+| 20:00, when roles are implemented in the tenant | Active and Inactive (short-term) identities |
+| 20:00, when no roles are defined | Active and Inactive (short-term) identities whose profile has an identity attribute marked as requiring periodic refresh |
 
-**Inactive (short-term)** is another identity state that can participate in these scheduled paths. Do not assume the same recurring population includes Inactive (long-term) identities.
+The evening roles condition concerns the tenant having roles. It doesn't require this person to hold a particular role.
 
-Selection for processing also does not mean every field or access assignment must change. Processing can preserve a result that is still correct.
+Don't extend the table to Inactive (long-term) identities. The recurring population rules described here are specific; they aren't a complete eligibility rule for every other processing path.
 
-Attribute synchronization is relevant to the morning selection rule, but it is not another name for scheduled identity processing.
+Now apply those conditions to our first design:
 
-For Devi's first design, the morning sync-account condition is not met. The evening no-roles condition is met because her profile has a time-dependent attribute marked for periodic refresh.
+The tenant's time zone is explicitly UTC. The identity state is Active. No roles are implemented, and this person has no account on a sync-configured source. The review mapping is marked for periodic refresh, and no Next Processing Date is configured.
 
-At 16:01, expecting the recurring evening job to have already applied Review due would be a timing mistake. Its scheduled time in this UTC tenant is 20:00.
+The morning condition isn't met because the sync-account requirement is absent. The evening no-roles condition is met because the profile has the periodic-refresh requirement.
 
-Nor should we say “it always runs every twelve hours for everyone.” That loses both the population conditions and the distinction between due, started and completed work.
+That is why the next relevant recurring job in this example is 20:00 UTC. Expecting it to have applied the new label at 16:01 would confuse the review deadline with the processing schedule.
 
-The tenant having roles is a selection condition for the documented evening path. It does not mean Devi must be a member of a particular role to meet that population rule.
+## Periodic refresh isn't a timer for each review date
 
-## Periodic refresh declares a reevaluation need, not a deadline
+The transform option `requiresPeriodicRefresh` is a **boolean**, a true-or-false setting. Marking it true identifies a need to reevaluate the logic during periodic processing.
 
-The transform option `requiresPeriodicRefresh` is a boolean, a true-or-false configuration setting. It identifies a need for periodic reevaluation of time-dependent logic.
+Our time-dependent review mapping has that setting. It gives the recurring selection rule the periodic-refresh condition it needs.
 
-In this example, the review mapping has that periodic requirement.
+It doesn't create an individual 16:00 timer from reviewAt. It doesn't mean every minute, and it doesn't override the documented identity-state conditions.
 
-It does not mean “run at every reviewAt value.” It does not mean “run every minute.” It also does not independently make a long-term inactive identity part of the Active/short-term recurring population.
+Let's inspect the supplied recurring-only observations, all on October 23, 2026:
 
-A calculation can be correct at the moment it runs while the stored value becomes outdated before its next run. That is why the business timing requirement must be part of the design.
-
-If a review label appearing after the evening run is acceptable, the recurring path may meet the requirement.
-
-If the business requires a reevaluation around 16:00, the recurring evening path alone is not an explanation of how that requirement will be met.
-
-Making the comparison more complicated cannot turn an evening schedule into a 16:00 schedule. The comparison and its processing mechanism solve different problems.
-
-Similarly, if roles happen to make a population eligible today, that is not a reason to leave a real time dependency undocumented. Review what will happen if the access-model configuration or profile eligibility changes.
-
-## Do not use your own clock as the tenant's clock
-
-The browser's display time, the tenant's recurring schedule time and a source timestamp's time zone can differ.
-
-Our example uses an explicitly UTC-configured tenant, so 20:00 on that schedule is 20:00 UTC. That is an example assumption, not a claim that every tenant defaults to UTC.
-
-The documented default schedule zone is CST/CDT. Check the actual tenant configuration instead of treating that default or the administrator's location as evidence for this tenant.
-
-A source value with an offset also identifies its own moment. For example, `2026-10-23T11:00:00.000-05:00` is the same instant as our 16:00 UTC reviewAt.
-
-The five-hour difference is a representation difference, not an extra five hours of processing delay.
-
-A date-only value such as `2026-10-23` needs an approved time and zone before it can represent this exact review moment. Do not silently add midnight or assume “end date” means the start of that date.
-
-For a named local time zone, daylight-saving rules can change the offset across dates. Preserve the intended local business time and convert using the correct rules for that date, rather than carrying one fixed offset into every future event.
-
-For an incident, normalize the relevant observations to a shared time reference before comparing them. Preserve the original zone information too.
-
-## A Next Processing Date adds a per-identity processing time
-
-Now consider an alternative design for the same review requirement.
-
-ISC's **Next Processing Date**, technical name `nextProcessing`, is an identity attribute used by time-based processing. Its mapping is configured per identity profile.
-
-It is not the same attribute as reviewAt. ReviewAt supplies the business boundary; nextProcessing supplies the planned next identity-processing time.
-
-They can contain the same timestamp when that is the approved plan. They still have different responsibilities.
-
-For this alternative, the Employees nextProcessing mapping receives the approved future processing timestamp from available source data, with any required conversion. The time-dependent review calculation still reads the associated account's reviewAt independently.
-
-Do not build this around an assumption that one identity-field calculation can read a newly calculated peer field because it appears earlier in a screen. Identity calculations can overlap; such a dependency does not establish readiness.
-
-The required nextProcessing value must be:
-
-- In the future.
-- In ISO 8601 form.
-- At least one hour after the time the nextProcessing identity attribute was updated in ISC.
-
-The last condition uses the identity attribute's update in ISC, not merely HR's earlier approval or publication time.
-
-Suppose the applied identity nextProcessing is verified as `2026-10-23T16:00:00.000Z` after it is updated at 13:30 UTC. That gives two hours and thirty minutes of lead time.
-
-The same 16:00 value first updated at 15:30 provides only thirty minutes. It does not meet the one-hour requirement.
-
-Do not present a too-soon, current or past timestamp as a supported exact-time rescue plan. Resolve the operational need through an approved supported path, and verify its outcome.
-
-Saving a profile mapping or seeing the value in Preview is not proof that the identity has an applied nextProcessing value. **Preview** evaluates selected mapping results; population application and current identity data need separate evidence.
-
-The alternative supplies another processing time in addition to scheduled processing. It does not remove the recurring jobs or replace their other responsibilities.
-
-## Compare the two designs without combining their histories
-
-Both designs use the same unchanged reviewAt. The following are alternative fictional observations on October 23, 2026, not one continuous run.
-
-| Design and observation | What it establishes |
+| Observation | What it establishes |
 |---|---|
-| Recurring-only: initial configuration application and current Before review are verified at 13:00 UTC | The initial stored label is established before the boundary |
-| Recurring-only: at 16:01, selected Preview returns Review due; current identity is separately checked and still says Before review | The calculation is correct at that time, but the current applied label has not changed |
-| Recurring-only: the eligible evening job is queued at 20:00, starts at 20:04 and current Review due is verified after relevant processing at 20:06 | The scheduled path has applied the changed result in this supplied example |
-| Time-based alternative: nextProcessing 16:00 is applied and verified after its 13:30 update | The planned per-identity time meets the stated future-format and lead-time conditions |
-| Time-based alternative: relevant processing and current Review due are verified at 16:02 | The per-identity path has produced the applied label in this supplied example; this is not a two-minute service guarantee |
+| 13:00 UTC: initial configuration application and current Before review are verified | The stored initial label is established before the boundary. This is not attributed to the morning job. |
+| 16:01 UTC: selected Preview returns Review due; a separate current identity check still shows Before review | The calculation returns the correct answer now, while the applied label remains old. |
+| 20:00 UTC: the eligible evening job is queued | The scheduled work is due and queued, not proved finished. |
+| 20:04 UTC: that job starts | Execution has begun in this supplied history. |
+| 20:06 UTC: relevant processing and current Review due are verified | The recurring path has applied the changed result in this example. |
 
-The 13:00 observation comes from the initial configuration application. It is not attributed to a morning scheduled job whose selection condition is absent.
+**Preview** evaluates mapping results for a selected identity. It helps test the calculation; it doesn't apply that result or establish a whole population's current values.
 
-At 16:01 in that history, we have actually checked the current identity. Unlike an old screenshot alone, that supplies current evidence of the retained Before review label.
+At 16:01, we have a current check of Before review as well as a new Preview of Review due. This is stronger evidence than relying on a screenshot from 13:00: it establishes that the applied label is still old at the time of inspection.
 
-It still does not make the comparison defective. The Preview and schedule explain the difference.
+The comparison isn't shown to be defective. It returns the correct result when evaluated. The gap is between when the answer needs to change and when the chosen recurring path evaluates and applies it.
 
-In the time-based alternative, the supplied observations confirm relevant execution and current state. A due timestamp alone would not establish either.
+If a review label after the evening run is acceptable, that design may meet the business need. If the requirement is reevaluation around 16:00, the evening schedule alone doesn't explain how to meet it.
 
-The intended processing time is not a guarantee that every dependent operation completes at that exact second. Keep execution and application evidence even when the per-identity time is correctly configured.
+Changing the comparison can't move an evening job to 16:00.
 
-The two paths fit together like this:
+The queued, started and verified times are supplied observations, not a four-minute start allowance or a six-minute completion guarantee. Selection also doesn't mean every field or access assignment must change; an evaluated result can remain correct.
+
+If roles make an identity eligible today, still record its actual time dependency. Removing roles or changing profile eligibility shouldn't leave the design relying on an unexplained side effect.
+
+## Put the business time and schedule time on the same clock
+
+Our recurring example deliberately uses a UTC-configured tenant. That doesn't establish UTC as every tenant's default.
+
+The documented schedule default is CST/CDT, the Central standard/daylight time designation. Check the tenant's actual configuration rather than assuming either the default or your own local zone applies.
+
+A source timestamp has its own representation too:
+
+`2026-10-23T11:00:00.000-05:00`
+
+This identifies the same instant as `2026-10-23T16:00:00.000Z`. The minus-five-hour offset means local time is five hours behind UTC, so 11:00 at that offset is 16:00 UTC.
+
+The different text doesn't represent an extra five hours of processing delay.
+
+A date-only value, `2026-10-23`, doesn't specify our 16:00 review moment. The business must supply the intended time and zone. Adding midnight would introduce a different requirement.
+
+For a named local zone, use its rules for the relevant date. Daylight-saving changes can alter the UTC offset; one date's fixed offset isn't a permanent rule for every future review.
+
+When investigating, compare the relevant instants using a common time reference and preserve the original timestamps and zones. Otherwise, a display difference can look like a scheduler fault.
+
+## Give the identity an additional processing time
+
+Now consider an alternative design for the same review. This is a separate hypothetical history, not a continuation of the recurring-only run.
+
+**Next Processing Date**, technical name `nextProcessing`, is an identity attribute used by time-based processing. Its mapping is configured per identity profile.
+
+Its purpose is different from reviewAt:
+
+- reviewAt supplies the business boundary used by the comparison.
+- nextProcessing supplies the planned next identity-processing time.
+
+They can have the same timestamp when that is the approved plan. That doesn't make them the same field or responsibility.
+
+For this alternative, Employees maps nextProcessing from available account data containing the approved future processing timestamp, using conversion if needed. The review calculation independently reads the associated account's reviewAt.
+
+Don't make one identity-field calculation depend on a newly calculated peer field merely because it appears earlier on the mapping screen. Identity calculations can overlap, and that display order doesn't establish that the peer's current value is ready. Keep these inputs independently available.
+
+The nextProcessing value must be:
+
+- A future time.
+- In ISO 8601 form, a standard date-and-time representation.
+- At least one hour after the nextProcessing identity attribute was updated in ISC.
+
+The timestamp shown earlier, with a full date, time and Z suffix, is the form used in this example. This isn't a claim that every date string accepted elsewhere is interchangeable in every ISC calculation.
+
+The one-hour condition is easy to attach to the wrong event. It is measured from the update of the identity attribute in ISC, not HR approval or the time someone saved a proposed mapping.
+
+Suppose the applied nextProcessing value is verified as 16:00 UTC after its update at 13:30 on October 23. The lead is two hours and thirty minutes, so that example meets the one-hour condition.
+
+If the same value is first updated at 15:30, only thirty minutes remain. Correct formatting doesn't make that timing valid. HR approving it at 09:00 doesn't supply the missing lead inside ISC.
+
+An old, current or too-soon timestamp isn't a supported exact-time recovery plan. Resolve an urgent need through an authorized supported path and verify the required result.
+
+Also check application. A saved profile mapping or correct Preview doesn't establish an applied nextProcessing value on the identity. Trace the available input, supported application and current identity value.
+
+In this alternative, the 16:00 value is applied and verified after the 13:30 update. Relevant processing and current Review due are then verified at 16:02.
+
+Those supplied observations establish the applied label. They don't promise two-minute delivery. The due timestamp alone would not establish actual execution or application.
+
+The per-identity processing time is additional to scheduled processing. It doesn't remove the recurring jobs or replace their other responsibilities.
 
 ```text
-Recurring scheduled path
-eligible population + tenant time zone
-                  |
-        scheduled job is queued
-                  |
-        observed execution/results
+Recurring path
+tenant time zone + eligible population
+               |
+scheduled job queued at 08:00/20:00
+               |
+actual execution and current result
 
-Additional time-based path
-profile mapping -> identity nextProcessing
-                  |
-future ISO time + one-hour lead
-                  |
-        relevant processing
-                  |
-        observed current result
+Additional per-identity path
+profile maps identity nextProcessing
+               |
+future ISO time + at least 1-hour lead
+               |
+relevant processing and current result
 
-Both evaluate applicable configuration.
-Neither is proof of external delivery.
+Both use the applicable configuration.
+External actions need separate evidence.
 ```
 
-This is a responsibility comparison. It does not describe undocumented internal queues or promise identical timing behavior for both paths.
+This compares responsibilities. Only the recurring job's documented queue behavior is described; the diagram doesn't invent an identical private queue implementation for the per-identity path.
 
-## One next time is not a permanent recurrence rule
+## Keep planning after the first milestone
 
-The attribute is called nextProcessing because it identifies a next processing time for an identity. A single timestamp is not a list of all future business events.
+A nextProcessing timestamp identifies a next processing time, not a permanent recurrence rule.
 
-If an employee has a start, an assignment-review point and an end date, the design needs to determine which future milestone is relevant next.
+If the business has a start, a review and an end milestone, decide which applicable future point needs processing next. After a milestone passes, check how the configuration will supply the next relevant future time with sufficient lead.
 
-After a milestone passes, review whether the calculation will produce the next applicable future time and meet the lead requirement.
+Don't assume ISC advances a single timestamp daily or invents a later review. Nor should you assume a universal clearing or retention behavior for a past value. Inspect the actual mapping and current data.
 
-Do not assume ISC invents a daily recurrence, advances the timestamp by a fixed number of days, or handles every later milestone because the first date was valid.
+A correction can separate the business date from an older processing plan. Suppose reviewAt is postponed from 16:00 to 18:00 and that corrected input reaches ISC.
 
-Also do not make up a universal automatic clearing or retention behavior for a past value. Inspect the actual configuration and current nextProcessing data, and verify the required next event.
+If a previously planned 16:00 run occurs and evaluates that revised input, it compares 16:00 with 18:00. Before review is the right answer. That result doesn't prove the calculation was skipped.
 
-A cancellation, extension or corrected date can change the plan. The revised business input must reach ISC, the nextProcessing value must be applied, and the new timing must still meet the requirements.
+The remaining question is how the revised plan will provide a later evaluation. Check the updated nextProcessing mapping, applied value, lead and execution, or the other approved timing path.
 
-For example, if HR moves reviewAt from 16:00 to 18:00, a correct independent calculation should evaluate the revised reviewAt. A still-planned 16:00 processing time does not itself change that business boundary.
+An extension, cancellation or corrected date needs the same review of the approved requirement and applied plan. Don't assume that changing the business date automatically proves every previously planned operation was changed or every later action completed.
 
-An early run might correctly return Before review for the new 18:00 boundary. You still need a plan for reevaluation at the revised relevant time.
+## A processing deadline isn't proof of an access cutoff
 
-This is why the business date and processing date must be traced separately, even when the first design used the same timestamp for both.
+Our review label is informational. There are no external actions configured for it.
 
-## Processing time is not an access-removal guarantee
+A separate design might use a time-dependent lifecycle state to require account or access changes. **Provisioning** carries out those changes through supported automatic or manual delivery.
 
-**Provisioning** carries out an account or access change in a connected system through supported automatic or manual delivery.
+The lifecycle configuration establishes which actions should follow. Their delivery still depends on connector capability, execution authorization and actual operation results. Identity-processing completion doesn't validate that provisioning succeeded.
 
-If a time-dependent **lifecycle state**, a business stage that can drive configured access, changes during processing, required account or access operations can follow.
+For a real cutoff, specify the target requirement: which account must be disabled, which membership removed, or which application behavior stopped. Establish an approved timing and delivery design with sufficient operational margin, then verify the required target state.
 
-Their success still depends on the configured actions, connector capabilities, authorization and target result.
+A disconnected target can require a person to complete a manual task. A failed write can require correction. A current identity stage, a task and effective access at the application are different evidence.
 
-Processing an identity does not validate that the resulting provisioning succeeded.
+A date comparison using now or a correctly configured nextProcessing value doesn't prove access disappeared at that exact second.
 
-Our Review due label has no such actions configured. It changes no account state or access. Reading the label as “Devi has been disabled” would invent both a requirement and a result.
+## Find the missed responsibility before changing the date
 
-For an actual cutoff requirement, specify what must be true at the target: which account is disabled, which membership is removed, or which application behavior must stop.
+For a missed-looking boundary, first verify the approved moment, zone and equality rule. Does "due at 16:00" include 16:00 itself? Our rule does.
 
-Then establish an approved timing and delivery design with sufficient operational margin and verification. Do not promise “access is gone exactly at the date” merely because a transform compares with now or nextProcessing has that date.
+Next check that the intended source value is already available. A perfectly timed run using an old end date can produce the wrong business answer without any scheduling defect.
 
-A disconnected target may require a human to complete a task. A failed write may need correction. A current identity stage and a target's effective access are different evidence.
+Inspect the governing identity profile and mapping, then the chosen processing path.
 
-## Investigate a missed-looking boundary in the right order
+For the recurring path, check identity state, the applicable population condition, periodic-refresh need where relevant, the tenant zone and actual job execution.
 
-First verify the approved boundary, including the time zone and whether equality belongs before or after it.
+For the per-identity path, check current applied nextProcessing, its identity-attribute update time, future format/lead conditions and relevant execution evidence. A value proposed in Preview doesn't establish these facts.
 
-Then check that the correct source value is already available to the calculation. A perfectly timed run using an old end date can return the wrong business result for reasons unrelated to the scheduler.
+Then inspect the current calculated field. An unchanged answer can be correct before the boundary or after a postponement. A value alone isn't proof of skipped execution.
 
-Inspect the governing profile, the time-dependent mapping and the intended processing path.
+Finally, follow each required consumer separately. Search visibility, a sent email, an external field and removed access don't prove one another.
 
-For the recurring path, check the identity state, applicable population rule, periodic-refresh need where relevant, tenant time zone and actual job execution.
+If a deadline was missed, retain the original observations before correcting the design. Don't temporarily edit worker data or set a past nextProcessing value to manufacture an event. Use the authorized supported recovery path and verify what the business actually requires.
 
-For the time-based path, check the applied nextProcessing value, when that identity attribute was updated, the future-time requirement and the actual processing evidence. Do not substitute a proposed value from Preview for current identity data.
+## Work through these timing decisions
 
-Then check the current calculated field. An unchanged result can be legitimate before the boundary or after a corrected future boundary. It does not independently prove a skipped job.
+### Questions
 
-Finally, follow separately required consumers. Search visibility, an email, a target field and removed access are not interchangeable completion signals.
+1. In the recurring-only design, the tenant is UTC, there are no roles or sync-configured source accounts for this Active identity, and its profile has the periodic review attribute. At 16:01, Preview is Review due but current identity is Before review. Is the comparison necessarily wrong?
+2. Another tenant has no roles. An Active identity's profile has no periodically refreshed attribute. Does pointing to the evening job establish inclusion in that documented population?
+3. A correctly formatted nextProcessing of 16:00 UTC is first updated on the identity at 15:30 the same day. Is that a valid plan merely because the date text is correct?
+4. HR approved 16:00 at 09:00, but nextProcessing isn't updated in ISC until 15:30. Which time determines the one-hour lead?
+5. One record shows 16:00 UTC and another shows 11:00 with explicit offset minus five hours on the same date. Must they identify different instants?
+6. The eligible evening job is queued at 20:00, starts at 20:04 and current Review due is verified at 20:06. Does that establish that the transform failed at 20:00?
+7. Corrected reviewAt 18:00 reaches ISC, and an earlier planned run at 16:00 evaluates it and returns Before review. Is that evidence of a skipped calculation?
+8. In a separate offboarding case, current lifecycle state is verified after processing, but a required target disable reports an error. Can processing completion close the access-cutoff requirement?
 
-If a deadline was missed, preserve the original observations before applying a correction. Avoid artificially changing worker data or choosing a past nextProcessing time to manufacture an event. Use an authorized supported recovery path and verify the real required state.
+### Work through the reasoning
 
-## Work through the timing decisions
+**1. Check the calculation and timing separately.** Preview returns the correct current answer. The selected recurring path is scheduled for 20:00 UTC, so the current Before review result at 16:01 isn't proof of a bad comparison. Check actual execution and whether the business accepts that timing.
 
-### 1. The stored value did not change at 16:00
+**2. The no-roles population condition is missing.** The profile's periodic-refresh requirement matters. Identify the timing need and correct configuration rather than assuming every Active identity belongs to the evening population.
 
-**Facts:** Devi has the recurring-only design: UTC tenant, no roles, no account on a sync-configured source, Active identity and a periodically refreshed review attribute. At 16:01, Preview is Review due while the separately checked current label is Before review.
+**3. Thirty minutes isn't the required hour.** Valid representation doesn't override the lead condition. Use a supported recovery or future plan and verify it.
 
-Is the comparison necessarily wrong?
+**4. The identity attribute's update in ISC determines the lead.** HR's earlier approval doesn't replace it. Investigate collection, mapping and application timing to explain why the value reached ISC too late.
 
-**Reasoning:** No. The evening path selects her profile population, but it is scheduled for 20:00 UTC. The facts establish different proposed and current results before that run. Check actual processing and the approved business timing requirement, not just the expression.
+**5. They represent the same instant under the supplied offset.** Eleven minus05:00 corresponds to sixteen UTC. Normalize before diagnosing delay, and don't reuse that offset blindly for future dates in a named zone.
 
-### 2. The tenant has no roles
+**6. Queueing, starting and applying differ.** The supplied times are consistent with delayed scheduled execution and a later correct result. Decide whether the delay meets the requirement; don't call it arithmetic failure.
 
-**Facts:** Another tenant has no roles. An Active identity's profile has no attribute marked for periodic refresh. The engineer points only to “the evening job.”
+**7. Before review is correct for the new boundary.** Sixteen is before eighteen. Verify the revised applied timing plan and later evaluation instead of changing a correct comparison.
 
-Has the supplied information established inclusion in that documented evening population?
+**8. The target outcome is still unresolved.** The identity stage and failed disable are separate facts. Resolve the authorized delivery problem and verify the actual account state; neither nextProcessing nor processing completion proves disablement.
 
-**Reasoning:** No. In the no-roles path, the profile's periodic-refresh condition matters. Identify the actual timing need and appropriate configuration. Do not assume every Active identity is included just because an evening job exists.
+## Design a reminder for each person's local morning
 
-### 3. The timestamp is valid but too close
+A project wants a review label at 09:00 in each worker's business location. The proposal is a date-only HR field plus periodic refresh, with an assumption that every label changes at local 09:00.
 
-**Facts:** nextProcessing is first updated in ISC at 15:30 UTC with a value of 16:00 UTC on the same date. The value is valid ISO text.
+What is missing before that plan can be accepted?
 
-Does correct formatting make the plan valid?
+Establish each person's intended local time zone and the exact moment for that date, including the applicable daylight-saving rules. A date alone doesn't identify 09:00.
 
-**Reasoning:** No. Thirty minutes does not meet the required one-hour lead from the identity attribute's update. Review a supported recovery or future plan; do not claim that a well-formed timestamp overrides the timing condition.
+Then compare the recurring tenant schedule with the acceptable delay. One tenant-wide morning or evening job isn't an independent local-09:00 job for every person.
 
-### 4. HR approved the date much earlier
+If nextProcessing is the selected design, establish how each future instant is obtained or calculated, reaches the mapping, is applied with sufficient lead and is revised after changed dates or completed milestones. A different supported design is acceptable if it meets the agreed requirement.
 
-**Facts:** HR approves a 16:00 processing time at 09:00, but the nextProcessing identity value is not updated in ISC until 15:30.
+Test the calculation separately from the timing: check expected results before, at and after the boundary, then verify the current label after relevant processing.
 
-Which update matters for the lead requirement?
+If an email is also required, identify its configured notification mechanism and delivery evidence. A changed review field isn't itself a sent reminder.
 
-**Reasoning:** The nextProcessing identity attribute's update in ISC matters. HR's approval time does not provide the missing ISC lead time. Inspect collection, mapping and application timestamps rather than treating publication as application.
-
-### 5. Two timestamps look different
-
-**Facts:** One record shows 16:00 UTC. Another explicitly shows 11:00 with offset minus five hours on the same date.
-
-Are those necessarily different processing moments?
-
-**Reasoning:** No. With the supplied offset, 11:00 minus05:00 represents 16:00 UTC. Normalize the instants before diagnosing delay. Do not generalize that fixed offset to every future date in a named daylight-saving zone.
-
-### 6. The scheduled time has arrived
-
-**Facts:** The eligible evening job is queued at 20:00 and begins at 20:04. Current Review due is verified at 20:06.
-
-Does this prove the transform failed at 20:00?
-
-**Reasoning:** No. Queued, started and applied are different observations. The supplied calculation and result are consistent with later execution. Evaluate whether that timing meets the business requirement; do not relabel a delivery or timing gap as an arithmetic error.
-
-### 7. The review was postponed
-
-**Facts:** reviewAt is corrected to 18:00 and that input reaches ISC. A previously planned 16:00 run evaluates the new input and returns Before review.
-
-Is returning Before review evidence of a skipped calculation?
-
-**Reasoning:** No. It is the correct result for a 16:00 evaluation against an 18:00 boundary. Verify the revised nextProcessing or other timing plan and its application so another relevant evaluation is not left unplanned.
-
-### 8. A later action has not completed
-
-**Facts:** In a separate offboarding case, current lifecycle state is verified after processing, but a required target disable operation reports an error.
-
-Can the identity-processing completion close the access-cutoff requirement?
-
-**Reasoning:** No. The current stage and failed target operation are separate outcomes. Resolve and verify the authorized disable path, including actual target state. A nextProcessing time is not proof that the account is disabled.
-
-## Design the next reminder without confusing the clocks
-
-A project wants a review label at 09:00 in each employee's business location. Its proposal is to use a date-only HR value, mark a transform for periodic refresh and assume every label changes at local 09:00.
-
-What would you ask before accepting that design?
-
-Establish the intended local time zone for each employee and the exact instant for each date, including daylight-saving rules where applicable. A date alone does not identify 09:00 anywhere.
-
-Then decide whether the recurring tenant schedule meets the accepted delay. A tenant-wide morning or evening job is not a separate 09:00 job for every employee's location.
-
-If the design uses nextProcessing, confirm how the per-identity future instant is calculated, collected or derived, applied early enough, and revised after changes or completed milestones.
-
-Test the calculation separately from timing. Use observations before, at and after the boundary. Confirm the applied label after relevant processing.
-
-If the project also wants an email, identify the configured notification mechanism and its delivery evidence. A review field changing is not itself a sent reminder.
-
-The explanation should name the business boundary, the processing plan, the observed identity result and each separately required action. Once those are distinct, a date-related incident becomes something you can investigate without guessing which clock or process was responsible.
+The missing design must connect the approved business moment to a valid processing plan, an observed identity result and each separately required action.

@@ -1,0 +1,17 @@
+October 23, 2026 / UTC
+
+16:59  Relevant evaluation
+       now < 17:00
+       Result: Before boundary
+              |
+17:00  Approved boundary passes
+       No exact-time run established
+              |
+17:03  Supplied processing evaluation
+       now >= 17:00
+       Result: Boundary reached
+              |
+       Current identity value verified
+
+17:03 is supplied example evidence.
+Boundary passage is not a target write.

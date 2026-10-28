@@ -1,145 +1,141 @@
 # A group appears in ISC. What access does it actually represent?
 
-Devi, employee number `100101`, checks invoices in an application called InvoiceDesk. Her account is `iv-100101`.
+An employee can open invoices for the West region but cannot approve them. In SailPoint Identity Security Cloud (ISC), you can see Invoice Readers listed against the employee's application account.
 
-SailPoint Identity Security Cloud (ISC) shows an entitlement named Invoice Readers associated with that account. Devi can open a West-region invoice, but she cannot approve it. She also cannot open an East-region invoice.
+Does that mean the access is working, or that something has failed?
 
-Is the entitlement broken?
+Start with what the employee is trying to do. Reading an invoice and approving it are different actions. A record showing Invoice Readers can help explain the first action without promising the second. To decide whether there is a problem, we need to connect the access recorded in ISC to the application's permission rules.
 
-Before changing anything, we need to know what Invoice Readers represents, which account holds it, and what InvoiceDesk allows that account to do. Those are connected questions, but they are not the same question.
+## What does the group actually allow?
 
-The InvoiceDesk application, records, configuration, policies and results below are fictional. The example assumes supported group and account collection, correctly linked records and membership that stays in place until removed, called standing access. It does not describe a default connector configuration or an actual tenant test.
+An **account** is the record through which a person or another entity uses a system. Here, we are looking at one employee's account in an invoice application.
 
-## Start with the permission, not the label
+A **permission** allows an action on something, such as reading an invoice or approving an expense. Both parts matter. “Read invoices” tells us the action, but we still need to know which invoices it covers.
 
-A **permission** allows an action on something: reading an invoice, editing a supplier or approving an expense. The action and the thing it applies to both matter.
+Applications can organize permissions through **groups**, which collect accounts or other supported members together. Instead of giving the same permission separately to every account, an application can use membership in a group when deciding what an account may do. The group and the application's rules together give that membership its meaning. A group used only as a mailing list does not automatically grant invoice access.
 
-“Read invoices” is already more useful than “finance access.” But it may still be incomplete. Does it mean all invoices, or only invoices within the account's assigned region?
+Let's use these supplied application rules:
 
-A **group** is a collection of accounts or other supported members. An application can use group membership when deciding what those members may do. A group used only as a mailing list doesn't automatically grant application permissions.
-
-An **entitlement** in ISC represents an access right on a source. Depending on the system and supported integration, that right may be represented by a group, an application role, a license or another supported access object.
-
-This is why an entitlement is not always one tiny permission. One application group can grant several actions. Another can grant only one. ISC's represented unit of access follows the source's supported model; it does not turn every possible application action into a separately manageable item.
-
-For this example, the application owner supplies these rules:
-
-| InvoiceDesk group | Agreed permission meaning |
+| Group | What its membership permits |
 |---|---|
-| Invoice Readers, native ID G-4101 | Read invoices within the account's businessUnit; no editing or approval |
-| Invoice Approvers, native ID G-4102 | Approve invoices within the account's businessUnit; does not itself release payment |
+| Invoice Readers | Read invoices within the account's business unit; no editing or approval |
+| Invoice Approvers | Approve invoices within the account's business unit; this permission does not itself release payment |
 
-**Native ID** means the identifier used for the object in the external system. G-4101 identifies the Readers group in this integration.
+The employee's account has a business unit of West and belongs only to Invoice Readers. It is enabled, sign-in succeeds, and there are no other grants of invoice access in this example.
 
-Devi's account has businessUnit West and belongs to G-4101 only. The account is enabled, and her sign-in succeeds. Under the supplied policy, reading West invoices is expected. Approving an invoice or reading East invoices is not.
+Under these rules, West reading is allowed. East reading and invoice approval are denied. That is the expected boundary of the account's access.
 
-We haven't found a failure. We have found a boundary of her access.
+These are hypothetical rules and observations for a supported integration. The membership remains in place until removed, rather than awaiting a separate activation. The application, policy and results are not observations from an actual tenant.
 
-Notice where the meaning came from: the application's permission configuration, confirmed by its owner. We didn't infer it from the word Readers alone.
+Notice why we needed the rules. The word Readers suggested reading, but it did not tell us the regional limit. A group name gives us a label to investigate; it does not establish every permission behind it.
 
-## Keep the access object separate from its holder
+## What does ISC represent?
 
-An **account** is the record through which a person or another entity uses an external system. Devi is the person; iv-100101 is her InvoiceDesk account.
+ISC needs a way to record which access rights exist and which accounts hold them.
 
-An **identity** is ISC's representation of a person or another entity. **Account correlation** associates a collected account with the appropriate identity. Here, that association has been checked: iv-100101 belongs on Devi's identity.
+A **source** is ISC's configured representation of a system or collection of account data. Our source, Invoice Production, represents this production invoice application directly. A **connector** supplies the supported integration for reading its data and, where supported and configured, making changes.
 
-A **membership** is the relationship between an account and a group. The group can exist before Devi joins it and remain after she leaves it.
+An **entitlement** represents an access right on a source. In this integration, ISC represents the Invoice Readers group as an entitlement. The external group is the access object; the entitlement is its representation in ISC.
 
-That gives us three different statements:
+The represented unit depends on the system and integration. It could be a group, a native application role, a license or another supported access object. One such object can permit more than one action. ISC does not automatically split every action in an application into a separately manageable entitlement.
 
-- G-4101 is an existing group in InvoiceDesk.
-- Account iv-100101 belongs to G-4101.
-- That account is associated with Devi's identity in ISC.
+Now separate the object from the relationship.
 
-The first statement doesn't prove the second. The second doesn't, by itself, establish the third.
+The Invoice Readers group exists whether this employee belongs to it or not. **Membership** is the relationship saying that a particular account belongs to that group. If twenty accounts join the same group, there is still one shared group definition, with twenty membership relationships.
 
-If twenty accounts belong to the same group, we have one group definition and twenty account-to-group membership relationships, not twenty unrelated entitlement definitions.
+This is why finding Invoice Readers in the access list does not answer “Does this employee hold it?” We must also inspect the employee's account and its membership.
 
-This distinction matters when someone asks, “Does Devi have Invoice Readers?” We need the correct account and its membership, not just a search result showing that the group exists.
+ISC connects that account to a person through an **identity**, its representation of that person. **Account correlation** matches and associates a collected account with the appropriate identity. It lets ISC associate that account's recorded access with the person.
 
-## How the source group becomes an ISC entitlement
+For our example, the employee's account has been checked and is correctly correlated. We therefore have a connected set of facts: the group exists, this account belongs to it, and this account is associated with this employee's identity. A mistake in any one of those relationships changes what we can conclude.
 
-A **source** is ISC's configured representation of a system or collection of account data. A **connector** provides the supported integration used to read information and, where supported and configured, make changes.
+## How do the application records reach ISC?
 
-Our source is InvoiceDesk Production. It represents the production InvoiceDesk system directly. It is not a directory group that a separate application may or may not honor.
+**Aggregation** means collecting external data into ISC. For this integration, two kinds of collection answer different questions.
 
-**Aggregation** means collecting external data into ISC. Two collections have different jobs here:
+**Account aggregation** reads accounts and their relevant **attributes**, meaning named pieces of information on a record. The account's business unit is one attribute. Its list of group memberships is another.
 
-**Account aggregation** collects accounts and their relevant attributes, including represented memberships. An **attribute** is a named piece of information on a record.
+Collecting the membership values tells ISC which represented access rights the account holds. Account aggregation can create a simple representation of those entitlements in the source's **catalog**, the collection of represented access items.
 
-**Entitlement aggregation** collects the access objects themselves, such as group IDs, names and descriptions. With appropriate support and scope, it can collect groups that currently have no members.
+That account data does not necessarily contain the group's full details. It may give a group reference without a useful description of what the group means.
 
-A **catalog** is the collection of represented access items. An item being present in the catalog means ISC has a representation of that access. It does not mean everyone, or anyone in particular, holds it.
+**Entitlement aggregation** separately reads the access objects and their supported details, such as group identifiers, names and descriptions. With the relevant integration support and collection scope, it can also collect a group that has no members. This makes it possible to represent available access without waiting for an account to hold it first.
 
-How does ISC know which account data represents access rather than an ordinary description?
+The two collections complement each other: account data supplies the holder relationship; entitlement data supplies details about the access object. Separate entitlement aggregation is not mandatory for every simple entitlement representation, and available capabilities depend on the connector.
 
-A **schema** describes the attributes represented for a kind of record and their designated uses. The account schema identifies the membership attribute as entitlement information.
+Neither read adds a membership to the external account. Nor does reading a group into ISC create a new group in the application. Collection gives ISC information about access; changing that access is separate work.
 
-For this fictional integration:
+## How does ISC recognize a membership value?
 
-- The account's membership attribute is named groups.
-- It is marked as an entitlement attribute.
-- It is multi-valued, so it can carry several group references.
-- Its Type is groups, connected to the supported entitlement type also named groups.
-- The entitlement schema selects id as the Entitlement ID and displayName as the Entitlement Name.
+An account contains many fields. ISC needs instructions to distinguish a group membership from an ordinary descriptive value.
 
-An **entitlement type** identifies a supported kind of access object. Here, groups is the supplied native object type, not a friendly name invented to improve the screen. Native type names and available capabilities depend on the integration.
+Those instructions are part of a **schema**: the definition of the attributes represented for a kind of record and how those attributes are used.
 
-The businessUnit attribute also matters to the application's authorization decision. That does not automatically make it an ISC entitlement. In this design it supplies the region used to limit the group's permission; groups carries the represented access memberships.
+For this hypothetical integration, the account's membership field is named `groups`. Its schema marks it as an **Entitlement** attribute. That designation tells ISC to interpret its collected values as access information. The field is also **Multi-Valued**, meaning it can contain a list of group references rather than only one.
 
-The word Type is doing a specific job in that account-schema setting: it connects the membership attribute to the corresponding kind of entitlement object.
+An **entitlement type** identifies a supported kind of access object. The native type supplied by this integration is also named `groups`. Here, **native** means belonging to the external system's model. The type's name must match the supported native object type; it is not an arbitrary friendly label.
 
-On Devi's collected account, groups contains G-4101. On the collected group record, the selected ID value is also G-4101. The source context, schema relationship and matching identifying value connect the membership to the group details.
+The account attribute's **Type** setting connects `groups` to that entitlement type. This is a relationship setting, not just a statement that the field contains text.
 
-The displayed name Invoice Readers helps a person recognize it. It is not a substitute for the identifying reference.
+The entitlement schema then identifies which field supplies the object's identifying value and which supplies its displayed name. In this example:
 
-These are selected teaching records, not an actual connector response or a required API request format:
+- `id` is selected as the **Entitlement ID**.
+- `displayName` is selected as the **Entitlement Name**.
+- The group record contains `id: invoice-readers` and `displayName: Invoice Readers`.
+- The employee account's `groups` list contains `invoice-readers`.
+
+The value `invoice-readers` is the supplied native group reference used on both records. It is not an ISC object ID. These field names and values belong to this example; a different connector may use different supported fields and identifiers.
+
+Why does the matching value matter? The account record says “this account holds `invoice-readers`.” The group record says “`invoice-readers` is the group displayed as Invoice Readers.” Within the correct source and type, the matching reference connects the membership to the object's details.
+
+A display name alone cannot do that job. A group in a test environment might have the same name but represent a different access object.
 
 ```text
-InvoiceDesk Production
+Invoice Production source
 
-Devi's ISC identity
+Employee's ISC identity
   |
-  | associated account
+  | correlated account
   v
-Account: iv-100101
+Collected employee account
   businessUnit: West
-  groups: [G-4101]
-              |
-              | matching group reference
-              v
+  groups: [invoice-readers]
+             |
+             | same native reference
+             v
 Entitlement type: groups
-  id: G-4101
+  id: invoice-readers
   displayName: Invoice Readers
 
-Group definition != account membership
+One group; many account memberships.
 ```
 
-Read the diagram as relationships, not as a claimed processing schedule. The group details and account data can be collected at different times. Their relationship does not prove that every view is equally current.
+The vertical relationships show how the records connect, not a required collection schedule. Group details and account data can arrive at different times, so check the relevant collection's freshness when asking about current access.
 
-Marking groups as an entitlement attribute tells ISC how to interpret the collected values. It does not add G-4101 to the external account.
+The account's `businessUnit` value also influences what the application allows. It is not automatically an ISC entitlement. In this design, `groups` represents access membership, while `businessUnit` supplies a restriction used by the application.
 
-Likewise, reading a group into the catalog does not create a new group in InvoiceDesk. Collection represents what the integration reads; a write is a different operation.
+Marking a field as an entitlement changes how ISC interprets that field. It does not configure the application's permission rules or place anyone in the group.
 
-## What happens when Devi opens an invoice?
+## Who decides whether an invoice can be opened?
 
-**Authentication** establishes who is signing in. **Authorization** decides whether the authenticated account may perform the requested action.
+Once the membership is represented, it is tempting to treat ISC as the system deciding each invoice action. For this integration, the application makes those decisions.
 
-The application uses its own authorization rules. In our example, InvoiceDesk considers the account's membership and businessUnit when evaluating the selected invoice and action.
+**Authentication** establishes who is signing in. **Authorization** determines what the authenticated account may do. Successful sign-in does not settle whether an invoice can be read or approved.
 
-**Scope** is the boundary of the permission: which records or resources it covers. Here, West is part of that boundary.
+When the employee attempts to read an invoice, the application evaluates its own policy. In our supplied rules, it considers the account's group membership, business unit, requested action and the invoice's region.
+
+The **scope** of a permission is the boundary of the resources it covers. Here, West is part of that boundary. Membership supplies the reading permission, while the business unit limits which invoices can be read.
 
 ```text
-Devi signs into InvoiceDesk
+Employee signs into invoice application
   |
   v
-Account iv-100101
-  enabled; sign-in succeeds
-  groups: G-4101
+Enabled account; sign-in succeeds
+  groups: invoice-readers
   businessUnit: West
   |
   v
-InvoiceDesk evaluates its own policy
+Application evaluates its own policy
   |
   +-- Read West invoice --> Allowed
   |
@@ -147,159 +143,148 @@ InvoiceDesk evaluates its own policy
   |
   +-- Approve invoice ---> Denied
 
-ISC represents the group and membership.
-InvoiceDesk enforces these actions.
+ISC records the represented access.
+The application enforces these actions.
 ```
 
-This is the supplied application policy, not an ISC rule engine diagram. ISC does not need to approve each ordinary invoice-opening action for this integration.
+This diagram describes the supplied application policy. It does not describe an ISC rule engine, and the application does not ask ISC to approve each ordinary invoice-opening action in this example.
 
-**Effective access** means what the account can actually do under the conditions being evaluated. Recorded membership is important evidence, but membership alone may not describe every condition governing effective access.
+**Effective access** means what the account can actually do under the conditions being evaluated. The represented membership helps explain that outcome, but it may not describe all the conditions.
 
-A disabled account, a different resource, another grant or an application restriction can change the result. Some systems also have temporary access that must be activated. Just-in-time access means access is authorized ahead of time but provisioned for use when activated, rather than continuously held. Our example uses standing membership, not access awaiting that activation.
+For example, an account restriction can prevent use even when a group is recorded. Another group can independently allow the same action. Some supported access is **Just-In-Time**, meaning it is authorized ahead of time but provisioned for use when activated. That differs from the continuously held membership used here, called **standing access**.
 
-So when a user reports “I have the entitlement but access fails,” ask which action failed, on which resource, through which account, and when. “Access fails” is too broad to identify a broken stage.
+So if someone says “I have the entitlement, but access fails,” make the report more precise: which account attempted which action, on which resource, and when? Without those details, expected denial and broken delivery can look like the same problem.
 
-## What the screen tells you, and what it doesn't
+## What can you trust on the screen?
 
-A friendly entitlement name is useful. A description is useful. Neither is an independent test of the application's current permission rules.
+The screen displays records and relationships supplied through the integration and ISC configuration. The application's permission rules determine what those records mean in use. A screen showing a group name does not establish that every part is correct.
 
-**Metadata** is information describing an object, such as its description or owner. An **owner** is the person or responsible party assigned to decisions about that access object. Ownership does not mean that person is a member of the group.
+For a support investigation, keep the evidence tied to the question:
 
-A useful description for G-4101 would say that it permits invoice reading within the account's businessUnit and excludes editing and approval. “Basic access” leaves important questions unanswered.
-
-Still, correcting the description in ISC is not the same as correcting InvoiceDesk's permissions. If the application accidentally grants editing through G-4101, changing the words to “read only” doesn't remove editing.
-
-Read each kind of evidence within its limits:
-
-| Evidence available | What it supports, and what remains open |
+| Evidence | What it establishes |
 |---|---|
-| Catalog contains G-4101 | ISC represents the group; it does not establish Devi's membership |
-| Collected groups on iv-100101 includes G-4101 | ISC recorded that account's membership at the relevant collection; check freshness for a current-state question |
-| Account is correctly correlated to Devi | The recorded account access can be associated with her identity; it does not establish approval or appropriateness |
-| Application owner confirms the permission rule | Establishes the agreed meaning; current enforcement still needs suitable evidence |
-| A current application check allows West reading | Confirms that selected action under the checked conditions; not every action, invoice or account |
+| Invoice Readers appears in the catalog | ISC represents that access object; this does not establish the employee's membership |
+| The collected account includes the matching group reference | ISC recorded that account's membership at the relevant collection; freshness matters for a current-state claim |
+| The account is correctly correlated | Its recorded access can be associated with the right identity; this does not establish that the access is appropriate |
+| The application owner confirms the intended rule | Establishes the agreed permission meaning; current enforcement still needs suitable evidence |
+| A current application check allows West reading | Establishes that action under the checked conditions, rather than every invoice or action |
 
-This is the front-end and back-end connection in practical terms. The screen presents records and relationships. The integration supplies the represented source data. The application applies its permission rules when an account attempts an action.
+Descriptions and owners help people interpret and govern those records. **Metadata** is information describing an object. An entitlement's description explains its purpose; its **owner** is an assigned responsible party for decisions about that access. The owner need not hold the access.
 
-A screen displaying a name isn't proof that all three parts are correct.
+For Invoice Readers, “Read invoices within the account's business unit; no editing or approval” supports a better decision than “Basic access.”
 
-## Having access isn't the same as having requested it
+However, changing an entitlement's display name or description in ISC does not send that change to the source or rewrite its permissions. If the application's actual group rule accidentally permits editing, editing must be addressed in the application's permission configuration through the approved process. Better wording alone cannot remove the capability.
 
-Suppose an InvoiceDesk administrator added Devi to G-4101 before this application was connected to ISC. Later, aggregation collects the existing account and membership.
+## Does holding an entitlement mean ISC granted it?
 
-ISC can now represent access it did not originally grant.
+Suppose an application administrator added the employee to Invoice Readers before the application was connected to ISC. Later account aggregation collects that membership.
 
-An **access request** asks for an access item for a recipient. The configured process may include an approval decision. A recorded membership is not, by itself, evidence that such a request existed or that an approver accepted it.
+ISC can represent access it did not originally grant. The membership record tells us what was collected, not necessarily why or through which process it was granted.
 
-**Governance** concerns whether access is appropriate, accountable and maintained under the organization's policies. A **certification** is a review in which assigned reviewers decide whether selected existing access should be retained or removed.
+An **access request** asks for an access item for a recipient. Its configured process may include approval. A membership does not, by itself, prove that a request existed or an approver accepted it.
 
-These processes need accurate access representation precisely because existing access can come from outside ISC's request process.
+This is one reason accurate entitlement representation matters for **governance**, the work of deciding whether access is appropriate, accountable and maintained under the organization's policies. A **certification** is a review in which designated reviewers assess selected existing access and decide whether it should be retained or removed. Reviewing existing access has a purpose even when that access arrived outside ISC's request process.
 
-An entitlement also doesn't become requestable merely because it was aggregated. **Requestable** means it has been made available through the applicable request configuration. That is separate from discovering that it exists.
+Likewise, discovering an entitlement does not automatically make it **requestable**. Requestable means the applicable request configuration makes it available to request. Discovery, holding access, permission to request it and approval of a particular request are separate facts.
 
-We should therefore distinguish “Devi holds it,” “Devi should hold it,” and “Devi can request it.” One statement cannot silently stand in for the others.
+## Where do access profiles, roles and provisioning fit?
 
-## Where access profiles, roles and provisioning fit
+Once entitlements represent useful access units, ISC can organize them into larger sets.
 
-An **access profile** bundles related entitlements from one source. For example, a configured Invoice Review access profile could include G-4101 together with another required InvoiceDesk entitlement.
+An **access profile** bundles related entitlements from one source. An Invoice Review profile might combine Invoice Readers with another required entitlement on Invoice Production.
 
-An **ISC role** groups access for a business purpose and can support assignment based on configured criteria. It can include access profiles or direct entitlements.
+An **ISC role** groups access for a business purpose, such as a job function. It can contain access profiles or direct entitlements, from one source or across sources, and can be assigned through configured criteria or requests.
 
-Neither object changes what G-4101 means inside InvoiceDesk. They organize access requirements and how access is assigned or governed.
+These objects organize access requirements. Including Invoice Readers in a bundle does not rewrite the application's reading permission.
 
-Be careful with the word role. An application's native role can be represented as an entitlement. That does not make it an ISC role. Ask which system owns the object and what job it performs.
+The word role needs care here. A native role in an application can be represented as an entitlement. An ISC role is a different object used to organize and assign access. Identify which system owns the object before deciding what the word means.
 
-**Provisioning** carries out supported account or access changes. If an authorized process requires a new membership, the supported fulfillment path must add that membership to the selected external account. A decision that access should be granted is not itself proof that the external change succeeded.
+**Provisioning** carries out account or access changes. If an authorized process calls for a new membership, fulfillment must actually add it to the selected external account. A decision that the employee should receive access is not evidence that the application accepted the change.
 
-For direct fulfillment, operation support, source configuration, target permissions and the actual result all matter. Other integrations may require manual fulfillment. Read capability doesn't establish write capability.
+For a direct change, check whether the integration supports the operation, whether the source is configured for it, whether the connection has the necessary permissions, and what result the operation produced. Other configurations require manual fulfillment by a responsible person. Being able to read a group does not establish the ability to add a member to it.
 
-Removing a membership is another distinct change. It concerns the account-to-group relationship, not necessarily the group's existence. An instruction to remove Devi's group membership should not be interpreted as an instruction to delete the shared group.
+Removing access also needs a precise object. Removing this account's membership changes its relationship to the group. Deleting the shared group affects the object used by other members and is not a substitute for removing one account's membership.
 
-After an attempted change, verify the relevant outcome. Don't use an old collected membership as proof that a recent removal failed, or a completed approval as proof that a group addition succeeded.
+After an attempted addition or removal, use evidence appropriate to the outcome. An approved request does not establish a successful addition. An old collected membership does not establish that a recent removal failed.
 
-Even a confirmed removal of G-4101 proves only that membership was removed. If another independently granted group permits the same action, Devi may retain that action through the other path.
+Even a confirmed membership removal may leave the account able to read invoices through another independently granted group. “Remove this membership” and “eliminate all invoice reading” describe different outcomes to verify.
 
-## Work through the evidence
+## What would you conclude from these records?
 
-For each case, pause at the question and decide which fact is missing before reading the reasoning. Unless a case explicitly changes a fact, use the supplied InvoiceDesk policy.
+Each question supplies a separate variation. Where it does not change a fact, use the invoice policy and correctly associated employee account described above.
 
-### Case 1: The group is there, but is the account a member?
+### 1. The group exists, but the account's list is empty
 
-**Facts:** Entitlement aggregation collected G-4101. A fresh account collection for iv-100101 contains an empty groups list. The supplied application check confirms no other invoice-reading grant.
+Entitlement aggregation collected Invoice Readers. A fresh account collection contains an empty `groups` list. A current application check confirms there is no other invoice-reading grant.
 
-Can we say Devi holds Invoice Readers because the catalog shows it?
+Does the catalog item establish that this employee holds Invoice Readers?
 
-**Reasoning:** No. The group definition exists, but this account has no recorded membership in it. The supplied current check also rules out another reading grant for this case. The missing relationship cannot be filled in by the existence of a catalog item.
+**Reasoning:** No. The access object exists, but the account has no recorded membership in it. The supplied check also rules out another reading grant for this case. A catalog entry cannot supply the missing account-to-group relationship.
 
-### Case 2: No ISC request can be found
+### 2. There was no ISC access request
 
-**Facts:** Fresh account evidence includes G-4101. The application administrator's change record shows that membership was added directly in InvoiceDesk. No ISC access request was used.
+Fresh account evidence includes `invoice-readers`. The application administrator's change record confirms a direct membership addition in the application. No ISC request was used.
 
-Does the absence of an ISC request mean the entitlement isn't real?
+Does that make the recorded entitlement unreal or automatically inappropriate?
 
-**Reasoning:** No. The membership exists and can be represented in ISC. The record of how access was granted is different from the record of what access the account holds. Whether that direct grant was appropriate requires policy and authorization evidence; absence of an ISC request alone doesn't settle that question.
+**Reasoning:** No. The membership exists and can be represented. How it was granted and whether it was authorized are separate questions. Review the applicable policy and authorization evidence to judge appropriateness; absence of an ISC request alone does not answer it.
 
-### Case 3: Readers can edit
+### 3. Readers can now edit
 
-**Facts:** The application owner confirms that a recent InvoiceDesk permission change accidentally added editing to G-4101. A current check shows iv-100101 can edit a West invoice. ISC still displays Invoice Readers.
+The application owner confirms that a recent permission change accidentally gave Invoice Readers editing rights. A current check shows the employee can edit a West invoice. ISC still displays Invoice Readers.
 
-Should we trust the label or change it to make the problem disappear?
+Which change addresses the problem?
 
-**Reasoning:** Neither resolves the permission defect. The supplied application evidence establishes unintended editing. The responsible application team must address the actual permission configuration through the approved change process, with scope and affected members considered. A label correction might improve the description, but it cannot substitute for removing the unwanted capability.
+**Reasoning:** Correct the application's unintended permission rule through the approved change process, considering the affected members and intended scope. Renaming the entitlement or improving its description can help people understand it, but cannot remove editing. The confirmed policy change and current editing result establish the defect.
 
-### Case 4: The same name appears in two environments
+### 4. The name matches in test and production
 
-**Facts:** InvoiceDesk Test and InvoiceDesk Production both contain a group displayed as Invoice Readers. Devi's production account has no G-4101 membership. Someone presents a Test catalog result as proof of production access.
+A test source contains an entitlement displayed as Invoice Readers. The production account has no membership in the production Readers group. Someone uses the test catalog result as proof of production access.
 
-Is the matching display name enough?
+Is that enough?
 
-**Reasoning:** No. The result describes a different source context. Identify the production account, its relevant membership value and the production entitlement it references. Human-readable names don't collapse separate environments into one access object.
+**Reasoning:** No. The catalog result belongs to a different source context. Check the production account, its membership reference and the matching production entitlement. Matching display names do not combine objects across environments.
 
-### Case 5: Approval fails, but reading works
+### 5. Reading succeeds, approval fails
 
-**Facts:** Devi's current memberships contain only G-4101. West reading succeeds; approval is denied. The owner reconfirms the stated policy.
+The account currently holds only Invoice Readers. West reading succeeds, approval is denied, and the owner reconfirms the stated policy.
 
-Should we re-run provisioning to fix approval?
+Should you repeat provisioning of Invoice Readers?
 
-**Reasoning:** The observed denial matches the access supplied. G-4101 doesn't authorize approval. First establish whether approval is a legitimate new requirement. If it is, follow the approved access process for the appropriate item. Repeating delivery of Readers doesn't turn it into Approvers.
+**Reasoning:** The supplied access is behaving as intended. Repeating the same membership addition cannot turn a reading permission into an approval permission. Establish whether approval is a legitimate new requirement. If it is, use the approved access process for the appropriate item.
 
-### Case 6: One group, many holders
+### 6. Twenty accounts reference one group
 
-**Facts:** Twenty current account records each reference G-4101 on InvoiceDesk Production. The catalog has one matching group record.
+Twenty current account records on Invoice Production reference `invoice-readers`. The catalog contains one matching group record.
 
-Are nineteen entitlements missing?
+Are nineteen entitlement definitions missing?
 
-**Reasoning:** No. One shared access object can have many holders. Investigate a missing membership on a particular account if the evidence indicates one, rather than expecting a separate group definition for every member.
+**Reasoning:** No. One shared access object can have many holders. Expect the relevant membership on each account, rather than a separate definition of the same group for each member.
 
-### Case 7: The wrong person owns the account in ISC
+### 7. The membership is on the wrong identity
 
-**Facts:** iv-100101 belongs to Devi in InvoiceDesk and contains G-4101. In ISC, it has been correlated to another person's identity.
+Ownership evidence in the application confirms which employee owns the account. Its `groups` list contains `invoice-readers`, but ISC associates the account with another person's identity.
 
-Would changing the entitlement description correct the person's access view?
+Would changing the entitlement description repair the access view?
 
-**Reasoning:** No. The broken relationship is account-to-identity association, not the permission meaning of G-4101. Investigate the account ownership evidence and correlation under an approved correction process. The native membership and the incorrect identity association are separate facts.
+**Reasoning:** No. Investigate and correct the account-to-identity association under the approved correlation process. The membership is on the account, while the incorrect association places that account's recorded access on the wrong identity. A description does not repair that relationship or change native membership.
 
-### Case 8: Membership is removed, but reading remains
+### 8. The membership was removed, but reading continues
 
-**Facts:** An authorized removal of G-4101 from iv-100101 is confirmed by fresh application evidence. The account still belongs to a second group, G-4199. The owner confirms that G-4199 independently permits West invoice reading, and a current read succeeds.
+Fresh application evidence confirms an authorized removal of Invoice Readers. The account still belongs to another group, Regional Report Readers. The owner confirms that this second group independently permits West invoice reading. A current read succeeds.
 
-Did the G-4101 removal necessarily fail?
+Does the successful read prove that the first removal failed?
 
-**Reasoning:** No. The selected membership was removed. Another supplied grant explains the remaining capability. If the requirement was to eliminate all invoice reading, that broader outcome hasn't been achieved. Review the other grant and its legitimate requirements before deciding on a further change.
+**Reasoning:** No. The selected membership was removed; the remaining grant explains the capability. If the requirement was to eliminate all invoice reading, that broader outcome remains unmet. Review the second grant and its legitimate purpose before deciding on another change.
 
-## Try the reasoning in a different system
+## Explain the same idea for a native application role
 
-A project application exposes a native role named Project Reviewer, identified by R-82. Its supported integration represents the role as an entitlement. The account proj-501 references R-82 and is correctly associated with its owner in ISC.
+A project application has a native role named Project Reviewer. Its supported integration represents that role as an entitlement. In the correct source and entitlement type, the account's role reference `project-reviewer` matches the selected entitlement ID. The account is correctly associated with its owner in ISC.
 
-The application owner states that R-82 permits reading reports only for projects assigned to that account. It does not permit editing. Current evidence shows the account can read an assigned project's report and is denied editing. The entitlement has not been configured as requestable.
+The application's rule allows reading reports only for projects assigned to that account. It allows no editing. A current check confirms assigned-project reading succeeds and editing is denied. The entitlement has not been made requestable.
 
-Explain these four points:
+Explain why the native role can be an entitlement without being an ISC role. Then explain what establishes the holder relationship, why editing denial is expected, and why the catalog item is not automatically available as an access request.
 
-- Why can a native role be an entitlement without being an ISC role?
-- What establishes that this account holds the represented access?
-- Why is the editing denial not a delivery failure?
-- Why doesn't the catalog item automatically become an available access request?
+**Reasoning:** Project Reviewer is an external access object, and the entitlement represents that object in ISC. An ISC role is a separate access-model object. The matching reference in the correct source and type establishes the account's recorded access; correct correlation associates it with its owner. The supplied application rule explains the editing denial. Making the entitlement requestable requires applicable request configuration, separate from collecting it.
 
-The native role is an external access object; the ISC entitlement represents it. An ISC role is a separate access-model object. The matching R-82 account reference, correct source/type context and verified account association support the recorded holder relationship. The supplied policy explains the editing denial. Request configuration is separate from collection and membership.
-
-To explain an entitlement clearly to someone else, start with the external access object and its agreed permission meaning. Then identify the account, the membership reference, ISC's representation and the evidence of what the application actually permits. That gives the name a meaning without asking it to prove more than it can.
+When explaining an entitlement to someone else, connect its name to the external access object, the account holding it, and the permission the application enforces. Those connections let you explain both what the person holds and why a particular action is allowed or denied.

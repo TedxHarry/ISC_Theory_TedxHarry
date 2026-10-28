@@ -1,313 +1,311 @@
 # The account was imported. Why isn't it on the person's identity?
 
-Devi, employee number `71001`, already has an identity in SailPoint Identity Security Cloud (ISC). Her payroll application account also exists in ISC's account inventory.
+An employee identity exists in SailPoint Identity Security Cloud (ISC). The person's payroll account also appears in ISC's account inventory.
 
-Yet that account is not associated with Devi. It appears as uncorrelated.
+Yet the identity doesn't show that payroll account. The account is recorded as uncorrelated.
 
-The import succeeded. So what is missing?
+The read succeeded. What is still missing?
 
-Importing an account tells ISC that a particular system contains that account. Establishing which identity it belongs to is another responsibility. Let's separate those two results before choosing a correction.
+Collection establishes that ISC has a particular account record. Correlation establishes the identity relationship for that account. One result doesn't, by itself, establish the other.
 
-## One record describes a person; another describes an application account
+## Recognizing an account isn't identifying its person
 
-An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a particular connected system.
+An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a connected system.
 
-Devi can have one identity with an HR worker account, a directory account and a payroll account attached to it. Those accounts do not need the same username or account identifier.
+One identity can have an HR worker record, a directory account and a payroll account attached. Those accounts needn't share a username or account identifier.
 
-A **source** is ISC's configured representation of a system or account-data collection. Its **connector** supplies the supported integration behavior. **Account aggregation** reads account information into ISC.
+A **source** is ISC's configured representation of a system or account-data collection. Its **connector** provides supported integration behavior. **Account aggregation** reads account information into ISC.
 
-An **attribute** is a named piece of information. An account attribute describes a source account; an identity attribute describes the ISC identity.
+An **attribute** is a named piece of information. Account attributes describe a source account; identity attributes describe the identity.
 
-An **authoritative source** supplies accounts used to establish identities through an **identity profile**. The profile is shared configuration for the identities it governs, including how identity attributes are populated.
+An **authoritative source** provides accounts used to establish identities through an **identity profile**. The profile supplies shared configuration, including how identity values are populated.
 
-For this fictional example, **PeopleBook Production** is authoritative for Employees. Its worker account `p-71001` has already established the intended employee identity with the required values.
+In this hypothetical example, HR-Production is authoritative for Employees. Its hr-record already belongs to the intended employee identity, whose required values are present.
 
-**LedgerPay Production** represents the existing payroll accounts. It is not authoritative for establishing employee identities in this design. Its collected account `lp-87` should be associated with Devi's existing identity.
+Payroll-Production represents existing payroll accounts. It isn't authoritative for establishing employees in this design. Collected account pay-account should belong to the existing employee identity.
 
-We use `I-71001` as a short teaching label for that identity, not a real ISC object ID.
+An **account identifier** distinguishes a record within its source. Payroll's selected Account ID field is accountKey, containing pay-account. That lets subsequent reads recognize the same account.
 
-## Finding an account again is not finding its person
+The selected **Account Name** field is loginName, containing pay.user. A separate friendly displayName contains Worker A.
 
-An **account identifier** distinguishes an account within the relevant source. It lets the integration recognize which account record it is handling.
+These are different schema roles. An **account schema** defines represented fields and designates which identify and name accounts. Account Name means the designated field, not every field that resembles a person's name.
 
-For LedgerPay, the selected Account ID field is `accountKey`, containing `lp-87`. The selected **Account Name** field is `loginName`, containing `drao`.
+Recognizing pay-account again can update that account's represented information. It doesn't identify whether the account belongs to the intended employee, another person or a shared service.
 
-These are schema designations: the **account schema** defines the fields and which ones identify and name accounts. Account Name here means the field selected for that purpose, not every field that looks like a person's name.
+**Account correlation** matches and associates source accounts with identities. It answers which identity this account should be attached to.
 
-The account also has a friendly `displayName` of `Devi Rao`. That display label is not the selected Account Name in this example.
+That is a relationship between records. It isn't merely copying a value, and it differs from recognizing the same source account on another read.
 
-Recognizing `lp-87` during a later read can update the same ISC account record. It doesn't establish whether that account belongs to `I-71001`, another person, a shared service or someone no longer employed.
+## Follow the matching information on both sides
 
-**Account correlation** is the process of matching and associating source accounts with identities. It answers, “Which identity should this account be attached to?”
+**Null** means no value is present. Here it concerns the payroll employee reference, not whether the payroll account exists.
 
-That is a relationship between objects. It is not merely copying a field and not the same as recognizing an existing source account.
+The supplied evidence is:
 
-Here is the initial supplied evidence:
-
-**Null** means no value is present. In this evidence it describes the payroll employee reference, not the account's existence.
-
-| Object or configuration | Selected fictional facts |
+| Object or configuration | Selected facts |
 |---|---|
-| Identity `I-71001` | Employees governs it. Identification Number, `identificationNumber`, is text `71001`. Its identity `name` value used for default correlation is `worker71001`; its display name is `Devi Rao`. |
-| PeopleBook worker account `p-71001` | Already attached to `I-71001`; the intended person and worker reference have been verified. |
-| LedgerPay account `lp-87` | `loginName = drao`, friendly `displayName = Devi Rao`, and `employeeRef = null`. It is collected, but not attached to a managed person's identity. |
-| LedgerPay configured correlation | One configured comparison pairs account `employeeRef` with identity `identificationNumber`. No other configured comparison supplies a match. |
-| Other eligible identity data | No identity's relevant matching value identifies this account through that missing employee reference; no identity has the `name` value `drao`. |
-| Recorded result | LedgerPay `lp-87` appears as uncorrelated. Devi's identity does not show it as her associated payroll account. |
+| Intended identity | Employees governs it. identificationNumber is text W-107; identity name is worker-w107; friendly display name is Worker A. |
+| HR account hr-record | Already attached to that identity; approved worker reference and person have been verified. |
+| Payroll account pay-account | Account ID pay-account, designated Account Name pay.user, friendly displayName Worker A, employeeRef null. |
+| Configured correlation | One pairing compares payroll employeeRef with identity identificationNumber. No other configured comparison matches. |
+| Other matching evidence | No identity has the name pay.user. The missing employee reference supplies no intended matching value. |
+| Recorded result | pay-account is uncorrelated and absent from the intended employee identity's associated payroll accounts. |
 
-The application account can exist and carry information even when ISC has not established its person relationship.
+The friendly labels match. The configured comparison doesn't use those labels.
 
-## Follow the matching responsibility
+It pairs payroll employeeRef with identity identificationNumber because both are intended to represent the same approved employee reference.
 
-Correlation configuration pairs an account attribute with an identity attribute. The comparison must use information that means the same thing on both sides.
+The account key pay-account and login pay.user have different purposes. They aren't wrong because they differ from W-107.
 
-In this design, payroll `employeeRef` is supposed to contain the employee number. Identity `identificationNumber` contains that same approved person reference.
+With employeeRef null, that configured comparison doesn't establish the relationship. If the approved unique reference W-107 were supplied, it could match the intended identity's identificationNumber.
 
-The account's technical key `lp-87` and its login `drao` are different identifiers serving different purposes. They are not incorrect merely because they differ from `71001`.
+But don't stop at one unsuccessful comparison and assume every such account must remain uncorrelated.
 
-If `employeeRef` contained text `71001`, the configured comparison would have the intended matching value. In the initial evidence it is null, so this comparison does not establish the relationship.
+Supported source types can have **preset correlation configuration**, initial attribute pairings supplied for that source type. Inspect the actual configuration, including any changes to those presets.
 
-Do not infer from that alone that ISC must leave every such account uncorrelated. Supported source types can have preset correlation configurations, and ISC also documents default correlation behavior when the source's correlation configuration cannot correlate an account.
+ISC also documents **default correlation** when the source's configured correlation cannot match an account. It compares the field designated Account Name with identity name, case-insensitively. This documented default isn't configurable.
 
-That default compares the account attribute designated as Account Name with an identity's `name` attribute, using case-insensitive comparison. It is not a general comparison of any human-readable full-name field.
+Case-insensitive means letter case doesn't distinguish the values in that comparison. It doesn't turn every friendly full-name field into a matching input.
 
-In the supplied evidence, Account Name is `drao`, while Devi's identity name is `worker71001`. No other identity has the name `drao`. The default path therefore supplies no match either.
-
-That explains why the main example remains uncorrelated. A missing employee reference and a matching-looking display label do not, by themselves, explain every source's outcome; the applicable configured and default paths matter.
+Here the designated Account Name is pay.user. The intended identity's name is worker-w107, and no other identity has name pay.user. The default path therefore supplies no match either.
 
 ```text
-Already established:
-  PeopleBook p-71001 -> identity I-71001
-  identificationNumber = "71001"
-  identity name = worker71001
+[Existing employee identity]
+[identificationNumber: "W-107"]
+[name: worker-w107]
 
-Collected LedgerPay account lp-87:
-  selected Account Name = drao
-  friendly displayName = Devi Rao
-  employeeRef = null
+[Collected payroll account pay-account]
+[Account Name: pay.user]
+[displayName: Worker A]
+[employeeRef: null]
+                  |
+[Configured reference: no match]
+[Default name comparison: no match]
+                  |
+[Recorded: uncorrelated]
 
-Applicable correlation checks:
-  configured employee reference: no match
-  default drao versus identity name: no match
-    -> supplied result: uncorrelated
-
-Human check:
-  correct account, person and matching data?
+[Engineer verifies intended ownership]
 ```
 
-The first arrow shows an existing account relationship. The last arrow connects the supplied matching conditions to the recorded result. This is a logical evidence map, not a diagram of ISC's private services.
+The upper records are separate evidence. The connected matching checks explain the supplied uncorrelated result. The final line is human ownership verification, not another automatic correlation stage.
 
-An aggregation can collect an account and evaluate correlation in one run. Separating the responsibilities here does not mean they always require separate jobs.
+This is a logical relationship map, not a private service pipeline. One aggregation can collect an account and evaluate correlation in the same run; different responsibilities don't require separate jobs in every case.
 
-## Uncorrelated describes a missing relationship, not a deleted login
+The absence of both applicable matches explains this example. Null employeeRef alone, or two similar display labels alone, wouldn't explain every source's outcome.
 
-An **uncorrelated account** is a collected account not linked to an authoritative identity. In this human-account example, ISC hasn't attached it to the intended employee identity.
+## Supply the approved reference and verify the relationship
 
-It isn't necessarily an account with no legitimate owner in the business. The payroll team may know exactly who uses `lp-87` even though the information or configuration available to ISC doesn't establish that relationship.
+The payroll owner confirms from approved employment evidence that pay-account belongs to employee reference W-107. The integration is intended to publish that reference in employeeRef.
 
-An **orphan account** is a business-risk description whose meaning should be agreed in the organization, such as an account with no valid accountable owner or no longer-needed access. It is not an automatic synonym for every uncorrelated account.
+The approved correction supplies employeeRef W-107 in the payroll feed. It doesn't rename pay.user, alter the valid employee reference or make Payroll-Production authoritative.
 
-Don't conclude that an uncorrelated account has been disabled, deleted or stripped of permissions in the application. Those are separate account or access changes.
+The corrected data then needs to be published, collected and evaluated through the supported correlation path. An external edit alone doesn't replace the old represented input inside ISC.
 
-**Provisioning** attempts supported account or access changes in a connected system. The **target system** is the external system receiving such a change.
-
-The supplied initial read and failed match do not include a provisioning operation to remove LedgerPay access. Whether the account can actually sign in and what it can do must be established from the application and relevant current evidence.
-
-The reverse is also true: an account can be associated with the right identity while disabled in its source. Correct ownership and usable access are different states.
-
-## Where will you see each piece of evidence?
-
-The Accounts view lets you inspect collected accounts and their attributes, including uncorrelated accounts. The source's Uncorrelated Accounts view or report helps locate records that still need a relationship.
-
-The identity's account and access information describes what ISC associates with that identity. If `lp-87` is uncorrelated, searching only Devi's identity is not a complete investigation of the source account inventory.
-
-An **entitlement** is a represented permission or membership. A collected account can carry membership information while its relationship to a person remains unresolved. Do not assign that access to Devi in your analysis simply because the account displays her name.
-
-ISC requires uncorrelated accounts to be resolved before they can be governed through the intended identity relationship. A source-level report listing a record is not the same evidence as a correct person-level access record.
-
-An **access request** asks for access to be assigned or removed through a configured request process. A **certification** is a review of whether access should remain. Reliable account-to-identity relationships matter when such processes act on a person's accounts and access.
-
-A **Source Owner** is a person assigned responsibilities for a source, such as manual fulfillment or access-review tasks. That assignment does not mean every account on the source is that person's own account.
-
-Likewise, an account's administrative business owner, a machine account's responsible person and the human identity using a personal account are not interchangeable relationships.
-
-When collecting evidence, record the exact source, account identifier, current relationship, matching fields and observation time. A total count or a familiar display name is not enough.
-
-## Correct the missing information without changing the person's identity
-
-In the main example, the payroll owner confirms from approved employment records that `lp-87` belongs to employee `71001`. The integration is supposed to supply that number in `employeeRef`.
-
-The approved correction populates that field in the application's data feed. It doesn't rename the payroll login, change the valid employee number or make LedgerPay authoritative.
-
-After the correction is published, the relevant source account must be collected and correlation evaluated through the supported path. Correcting data in the application without reading it into ISC leaves the old represented input in place.
-
-Here are supplied fictional before-and-after facts:
+Assume the intended matching value is unique, ownership evidence is correct, and correlation is reevaluated. The supplied result is:
 
 ```text
-Before correction:
-  same LedgerPay account lp-87
-  employeeRef = null
-    -> no applicable match
-    -> uncorrelated
+[Same payroll account pay-account]
+[employeeRef: null -> "W-107"]
+                  |
+[Corrected input published and collected]
+                  |
+[Correlation reevaluated]
+[Unique approved identity match]
+                  |
+[Same identity now has pay-account]
 
-Approved data correction and collection:
-  same LedgerPay account lp-87
-  employeeRef = "71001"
-    -> configured match to identificationNumber
-    -> associated with same identity I-71001
-
-Human verification:
-  owner evidence supports the relationship?
-  intended identity shows exact source/account?
-  other dependent outcomes checked separately?
+[Account key and login unchanged]
+[No access change supplied]
 ```
 
-The arrows show the data dependency and supplied correlation outcome. The diagram assumes the account is reevaluated, the intended matching value is unique and the approved owner evidence is correct. It does not promise that editing one external field immediately changes every ISC screen.
+The changed account field now matches the intended identity's identificationNumber. The same payroll account becomes attached to the same employee identity.
 
-In the successful result, the account identifier is still `lp-87`, the login is still `drao`, and the identity is still `I-71001`. What changed is the missing matching input and the established relationship.
+Its account key is still pay-account, and its login is still pay.user. No new employee identity is needed. No application permission was newly granted by the statement that correlation succeeded.
 
-No new employee identity was needed. No application permission was newly granted by the correlation statement itself.
+Verify the exact source/account on the intended identity and check that the approved owner evidence supports that association. A lower uncorrelated count alone wouldn't prove the link is right.
 
-## A configuration change and an existing association need extra care
+The diagram describes dependencies and supplied outcomes. It doesn't promise that editing a feed immediately updates every ISC view.
 
-If the correlation pairing itself is wrong, repairing data alone may not solve the problem. Inspect the actual source configuration, including preset and default behavior.
+## Understand what uncorrelated does and doesn't tell you
 
-When correlation configuration changes after accounts have already been aggregated, the documented approach includes aggregation with optimization disabled so unchanged accounts can be reexamined. **Optimization** avoids unnecessary processing of unchanged account data; a successful optimized read does not prove every unchanged account was reevaluated under new criteria.
+An **uncorrelated account** is a collected account not linked to an authoritative identity. In this example, the intended employee relationship hasn't been established.
 
-That is not a command to rerun every source broadly. Select the supported operation and scope for the actual defect, and verify its effect.
+The payroll team may already know who uses it. Technical lack of correlation doesn't necessarily mean the business has no legitimate owner.
 
-Nor does an unoptimized aggregation erase every existing relationship. **Manual correlation** creates an explicit persistent association; later source-value changes do not automatically move that manually linked account to someone else.
+An **orphan account** is a business-risk description whose meaning should be agreed, such as an account without a valid accountable owner or with access no longer needed. It isn't an automatic synonym for every uncorrelated account.
 
-Accounts created through ISC can also carry manual-correlation treatment. Inspect how the association was established rather than assuming every link resulted from the current automatic comparison.
+An uncorrelated account hasn't necessarily been disabled, deleted or stripped of permissions in its application.
 
-An approved manual correction can be appropriate for a verified exceptional account. It is not a substitute for repairing widespread missing references or incorrect matching configuration.
+**Provisioning** performs supported external account or access changes. The **target system** receives those attempted changes.
 
-Do not remove accounts, reset a source or delete identities simply to improve an uncorrelated count. Those actions can affect other records and relationships. A link to the wrong identity needs evidence-based correction, not a cosmetic status change.
+The initial read and unsuccessful match supply no operation to remove payroll access. Verify current sign-in capability and permissions through the application and relevant evidence.
 
-## A recorded match can still be wrong
+Conversely, an account can be correctly associated with an identity while disabled in its source. Ownership and usable access are separate observations.
 
-Suppose `lp-87` contains another employee's number by mistake. A configured comparison can associate it with that employee's identity even though the business account belongs to Devi.
+## Look in the view that contains the evidence
 
-The result is correlated, but the ownership is incorrect.
+The Accounts view contains collected source accounts and attributes, including uncorrelated accounts. Source-level uncorrelated views and reports help locate unresolved relationships.
 
-This is why “100% correlated” is not a complete quality measure. It says that associations exist; it does not establish that every association is legitimate.
+The identity's account and access views show what ISC associates with that identity. Searching only the employee identity won't establish everything in the source inventory when the payroll account isn't attached.
 
-A loose match can also hide the missing reference. If the selected Account Name happens to match an unintended identity's name, a default path can produce a relationship even though your planned employee-number comparison did not.
+An **entitlement** is a represented permission or membership. An uncorrelated account can carry collected membership information without establishing that the intended employee holds it.
 
-Don't fix the main example by matching everyone named `Devi Rao`. Names can be shared, changed or entered inconsistently. Confirm the approved person reference and understand the actual comparison before accepting the association.
+Don't assign those memberships to the employee in your analysis merely because displayName looks familiar. Person-based access decisions need the right account-to-identity relationship, not just a source inventory entry.
 
-For a shared service account, do not force a personal-account relationship simply because someone administers it. Its classification and responsible-ownership design must fit the actual account use and supported features.
+An **access request** asks for access to be assigned or removed through configured processing. A **certification** reviews whether existing access should remain. Reliable relationships matter when these processes govern a person's accounts and access.
 
-The aim is the correct relationship for the intended account type, not the largest possible correlated count.
+A **Source Owner** is assigned operational responsibilities, such as manual fulfillment or access review. Manual fulfillment means a person carries out the required change rather than an automated connector doing it.
 
-## Follow the consequences without mixing them together
+That assignment doesn't mean every source account is the Source Owner's personal account. Nor are a service account's responsible administrator, an application's business owner and a human account's user interchangeable relationships.
 
-**Identity processing** reevaluates identity data and configured access requirements. Correlation changes can affect the account data available to a person's mappings and other configured decisions.
+Record the source, exact account identifier, current association, matching fields and observation time. Counts and friendly labels don't identify the ownership evidence.
 
-An **identity attribute mapping** selects or calculates an identity field's value. It can read a value from an associated application account without making that application authoritative for employee identity creation. Whether it does so depends on the profile's actual mapping.
+## A different defect needs a different correction
 
-A **role** groups access requirements and can use configured membership criteria. A **lifecycle state (LCS)** describes a business stage with configured access or account actions. Those consumers need their own data and configuration evidence.
+The main example changes missing matching data. A wrongly configured pairing needs configuration review instead.
 
-**Attribute synchronization** is a configured identity-to-account write path for existing correlated accounts. A new or changed relationship can therefore have consequences beyond a screen label when such synchronization is configured.
+If employeeRef is correct but the source compares another field, supplying it again won't fix that selection. Inspect actual configured, preset and default paths.
 
-Correlation is not a guarantee that every value is written, that every role changes or that all required provisioning succeeds. Identity processing and external delivery have distinct outcomes.
+**Optimization** avoids unnecessary reevaluation of unchanged account data during an optimized aggregation. A successful read doesn't prove every unchanged account used newly edited criteria.
 
-For the supplied LedgerPay example, no attribute-synchronization write is configured as part of the correction, and no access change is requested. The successful result establishes the intended account relationship.
+After correlation configuration changes on an already-aggregated source, the documented approach includes aggregation with optimization disabled so unchanged accounts can be reexamined.
 
-If a real project configures downstream actions, review them before moving an account. Correcting a relationship can change which person's information or access requirements apply to it.
+Choose the supported operation and appropriate affected scope; this isn't an instruction to broadly reprocess every source.
 
-## Separate five observations during an investigation
+Existing association history matters too. **Manual correlation** creates an explicit persistent link to an identity. Later source-value changes don't automatically move that account to another identity.
 
-| Observation | What it establishes, and what still needs checking |
+Unoptimized aggregation doesn't erase the manual link. Accounts created through ISC can also have manually correlated treatment, so inspect how the relationship was established.
+
+An approved manual correction can fit a verified exceptional account. It doesn't replace repairing a feed with widespread missing references or a broadly wrong pairing.
+
+Don't remove accounts, reset a source or delete identities simply to improve the count. A relationship on the wrong identity requires ownership evidence, supported correction and a review of dependent effects.
+
+## A successful match isn't proof of correct ownership
+
+Suppose approved payroll records say the account belongs to the intended worker, but employeeRef mistakenly contains another employee's number.
+
+The configured comparison can attach it to that other identity. Correlation exists, but the business relationship is wrong.
+
+That is why 100% correlated isn't a complete quality measure. It records associations, not proof that all are legitimate.
+
+A default name match can also conceal the missing planned reference. If the designated Account Name matches an unintended identity's name, the default path can produce an association even though the employee-reference comparison didn't.
+
+Verify which path supplied the match and whether it agrees with approved ownership. Don't replace the main example with a broad friendly-display-name comparison; names can be shared, changed or entered inconsistently.
+
+For a shared or service account, use a responsible-ownership and account-classification design appropriate to its actual use and supported features. Don't force a personal account relationship merely because someone administers it.
+
+The intended result is the correct relationship for the account type, not simply the largest correlated percentage.
+
+## Review what a changed relationship makes possible
+
+**Identity processing** evaluates identity information and configured access requirements. Correlation can change which associated account data is available to a person's mappings and other decisions.
+
+An **identity attribute mapping** selects or calculates an identity field. A governing profile can read a value from an associated application account without making that application authoritative for establishing employees.
+
+A **role** groups access requirements and can use membership criteria. A **lifecycle state (LCS)** is a business stage with configured account or access actions. These decisions depend on their actual inputs and configuration.
+
+**Attribute synchronization** is a configured identity-to-account write path for existing correlated accounts. A new or changed association can matter when that path is configured, because the identity whose values apply to the account has changed.
+
+That doesn't establish that every field is written, every role changes or required provisioning succeeds. Identity processing and target delivery have separate outcomes.
+
+In the main payroll correction, no synchronization write is configured as part of the repair and no access change is requested. Its successful result establishes the intended account relationship.
+
+Where a project does configure downstream actions, review them before moving an account. The relationship can determine whose data or access requirements the account receives.
+
+## Separate the observations before diagnosing the symptom
+
+| Observation | What it establishes and what remains to check |
 |---|---|
-| The application account exists | The application has a record. It does not prove ISC collected it or knows its person. |
-| ISC has the source account | Collection and representation have occurred for that record. Check its current data and relationship. |
-| The account is uncorrelated | The intended authoritative identity relationship is absent. Investigate input, identity availability and applicable matching paths; don't infer deletion. |
-| The account is correlated | A relationship exists. Verify that it is the correct identity and understand how the link was established. |
-| The identity shows the account and access | ISC associates that represented account/access with the identity. Verify business ownership, freshness and any required target outcomes separately. |
+| Account exists in the application | The application has a record; ISC collection and ownership are still unproved. |
+| Account exists in ISC | That source record was collected and represented; inspect current fields and association. |
+| Account is uncorrelated | The authoritative identity link is missing; investigate identity availability, inputs and matching paths, not assumed deletion. |
+| Account is correlated | A relationship exists; verify the intended person and how the link was established. |
+| Identity shows account and access | ISC associates represented data with that identity; verify ownership, freshness and required target outcomes. |
 
-If the account is not present in ISC at all, investigate the source read and collection scope before diagnosing a correlation defect.
+If no account record exists in ISC, investigate collection and scope first.
 
-If the account is present but uncorrelated, investigate the relationship. If it is attached to the wrong identity, investigate incorrect ownership. If it is attached correctly but a particular permission is missing, investigate collected membership and the actual access process.
+If it is present but uncorrelated, investigate the missing relationship. If attached to the wrong identity, investigate incorrect ownership. If correctly attached but a permission is missing, inspect collected membership and the actual access process.
 
-The same symptom, “I can't find the account under Devi,” can arise at different boundaries.
+“I can't find the account under the employee” doesn't, by itself, distinguish those causes.
 
 ## Try the reasoning against changed records
 
-### 1. The import finished, but the reference is missing
+### 1. The import succeeds without a reference
 
-**Facts:** `lp-87` is collected with `employeeRef = null`. No configured or default path matches it to an identity.
+pay-account is collected with employeeRef null. No configured or default path matches.
 
-Did the successful import establish Devi's ownership?
+Has import success established the intended worker's ownership?
 
-**Reasoning:** No. The account exists in ISC, but the supplied comparison evidence does not establish its identity relationship. Inspect the approved ownership and matching input rather than treating read success as a person match.
+**Worked reasoning:** No. Collection and comparison evidence describe different results. Verify approved ownership and missing input; read success doesn't supply the relationship.
 
-### 2. The display names are identical
+### 2. The display labels match
 
-**Facts:** Account friendly `displayName` and identity display name are both `Devi Rao`. The selected Account Name is `drao`; the identity's relevant name is `worker71001`. No configured comparison uses the friendly name.
+Account displayName and identity display name both contain Worker A. Designated Account Name is pay.user and identity name is worker-w107. No configured comparison uses the friendly label.
 
-Does the shared display label prove a default match?
+Does the label prove a default match?
 
-**Reasoning:** No. The documented default uses the designated Account Name and identity name, not any full-name field. Inspect the actual designations, values and other applicable criteria. Identical display text is not ownership evidence by itself.
+**Worked reasoning:** No. Default correlation uses the designated Account Name and identity name. Inspect those fields and other applicable criteria; identical display text isn't ownership proof.
 
-### 3. The default path does match
+### 3. The default comparison matches
 
-**Facts:** A source's configured employee-number comparison does not match. Its designated Account Name equals an identity's name, and no manual relationship overrides the supplied case.
+Configured employee-reference matching fails. Designated Account Name equals an identity's name, with no manual relationship overriding this supplied case.
 
-Can you conclude that the account must remain uncorrelated?
+Must it remain uncorrelated?
 
-**Reasoning:** No. The documented default correlation path can associate it using that name comparison. Verify the resulting identity and business ownership rather than assuming only the preferred configured comparison matters.
+**Worked reasoning:** No. The documented default can establish a relationship. Verify its actual result and business ownership rather than assuming only the preferred configured pairing matters.
 
-### 4. A matched employee number belongs to someone else
+### 4. A matching reference belongs to someone else
 
-**Facts:** The account belongs to Devi according to approved application records, but its `employeeRef` contains another employee's number and it is attached to that employee's identity.
+Approved account evidence identifies the intended worker, but employeeRef contains another employee's number and the account is attached to that identity.
 
-Is the account correct because it is correlated?
+Is the correlated state sufficient?
 
-**Reasoning:** No. The input has produced a wrong person relationship. Confirm the intended owner, correct the actual data or association through the approved process, and review dependent effects. A higher correlation percentage would conceal this defect.
+**Worked reasoning:** No. Correct the actual data or relationship through an approved evidence-based process and review dependencies. A correlated percentage can conceal wrong ownership.
 
-### 5. The intended identity is absent
+### 5. The intended identity doesn't exist
 
-**Facts:** An application account is collected, but the intended worker identity has not been established. No other legitimate identity matches.
+The application account was collected, but the worker identity hasn't been established. No legitimate alternative identity matches.
 
-Should you make the application authoritative just to clear the count?
+Should the application become authoritative to clear the count?
 
-**Reasoning:** No. Investigate why the intended population or identity is missing and use the approved authoritative-source design. Making the application authoritative changes its identity-establishment responsibility rather than proving which existing person owns the account.
+**Worked reasoning:** No. Investigate the approved authoritative intake and missing population. Changing application authority changes identity-establishment responsibility; it doesn't prove ownership.
 
-### 6. Only the configuration changed
+### 6. Criteria changed, but account data didn't
 
-**Facts:** Correlation criteria were corrected. Existing account data did not change, and the next aggregation used optimization.
+The pairing was corrected. Unchanged account data is read with optimization.
 
-Does read success prove all those accounts used the new comparison?
+Does success prove all records used the new comparison?
 
-**Reasoning:** No. Unchanged accounts may need reexamination through the documented unoptimized aggregation approach. Verify the affected records and operation; don't equate optimized collection success with universal relationship reevaluation.
+**Worked reasoning:** No. Establish the documented unoptimized reexamination and affected results. Read success isn't universal correlation reevaluation.
 
-### 7. A manual link remains after a field change
+### 7. A manual association survives a field change
 
-**Facts:** An account was manually associated with an identity. Its employee reference later changes.
+A manually correlated account receives a changed employee reference.
 
-Can you assume the next unoptimized aggregation will move it automatically?
+Will an unoptimized aggregation automatically move it?
 
-**Reasoning:** No. Manual correlation is persistent. Inspect the association history, intended owner and supported correction path. A field change and an unoptimized read do not remove that explicit link by themselves.
+**Worked reasoning:** No. The explicit manual link persists. Inspect association history, intended owner and supported correction; changed data and reexamination don't remove it by themselves.
 
-### 8. The account is uncorrelated, but the application still permits use
+### 8. Uncorrelated in ISC, enabled in the application
 
-**Facts:** ISC lists an account as uncorrelated. The application owner confirms it remains enabled and has existing permissions.
+The application owner confirms the uncorrelated account remains enabled with existing permissions.
 
-Do these observations contradict each other?
+Is that contradictory?
 
-**Reasoning:** No. They describe an ISC identity relationship and the application's account state. No disable or access-removal operation has been supplied. Investigate whether access is legitimate and what action is approved; don't infer automatic removal from the missing link.
+**Worked reasoning:** No. These are relationship and external account-state observations. No disabling or removal operation is supplied. Establish legitimate use and approved action separately.
 
-## Apply the distinction to a second application
+## Apply the distinction to another application
 
-A project imports 2,000 project-management accounts and finds 120 uncorrelated records. The team proposes assigning all 120 to the source administrator.
+A project imports 2,000 project-management accounts and finds 120 uncorrelated records. The team proposes attaching all 120 to the source administrator.
 
-What would you establish before accepting that proposal?
+What would you establish first?
 
-Separate missing person identities, absent matching references, wrong field pairings, legitimate shared or service accounts and accounts that are no longer needed. Check preset/default paths and existing manual associations, not just the total count.
+**Worked reasoning:** Separate missing identities, absent matching references, wrong pairings, legitimate shared/service accounts and accounts no longer needed. Inspect preset/default logic and existing manual links too.
 
-For sampled records, identify the exact source/account, intended owner evidence, candidate identity and the comparison that should establish the relationship. Check a similarly named different person and an account whose login differs from the employee number.
+For sampled records, identify the exact source/account, intended owner evidence, candidate identity and the comparison that should establish the relationship.
 
-Choose corrections that fit the cause and account type. The source administrator's operational responsibility does not make every account their personal account.
+Include a similarly named different person and an account whose login differs from the employee reference. Neither a friendly name nor a different login resolves ownership by itself.
 
-Then verify the resulting relationships and any configured downstream effects. A useful completion statement names whose account was established and on what evidence, rather than saying only that the uncorrelated count reached zero.
+Choose cause-specific corrections and suitable account classification. Operational responsibility for the source doesn't make every account the administrator's personal account.
+
+Verify the resulting relationships and configured downstream effects. A completion statement should say whose account was established and on what evidence, rather than only that the uncorrelated count reached zero.

@@ -1,0 +1,16 @@
+Verified ISC manager relationship
+               |
+               v
+Check each relevant process separately
+
+Request approval
+  configured reviewer and actual task
+  -> review routing isn't access delivery
+
+Manager Campaign
+  generated population and assignments
+  -> snapshot isn't a live manager lookup
+
+External manager update
+  target representation and mapped write
+  -> verify actual directory value

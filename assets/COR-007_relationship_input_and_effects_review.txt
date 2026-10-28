@@ -1,0 +1,16 @@
+Verified association for app-41
+             |
+             v
+Separate human follow-up tracks
+
+Input repair
+  approve and deliver the reference
+  verify the collected account value
+
+Persistent-link review
+  document why explicit link remains
+  approve any later relationship change
+
+Dependent effects
+  inspect operations using the link
+  verify any external writes separately

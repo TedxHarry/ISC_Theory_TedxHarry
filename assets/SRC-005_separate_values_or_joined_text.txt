@@ -1,0 +1,7 @@
+[Two membership values from the API]
+                |
+        +-------+--------+
+        |                |
+   [Keep list]     [Join with ;]
+        |                |
+ [Two entries]     [One text value]

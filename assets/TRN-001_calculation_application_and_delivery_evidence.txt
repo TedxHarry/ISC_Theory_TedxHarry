@@ -1,0 +1,21 @@
+Human verification for this change
+
+Approved meaning and actual input
+                |
+                v
+Preview expected values
+                |
+                v
+Approved processing and affected scope
+                |
+                v
+Current identity values verified
+
+Dependent decision in scope?
+  -> inspect the actual decision
+
+External write configured and needed?
+  no  -> no delivery inferred
+  yes -> inspect operation and target
+
+Preview isn't target confirmation.

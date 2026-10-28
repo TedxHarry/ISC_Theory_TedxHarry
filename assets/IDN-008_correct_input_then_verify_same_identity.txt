@@ -1,0 +1,12 @@
+Before:
+[Directory " 0900 " -> Trim -> "0900"]
+[Preview and observed identity agree]
+
+Approved explicit input correction:
+[HR "0042" -> Trim -> Preview "0042"]
+
+After appropriate processing:
+[Same identity costCenter: "0042"]
+[Directory unchanged / no sync]
+
+[Engineer verifies required outcomes]

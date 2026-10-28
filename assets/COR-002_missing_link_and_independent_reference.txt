@@ -1,0 +1,12 @@
+First-account proposal:
+[Correlation needs projectWorkerRef]
+                 |
+[Mapping needs linked project account]
+                 |
+[That association doesn't exist yet]
+
+Independent input:
+[Linked HR -> identity person reference]
+[Project account -> worker reference]
+                 |
+[Compare independently available values]

@@ -1,318 +1,280 @@
 # The data changed. Where did the expected result stop?
 
-Devi's office changes from Leeds to Bristol. Her worker account in SailPoint Identity Security Cloud (ISC) contains Bristol, but her identity still shows Leeds and the directory group she needs is missing.
+The collected HR account contains Bristol, but the person's identity in ISC still shows Leeds and the required directory group is missing.
 
-The support ticket says, “Aggregation completed. Processing was tried. Nothing happened.”
+The ticket says, "Aggregation completed. Processing was tried. Nothing happened."
 
-That description joins several different questions.
+Let's make that more specific. Did ISC collect the intended field? Did the mapping select it? Was the result applied? Did the access condition qualify, and did the change reach the intended account?
 
-**Aggregation** collects account data into ISC. **Identity processing** reevaluates person-level information and applicable relationships and access requirements. **Provisioning** performs required changes in connected systems.
+Each answer can narrow the next question. Finding one defect doesn't establish that it was the only issue.
 
-Completing one does not prove that every later result is correct. Equally, an unchanged result does not prove that processing never ran.
+## Specify the required result and the accounts involved
 
-Let's establish the exact requirement, then use the evidence to find where the expectation stops matching the actual outcome.
+In SailPoint Identity Security Cloud, or ISC, an **identity** is the record representing a person across their accounts. An **account** is the person's record in a particular system. An **attribute** is a named field on a record.
 
-## Make “the expected result” specific
+The person already has a valid identity and a correctly associated HR-Primary account. A **source** is ISC's configured representation of a system's account data.
 
-Devi's employee number is 98008. Her ISC **identity** is the record representing her as a person. We will call it I-98008; that is a teaching label, not an actual ISC object ID.
+HR-Primary is **authoritative** for this employee population: its worker accounts participate in establishing and maintaining the identities. The Employees **identity profile** holds shared configuration.
 
-Her worker account `pp-98008` on PeopleRecord Production is correctly associated with that identity. A **source** is ISC's configured representation of a system's account data. PeopleRecord is authoritative for this employee population: its worker records establish and maintain the related identities.
+A **mapping** specifies how an identity field receives a value. The approved input for identity location is the account's currentOffice field. legacyOffice holds historical information and must not supply current location.
 
-The Employees **identity profile** holds the shared configuration for their person-level information.
+Identity workerType separately reads the account's workerType. Its current value is EMP, this example's employee code.
 
-An **account attribute** is a field on an account; an **identity attribute** is a field on the person record. A **mapping** specifies where an identity value comes from.
-
-The business-approved location input is PeopleRecord currentOffice. The source also retains legacyOffice for historical information. The two fields must not be treated as interchangeable.
-
-Identity workerType reads the account's workerType directly and currently contains EMP.
-
-An enabled automatic **role**, Bristol Workspace, groups the required access and assigns it when both conditions are true:
+An enabled automatic Bristol Workspace **role** requires both conditions:
 
 - Identity location equals Bristol.
 - Identity workerType equals EMP.
 
-Both conditions are joined with AND. A Bristol location alone is not the whole requirement.
+A role groups access requirements and can assign them through configured conditions. **AND** means both criteria must match; Bristol alone isn't sufficient.
 
-The role contains enabled Bristol Tools, an **access profile** that bundles access from OfficeDirectory. It requires the ordinary group membership `BR-WORK`. That group membership is the **entitlement**, the access item governed in ISC.
+The role contains enabled Bristol Tools, an **access profile** bundling access from Directory-Primary. It requires ordinary group membership `BR-WORK`, the **entitlement**, or source-specific permission represented in ISC.
 
-Devi has two correctly associated OfficeDirectory accounts:
+There are two correctly associated directory accounts. One has account field type equal to Primary; the other has type equal to Admin. Bristol Tools' automatic multiple-account selection uses type equal to Primary.
 
-- `od-98008`, with account field type equal to Primary.
-- `oda-98008`, with type equal to Admin.
+Exactly one account matches. The requirement from this automatic role grant is therefore for the primary account, not both.
 
-Bristol Tools has automatic multiple-account selection configured to choose the account whose type equals Primary. Exactly one of Devi's accounts matches. The BR-WORK requirement is therefore for od-98008, not for both accounts.
+The source supports group addition and provisioning is enabled. **Provisioning** carries out required changes through a supported automatic or manual path. Capability and enabled configuration still don't establish execution permission or success.
 
-The source supports group addition and has provisioning enabled. This is standing access, with no separate activation step. Both accounts initially lack BR-WORK.
+Both accounts initially lack BR-WORK. This is ordinary ongoing access, with no separate activation step.
 
-Devi's **identity state**, the setting controlling participation in particular ISC processes, is Active. No account creation, ongoing identity-to-account field synchronization or old-office access removal is in scope. Configuration changes are limited to the reviewed mapping correction and connection-permission recovery. We are investigating this new group requirement, not declaring an entire employee move complete.
+Identity state, which controls participation in specified ISC processes, is Active. No account creation, ongoing identity-to-account field copying or old-office access removal is in scope. Reviewed changes are limited to the location mapping and delivery-permission recovery. No other data or configuration changes occur during these observations.
 
-All records, times, actions and results below are fictional. No real tenant or account is changed.
+We are investigating this new group requirement, not declaring an entire worker move or shared-profile rollout complete.
 
-## Preserve the evidence before changing the configuration
+All records, approvals, actions and observations below are hypothetical. They aren't results from an actual tenant.
 
-A useful starting record contains the identity, source account, exact fields, expected value, actual value, relevant configuration and observation times.
+## Preserve the starting evidence
 
-Include the job or activity reference when one exists. Different systems can have different references; do not invent one universal transaction identifier.
+Record the intended identity, source and account, expected and actual values, saved configuration, operation references and observation times.
 
-Here are the initial observations on October 23, 2026. All times are UTC, a shared time reference.
+Use the actual references available for each system. Don't invent one universal transaction identifier connecting all of them.
 
-At 18:00, the approved PeopleRecord worker record has currentOffice Bristol and legacyOffice Leeds. At 18:05, collection has brought those exact values into pp-98008 in ISC.
+The initial supplied observations are on October 23, 2026, in UTC, Coordinated Universal Time:
 
-At 18:06, a selected **Process Identity** operation for Devi has completed. This is an administrator-initiated reevaluation of the selected identity. Her current identity location remains Leeds, workerType remains EMP, and Bristol Workspace is not assigned.
-
-What have these observations actually established?
-
-| Observation | What it establishes, and what it does not |
+| Observation | What it establishes |
 |---|---|
-| The producer record has currentOffice Bristol | The approved input exists there. By itself, it does not prove ISC collected it. |
-| ISC account pp-98008 has currentOffice Bristol | Collection reached this account. It does not tell us which field the identity mapping selects. |
-| Selected Process Identity completed | This selected reevaluation occurred. Its completion does not prove the configured value or resulting access is correct. |
-| Identity location is Leeds | The applied value is still Leeds. We need the actual mapping and selected input before naming the cause. |
+| 18:00: the approved HR record has currentOffice Bristol and legacyOffice Leeds | The producing system has the intended current field. Collection isn't established by this observation alone. |
+| 18:05: those exact values are verified on the associated HR account in ISC | Collection reached this account; the identity mapping's selected field still needs checking. |
+| 18:06: selected Process Identity completes; current location is Leeds, workerType EMP and Bristol Workspace is absent | Selected reevaluation occurred, but the expected location and role result aren't established. |
 
-There is no reason yet to alter the producer's correct Bristol value. There is also no reason to assume a connector outage merely because the group is absent.
+**Aggregation** collects account information into ISC. **Identity processing** evaluates identity information and applicable relationships and access requirements.
 
-A **connector** is the integration that communicates with a source system. A successful read and a successful group write require different evidence.
+**Process Identity** is an administrator-initiated evaluation of the selected identity. Its completion is explicitly supplied here; we aren't inferring execution merely because an account field changed.
 
-## Test whether ISC used the value you expected
+These facts don't yet justify changing HR's correct Bristol value or declaring a connector outage. A **connector** supplies integration with a source system; a successful read and a successful group write need different evidence.
 
-Open the saved Employees location mapping and inspect its selected source and field.
+## Inspect which value the saved mapping actually selects
 
-In this case, it reads PeopleRecord legacyOffice directly.
+The saved Employees location mapping reads HR-Primary legacyOffice directly.
 
-That explains the result. The collected account contains both values, but the mapping tells ISC to use Leeds.
-
-```text
-Collected account pp-98008
-  currentOffice: Bristol  (approved input)
-  legacyOffice: Leeds     (historical)
-
-Saved location mapping
-  selects legacyOffice -> identity Leeds
-
-Approved correction
-  selects currentOffice -> Bristol
-  Preview result is not application proof
-  Verify current identity after processing
-```
-
-The arrows show configured input selection and the evidence needed after correction. They do not describe a private backend job order.
-
-We have a supported explanation for an unchanged result after processing: the process used an inappropriate configured input. Repeating it with the same available data and mapping does not repair that selection.
-
-No transform is needed. A **transform** calculates or prepares a value. Adding one to trim or change case would not fix reading the wrong field.
-
-Do not turn every mismatch into a calculation problem before inspecting the direct mapping.
-
-The conclusion is narrower than “ISC processing is broken.” The saved mapping selects historical information where the approved requirement calls for current information.
-
-That distinction determines the correction and the people who need to review it.
-
-## Apply the correction without losing sight of its scope
-
-The mapping is shared by identities associated with Employees. Before applying a change, review who uses it, the relevant available inputs, and the access consequences.
-
-A successful result for Devi would not prove that every other employee has currentOffice populated correctly. Nor does selecting one identity create a private configuration version that other relevant processing cannot use.
-
-In this fictional case, the appropriate owners approve the direct mapping correction and its access consequences. The affected profile population has been reviewed; broader application and its separate validation are tracked outside this selected investigation.
-
-At 18:10, the corrected mapping is saved. It now selects currentOffice.
-
-At 18:11, **Preview**, which evaluates mappings for a selected identity, returns Bristol. A separate current-identity check still shows Leeds.
-
-Save establishes the stored instruction. Preview establishes a selected evaluation. Neither observation alone establishes the applied result.
-
-The authorized selected Process Identity operation starts at 18:12. At 18:15, its completion and the current identity results are verified: location Bristol and workerType EMP. Bristol Workspace is now assigned.
-
-Those results agree with both configured role conditions. We have crossed the identity-value and role-assignment boundaries.
-
-We have not yet established BR-WORK membership on od-98008.
-
-Manual application is not harmless just because it is useful. Its relevant mappings and access requirements can have wider effects than the single field motivating the investigation. Choose a supported, authorized scope and verify the actual affected results.
-
-## Follow the requirement to the intended account
-
-A person can qualify for a role while delivery to an account is incomplete.
-
-The access profile's multiple-account selection tells us which account should receive the membership for this automatic grant.
+Now the unchanged result makes sense. Both values reached ISC, but the mapping selects Leeds. Processing can run and still produce a business-incorrect result because the instructions select historical information.
 
 ```text
-Bristol Workspace assigned
-  -> Bristol Tools access profile
-  -> OfficeDirectory group BR-WORK
+Collected HR account
+currentOffice: Bristol  (approved)
+legacyOffice: Leeds     (historical)
+                |
+saved location mapping reads legacyOffice
+                |
+current identity location: Leeds
 
-Automatic account selection: type Primary
-  od-98008  / Primary -> selected
-  oda-98008 / Admin   -> not selected
-
-18:17 selected-account add failed
-18:18 od-98008 checked: BR-WORK absent
-After approved delivery recovery
-18:35 od-98008 present; oda-98008 absent
+Approved correction reads currentOffice
+                |
+Preview Bristol / current still Leeds
+                |
+supported selected processing
+                |
+verify current Bristol and workerType EMP
 ```
 
-The arrows describe the configured access relationship and selected account. The times are supplied observations, not a required provisioning sequence or a duration guarantee.
+The first part explains the defect. The correction and verification path are separate; a proposed change isn't an already-applied result.
 
-At 18:17, the activity for adding BR-WORK to od-98008 reports an insufficient-permission error. At 18:18, fresh target checks show BR-WORK absent on both accounts.
+A **transform** calculates or prepares an attribute value. No transform is needed here. Trimming text or changing case wouldn't repair selection of the wrong field.
 
-The primary account's missing membership is now explained by a confirmed failed delivery attempt. The administrator account's absence is consistent with the selection policy.
+The supported conclusion is specific: the saved input selection conflicts with the approved current-office requirement. Repeating the same processing with the same data and mapping won't correct that choice.
 
-Do not change the role condition back to Leeds to make the missing group look expected. Bristol is the approved business fact, and the role has qualified correctly.
+## Apply the reviewed correction, then check both role conditions
 
-Do not add the group to the administrator account merely because it is another account associated with Devi. That would change the access requirement instead of satisfying it.
+Employees' mapping is shared. Before changing it, review the affected population, available currentOffice values and access consequences.
 
-Operation capability and runtime permission are different checks. The source can support adding groups while the connection lacks the authority required for this particular addition.
+One successful sample wouldn't establish that every employee has the correct input. A selected run also doesn't create a private configuration version that other relevant processing can't use.
 
-Inspect the specific identity, source, account, group, action and error. A broad “provisioning finished” description cannot replace that evidence.
+In this supplied case, the owners approve the direct mapping correction and its access effects. Profile-wide input coverage, application and validation are tracked separately from this selected investigation.
 
-## Keep a delayed view separate from a failed write
+At 18:10, the corrected mapping is saved and verified to select currentOffice.
 
-**Search** provides a searchable representation of identity and access information. It is not a live query of every connected directory.
+At 18:11, **Preview**, which evaluates mappings for a selected identity, returns Bristol. A separate current check still shows Leeds.
 
-At 18:16, Search still displays Leeds for Devi, although her current identity location was verified as Bristol at 18:15.
+Save establishes the stored instructions. Preview establishes a selected evaluation. Neither alone establishes current Bristol or a target write.
 
-At 18:24, Search displays Bristol.
+Authorized selected processing starts at 18:12. At 18:15, completion and current identity location Bristol and workerType EMP are verified. Bristol Workspace is now assigned.
 
-The independent current-identity observation establishes the distinction: the view was behind the already-applied value.
+Why does that role match? Both facts meet the configured AND condition. We didn't discard the worker-type test because location looked right.
 
-That delayed view did not cause the permission failure on BR-WORK. Waiting for Search to show Bristol would not authorize the connection to add the group.
+The identity and role results are now established. BR-WORK on the primary directory account still needs its own evidence.
 
-Conversely, correcting the connection permission does not by itself prove that Search has updated.
+## Follow the role to the account that should receive access
 
-When views disagree, compare the same identity, actual query, filters and observation times. Do not diagnose visibility delay from one old result when the current identity value has not been checked.
+The access profile's multiple-account criteria matter because this identity has two accounts on its source. For this automatic grant, type equal to Primary uniquely selects the primary account.
 
-A historical account report is also not a current target observation. Opening an old report now does not make its data current.
+An account-selection problem can prevent delivery. Here, exactly one account matches the automatic criteria, so that ambiguity isn't the cause.
 
-## Confirm recovery at the boundary that failed
+Don't turn a person's role assignment into an assumption that every associated account should receive the group.
 
-The approved recovery addresses the connection permission and the failed BR-WORK delivery through the supported operational process.
+```text
+Bristol AND EMP qualify
+       |
+Bristol Workspace -> Bristol Tools
+       |
+Directory-Primary entitlement BR-WORK
 
-We do not assume that another identity-processing run retries every failed provisioning item. Recovery behavior depends on the operation and error; a changed mapping is not a universal repair for delivery.
+Automatic selection: type equals Primary
+primary account: selected
+administrator account: not selected
 
-In the supplied later evidence, the connection issue is corrected through the approved process, and the specific group-add recovery completes at 18:34.
+18:17 primary group add: permission error
+18:18 group absent on both accounts
+18:34 approved group recovery completes
+18:35 primary present / admin absent
 
-At 18:35, fresh target checks confirm BR-WORK present on od-98008 and absent on oda-98008. The intended role remains assigned.
+These are supplied observations,
+not guaranteed execution durations.
+```
 
-Now we can report that this account-level requirement was delivered to the selected account. We cannot extend that claim to unrelated accounts, previous-office cleanup or every employee affected by the shared mapping.
+At 18:17, the exact BR-WORK add on the primary account reports insufficient permission. At 18:18, fresh checks find the group absent on both accounts.
 
-Separate the findings in the case record.
+The primary absence is a failed required delivery. The administrator account's absence agrees with the selection policy for this grant.
+
+Inspect the particular source, account, group, operation and error. Supporting a group-add operation doesn't guarantee that the connection is authorized to perform this addition.
+
+Changing the role back to Leeds wouldn't fix the permission. Adding the group to the administrator account would change the intended destination rather than satisfy the primary requirement.
+
+## Separate an old Search result from the failed addition
+
+**Search** provides a searchable representation of identity and access information. It isn't a live query of every connected directory.
+
+At 18:16, Search still shows Leeds for the same identity whose current Bristol value was verified at 18:15. At 18:24, Search shows Bristol.
+
+The independent current check distinguishes a delayed view from an unverified identity update. Search's old representation didn't cause the permission failure, and its later update didn't authorize the group addition.
+
+Likewise, correcting a connection permission doesn't establish Search's current contents. Check each required result.
+
+When views disagree, verify identity, query, filters and observation times. One old value without a current identity check isn't enough to diagnose visibility delay.
+
+An account report has its own capture time too. Opening old data later doesn't turn it into a fresh target observation.
+
+## Verify recovery where delivery failed
+
+The approved recovery addresses the connection permission and specific failed group operation through its supported process.
+
+Another identity-processing run isn't a universal retry command. Recovery depends on the operation and error; a mapping correction isn't a general repair for failed target writes.
+
+In the supplied continuation, authorized recovery corrects the connection issue and the specific group addition completes at 18:34.
+
+At 18:35, fresh checks confirm BR-WORK present on the primary account and absent on the administrator account. The intended role remains assigned.
+
+That verifies this account-level requirement. It doesn't establish unrelated account access, old-office cleanup or application across every identity using Employees.
+
+The supplied times aren't processing durations or delivery guarantees. The diagrams show dependencies, selected accounts and observations, not a private backend execution sequence.
+
+Keep the findings separate:
 
 | Finding | Correction or acceptance evidence |
 |---|---|
-| Identity mapping selected legacyOffice | Approved currentOffice mapping saved; selected processing produced verified Bristol. |
-| Bristol Workspace was initially absent | Current Bristol and EMP satisfy both conditions; actual role assignment verified at 18:15. |
-| BR-WORK addition failed on the primary account | Approved permission/recovery process; specific completion and fresh primary membership at 18:35. |
-| Search temporarily showed Leeds | Current identity was independently Bristol; same Search result showed Bristol at 18:24. |
+| Mapping selected legacyOffice | Approved currentOffice mapping saved; selected processing produced current Bristol. |
+| Bristol Workspace was initially absent | Current Bristol and EMP meet both conditions; actual assignment verified at 18:15. |
+| Primary BR-WORK addition failed | Approved permission/recovery process, specific completion at 18:34 and fresh primary membership at 18:35. |
+| Search temporarily showed Leeds | Current identity was independently Bristol; Search showed Bristol at 18:24. |
 
-There were different boundaries in one ticket. Finding the mapping defect did not establish that it was the only issue.
+Finding the mapping defect didn't prove there was no delivery problem. The evidence exposed both, and each needed its own correction or verification.
 
-## Use a result to narrow the next question
+## Let each verified result guide the next investigation
 
-You do not need to restart the whole investigation after every observation.
+If the approved input isn't collected, inspect collection scope, freshness and the exact selected account.
 
-If the correct input is not collected, investigate collection and selection before recalculating. If it is collected but not selected, investigate the mapping. If the expected mapped value is only a Preview, application remains unverified.
+If the value is collected but the mapping selects another field, inspect configuration. If the correct result exists only in Preview, verify the relevant supported application and current identity value.
 
-If the current value is right but the role does not qualify, inspect every configured condition and whether the role and profile are enabled. Do not silently replace an AND with one convenient matching condition.
+If the current fields are right but the role doesn't qualify, inspect every condition and whether the role and access profile are enabled.
 
-If the role is assigned, inspect the required source access and account-selection path. Then inspect the specific delivery result and fresh target state.
+If the role is assigned, identify its required source access and account-selection path, then inspect delivery and fresh target state.
 
-These are diagnostic dependencies, not a claim that every ISC process executes as one universal sequence.
+Each result needs particular information or configuration; those are its **dependencies**. Following them helps diagnosis, but doesn't prescribe one fixed execution sequence.
 
-A job that is queued has not necessarily begun. A running job has not necessarily reached the identity. A completed job has only crossed its own documented boundary. Record which one you actually observed.
+Also identify the actual processing state. Queued work may not have begun; running work may not have reached the identity; completion concerns that operation's documented scope.
 
-When a clock-dependent calculation is involved, verify its evaluation time and supported processing path as well as its input. The arrival of a date does not update every stored value without the relevant processing.
+The starting action determines population too. **Apply Changes** from role, access-profile or application lists starts broad identity processing to apply configuration. It excludes Inactive (long-term), an identity participation setting with reduced inclusion. Profile-associated application and selected processing can include that state. Use the appropriate scope rather than changing participation to force inclusion.
 
-When **lifecycle state**, the configured business stage that can drive account and access actions, affects the requirement, inspect the selected state and its actual enabled configuration. A familiar label is not proof of an account action.
+For a time-dependent calculation, check evaluation time and the supported processing plan. Reaching a date doesn't apply every stored result automatically.
 
-For a manager issue, **manager correlation** resolves an employee's reference to another person's identity. A correct reference value is not proof that the intended manager identity exists with the matching candidate value. Inspect both the Manager Name mapping and the source's manager-correlation configuration.
+A **lifecycle state** is a business-stage configuration that can drive account or access actions. If it affects the requirement, inspect its actual assigned state and enabled action configuration. A familiar label isn't target-action evidence.
 
-Do not force these different mechanisms into a generic “refresh failed” diagnosis.
+For a manager issue, **manager correlation** resolves the employee's account reference to another person's identity. Verify the profile's Manager Name mapping, the source correlation configuration and the candidate identity values. A plausible reference isn't proof of a matching available manager.
 
-## Missing evidence is not a failed outcome
+The actual mechanism determines what evidence is missing. "Refresh failed" doesn't identify it.
 
-Suppose you have a correct role assignment but cannot find a provisioning activity in the first search.
+## Missing evidence and a failed operation aren't the same conclusion
 
-That is an evidence gap. Verify the source, account, operation, time range, status filters and view coverage. Also check whether the required access already exists or whether account selection prevented delivery.
+Suppose a role is assigned, but the first search finds no provisioning activity and no fresh target check is supplied.
 
-A failed attempt needs operation-level evidence. A fresh target state can establish that the requirement remains unmet without telling you whether delivery failed, is waiting, or was never initiated. Absence from one search is not enough to identify its cause.
+The cause is unknown. Check source, account, operation, time range, status filters and view coverage. Check whether the group already exists and whether selection prevented delivery.
 
-Likewise, a correct unchanged value or an already-present group does not require a new visible write just to prove processing worked.
+A recorded failed attempt establishes failure of that attempt. Fresh absence establishes an unmet target requirement at that time, but doesn't say whether work failed, is waiting or never began.
 
-Record what remains unknown. That is more useful than turning uncertainty into an invented error.
+Likewise, an already-correct value or group doesn't need a new visible write to prove processing worked.
 
-Avoid broad corrective actions while the actual failure boundary is unknown. A full aggregation, broad application or direct grant can affect other people and obscure which change caused the later outcome.
+Record what remains unknown. Broad aggregation, broad application or direct grants made before diagnosis can affect others and obscure which change produced the later result.
 
-If an urgent access or security requirement is at risk, preserve the evidence and use the approved escalation or recovery path. Urgency changes the handling priority; it does not make an unsupported assumption true.
+If an urgent access or security requirement is at risk, preserve the evidence and follow the approved escalation or recovery path. Urgency changes handling priority; it doesn't establish a missing fact.
 
-## Work through the alternatives
+## Work through these alternatives
 
-Each variation changes only its supplied facts.
+Each question changes only its supplied facts.
 
-### 1. The producer changed, but the selected account did not
+### Questions
 
-**Facts:** PeopleRecord has currentOffice Bristol, but ISC account pp-98008 still contains currentOffice Leeds. The identity mapping correctly selects currentOffice.
+1. HR has currentOffice Bristol, but the selected collected account still has currentOffice Leeds. The mapping correctly selects currentOffice. What should be investigated first?
+2. Both currentOffice Bristol and legacyOffice Leeds are collected. The saved mapping reads legacyOffice, selected processing completes and current identity remains Leeds. Does that establish a failed processing run?
+3. The corrected mapping is saved, Preview is Bristol, current identity is Leeds and no later application is verified. Has Bristol been applied?
+4. Current location is Bristol but workerType is CONT. The enabled role requires Bristol AND EMP. Does it qualify through those criteria?
+5. In a separate case, an Inactive (long-term) identity is meant to reflect a shared configuration change. Apply Changes starts from the access-profile list. Does completion prove that identity was reevaluated?
+6. Bristol and EMP are applied, the role is assigned and the exact primary-account add reports insufficient permission. Which result still needs correction?
+7. The role is assigned, one search finds no add activity and no fresh target check is supplied. Is a failed write established?
+8. Fresh checks find BR-WORK on the administrator account but not the primary account. Automatic selection still requires type Primary. Is the intended delivery complete?
 
-**Reasoning:** Investigate collection scope, freshness and exact-account selection first. Processing available Leeds data cannot establish Bristol. Do not change a correct mapping to compensate for an input that never arrived.
+### Work through the reasoning
 
-### 2. Processing completed with the legacy mapping
+**1. Establish the intended collected input.** Check collection scope, freshness and account selection. Processing Leeds can't establish uncollected Bristol. Don't change a correct mapping to compensate for missing data.
 
-**Facts:** Account currentOffice Bristol and legacyOffice Leeds are collected. The saved mapping selects legacyOffice. Selected processing completes and the current identity remains Leeds.
+**2. The result follows the configured but inappropriate field.** The evidence supports a mapping defect relative to the business requirement, not failure to execute. Repetition without correction doesn't address it.
 
-**Reasoning:** The result agrees with the configured input but conflicts with the approved current-office requirement. The evidence identifies a mapping defect, not proof that processing failed to run. Repetition without correction does not address the cause.
+**3. Only the selected calculation is correct.** The current observation is still Leeds. Use the supported application path and verify the current result; don't infer role or target success.
 
-### 3. Only Preview is correct
+**4. The AND condition isn't met.** Bristol matches, CONT doesn't match EMP. Missing automatic assignment can be correct. Verify approved worker data or policy before proposing a change, rather than dropping a condition to force access.
 
-**Facts:** The corrected mapping is saved, Preview returns Bristol, and the current identity still shows Leeds. No later relevant application is verified.
+**5. That broad list-page action excludes long-term.** Profile-associated and selected processing have different supported scope. Review an authorized path and actual results instead of changing participation state simply to force inclusion.
 
-**Reasoning:** The proposed calculation works for that selected evaluation. The applied result remains unverified. Use an appropriate supported application path and current-result evidence rather than claiming the role or group was delivered.
+**6. Delivery failed separately.** Investigate the specific operation and approved permission/recovery path, then verify target membership. Another Preview or a Search update doesn't repair the write.
 
-### 4. One role condition is false
+**7. The evidence leaves the cause unknown.** Verify search coverage, account selection and existing target access, then relevant activity. One empty search doesn't prove failure or even current absence.
 
-**Facts:** The current identity location is Bristol, but workerType is CONT rather than EMP. The enabled Bristol Workspace role still requires Bristol AND EMP.
+**8. The primary requirement remains unmet.** The administrator membership has a separate origin to investigate. Don't copy or remove access without reviewing authorization, other requirements and the cause.
 
-**Reasoning:** The role does not qualify through these criteria. Missing assignment can be correct. Confirm whether the policy or worker data is wrong before proposing a change; a matching location alone does not justify removing the employee-type condition.
+## Try a manager-reference change
 
-### 5. The broad action excludes the identity
+An employee's collected managerReference changes from M-OLD to non-null M-NEW. Only this source/profile supplies the manager.
 
-**Facts:** In a separate case, an identity is Inactive (long-term), and Apply Changes is started from the access-profile list after a shared configuration change.
+The Manager Name mapping and source correlation configuration select that reference and compare it with identificationNumber on manager identities.
 
-**Reasoning:** That broad action excludes long-term inactive identities. Its completion does not prove this person's reevaluation. Profile-associated application and selected identity processing have different supported scope. Review an appropriate authorized path instead of changing the business participation state just to force inclusion.
+The employee is already linked to the manager identity whose identificationNumber is M-OLD. No identity currently has identificationNumber M-NEW. Selected processing completes, but the current manager remains M-OLD.
 
-### 6. The value and role are right, but delivery failed
+A colleague proposes repeating processing until it changes. Which explanation fits, and what would a useful correction address?
 
-**Facts:** Bristol and EMP are applied, Bristol Workspace is assigned, and the exact BR-WORK addition to od-98008 reports insufficient permission.
+The documented unmatched non-null behavior retains the existing relationship. The result is consistent with the missing candidate; it doesn't establish that processing never ran.
 
-**Reasoning:** Investigate the operation and approved permission/recovery path. An unchanged Search result or another mapping Preview cannot repair that write. Verify the target outcome after recovery rather than closing the case from the role assignment alone.
+Check whether M-NEW is the approved reference and whether the intended manager identity should exist with that applied identificationNumber. Correct the verified data or candidate-availability issue through the supported process, then verify actual resolution.
 
-### 7. No activity appears in the initial search
+Don't invent a manager to satisfy a guessed match. **Null**, no value, has different behavior: a change to a selected null can clear the relationship under these single-source conditions. An unmatched non-null code isn't the same input.
 
-**Facts:** The role is assigned. One search returns no group-add activity. No fresh target membership check is supplied.
+An existing approval is separate work too. A corrected current manager wouldn't, by itself, prove that an earlier recorded approver was changed.
 
-**Reasoning:** The cause remains unknown. Verify query coverage, account selection, actual existing membership and relevant operation evidence. Do not assert a failed write or guaranteed absence merely because one search returned nothing.
-
-### 8. The group is on the other account
-
-**Facts:** A fresh check finds BR-WORK on oda-98008 but absent on od-98008. The automatic access profile still selects type Primary.
-
-**Reasoning:** The intended primary-account requirement remains unmet. The administrator account's membership does not prove correct delivery, and its origin must be investigated separately. Do not remove or copy access without reviewing authorization, other requirements and the actual cause.
-
-## Try a manager correction
-
-An employee's collected HR manager reference changes from 71001 to non-null 71002. Only this source/profile supplies the manager. Its Manager Name mapping and source manager-correlation configuration select the intended reference and compare it with managers' identificationNumber identity values.
-
-The employee already has resolved manager 71001. No identity currently has identificationNumber 71002. Relevant selected identity processing has completed, but the current resolved manager remains 71001.
-
-A colleague proposes repeating processing until the relationship changes.
-
-Which explanation fits the supplied facts, and what would a useful correction need to address?
-
-The documented behavior retains an existing manager when a changed non-null reference cannot correlate to a new manager. The supplied result is therefore consistent with the missing candidate.
-
-Check whether 71002 is the approved reference and whether the intended manager's identity should exist with the required applied identifier. Correct the verified data or candidate-availability issue through the supported process, then verify actual relationship resolution.
-
-Do not create a guessed manager or assume that a changed reference must clear the existing relationship. A change to null has different documented behavior.
-
-If an approval already exists, its recorded recipient and handling are another question. A corrected current manager relationship alone would not prove that earlier work was rerouted.
-
-For Devi's office issue, the final explanation should be equally specific: collection brought the right current field into ISC; the old mapping selected historical data; applying the approved correction established Bristol and the qualifying role; a separate permission failure blocked BR-WORK; recovery was verified on the primary account. Search caught up independently.
-
-That explanation identifies what happened, why it happened, and which evidence supports the completed requirement.
+For the office investigation, a complete explanation names the selected input defect, verified Bristol and EMP, qualifying role, failed primary delivery and confirmed recovery. Search's later update is a separate observation.

@@ -1,66 +1,70 @@
 # The calculation returned a value. What actually went wrong?
 
-Devi works in Engineering. Her employee number is 89009. HR supplies her department through the source called WorkforceLedger Production, which represents worker account data in SailPoint Identity Security Cloud, or ISC.
+The approved department is Engineering. The collected account contains `departmentCode = " ENG "`, with one ordinary space on each side.
 
-Her one WorkforceLedger account, `wl-89009`, is already correctly associated with her ISC identity. We will label that identity `I-89009` to keep the records distinct; this is a teaching label, not an actual ISC object ID.
+Yet the selected calculation's **Preview** returns Finance. Preview evaluates mappings for one identity using available data; it does not establish the current stored identity value or every person's result.
 
-The account data available in ISC contains `departmentCode = " ENG "`. There is one ordinary space before ENG and one after it. HR confirms that ENG means Engineering. The organization approves FIN as Finance. It does not approve Finance as a substitute when a department is missing or cannot be calculated.
+Changing a substitute from Finance to Engineering could make this one result look right. It would not explain why the code already on the account was not used.
 
-Yet Preview shows Finance for Devi's identity department.
+Consider this hypothetical investigation. The task is to explain the result, correct its cause and state exactly which outcomes are verified.
 
-Where would you begin?
+## Define the expected result before editing anything
 
-Changing Finance to Engineering in a fallback would make this one result look right. It would not tell us why the calculation failed to use the department already present on the account.
+An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a connected system. An **attribute** is a named field on a record.
 
-The records, configurations and investigation results below are fictional. They let us follow an incident without claiming that any change was made in a real tenant.
+A **source** represents a system or collection of account data in ISC. Here, **HR-Primary** represents worker records. The Employees **identity profile** is the shared configuration governing this population.
 
-## First establish what “wrong” means
+HR-Primary is its **authoritative source**: worker accounts establish identities through that profile. **Account correlation** associates an account with its intended identity.
 
-An **identity attribute** is a field on ISC's identity record, such as department. An **account attribute** is a field on a particular source account, such as departmentCode. They are separate fields even when one supplies the other.
+The existing identity has exactly one correctly associated HR-Primary account. **Account aggregation** has read its data into ISC; evaluating an account-field retrieval does not itself request a new HR read. The collected departmentCode is `" ENG "`. Other required identity attributes are valid.
 
-An **identity profile** defines shared identity configuration for a population. Devi belongs to the Employees profile. Its department **mapping** tells ISC how to obtain the identity department value.
+The profile's department **mapping** establishes how identity `department` obtains its value. The account field departmentCode and identity field department belong to different records.
 
-A **transform** is a calculation used to prepare a value. It can retrieve account data, change text, translate a code, or combine operations. Its returned value still needs to satisfy the business requirement.
+HR approves ENG as Engineering, FIN as Finance and removal of surrounding ordinary spaces for these codes. No Finance, Unknown or empty substitute is approved when a department is unavailable or cannot be calculated.
 
-In this example, three outcomes would mean different things:
+A **transform** is a configurable ISC object that retrieves or manipulates data and returns a result. Its returned text must still satisfy that agreement.
 
-| Observation | What you can conclude |
+The expected result is specific: for the selected identity, using the correctly associated account's `" ENG "`, the approved calculation should return Engineering.
+
+An **applied value** is the value established on the identity record. **Identity processing** reevaluates identity information and applicable decisions and can update mapped fields.
+
+Initially, we have a Preview observation. Current applied and external-system values have not been checked.
+
+| Observation | Supported conclusion |
 |---|---|
-| The selected calculation reports an error | That evaluation did not successfully produce its normal result; investigate the failing operation and input |
-| Preview returns Finance for Devi | A value was returned, but it contradicts the approved Engineering department |
-| Preview returns Engineering, but the last checked identity department was Finance | The calculation result and historical applied evidence differ; check current identity data and relevant processing |
+| Selected evaluation reports an error | The operation did not produce its normal result; investigate input and failure |
+| Preview returns Finance | Returned text contradicts the approved Engineering requirement |
+| Corrected Preview returns Engineering, but only an earlier Finance identity observation exists | Recheck relevant processing and current identity state; neither current value follows from those facts alone |
 
-**Preview** evaluates mappings for a selected identity using available information. It does not prove that every identity has received the result.
+Keeping these conclusions separate prevents a single Preview result from becoming an unsupported claim about the live identity, an entire population or a target account.
 
-An **applied value** is the value established on the identity record. **Identity processing** reevaluates identity data against applicable configuration and can update mapped fields.
+## Preserve the evidence that explains the observation
 
-At the beginning of this incident, Finance is a Preview observation. The current applied department has not yet been checked. We must not silently turn that into a claim that the live identity, every employee or an external account is wrong.
+Record the relevant identity and account identifiers, profile and field, saved mapping and transform, available input, observation time and use context before changing the definition.
 
-Write the expected result as a testable statement: “For I-89009, using account wl-89009 with departmentCode `" ENG "`, the approved department calculation should return Engineering.”
+If an error is visible, preserve its actual text and relevant activity context. “Transform broken” loses the detail needed to distinguish causes. Keep only relevant authorized information in an appropriately protected investigation record, rather than copying an entire HR record into a public ticket.
 
-Now we have a specific result to explain.
+Record missing evidence too. Here, we initially know the associated account's spaced code and Preview Finance; we have not checked current applied or external values.
 
-## Keep the evidence before changing the definition
+An edited definition that passes today does not explain which definition produced an earlier result. Preserve the version and input where available. If historical evidence was not retained, state the limit.
 
-Before making a correction, preserve the affected identity and account identifiers, the governing profile and field, the saved mapping and transform definition, the available input, and the time and context of the observation.
+This does not require a hidden trace screen. Use supported configuration, records, Preview and activity evidence actually available; do not invent a stored intermediate trace.
 
-If an error is visible, keep its actual text and surrounding activity context. Do not replace a specific error with “transform broken.”
+## Read the saved calculation, not just its name
 
-For sensitive values, retain only the information needed in an appropriately protected investigation record. An exact string can matter without making an employee's entire record suitable for a public ticket.
+The definition uses **JSON**, a text format for structured data. Braces group properties and settings; square brackets contain an ordered **array**. Quoted text is a **string**. Unquoted true is a **boolean**, a yes/no setting.
 
-Also record what has not been checked. For Devi, we initially have Preview Finance and the associated account's spaced code. We do not yet have current applied or external-system evidence.
+Follow the separate jobs performed by the operations:
 
-Why preserve the saved definition?
+`accountAttribute` retrieves a named field from an account associated with the identity being evaluated, on the specified source.
 
-Because changing it can remove the conditions that produced the incident. A successful test of your edited version does not explain which version produced yesterday's result.
+`lookup` matches an incoming string to a table **key** and returns its paired **value**. ENG maps to Engineering; FIN maps to Finance. A **default** can supply a result for an unmatched key, but none is configured here. An unmatched input without a default produces an error.
 
-If the previous definition or input was not retained, say so. Do not claim a historical reconstruction from today's configuration alone.
+**Null** means no value. `firstValid` selects the first candidate returning a **non-null** value. The operation's name does not mean that HR approved the returned text as the true department.
 
-This is not a requirement to find a hidden trace screen. Use supported configuration, record, Preview and activity evidence that is actually available. ISC does not need to expose every intermediate value for you to reason about a small expression.
+The setting `ignoreErrors: true` allows firstValid to continue to its next candidate after a candidate fails.
 
-## Read the instructions that actually supply the value
-
-The saved department calculation is:
+A **fallback** is an alternative used under a defined condition. Here, the second candidate is the literal Finance string, which can be used after a failure in the first candidate.
 
 ```json
 {
@@ -75,7 +79,7 @@ The saved department calculation is:
           "input": {
             "type": "accountAttribute",
             "attributes": {
-              "sourceName": "WorkforceLedger Production",
+              "sourceName": "HR-Primary",
               "attributeName": "departmentCode",
               "accountReturnFirstLink": true
             }
@@ -92,130 +96,56 @@ The saved department calculation is:
 }
 ```
 
-This is a complete illustrative transform definition, not a deployed configuration.
+The outer, or **root**, type is firstValid. Its first candidate is the nested lookup calculation. Its second candidate is fixed text.
 
-JSON is the structured notation used here. Braces group properties; square brackets hold an ordered list. Quoted text is a string. The unquoted true is a boolean setting.
+Inside lookup, the retrieval explicitly chooses HR-Primary departmentCode. `accountReturnFirstLink: true` returns the first selected account's field even if null; it does not suppress retrieval errors. Our main evidence supplies one account with a successfully returned string.
 
-The root `type` is `firstValid`: the outer operation selects a result. Inside its values list, the first candidate is another calculation. The second is the literal string Finance.
+An **explicit input** is chosen inside the definition. An **implicit input** comes from surrounding mapping context. Changing a visible mapping source selector does not rewrite this nested sourceName reference.
 
-The inner **accountAttribute** operation retrieves a named field from an account associated with the identity being evaluated. Its sourceName explicitly selects WorkforceLedger Production, and attributeName selects departmentCode.
+Inspect the mapping and actual saved expression together. The root name identifies the transform; it does not establish its input path or prove its result is correct.
 
-The `accountReturnFirstLink: true` setting returns the first selected account's value even if it is null. Null means no value, rather than the text `"null"`. Here there is exactly one associated account on this source, so the example does not depend on choosing between several accounts.
+## Follow the candidate and the enclosing result separately
 
-The **lookup** operation translates an incoming string by matching a table key and returning its paired value. ENG maps to Engineering; FIN maps to Finance. No default is configured in this table. An input that matches no key produces an error.
+An **input contract** describes what an operation expects. This lookup expects an approved code such as ENG or FIN. Its retrieval supplies `" ENG "`, including the spaces; retrieval itself has not normalized the text.
 
-The outer **firstValid** operation chooses the first candidate that evaluates to a non-null value. With `ignoreErrors: true`, it can proceed to the next candidate after a candidate errors.
+For the supplied investigation, evaluating that lookup candidate reports an unmatched-key error.
 
-“Valid” in this operation's name does not mean “HR has approved this as the employee's real department.”
+The first candidate therefore did not return Engineering normally. The outer firstValid can continue because ignoreErrors is true. Its next candidate, `"Finance"`, is non-null and is returned.
 
-Finally, the input is **explicit**: the definition itself says where to retrieve it. An **implicit input** would come from the surrounding mapping.
-
-Changing a visible source selector on the mapping does not rewrite that nested sourceName instruction. Inspect both the mapping and the saved expression before concluding which source supplied the result.
-
-## Follow the value until it stops meeting the contract
-
-An **input contract** states what an operation needs from its input. Here, the lookup expects an exact approved code such as ENG or FIN.
-
-What does the account read supply?
-
-It supplies `" ENG "`, including both spaces. Retrieving the field does not itself normalize it.
-
-Does that string match the key `"ENG"`?
-
-No. The actual input contains additional characters. The supplied investigation confirms that evaluating this lookup candidate with that input reports an unmatched-key error. This is a fictional diagnostic observation, not a quotation of a tenant error message.
-
-The candidate therefore does not successfully return Engineering. The enclosing firstValid is allowed to continue because ignoreErrors is true. Its next candidate is the non-null string Finance, so the outer calculation returns Finance.
-
-Here is that value dependency. Arrows mean “supplies input or an outcome to,” not separate background jobs:
+The arrows connect values and outcomes. They do not represent separate background jobs or a guaranteed internal execution schedule.
 
 ```text
-I-89009 / account wl-89009
+Selected identity / HR-Primary account
 departmentCode = " ENG "
-            |
-            v
+                 |
 lookup keys: ENG / FIN
-no match; no table default
-            |
-            v
-candidate reports an error
-            |
+No match; no table default
+                 |
+Supplied candidate diagnostic: error
+                 |
 firstValid / ignoreErrors: true
-            |
-            v
-next candidate: "Finance"
-            |
-            v
-returned department: Finance
+                 |
+Next candidate: "Finance"
+                 |
+Returned department: Finance
 
-Returned text is not proof
-of a correct department.
+Arrows connect values and outcomes.
+Returned text is not business proof.
 ```
 
-We have two defects with different responsibilities.
+There are two defects.
 
-The lookup was given an unprepared code even though this field's agreement permits surrounding spaces to be removed.
+First, lookup receives an unprepared code even though the owner permits removal of its surrounding spaces. Second, the error policy turns failed calculation into an ordinary department that the owner did not approve as a substitute.
 
-The error-handling design then converted a calculation failure into an ordinary department. That substitute contradicts the business policy.
+Turning ignoreErrors off exposes the candidate failure, but leaves the input unprepared. Adding trim while retaining the Finance fallback fixes this ENG record, but can still disguise another unrecognized code as Finance.
 
-Correcting only one can leave the other behind. Adding trim while retaining the Finance substitute fixes the supplied spaced ENG case, but an unrecognized code can still be disguised as Finance.
+Error visibility and data correctness need separate attention.
 
-Changing ignoreErrors to false would expose a candidate error. It would not remove the spaces or make the lookup accept the code. A diagnostic improvement is not yet a complete data correction.
+## Correct both responsibilities
 
-## Test the explanation against competing causes
+The `trim` operation removes whitespace at the beginning and end of a string. It can prepare the code according to the approved agreement.
 
-A final value of Finance does not, by itself, prove that fallback was used.
-
-Suppose the account read returned FIN. The lookup could legitimately return Finance as its first candidate, without needing the substitute. You would then investigate why the selected account supplied FIN for this person.
-
-Similarly, a lookup table could incorrectly contain `"ENG": "Finance"`. That calculation could run successfully while implementing the wrong business translation.
-
-A diagnosis needs evidence that separates these possibilities.
-
-For Devi, the supplied checks establish the exact associated account, the spaced ENG input, the saved ENG-to-Engineering table, the unmatched-key candidate error, and the outer Finance result. Together they support the missing-normalization and masking explanation.
-
-If several source accounts exist, inspect which accounts are eligible and how the account retrieval filters, sorts and handles null values. A perfectly functioning lookup can translate the wrong account's code.
-
-If the source display name changed, review the saved sourceName reference. It depends on that display name. Do not assume a similar-looking source is interchangeable.
-
-If the expression uses **reference**, that operation reuses an existing named transform. Inspect the referenced definition as well as the calling calculation. A caller is simply a calculation that uses the shared logic.
-
-Changing the shared definition can affect other callers. Editing a copied expression changes that copy instead. The visible outer JSON may not contain all the instructions involved.
-
-If a date or clock comparison is involved, preserve the input representation and evaluation time too. A later test can differ legitimately when its time-dependent input differs.
-
-Our main example does not use reference or the clock. These are additional dependencies to look for, not assumed causes of Devi's incident.
-
-## Do not treat every kind of “blank” as the same failure
-
-The repair must distinguish data states rather than making everything look populated.
-
-| Available evidence | What still needs investigation |
-|---|---|
-| The field is absent, or an account read returns null | Collection, schema, account selection and the approved missing-value policy |
-| The input is the empty string `""` | Whether empty text is allowed and how the actual operations handle it; non-null does not mean usable |
-| The input contains only ordinary spaces | Normalization and the policy for the resulting empty text |
-| The input is non-empty but unrecognized, such as OPS | Whether the code is legitimate, erroneous or not yet included in the approved translation |
-| The account retrieval or nested operation reports an error | The failing dependency and its actual error; it is not proof of ordinary missing business data |
-
-Missing means the needed information is unavailable. Empty means a string exists with no characters. A failure means an operation could not complete as intended. Those conditions can require different corrections.
-
-FirstValid is not a general-purpose check for empty text, placeholders, business validity or correct account ownership.
-
-Trim removes surrounding whitespace from a string. It does not decide whether an empty result is acceptable, whether OPS is a real department, or whether a list of values should be reduced to one string.
-
-If an operation expects a single string but the selected field provides several values, review the schema, actual representation and approved selection rule. Do not silently choose the first entry just to avoid an error.
-
-Likewise, “Unknown” can be a legitimate label in one business process and misleading data in another. A sentinel is an agreed marker for a special state, not an automatically safe fallback.
-
-A sentinel needs defined meaning, consumers and follow-up. Replacing Finance with Unknown without that agreement is another unsupported design choice.
-
-For this example, the owner requires a recognized department code. No missing-value substitute is approved. We must keep unresolved values visible for correction without inventing a department or prescribing an unverified universal clearing or retention behavior.
-
-## Correct the cause and preserve the error policy
-
-HR confirms that surrounding ordinary spaces are insignificant for this field. ENG and FIN remain the only approved codes in this example.
-
-A proposed replacement explicitly trims the retrieved code before lookup and removes the unsupported substitute:
+The proposed replacement explicitly trims the retrieved value, then performs the approved translation. It removes the unsupported substitute:
 
 ```json
 {
@@ -228,7 +158,7 @@ A proposed replacement explicitly trims the retrieved code before lookup and rem
         "input": {
           "type": "accountAttribute",
           "attributes": {
-            "sourceName": "WorkforceLedger Production",
+            "sourceName": "HR-Primary",
             "attributeName": "departmentCode",
             "accountReturnFirstLink": true
           }
@@ -243,158 +173,159 @@ A proposed replacement explicitly trims the retrieved code before lookup and rem
 }
 ```
 
-Here the root operation is lookup. Its input is the result of trim, whose input is the retrieved account field.
+Now the root is lookup. Its input is trim's returned result, and trim's input is the account retrieval.
 
-For Devi, the successive values are `" ENG "`, then `"ENG"`, then `"Engineering"`. The output remains text; no number conversion or invented department is involved.
+The supplied values are `" ENG "`, then `"ENG"`, then `"Engineering"`. The mapping still supplies identity department as the destination.
 
-For a supplied FIN code, the result is Finance. Finance remains a valid translation, but it is no longer an unconditional rescue value.
+A supplied FIN still returns Finance. Finance remains a valid translation; it is no longer an unconditional rescue value.
 
-For a supplied OPS string, trim leaves OPS unchanged. It matches neither approved key. With no lookup default or enclosing error-skipping fallback, the definition exposes an unmatched-key failure rather than returning Finance.
+For OPS, trim leaves the string unchanged. This example's approved table contains only ENG and FIN. With no default or enclosing error-skipping fallback, OPS exposes an unmatched-key failure instead of becoming Finance.
 
-That is intentional visibility, not a claim that errors are desirable final business outcomes. Someone still needs to determine whether HR must correct OPS or the approved table must be extended.
+That failure needs action. Determine whether the producer must correct OPS or the owner must approve a table extension. Do not invent OPS-to-Engineering merely to make a test pass.
 
-Do not add OPS-to-Engineering merely because it makes a test green. A mapping between business codes and departments needs the responsible owner's approval.
+The replacement does not define every absent, null, empty or multiple-account case. Before a population rollout, establish the required handling and verify those operations in their intended context. No universal clearing, retention or replacement of stored department is implied by a failed calculation.
 
-The replacement also does not specify a complete null/empty policy. Before applying it to a population that can contain those states, establish the required handling and verify the relevant operations in that context. Do not claim that any failure automatically clears, preserves or replaces the stored identity department.
+## Verify the correction and its boundary
 
-## Verify a correction at the place it is supposed to work
+Check spaced ENG, ordinary ENG, FIN, unknown OPS and actual missing/empty/multiple-account cases relevant to the population. Not every test should return a department.
 
-First test the explanation against representative inputs: spaced ENG, ordinary ENG, FIN, an unknown code, empty text, null, and any supported multiple-account situation. Not every case is expected to succeed.
+A test meets the requirement when its expected result or approved exception handling is observed. A populated output box alone is insufficient.
 
-For unknown or unusable inputs, verify that the approved failure or exception handling remains visible and actionable. A test passes when the observed behavior meets the requirement, not merely when an output box contains text.
+Use the intended Employees identity-profile mapping. A successful test in a separate account-create configuration does not establish that this mapping works.
 
-Use the intended context. Devi's example is an Employees identity-profile department mapping. A test of one field in a separate account-creation configuration is not evidence that this mapping works.
+Review shared change scope before application: profile identities, referenced callers and consumers using department. A **consumer** is a process or system that uses a field; a department used in an access condition can have consequences beyond display text.
 
-Then review the change's scope before applying it. A shared profile mapping can affect many identities. A referenced transform can affect multiple mappings. Identify consumers of department, especially configurations that use it to decide access, before changing shared logic.
+For this hypothetical continuation, the department mapping is confirmed to use the replacement. Representative checks and shared-impact review are complete, Preview returns Engineering, and relevant identity processing plus a separate current identity observation confirm department Engineering.
 
-A **consumer** is a process or system that uses the field. **Provisioning** makes account or access changes in a connected system. **Attribute synchronization** is separately configured identity-to-account updating for selected attributes.
+Those are supplied observations, not immediate-processing or mandatory-manual-step promises.
 
-Correcting the identity calculation does not establish any of those external outcomes.
+**Provisioning** performs account or access changes in a connected system. **Attribute synchronization** is separately configured updating from identity fields to eligible existing account attributes.
 
-The following is a human investigation and verification path, not a guaranteed ISC execution sequence:
+The main identity also has an existing **Directory-Primary** account whose department is Finance. No ongoing department update is configured. Its retained Finance does not refute the verified identity result.
+
+If an update is required, identify an authorized supported mechanism and verify its result. A correct identity field also does not prove every dependent assignment was reevaluated or each resulting external operation completed.
+
+This diagram is a human investigation and verification path, not the sequence the ISC engine automatically performs:
 
 ```text
-Preserve the observed evidence
+Human investigation and verification
+
+Preserve observed evidence
               |
-              v
 Identify actual context and input
               |
-              v
 Explain the failing or wrong step
               |
-              v
 Approve a cause-based correction
               |
-              v
 Test intended and exception cases
               |
-              v
 Check relevant application
 and current identity value
               |
-              v
 Verify each required consumer
 
-Do not skip from a good Preview
-to a confirmed external outcome.
+A good Preview is not target proof.
 ```
 
-In our fictional continuation, the corrected definition returns Engineering in Preview for Devi. Relevant identity processing and a separate current identity observation then confirm department Engineering.
+A useful conclusion states the cause, correction and evidence:
 
-These are supplied observations, not a promise of immediate processing or a recipe requiring a manual step after every account update.
+“The selected lookup received spaced ENG and reported an unmatched-key error. The enclosing error-skipping fallback returned Finance. The approved replacement trims the code and removes that substitute. Preview and current identity evidence confirm Engineering. The directory account is still Finance; no ongoing update is configured.”
 
-Devi also has a ProjectDirectory account, `pd-89009`, whose department is Finance. No ongoing department update is configured for that account in this example.
+That explains the incident and its remaining boundary more clearly than “transform fixed.”
 
-Its unchanged Finance does not refute the corrected identity calculation. If the business requires an account update, it needs a separately authorized, supported update mechanism and result verification.
+## Challenge the explanation with competing causes
 
-An identity department used in an access condition requires another distinction: a corrected field does not prove that every dependent assignment was reevaluated or that every resulting external change completed.
+Finance alone does not prove that fallback was selected.
 
-A useful incident conclusion states the original defect, the correction and the verified boundary. For example:
+If the retrieval supplied FIN, lookup could legitimately return Finance without using the substitute. If the table incorrectly paired ENG with Finance, a successful lookup could also produce the wrong answer.
 
-“The selected lookup received spaced ENG, failed to match, and the error-skipping fallback returned Finance. The approved replacement trims the source string and removes that substitute. Preview and current identity evidence confirm Engineering for I-89009. ProjectDirectory department has not been updated; no ongoing update is configured.”
+For our main case, the exact account, spaced ENG input, saved ENG-to-Engineering table, supplied candidate error and enclosing Finance result jointly support the diagnosis. Without those checks, it remains a hypothesis.
 
-That conclusion explains more than “transform fixed.”
+Multiple accounts require their own selection evidence: eligibility, filters, sorting and null handling. A functioning lookup can translate the wrong account's code correctly.
 
-## Work through the investigation decisions
+A source rename requires review of sourceName, which depends on the display name. A similarly named source is not automatically interchangeable.
 
-### 1. The returned value is plausible
+If `reference` is used, it reuses an existing named transform's logic. A **caller** is a calculation using that shared definition. Inspect the referenced logic as well as the outer expression.
 
-**Facts:** Preview returns Finance. The saved definition contains the Finance substitute, but the selected account input has not been checked.
+A shared edit affects dependent callers; editing a copy changes that copy. If a clock or date comparison is involved, preserve the input representation and evaluation time too: later tests can differ legitimately.
 
-Can you conclude that fallback was used?
+Our main calculation uses neither reference nor the clock. They are additional dependencies to inspect when present, not assumed causes.
 
-**Reasoning:** No. FIN could have matched successfully, a translation could be wrong, or the substitute could have been selected after a failure. Inspect the exact input, selected account and saved operations. A plausible output alone does not establish its path.
+Today's saved configuration and matching data alone do not reconstruct an unretained historical execution. Keep the conclusion within the available evidence.
 
-### 2. The failing candidate is now known
+## Distinguish blank, invalid and failed inputs
 
-**Facts:** The selected account supplies `" ENG "`. The lookup has only ENG and FIN keys, with no default. The supplied diagnostic confirms an unmatched-key error. The enclosing firstValid has ignoreErrors true and Finance next.
+An **empty string**, `""`, has zero characters. A whitespace-only string contains characters that may disappear after trimming. Missing information, present-but-unsuitable text and failed evaluation are different conditions.
 
-Why can the outer result still be Finance?
+An **account schema** describes the account's fields and their value types, including whether a field holds one value or several. It helps establish what the retrieval is actually supplying.
 
-**Reasoning:** The error-skipping setting permits continuation. The literal next candidate is non-null and is returned. The nested candidate failed while the outer expression still supplied text; that text violates Devi's approved department requirement.
+| Available evidence | What needs investigating |
+|---|---|
+| Field absent or account read returns null | Collection, schema, selection and approved missing-value policy; absence does not itself prove a successful null retrieval |
+| Input is `""` | Whether empty is allowed and how the actual operations handle it |
+| Input is only ordinary spaces | Normalization and handling of the resulting empty text |
+| Nonempty unrecognized OPS | Whether it is erroneous, legitimate but unapproved, or absent from the current table |
+| Retrieval or nested operation errors | The failed dependency and actual error, rather than assumed ordinary missing data |
 
-### 3. Error visibility is restored
+FirstValid does not validate empty text, placeholders, code meaning or account ownership. Non-null is not synonymous with usable.
 
-**Facts:** Someone changes ignoreErrors to false. The spaced input and lookup remain unchanged.
+Trim does not decide whether an empty result is acceptable, whether OPS is real, or how several supplied values should become one. A **list** contains multiple values; if a single-string operation receives a list, inspect actual representation, schema and the approved selection rule.
 
-Has the department calculation been repaired?
+Do not silently take the first entry just to avoid a failure.
 
-**Reasoning:** Not completely. The unmatched input remains. The change stops this firstValid from skipping the error, but the input still needs approved preparation or correction. Error policy and data correctness are separate responsibilities.
+A **sentinel** is an agreed marker for a special state. Unknown can be a useful label in one process and misleading data in another. Its meaning, consumers and follow-up must be approved.
 
-### 4. One example passes after adding trim
+Replacing Finance with Unknown without that agreement is another unsupported choice. Here the owner requires a recognized department, with no approved missing-value substitute. Unresolved cases need visible correction, without invented stored-value behavior.
 
-**Facts:** Trim is added before lookup, but the original error-skipping Finance substitute remains. Devi now gets Engineering. A supplied OPS code still causes an unmatched-key error inside lookup.
+## Decide what the evidence supports
 
-Is the unsupported-department problem resolved?
+1. Preview returns Finance and the definition contains the Finance substitute. The selected input has not been checked. Can fallback selection be concluded?
 
-**Reasoning:** No. The same fallback can still turn OPS's failed translation into Finance. Remove or redesign the substitute according to approved policy, and keep unknown codes visible for investigation. One successful record does not cover exception behavior.
+2. The account supplies `" ENG "`; lookup has ENG/FIN keys with no default; a supplied diagnostic confirms unmatched-key failure. FirstValid explicitly ignores errors and has Finance next. Why can the outer result still be Finance?
 
-### 5. The corrected input is an empty string
+3. IgnoreErrors is changed to false, but the spaced input and lookup remain. Is the department calculation fully repaired?
 
-**Facts:** A collected string contains only ordinary spaces. Trimming produces `""`. The owner has not approved an empty department or substitute.
+4. Trim is added, but the error-skipping Finance substitute remains. ENG now returns Engineering; OPS still produces a lookup error. Is the unsupported-department problem resolved?
 
-Should the engineer treat it as a usable department because it is non-null?
+5. Ordinary spaces trim to `""`. No empty department or substitute is approved. Does being non-null make that a usable department?
 
-**Reasoning:** No. The business requirement is a recognized code, not merely a non-null value. Establish how empty input is handled in the actual calculation and agree the missing-data response. Do not assert an unverified stored-value outcome.
+6. HR now has ENG, but the exact associated ISC account still contains FIN. The table correctly translates FIN to Finance. Must the table change?
 
-### 6. The source record looks correct
+7. Corrected Preview returns Engineering. The only checked identity department is Finance from before the correction. No new processing or current observation is supplied. Is the applied value definitely Engineering or definitely Finance?
 
-**Facts:** HR's own record now contains ENG, but the exact associated account available in ISC still contains FIN. The saved lookup correctly translates FIN to Finance.
+8. Current identity department is verified as Engineering. Directory-Primary remains Finance, with no ongoing department update configured. What remains unresolved?
 
-Must the lookup table change?
+### Compare your reasoning
 
-**Reasoning:** No. It is translating its available input correctly. Investigate collection, observation times and account selection. Account aggregation reads account data into ISC; evaluating an accountAttribute expression is not itself a fresh live HR read.
+**1.** No. FIN could have matched, a table translation could be wrong, or a failed candidate could have led to the substitute. Inspect exact input, selected account and saved operations.
 
-### 7. Preview is correct after the repair
+**2.** The setting allows continuation after the candidate error. The non-null next literal is returned. The candidate failed while the outer expression supplied text that violates the approved department requirement.
 
-**Facts:** Preview returns Engineering. The last checked identity department was Finance before the repair. No new current identity observation or processing evidence has been collected.
+**3.** Not fully. Error skipping stops, but the input still needs approved preparation or correction. Exposing a defect is not the same as fixing it.
 
-Is the applied department definitely Engineering, or definitely still Finance?
+**4.** No. OPS's failure can still become Finance through the retained fallback. Remove or redesign the substitute under the approved policy and test exception behavior. One passing record does not establish resolution.
 
-**Reasoning:** Neither conclusion follows yet. Check the current identity field and relevant processing. A good Preview is not application evidence, and a historical Finance observation is not proof of today's current value.
+**5.** No. The requirement is a recognized code. Establish actual empty-input behavior and the approved missing-data response without guessing the resulting stored identity state.
 
-### 8. An external account has not changed
+**6.** No. It correctly translates the available FIN. Inspect collection, observation times and account selection. Account aggregation reads account data into ISC; evaluating accountAttribute is not itself a fresh HR read.
 
-**Facts:** Current identity department is verified as Engineering. ProjectDirectory pd-89009 remains Finance. No ongoing department update is configured.
+**7.** Neither is established. Check relevant processing and current identity data. Good Preview is not application evidence; historical Finance is not proof of the current value.
 
-What remains unresolved?
+**8.** The identity result is verified. Determine whether a target change is required; if so, configure or select the authorized supported path and verify it. If approved scope excludes a target update, none is required. Do not alter the correct identity calculation to conceal missing delivery.
 
-**Reasoning:** The identity result is verified. Whether the target should change is a separate requirement. If required, identify and authorize the supported update path, then verify its result. Do not alter a correct identity transform merely to conceal an absent target-update mechanism.
+## Investigate an unfamiliar site without hiding it
 
-## Investigate an unfamiliar value without hiding it
+A facilities account supplies `siteCode = " DAL "`. Its approved table pairs DAL with Dallas and AUS with Austin, with no default. Surrounding ordinary spaces are confirmed insignificant.
 
-A facilities team reports that an employee is assigned to the wrong building in ISC.
+An outer firstValid skips errors and supplies Austin next. Selected Preview returns Austin; no current identity or external outcome is supplied.
 
-The selected account supplies `siteCode = " DAL "`. The approved lookup contains DAL-to-Dallas and AUS-to-Austin, with no default. An outer firstValid skips errors and supplies Austin as its next candidate.
+Would changing the substitute to Dallas resolve the design?
 
-The current selected Preview returns Austin. No current applied or external-system observations are supplied. Surrounding ordinary spaces are confirmed insignificant for siteCode.
+For this supplied investigation, the spaced input produces an unmatched-key failure. Error skipping permits Austin. Replacing it with Dallas would hide the same defect for another site.
 
-Would replacing the substitute with Dallas resolve the design?
+Prepare the approved input before translation and remove or redesign the unsupported substitute. Test DAL, AUS and unknown BOS. An unknown site must not silently become a known one simply to populate the field.
 
-Trace the string first. The spaced value does not match DAL. The failed candidate can be skipped, allowing Austin to be returned. Changing the substitute to Dallas would hide the same defect for another site.
+Review other mappings and consumers before shared changes. Then distinguish the selected result, current identity value and required external update.
 
-Prepare the approved input before translation and remove or redesign the unsupported substitute. Test both sites and an unrecognized code such as BOS. An unknown building must not silently become a known one just to populate the field.
-
-Before applying shared changes, identify other mappings and consumers. Then distinguish the selected calculation result, current identity field and any required external update.
-
-The investigation is complete only to the boundary supported by evidence. If a required input, historical definition or consumer result is unavailable, state what remains unknown and who must supply it. A truthful unresolved item is more useful than a confident but invented explanation.
+If historical input, a saved definition or a required consumer result is unavailable, record the unresolved item and who must supply it. Close the investigation only to the boundary supported by evidence.

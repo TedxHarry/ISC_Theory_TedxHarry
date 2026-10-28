@@ -1,332 +1,340 @@
 # Which identifier will still point to the right person tomorrow?
 
-Devi, employee `73003`, has an employee identity in SailPoint Identity Security Cloud (ISC). Her project-planning account is supposed to belong to that identity.
+Suppose a project account can match its intended employee identity through either email or an approved person reference. Both values agree today.
 
-The project team can match the account using an email address or an approved person reference. Both values agree today.
+Which reference should the design rely on?
 
-Which one should the team choose?
+Today's equality is one check. We also need to know what happens when an address changes, a value is reassigned, a worker returns or another company brings overlapping numbers.
 
-Let's ask a harder question than “Does it match?” What happens when the address changes, someone returns after leaving, or another company joins the organization with overlapping employee numbers?
+A dependable identifier needs to keep identifying the intended subject through the changes this design must handle.
 
-## First decide what the identifier identifies
+## Decide what the value identifies
 
-An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a connected system. An **attribute** is a named piece of information on one of those objects.
+In SailPoint Identity Security Cloud (ISC), an **identity** represents a person or another managed entity. An **account** is a record in a connected system. An **attribute** is a named piece of information on either object.
 
-An **identifier** is a value used to distinguish something. Its usefulness depends on what that something is and where the value is unique.
+An **identifier** distinguishes something within a particular scope. A unique account key can identify one application record without identifying its person across systems.
 
-A **source** is ISC's configured representation of a system or account-data collection. In this fictional design, **AnchorHR Production** supplies employee records. It is authoritative: its worker accounts establish identities through the Employees **identity profile**, the shared configuration governing those identities and their attribute mappings.
+A **source** is ISC's configured representation of a system or account-data collection. Here HR-Production represents Human Resources (HR) worker records.
 
-AnchorHR worker account `hr-73003` is already attached to Devi's identity. We use `I-73003` as a teaching label for the identity, not an actual ISC object ID.
+It is an **authoritative source**: its accounts establish identities through the Employees **identity profile**, shared configuration including how identity values are populated. HR account hr-record already belongs to the intended employee identity.
 
-**TeamPlan Production** represents the project-planning application. Its account `tp-206` needs to be associated with the intended employee identity. TeamPlan does not establish employee identities in this design.
+Project-Production represents project-planning accounts. It doesn't establish employee identities in this design. Account project-account needs the correct existing identity relationship.
 
-**Account correlation** matches and associates source accounts with identities. A **correlation criterion** pairs an account attribute with an identity attribute for comparison. The standard form uses the fixed **Equals** operation.
+**Account correlation** matches and associates source accounts with identities. A **correlation criterion** pairs an account attribute with an identity attribute; the standard form uses fixed **Equals** comparison.
 
-An **identity attribute mapping** supplies an identity value from selected data or a calculation. Employees maps AnchorHR's `personRef` to identity `identificationNumber`.
+An **identity attribute mapping** supplies an identity value from selected input or a calculation. Employees maps HR personRef to identity identificationNumber.
 
-The business has approved `P-73003` as Devi's persistent person reference. Her employee number is `73003`; these values have different meanings even though they share digits.
+The approved person reference is P-73003. Employee number 73003 has a different meaning, despite sharing digits.
 
-Here are the supplied records and policies:
-
-| Record or policy | Facts that matter to the decision |
+| Record or policy | Supplied facts |
 |---|---|
-| AnchorHR worker `hr-73003` | Employee number `73003`, person reference `P-73003`, work email `drao@learn.example`. |
-| Identity `I-73003` | Applied Identification Number, `identificationNumber`, is text `P-73003`; Work Email, `email`, is `drao@learn.example`; identity `name` is `worker73003`. |
-| TeamPlan account `tp-206` | Account key `tp-206`, login `drao.tp`, `ownerPersonRef = P-73003`, and `mail = drao@learn.example`. The application owner verifies that this account belongs to Devi. |
-| Person-reference policy | AnchorHR's reference identifies a person across employment changes, is not reassigned to another person, and is supplied independently of TeamPlan account ownership. These are supplied project assumptions, not universal properties of HR identifiers. |
-| Email policy | Addresses can change and can later be reassigned. An old application account can retain an earlier address. |
-| Evaluation conditions | Identification Number is already eligible for correlation. The candidate person reference is unique; no existing manual link overrides the supplied case. No identity has the name `drao.tp`. |
+| HR account hr-record | Employee number 73003, personRef P-73003 and work email worker.a@example.invalid. |
+| Existing identity | Applied identificationNumber is text P-73003; email is worker.a@example.invalid; identity name is worker73003. |
+| Project account project-account | Login project.user, ownerPersonRef P-73003 and mail worker.a@example.invalid; application owner verifies the intended person. |
+| Person-reference policy | Identifies the person across employment changes, isn't reassigned, and is available independently of the project account relationship. |
+| Email policy | Addresses may change or be reassigned; old accounts can retain an earlier address. |
+| Evaluation conditions | Identification Number is eligible for correlation; the approved owner reference is unique, no existing explicitly assigned link overrides evaluation, and no identity name is project.user. |
 
-An **account schema** defines the fields represented on a source account. For TeamPlan it selects the account key as **Account ID** and the login as **Account Name**.
+These are supplied organizational policies, not universal properties of HR fields or ISC. The email is illustrative, not evidence of a real mailbox.
 
-The account key distinguishes `tp-206` from other TeamPlan accounts. It is not the reference that identifies Devi across systems.
+An **account schema** defines represented fields and their designations. Project's account key is its **Account ID**; login project.user is its **Account Name**.
 
-Choosing a better person reference does not require changing the valid Account ID or Account Name. Changing those schema designations after aggregation can break references or create serious data problems.
+Those identify or name the source account. They aren't automatically the cross-system person reference.
 
-## Uniqueness needs a population, not just a label
+Choosing a better person reference doesn't require changing valid Account ID/Name designations. Changing those after aggregation can break references or create serious record problems.
 
-**Uniqueness** means a value distinguishes its intended subject within the population being considered.
+Under the supplied agreement, ownerPersonRef Equals identificationNumber compares P-73003 on both sides. With the approved unique owner and supported evaluation, the supplied result associates project-account with that same employee identity.
 
-A TeamPlan key can be unique among TeamPlan accounts without appearing on any employee identity. A local employee number can be unique within one company while another company uses the same number for a different person.
+That establishes a relationship, not a new permission or external field update. We still need to test whether this reference policy works for the intended population and changes.
 
-Ask, “Unique among which people, in which systems, and for how long?”
+## Ask where and for whom the value is unique
 
-For correlation, examine the candidate identities relevant to the source's matching behavior, not only the small team used for a demonstration. An identity profile is not a reason to assume that a reused number in another profile cannot matter.
+**Uniqueness** means the value distinguishes its intended subject within the relevant population.
 
-Do not invent a profile restriction that the actual correlation configuration does not provide.
+An application account key can be unique within that application while having no independently established identity counterpart.
 
-There is another distinction. Devi could legitimately have a standard account and an administrator account. Both can carry the same person reference because they belong to one person.
+A local employee number can be unique in one company while another company uses it for someone else. Ask which people are included, which systems use the number and how long that uniqueness lasts.
 
-That is different from two different identities carrying the same reference.
+Examine the actual candidate identities for the source's matching behavior. Don't assume an identity-profile label restricts candidates in a way the configured comparison doesn't provide.
+
+Repeated references also need interpretation. One person may legitimately own an ordinary account and an administrative account carrying the same owner reference:
 
 ```text
-TeamPlan account tp-206:
-  ownerPersonRef = P-73003
-    -> identity I-73003
+[Project account project-account]
+[ownerPersonRef: P-73003]
+                 |
+[Same intended identity]
 
-TeamPlan account tp-admin-206:
-  ownerPersonRef = P-73003
-    -> same identity I-73003
-       identificationNumber = P-73003
+[Project account project-admin]
+[ownerPersonRef: P-73003]
+                 |
+[Same intended identity]
+[identificationNumber: P-73003]
 
-Different identities sharing P-73003:
-  not proof of one intended candidate
-  -> investigate duplicate person references
+[Different identities with P-73003?]
+[Investigate duplicate references]
 
-Human verification:
-  legitimate accounts, intended owner and scope?
+[Verify each account and its access]
 ```
 
-The two account-to-identity paths show a possible many-accounts-to-one-person relationship. They do not promise automatic account creation or permission assignment.
+The two paths describe several accounts belonging to one identity. The keys distinguish accounts; P-73003 identifies their shared owner.
 
-The second branch shows a data-quality concern, not ISC's undocumented choice between duplicate candidates. If the evidence doesn't establish one intended identity, investigate it rather than guessing which record the product will choose.
+Different identities carrying P-73003 are another problem. That evidence doesn't establish one intended candidate. Investigate rather than inventing which duplicate ISC would select.
 
-An **entitlement** is a represented permission or membership. Even when both accounts belong to Devi, they do not necessarily have the same entitlements or require identical treatment.
+An **entitlement** is a represented permission or membership. Accounts with the same owner don't necessarily hold the same entitlements or need identical treatment.
 
-A shared service account is different again. Its administrator's employee number does not automatically make it a personal account. Confirm account type and the appropriate responsibility model before selecting a personal ownership reference.
+A shared or service account needs a suitable responsibility and classification design. Its administrator's employee reference doesn't automatically make it that person's personal account.
 
-## A reliable value must exist when matching needs it
+The diagram is a relationship comparison, not account creation or automatic permission assignment.
 
-**Availability** asks whether the value exists on both sides at the relevant time. **Coverage** asks how much of the intended population actually has it.
+## Check that the value is available before matching
 
-A reference populated for long-serving employees may be absent for contractors, acquisitions or new starters. “HR has a field for it” is not evidence that every account and candidate identity has a usable value.
+**Availability** asks whether each side has the value when needed. **Coverage** asks which parts of the intended population actually have it.
 
-**Account aggregation** reads account information into ISC. **Identity processing** evaluates identity data and configured requirements, including profile mappings.
+A field populated for established employees may be missing for contractors, new starters or an acquired population. A field definition isn't proof of usable values everywhere.
 
-The raw HR field, the current mapped identity value and the collected TeamPlan field are separate observations. Record what was published, collected and applied before comparing them.
+**Account aggregation** reads account information into ISC. **Identity processing** evaluates identity information and configured requirements, including mappings.
 
-For a first TeamPlan account, the identity-side reference must already be available without needing that missing account relationship. A mapping that can only read an already associated TeamPlan account cannot independently supply the value needed to discover that first account's owner.
+The published HR field, current mapped identity value and collected project account value are separate observations. Establish each before comparing.
 
-This is a dependency problem, not a reason to keep rerunning the same read.
+For the first project account, the identity-side value must be available without needing that still-missing relationship.
 
-**Null** means no value is present. Empty text, `""`, has no characters. A shared placeholder such as `UNKNOWN` is text, but it does not identify an individual.
+If its only input comes from an already associated project account, it can't independently identify the owner of the first unassociated account under those conditions.
 
-If 30 accounts lack their approved references, assigning all 30 the same placeholder does not repair person identification.
+An **Account Attribute transform** is a configured lookup of an account already associated with an identity. It doesn't turn that unavailable relationship into independent input merely because another read runs.
 
-The appropriate response can include correcting an authorized feed, completing the intended population intake or handling a verified exception through an approved process. Do not fill the gap by borrowing a sponsor's reference or inventing a person identifier.
+**Null** means no value. An **empty string** has zero characters; UNKNOWN is populated text but doesn't identify an individual.
 
-## Consistency means the same meaning and representation
+Giving the same placeholder to 30 accounts missing their references doesn't repair ownership.
 
-**Consistency** asks whether the paired values identify the same thing and follow the agreed format across their producing and consuming systems.
+Resolve the real gap through approved feed correction, population intake or a verified exception. Don't borrow a sponsor's reference or invent a person identifier.
 
-An employee number, a contract number and a payroll assignment number can all be valid. They are not interchangeable.
+## Preserve the meaning and representation on both sides
 
-For TeamPlan, `ownerPersonRef` must identify the account's person. A field containing that person's manager or sponsor would point at someone else, even if its value matched a real employee identity.
+**Consistency** means paired values identify the same subject using the agreed format.
 
-Representation also matters. Text `"0073003"` is different from `"73003"`. A feed that converts an identifier to a number can lose meaningful zeros.
+Person, employment, contract and payroll-assignment references can all be valid while identifying different things. An account's ownerPersonRef must identify its user, not a manager or sponsor who happens to have a real employee identity.
 
-A **transform** calculates a value from inputs. A normalization transform can make representations consistent, but it must preserve the distinctions the organization needs.
+Text "0073003" differs from "73003". A producer that converts the reference to a number can lose meaningful zeros.
 
-For example, removing a company prefix from `NORTH:73003` and `SOUTH:73003` would collapse two different references into `73003`.
+A **transform** calculates an output from inputs. **Normalization** puts information into an agreed representation; it must preserve required distinctions.
 
-That is not harmless cleanup.
+Suppose NORTH:73003 and SOUTH:73003 identify two people. Removing the prefixes collapses them into the same text 73003.
 
-The prefix is a **namespace**: it identifies the domain in which the remaining value has meaning. A qualified reference includes that domain so otherwise overlapping local values can be distinguished.
+The prefix supplies a **namespace**, the domain in which the remaining value has meaning. A **qualified reference** includes that domain to distinguish overlapping local values.
 
-If a project adopts a qualified reference, both sides must contain or calculate the same approved qualified value. The identity attribute must be eligible for correlation and populated before evaluation.
+Both sides must supply or calculate the same approved qualified value, with eligible and populated identity input before correlation.
 
-Adding company and employee number as two separate correlation rows is not automatically a combined company-and-number comparison. Standard rows are not a declaration that every row must match the same candidate. Don't treat that as an implicit composite key.
+A **composite key** uses several components together. Company and local person number can be represented by one approved qualified reference.
 
-A **composite key** uses multiple components together to identify something. An approved single qualified reference can represent those components; a particular technical implementation still needs supported mapping and comparison behavior.
+Adding company and employee number as separate standard correlation rows doesn't automatically declare a combined AND comparison. The documented standard behavior can correlate when one criterion is met; separate rows aren't an implicit composite key.
 
-Case is another part of the contract. Configured correlation is case-insensitive by default, with a supported `ignoreCase` setting for configured comparisons. If letter case distinguishes two business references, review that setting and the candidate data.
+Letter case needs agreement too. Configured correlation is case-insensitive by default, with supported ignoreCase settings. If case distinguishes people, review the setting and candidate data.
 
-Do not assume Equals strips spaces, rewrites prefixes or resolves every type difference.
+Equals doesn't promise to strip spaces, remove prefixes or repair every type difference. Easier equality can destroy the distinction needed for correct ownership.
 
-## Stability includes who receives the value next
+## Stability includes the next person who receives the value
 
-**Stability** asks whether the reference continues to identify the intended person through the changes the design needs to handle.
+**Stability** asks whether the reference continues to identify the intended person through relevant changes.
 
-A value that changes when someone marries, moves department or changes email domain creates additional coordination requirements. A value that is later given to a different person creates an ownership risk.
+A name-derived value or email change introduces coordination work. Reassigning an old value to another person can break the ownership meaning even when today's candidate data looks unique.
 
-Consider this variation of Devi's email. The account is being evaluated for correlation; no persistent manual association overrides the variation.
+Consider a separate email variation, with the account being evaluated and no persistent explicitly assigned relationship overriding it:
 
 ```text
 Earlier:
-  Devi identity email = drao@learn.example
-  TeamPlan mail       = drao@learn.example
-  approved person reference = P-73003
+[Identity and account mail agree]
+[worker.a@example.invalid]
 
-Later supplied business facts:
-  Devi's identity has a new email
-  old address is reassigned to another person
-  Devi's TeamPlan account keeps the old address
+Later supplied facts:
+[Original person has a new address]
+[Old address belongs to another person]
+[Old project account keeps old mail]
+                 |
+[Email equality points to new holder]
 
-If evaluated using that stale email:
-  account value equals the new holder's email
-    -> equality no longer proves Devi's ownership
-
-Person-reference path:
-  account ownerPersonRef = P-73003
-  Devi identificationNumber = P-73003
-    -> same intended person reference
+[Person reference remains P-73003]
+[Account and intended identity agree]
 ```
 
-The arrows compare two possible identification paths under supplied facts. They do not claim an existing account automatically moves between identities after every email change.
+The original person now has a new address. Another person holds the old address, while the original person's project account retains that old mail value.
 
-The problem is deeper than “email sometimes changes.” At the later observation, the old address can be unique among current identities and still identify the wrong person for the old account.
+Comparing stale account mail with current identity email can point to the new holder. One unique current match doesn't establish the old account's legitimate owner.
 
-Current uniqueness does not establish historical continuity.
+This is not a claim that an existing association automatically moves whenever email changes. The diagram compares identification paths under supplied facts.
 
-An employee number also needs a policy check. Does it stay with the person during a contractor-to-employee conversion? Is a new number issued for each employment? Can the old number be reused?
+The approved P-73003 reference continues to represent the original person under the separate non-reuse policy. That policy, not the field's name, makes the reference dependable here.
 
-A **rehire** is a person's return after an earlier period of employment. Establish whether the approved person reference persists and whether the intended ISC identity still exists. A stable business reference does not, by itself, restore a deleted identity, recreate an account or authorize restoration of old access.
+Employee numbers also need this review. Does the number persist through contractor conversion, change for each employment or get reused later?
 
-If references must change, record the old-to-new ownership evidence, the effective change, feed readiness and how existing associations will be reviewed. Don't overwrite every identifier merely to make a new snapshot look consistent.
+A **rehire** is a return after an earlier employment period. Check reference continuity and whether the intended ISC identity still exists.
 
-## Compare the candidates rather than voting for a familiar field
+A stable business reference doesn't recover a deleted identity, recreate an account or authorize restoring old access.
 
-| Candidate | Questions that decide whether it fits |
+When references must change, preserve old-to-new ownership evidence, effective timing, feed readiness and the review of existing associations. Don't overwrite all identifiers simply to make a new snapshot agree.
+
+## Compare candidates against their actual guarantees
+
+| Candidate | What needs to be established |
 |---|---|
-| Full name or display name | Can names be shared or changed? Is the field intended to identify a person, or just display a readable label? |
-| Email or login | Is it available before first association, unique in the actual candidate population, synchronized when it changes and protected against reassignment? |
-| Local employee number | Does it identify a person or an employment, cover the intended worker types, survive conversions and remain distinct after acquisitions? |
-| Approved persistent person reference | Is its meaning and non-reuse policy verified, is it present on both sides, and can the supplying teams maintain that contract? |
-| Qualified company/person reference | Is the namespace stable, are all components available on both sides, and does the qualification preserve rather than invent ownership? |
-| Application account key | Does it identify the source account rather than its person? What independently established identity value would legitimately correspond to it? |
+| Full/display name | Shared or changed names; whether the field identifies a person or only displays a label. |
+| Email/login | First-association availability, actual candidate uniqueness, change coordination and reassignment policy. |
+| Local employee number | Person versus employment meaning, worker-type coverage, conversion behavior and acquisition collisions. |
+| Persistent person reference | Verified meaning/non-reuse, independent availability on both sides and maintainable producer guarantees. |
+| Qualified company/person reference | Stable namespace, available components and legitimate ownership meaning. |
+| Application account key | Source-record identity and any approved independently established identity counterpart. |
 
-There is no rule that email can never be used, or that a field called employee ID is always safe.
+Email isn't universally forbidden, and employee ID isn't automatically reliable. Choose from real policies and evidence.
 
-Choose from the organization's actual guarantees and data. If no candidate meets the required conditions, record the gap and correction plan. A source that cannot supply a dependable person reference needs design work, not a more optimistic description.
+If no candidate meets the requirement, record the design gap and correction plan. Calling a field reliable doesn't supply missing guarantees.
 
-Do not spread additional sensitive personal information across applications just because it could distinguish people. Choose the approved reference and the necessary data scope.
+Use the approved necessary reference rather than distributing more sensitive personal information merely because it could distinguish people.
 
-## A higher matching percentage can hide a worse design
+## A higher percentage can conceal a known wrong owner
 
-The team inspects a fictional population of 1,000 personal TeamPlan accounts.
+Suppose a review examines 1,000 personal project accounts:
 
-All 1,000 have an email value equal to an identity's current email. Yet an ownership review confirms that one old account's address was reassigned: its email comparison identifies a different person from the account's legitimate owner.
+- All 1,000 have an email value equal to a current identity email.
+- One account is confirmed to match the wrong person because its address was reassigned.
+- Person references are present on 970 accounts, and supplied ownership checks verify those 970.
+- The other 30 lack the approved reference.
 
-The persistent person reference is present on 970 accounts. Supplied ownership checks confirm those 970 references identify their intended people. The remaining 30 require missing-data investigation.
+Email has 100% value-match coverage in this comparison. The reference has 97% account availability.
 
-Email has 100% value-match coverage in this comparison; the person reference has 97% availability on the accounts. Neither number is a complete measure of correct correlation.
+Those aren't interchangeable measures of correct correlation. One known wrong relationship isn't cancelled out by more equal values.
 
-One known wrong ownership relationship is not cancelled out by having more matches.
+Nor do these facts verify the other 999 email relationships or establish that the 30 missing-reference accounts are all uncorrelated. Actual configurations and other matching paths still matter.
 
-These are supplied comparison and ownership facts, not results claimed from a real tenant test. They also do not prove the other 999 email-based relationships are correct without checking them.
+These are supplied teaching observations, not results from a real tenant test.
 
-ISC's correlation Test feature evaluates a sample to estimate how many accounts will correlate. Where licensed recommendations are available, they can suggest pairings based on matching data.
+ISC's correlation **Test** evaluates a sample and estimates how many accounts will correlate. Licensed recommendations can suggest pairings based on matching data.
 
-Use those results to investigate candidates and gaps. They do not replace the business evidence that a particular account belongs to a particular person.
+Use them to investigate candidates and gaps. They don't replace evidence of who legitimately owns an account.
 
-Test renamed and reused values, missing references, legitimate additional accounts, people outside the initial sample and cross-company collisions. Include cases that should not match, not just easy examples that should.
+Test expected matches and deliberate non-matches: renamed/reused values, missing references, additional legitimate accounts, people outside the initial sample and cross-company overlaps.
 
-## Turn the choice into a maintained data contract
+The dependable reference plus remediation is a candidate design here, not blanket approval to deploy with unresolved exceptions.
 
-A **data contract** is an agreement about a field's meaning, format, producer and expected delivery. Here it should also state uniqueness scope, availability and reuse rules.
+## Make the reference policy something teams can maintain
 
-For the main example, the approved contract says AnchorHR supplies the persistent person reference, Employees maps it to identity Identification Number, and TeamPlan publishes that same person's reference as `ownerPersonRef`.
+A **data contract** is an agreement about meaning, format, producer and delivery. For correlation, include uniqueness scope, availability and reuse policy.
 
-The application owner verifies account ownership; the integration team maintains delivery; the ISC team configures and verifies the comparison. These are illustrative responsibilities to assign explicitly, not mandatory SailPoint job titles.
+The main contract says HR publishes P-73003, Employees maps personRef to identificationNumber, and the project application publishes that same person's reference in ownerPersonRef.
 
-Before deploying the criterion, verify the saved source configuration rather than relying on its name or a proposal. Identify any preset pairings supplied with the source type.
+Account owners verify business ownership, integration teams maintain delivery and ISC administrators configure and verify comparisons. These are illustrative responsibilities to assign explicitly, not mandatory SailPoint job titles.
 
-A **custom identity attribute** is an additional identity field defined for the organization. To appear in correlation's Identity Attribute list, it must be configured as searchable for correlation. The documented preparation then requires manual processing for all identities before source aggregation. Being usable in the separate Search interface is not proof of that correlation eligibility.
+Inspect saved source criteria and any **preset configuration**, initial pairings supplied for that source type.
 
-ISC also has a non-configurable default path when configured correlation cannot associate an account: designated Account Name is compared with identity `name`, case-insensitively.
+If a **custom identity attribute**, an additional identity field, is needed, distinguish its definition, mapping, populated value and searchable-for-correlation setting.
 
-For the supplied TeamPlan case, Account Name is `drao.tp`; Devi's identity name is `worker73003`, and no identity has the name `drao.tp`. That default therefore supplies no alternative match.
+The documented preparation requires manual processing for all identities before source aggregation. Being available in the separate Search interface doesn't establish correlation eligibility.
 
-The saved configuration contains one criterion: TeamPlan `ownerPersonRef` Equals identity `identificationNumber`. With text `P-73003` on both sides, the verified unique owner and supported evaluation, the supplied result associates `tp-206` with `I-73003`.
+Also inspect **default correlation**: when configured matching can't associate the account, designated Account Name is compared with identity name case-insensitively. This default isn't configurable.
 
-That result establishes the intended relationship. It does not, by itself, grant a permission or change an external account field.
+Here Account Name is project.user, identity name is worker73003 and no identity name is project.user. That path supplies no alternative match.
 
-## Existing relationships need a controlled change
+The selected ownerPersonRef/identificationNumber pairing and approved unique reference explain the main supplied relationship. Don't infer ownership from a copied or guessed value alone.
 
-**Manual correlation** establishes a persistent explicit association. Changed source values and an unoptimized aggregation do not automatically clear that link. Accounts created through ISC can also have manual-correlation treatment.
+## Treat existing links as part of the change
 
-**Optimization** skips unchanged accounts for relevant processing. If correlation configuration changes, the documented unoptimized aggregation approach allows unchanged accounts to be reexamined.
+**Manual correlation** creates a persistent explicit association. Source-value changes and unoptimized aggregation don't automatically remove it. ISC-created accounts can also have manual-correlation treatment.
 
-A better proposed identifier does not prove that every existing account was reevaluated or safely reassigned. Inspect current associations, affected scope and the supported correction path.
+**Optimization** avoids relevant reevaluation of unchanged accounts. After configuration changes, documented unoptimized aggregation lets unchanged accounts be reexamined.
 
-**Preview** evaluates an identity mapping for a selected person. It helps verify a proposed identity-side value, but it is not evidence that all identities hold that value or that source correlation has used it.
+A better proposed identifier doesn't prove every existing account was reevaluated or safely reassigned. Review current relationships, affected scope and the supported correction path.
 
-The Accounts view shows represented source accounts; identity details and associated accounts show person-level values and relationships. Keep the exact source, account key, identity, comparison values and observation times together.
+**Preview** evaluates a selected identity mapping. It helps inspect proposed identity input; it isn't evidence that every identity holds it or that account correlation has used it.
 
-**Provisioning** attempts supported account or access changes in an external system. **Attribute synchronization** is a configured identity-to-account write path for existing correlated accounts. Changing identity values or relationships can affect configured consumers, so review those dependencies before a real rollout.
+Use source Accounts and identity details/associated accounts for their respective records. Keep exact source, account key, identity, inputs and observation times together.
 
-Do not use synchronization to copy a guessed reference into an account and then cite that copied value as independent proof of its owner.
+**Provisioning** performs supported external account/access changes. **Attribute synchronization** is a configured identity-to-account writer for existing correlated accounts.
 
-In our fictional main result, no attribute-sync write or requested access change is configured as part of the comparison. External access remains a separate outcome to establish.
+A value or relationship change can affect configured consumers, meaning processes or systems using that value. Review them before rollout and verify required external outcomes separately.
+
+Don't synchronize a guessed reference into an account and then cite that copied value as independent ownership proof.
+
+The main supplied association includes no configured sync write or requested access change. Its evidence concerns the correct account-to-identity relationship.
 
 ## Try the identifier against changed conditions
 
-### 1. A unique account key
+### 1. An account key is unique
 
-**Facts:** TeamPlan key `tp-206` is unique among its accounts. No identity field carries that key or has an approved relationship to it.
+project-account is unique within its source. No identity field carries an approved counterpart.
 
-Is uniqueness enough to make it the person-matching reference?
+Is uniqueness enough for person matching?
 
-**Reasoning:** No. It distinguishes an account, not an independently identified person. Find the approved counterpart and ownership meaning rather than copying the key into a guessed identity.
+**Worked reasoning:** No. It distinguishes a source record, not an independently identified person. Establish meaning and counterpart rather than copying a key into a guessed identity.
 
-### 2. Two accounts share one person reference
+### 2. Two legitimate accounts share a reference
 
-**Facts:** Devi legitimately owns `tp-206` and `tp-admin-206`. Both carry `P-73003`; only her identity has that approved reference.
+project-account and project-admin both belong to the same person and carry P-73003. Only the intended identity has that approved reference.
 
-Must one account receive a different person number?
+Must one receive a different person number?
 
-**Reasoning:** No. The account keys distinguish the accounts; the shared reference identifies the same owner. Verify both uses and their access separately. This is not the same as two different identities sharing the reference.
+**Worked reasoning:** No. Distinct account keys and one shared owner reference can be legitimate. Verify both uses and access; two identities sharing the reference is a different condition.
 
-### 3. Unique inside one company
+### 3. Two companies reuse a local number
 
-**Facts:** North and South each use employee number `73003` for different people. A shared source contains both populations.
+North and South each use 73003 for different people in a shared population.
 
-Can local uniqueness be treated as uniqueness for that matching population?
+Is company-local uniqueness sufficient?
 
-**Reasoning:** No. Establish a common global reference or an approved qualified value on both sides. Merely adding a company row and a number row does not establish a combined comparison.
+**Worked reasoning:** No. Establish a global or approved qualified reference on both sides. Separate company and number criteria aren't automatically an AND comparison.
 
-### 4. The old email belongs to someone new
+### 4. The email now belongs to someone else
 
-**Facts:** An old application account still belongs to its original user, but its email now matches a different person's current address.
+An account still belongs to its original user, but its stale email matches another person's current address.
 
-Does a single current email match prove correct ownership?
+Does that unique current match prove ownership?
 
-**Reasoning:** No. Reassignment has broken the connection between value and original person. Use ownership history and an appropriate independent reference; don't infer which existing relationship automatically changes.
+**Worked reasoning:** No. Reassignment has broken continuity. Inspect ownership history and an appropriate independent reference without assuming automatic movement of an existing link.
 
-### 5. A reference exists only after association
+### 5. Input exists only after association
 
-**Facts:** The proposed identity field can only obtain a reference from an already associated application account. The first such account is not yet associated and no independent input exists.
+The identity reference can only come from an already associated application account. No first account is associated and no independent input exists.
 
-Is the reference available for this first matching decision?
+Is the value available for that first comparison?
 
-**Reasoning:** No, under the supplied dependency. Obtain an approved independent input or verified exception; another read doesn't supply evidence through a relationship that doesn't exist.
+**Worked reasoning:** Not under these conditions. Supply an approved independent input or verified exception; another read doesn't create missing relationship-dependent evidence.
 
-### 6. More complete, but less trustworthy
+### 6. More values match, but one owner is wrong
 
-**Facts:** Email values match for all 1,000 accounts, with one confirmed wrong owner. Verified person references are available for 970; 30 are missing.
+All 1,000 emails match, with one confirmed wrong owner. Verified references exist for 970, with 30 missing.
 
-Should 100% automatically win over 97%?
+Does 100% automatically beat 97%?
 
-**Reasoning:** No. The measurements describe different evidence, and a wrong owner is a known defect. Take the dependable reference and missing-data remediation forward as the candidate design, while investigating the full population and controlling exceptions.
+**Worked reasoning:** No. They measure different evidence. Investigate the known wrong relationship and take the dependable reference plus missing-data remediation forward as a candidate, with controlled exceptions and wider validation.
 
-### 7. Prefix removal creates a collision
+### 7. Prefix removal creates equality
 
-**Facts:** `NORTH:73003` and `SOUTH:73003` identify different people. A proposed transform removes the prefix.
+NORTH:73003 and SOUTH:73003 identify different people. A transform removes the prefix.
 
-Has normalization improved matching?
+Has normalization improved identification?
 
-**Reasoning:** It has discarded a necessary distinction. Preserve the approved qualification and verify both producing and mapped representations. Easier equality is not better ownership evidence.
+**Worked reasoning:** It removed a necessary distinction. Preserve approved qualification in producer and identity values. Easier equality isn't stronger ownership evidence.
 
-### 8. A returning employee has a stable reference
+### 8. A returning person keeps a stable reference
 
-**Facts:** A returning worker retains the approved person reference. The earlier ISC identity was deleted, and old application access has not been reviewed.
+The approved reference persists, but the earlier ISC identity was deleted and old application access is unreviewed.
 
-Does the reference alone restore that identity and justify the old access?
+Does it restore the identity and justify that access?
 
-**Reasoning:** No. Establish the intended identity and continuity through the approved design, then review account association and authorized access separately. Stable person meaning is not automatic object recovery or access approval.
+**Worked reasoning:** No. Establish approved identity continuity and account relationships, then review authorized access separately. Business reference stability isn't automatic object recovery.
 
-## Explain the choice for an acquired company
+## Apply the decision to an acquired company
 
-An acquired company supplies a local `staffNumber`. It overlaps existing employees' numbers. Contractors receive no staff number, and work email appears only after a downstream directory account is created.
+An acquired company has staffNumber values overlapping existing numbers. Contractors have none, and work email appears only after a directory account is created.
 
-The team proposes matching by email until the numbers are cleaned up, then removing company prefixes so all values look consistent.
+The proposal is to match by email temporarily, then remove company prefixes so numbers look consistent.
 
-What would you establish before accepting that plan?
+What must be established?
 
-Identify the intended people and account types, the meaning and reuse policy of each reference, and when each input exists. Email is not an available first-account input merely because a later directory account will receive it.
+**Worked reasoning:** Identify people/account types, reference meanings, reuse policies and input timing. Later email isn't automatically available for a first-account comparison.
 
-Preserve the company distinction where it identifies different people. Check whether an approved global person reference exists, or whether a qualified reference can be populated consistently on both sides. Treat missing contractor references as a coverage problem requiring an approved supplier or exception.
+Preserve company distinctions where they identify different people. Determine whether an approved global reference or consistently qualified input can be supplied independently on both sides.
 
-Then verify correlation eligibility, saved configured/default paths, affected existing associations and supported evaluation. Test correct owners and deliberate non-matches, including reused addresses and overlapping local numbers.
+Missing contractor references need an approved supplier or exception. Neither a placeholder nor a more optimistic field description supplies that coverage.
 
-The design decision should explain why the chosen value continues to identify the intended person, who maintains that guarantee and how exceptions are resolved. A field name and a matching percentage cannot answer those questions for you.
+Verify eligibility, saved configured/default paths, existing associations and supported evaluation. Include deliberate non-matches, reused addresses and overlapping local numbers.
+
+The proposal needs an explainable guarantee: why this value keeps identifying the intended person, who maintains it and how exceptions are resolved.

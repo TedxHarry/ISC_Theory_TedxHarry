@@ -1,0 +1,18 @@
+Verified before
+  Native key: case-readers
+  Label: Case Review
+  Account groups: [case-readers]
+  ISC record: <same entitlement ID>
+              |
+              | label changed
+              v
+Verified after collection
+  Native key: case-readers
+  Label: Case Review Readers
+  Account groups: [case-readers]
+  ISC record: <same entitlement ID>
+
+Same members and permissions verified.
+
+Replacement key: case-readers-v2
+Different object; continuity unproven.

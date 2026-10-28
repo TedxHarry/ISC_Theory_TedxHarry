@@ -1,0 +1,19 @@
+Evaluated account; no manual link
+                |
+                v
+Configured pairing 1
+  unique intended match -> associate
+  no match
+     |
+     v
+Configured pairing 2
+  unique intended match -> associate
+  no match
+     |
+     v
+Default: Account Name to identity name
+  unique intended match -> associate
+  no match              -> uncorrelated
+
+Human verification, separately:
+Does the link identify the right owner?

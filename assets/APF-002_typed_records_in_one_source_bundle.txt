@@ -1,0 +1,14 @@
+Profile: Order draft preparation
+Source: Orders Production
+|
++-- reader entitlement record
+|   type groups, native value "2201"
+|
++-- creator entitlement record
+|   type roles, native value "2201"
+|
++-- editor entitlement record
+    type licenses, native value "2201"
+
+Three represented entitlement records.
+Each has its own ISC identifier.

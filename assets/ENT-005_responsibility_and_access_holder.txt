@@ -1,0 +1,15 @@
+Payroll Production source
+|
++-- Payroll Reports entitlement
+|   |
+|   +-- owner -> responsible identity
+|   |
+|   +-- description and metadata
+|       -> explain and assess access
+|
++-- Employee's application account
+    |
+    +-- member of payroll group
+        -> application permission
+
+Ownership does not add membership.

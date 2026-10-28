@@ -1,0 +1,22 @@
+Identify source, type and native key
+                |
+                v
+Compare current native evidence
+                |
+       +--------+--------+
+       |                 |
+     found           not found
+       |                 |
+       v                 v
+Check read path     Verify coverage
+and field origin    before absence
+       |                 |
+       +--------+--------+
+                |
+                v
+Choose scoped approved correction
+                |
+                v
+Verify that layer and affected access
+
+Not found is not deletion permission.

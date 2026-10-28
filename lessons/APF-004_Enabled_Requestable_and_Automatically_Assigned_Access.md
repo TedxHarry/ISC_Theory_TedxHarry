@@ -1,351 +1,336 @@
 # The profile is enabled. Who actually receives its access?
 
-Devi, employee `110404`, maintains work orders in AssetRoute Production, a fictional application. Her account, `ar-110404`, already exists and can sign in. It does not yet have the memberships needed to read and update work orders.
+An employee has an application account and can sign in, but cannot read or update work orders. An engineer defines a package containing the required access and enables it.
 
-The engineering team creates a package called **Work-order maintenance**, adds the required access items and enables it.
+The employee still cannot update a work order.
 
-Devi still cannot update a work order.
+Before calling that a failure, ask what has selected this employee to receive the package. Making a package available for use and deciding who receives it are different actions.
 
-Has enablement failed?
+The records, native rules, configurations, times and outcomes below are hypothetical. They supply a supported example, not real tenant observations or a universal connector contract.
 
-Not necessarily. We have established that the package can be used, but we have not yet established why Devi should receive it. A package definition and a decision to give that package to someone are different things.
+## Identify the package and the account separately
 
-All records, configurations, times, permission rules and observations here are fictional. The example uses a supported integration contract, not a claim that every source can perform these operations.
+An **account** is the external record through which a person or another entity uses a system. A **group** collects members, such as accounts. A membership connects an account to a group, and the application can use that relationship to determine allowed actions.
 
-## Separate the package from the person receiving it
+In SailPoint Identity Security Cloud (ISC), an **entitlement** represents source access, such as a group membership. An **access profile** is a named bundle of related entitlements from one source.
 
-In SailPoint Identity Security Cloud, or ISC, an **entitlement** represents a source access right, such as a group membership. An **access profile** bundles related entitlements from one source.
+A **source** is ISC's configured representation of a system or collection of account data. Its **connector** supplies the supported integration for reading information and, where supported and configured, making changes.
 
-A **source** represents a connected system or account-data collection in ISC. Its **connector** is the integration that reads information and, where supported and configured, makes changes.
+**Native** means belonging to the external application itself. Here, Work Orders Production supports reading accounts and groups and writing group-membership changes. The **Work-order maintenance** profile references these two represented entitlements:
 
-Here, one source represents AssetRoute Production. The fictional connector supports reading accounts and groups and updating group memberships.
+- Work-order Readers permits reading work orders at the account's assigned site.
+- Work-order Editors permits updating those orders when the same account also has Readers.
 
-The profile contains two entitlements:
+These rights do not permit application administration. The application also requires an enabled account and successful sign-in.
 
-- `AR-4401`, Work-order Readers, permits reading work orders at the account's assigned site.
-- `AR-4402`, Work-order Editors, permits updating those work orders when the same account also has Work-order Readers.
+An **identity** is ISC's representation of a person or another entity. The employee's account is correctly associated with their identity and is their only account on this source. It is enabled, sign-in succeeds and its assigned site is North.
 
-Neither group permits application administration. The application also requires an enabled account and successful sign-in. Devi's assigned site is North.
+Neither group is initially present. No other grant gives this account the required rights. The selected entitlement records belong to Production, not similarly named Test access.
 
-An **account** is the application's login record. An ISC **identity** represents the person. Devi's identity is correctly associated with `ar-110404`, her only account on this source.
+The example uses **standing access**: the memberships are delivered without a separate just-in-time activation requirement. Just-in-time access, where authorized access needs activation for a limited period, has additional behavior outside this example.
 
-We will call the access profile `AP-4404`. This is a teaching label, not a real ISC ID format or an API payload. The selected entitlements refer to the two Production groups, not similarly named Test groups.
+## What did enabling the profile change?
 
-The groups provide **standing access**: these memberships do not require a separate activation each time Devi uses the capability. Just-In-Time access, where access is activated for a limited period, has additional behavior and is not part of this example.
+An **enabled** profile can participate in supported access-model use. Enablement changes the profile's status. It does not select employees or add native memberships by itself.
 
-At the start, neither group is on Devi's account. There is no approved request, no applicable role assignment and no lifecycle configuration requiring this package.
+A profile created in the administrative interface starts disabled and needs at least one entitlement before it can be enabled. Inspect the exact saved record when checking its current state; do not infer that state from an old screenshot or an assumed API default.
 
-That last sentence explains why simply enabling it has not given Devi access.
+The profile's status is also separate from the application's account status. Enabling Work-order maintenance does not enable a disabled application account. Our employee's account was already enabled before the profile existed.
 
-## Enabled answers whether the profile is available for use
+When the administrative screen shows an enabled profile, it is showing the state of that access-model object. To explain a particular person's access, you still need the mechanism that requires access for them and evidence of delivery.
 
-When you create a profile in the administrative interface, it starts disabled. It needs entitlements before it can be enabled.
+At this point in the example, no such mechanism requires this package for the employee. That explains the unchanged account.
 
-An **enabled** profile can participate in supported access delivery. A **disabled** profile is not provisioned through the profile, even if an existing role or lifecycle configuration still references it.
+## What does requestable make possible?
 
-Enablement is a setting on the profile. It is not an employee-selection condition.
+An **access request** asks for an access item for a recipient. ISC's **Request Center** is the user-facing place for finding and submitting supported access requests.
 
-Changing it does not mean “give this to everyone,” “give this to everyone on the source,” or “give this to everyone with the same department as the owner.”
+A **requestable** profile is configured to allow direct requests for that profile. It must also be enabled, and the applicable request permissions and audience restrictions must allow the intended request.
 
-It also does not enable Devi's application account. That account has its own enabled or disabled condition in AssetRoute. The profile and the account are different objects, so their status fields answer different questions.
+This configuration is presented through Allow Access Requests. In the access-profile model, `enabled` and `requestable` are separate yes-or-no properties.
 
-When you see an enabled profile in the administrative interface, you are looking at the status of that access-model object. You are not looking at proof of a completed membership change for a particular person.
+For this example, the tenant's supported Request Center configuration permits an enabled profile to be non-requestable. That support must be checked in the actual tenant; do not assume every request experience or API configuration supports the same combination.
 
-To explain an actual grant, continue to the route that requires the access.
+Work-order maintenance initially has direct requests off.
 
-## Requestable answers whether the profile itself can be requested
+Even if requests were on, a person seeing the package would not thereby receive it. Availability allows a request to be made. It is not submission, a decision or a completed account change.
 
-An **access request** asks for access to be given to a recipient. ISC's **Request Center** is the user-facing place for finding and submitting supported access requests.
+Now let's give the employee a specific, automatic reason to receive it.
 
-A profile marked **requestable** is configured to allow requests for that profile. The profile must also be enabled. Audience restrictions and the organization's supported request experience still matter.
+## Configure the actual selection rule
 
-The relevant configuration is commonly presented as **Allow Access Requests**. In the access-profile model, `enabled` and `requestable` are separate yes-or-no properties.
+An **ISC role** groups access for a broader business responsibility. It can include access profiles. Our role, **Facilities technician**, includes Work-order maintenance.
 
-Do not assume their values from a screenshot of one toggle, an old article or a remembered default. Inspect the saved configuration in the tenant you are working on. This example assumes a Request Center configuration that supports making an enabled profile non-requestable.
+The role has **membership criteria**, conditions that select which identities should receive it. They are configured rules, not conclusions ISC derives from the role's name.
 
-Compare these situations:
+An **identity attribute** is a named value on an ISC identity. The role's criteria here read identity values, rather than a similarly named field on any arbitrary source account.
 
-| Profile configuration and route | What follows from the supplied facts |
-|---|---|
-| Disabled, even if a requestable value is present | The profile is not available for direct requests or provisioned through its role/lifecycle references. Existing native access is a separate question. |
-| Enabled, not requestable, no applicable assignment route | Enablement alone gives nobody new access. No recipient has been selected. |
-| Enabled, not requestable, included in an applicable automatic assignment | Profile requests are unnecessary for that assignment route. Access delivery still depends on processing and provisioning. |
-| Enabled and requestable, no request submitted and no applicable automatic assignment | The direct request route is available where permitted. No grant follows merely from making the choice available. |
+A **lifecycle state** describes an identity's organizational stage and can carry configured access requirements. Its governing **identity profile** defines how source information populates identity attributes and which lifecycle configuration governs those identities.
 
-The table separates request availability from recipient selection. It does not claim these are the only access arrangements ISC supports.
+For this example, the applied identity values are:
 
-A profile can be useful for automatic access without appearing as a separately requestable choice. Conversely, a requestable profile can remain unassigned until someone makes an appropriate request.
+- Department: `Facilities`.
+- Lifecycle State: `working`, the technical value of the enabled state displayed as Working.
 
-## A request still needs a decision and delivery
+Working is a configured state in this example. The criterion uses its technical value, not an assumed built-in label. These are current applied identity values, not merely new information in HR or a preview of values that has not been applied.
 
-For an independent variation, suppose the organization enables direct requests for Work-order maintenance.
+The enabled Facilities technician role requires Department equal to Facilities **AND** Lifecycle State equal to working.
 
-Devi is an eligible recipient, can find the package, submits the required justification and asks for access now. The supplied reviewer configuration requires her manager to approve.
+AND means both conditions must match. Our employee satisfies both. A Facilities employee in prehire does not satisfy this rule, because matching Department does not compensate for the other failed condition.
 
-An **approval** is the decision that the request may proceed. **Provisioning** is the separate work of changing the source account or its access through a supported integration or manual process.
+The role includes the enabled profile, so its configured requirement supplies the reason for assigning that package. Direct profile requests can remain off.
 
-Before approval, the submitted request is not evidence that the groups were granted. After approval, you still need to establish what happened to the account.
+## Follow that decision into the application
 
-The supported route must select the right account and perform the required membership changes. A pending activity, a permission rejection or an uncompleted manual task can prevent delivery.
+**Identity processing** evaluates an identity and relevant identity/access-model configuration. It uses applied information and configured requirements to determine access changes.
 
-If a future start date is configured, an approval also does not mean the access should be available before that start date. Check the request's conditions, not just the word “Approved.”
+**Provisioning** carries out account or access changes. Processing can establish a requirement and start provisioning; it does not validate that the final native operation succeeded.
 
-Requestability does not promise that approval is required in every configuration. Local and global approval settings determine the applicable review behavior. Turning off a local approval option is not proof that no global approval applies.
+Saved access-model changes need the relevant processing to apply them to identities. For reviewed role, profile and application changes, Apply Changes initiates that recalculation.
 
-Nor is a profile's owner automatically its reviewer. Inspect the actual review configuration.
+Using Apply Changes on those list pages covers the related role, profile and application configurations together. It is not an isolated application of the last row edited. Review the actual change set and affected population before initiating it.
 
-Keep another distinction in mind: a requested ISC role uses the role's approval process. It does not automatically run the request-approval chain of every profile it contains. Review request exposure at the object being requested; a profile's direct-request setting is not a complete policy for every route to its underlying entitlements.
+Use these supplied observations from the same day, in UTC:
 
-## Automatic assignment needs an actual rule or requirement
+- **10:00:** The profile is enabled and non-requestable. No role or lifecycle requirement yet includes it. Current native evidence shows neither group on the employee's account.
+- **10:15:** The reviewed role, its two criteria and profile reference are saved and enabled. Relevant access-model processing is initiated.
+- **10:17:** ISC evidence records the employee assigned to Facilities technician. The provisioning activity is pending. Fresh native evidence still shows neither group.
+- **10:24:** Current native evidence shows Readers and Editors on that same account. With the account enabled and sign-in successful, a North-site work-order update succeeds. A South-site update is denied; administration remains unavailable.
 
-An ISC **role** represents a broader access requirement, such as the access needed for a business responsibility. It can include access profiles.
+No profile request was submitted. The role selected the employee using its configured criteria.
 
-An automatically assigned role has configured **membership criteria**, meaning conditions used to select the identities that should receive it. In another supported arrangement, the role can use a configured list of identities. A role's name alone selects neither.
+At 10:17, the assignment and working access had different states. That is expected while delivery is pending. At 10:24, the native memberships and scoped action establish the selected outcome. No other relevant account, permission or application-policy change occurred.
 
-A **lifecycle state** describes a person's stage in the organization, such as prehire, working or leave. The identity's governing **identity profile** is the configuration that defines its identity mappings and lifecycle options.
+The times describe these observations, not a delivery guarantee or a recommended waiting period. A pending change, a rejected source operation and a successful native outcome need different evidence.
 
-For this example, Devi's current applied identity values are:
+If a source operation instead reports a permission rejection, investigate that operation's exact source, account and error. An **integration credential** is the account or authorization the connector uses for its source operations. A verified missing credential permission needs an approved correction and supported recovery, followed by native checks. Turning on profile requests does not repair the rejected write.
 
-- `department = Facilities`.
-- `lifecycleState = working`, the technical name of the enabled lifecycle state displayed as **Working**.
+## Automatic selection can have another basis
 
-An **identity attribute** is a named value on the ISC identity. These are the applied values, not merely values shown in an upstream HR screen or an unapplied preview.
+A role can also use an **identity list**, an explicitly configured list of identities that should receive it. Selecting identities into that list is a design choice; the role name still does not invent the recipients.
 
-The team now defines and enables an ISC role called **Facilities technician**. It includes `AP-4404`. Its automatic membership criteria require both:
+Alternatively, the governing Working lifecycle state could include Work-order maintenance as an access requirement.
 
-1. Department equals `Facilities`.
-2. Lifecycle state equals `working`.
+That lifecycle design covers identities governed by that identity profile and state. It does not acquire a Facilities department restriction merely because the profile's name sounds like a technician package.
 
-The conditions are joined with **AND**. Both must be satisfied. An employee in Facilities who is still in prehire does not satisfy this supplied rule.
+If everyone covered by the state needs the package, that can be appropriate. If only Facilities employees need it, review whether the lifecycle scope is too broad. Our main example uses the role's two conditions instead.
 
-The profile remains enabled and non-requestable. The role provides the reason for assigning it; the profile's request setting does not decide whether Devi meets the role criteria.
+These automatic routes authorize access through the configured model. They do not ask each qualifying person to submit a profile request or invoke the profile's direct-request approval chain.
 
-An alternative would be to include the profile as an access requirement of the enabled Working lifecycle state. That would apply within the governing identity profile and state, not select Facilities staff merely because the package name sounds department-specific.
+If an automatic grant is inappropriate, inspect the actual requirement, applied inputs and approval of the model change. Adding more direct-request approvers does not narrow an automatic role criterion.
 
-These are different designs. A lifecycle requirement can be too broad for a department-specific need. Choose it only if everyone covered by that state should receive the package.
+## A direct request follows its own conditions
 
-Neither design requires a separate profile request from each qualifying person. Their authorization comes from the configured access model. Automatic role/lifecycle assignment does not invoke the profile's direct-request approval chain.
+Consider an independent variation. Work-order maintenance is enabled and directly requestable. No automatic assignment applies to this employee.
 
-This is why criteria, state configuration and the people they cover need careful review before application.
+The request permissions allow the employee to find the package and request it for themselves. They submit the required justification for access now. The configured reviewer is the recipient's manager.
 
-## Follow the route beyond the setting
+An **approval** is the decision that the request may proceed. Submission alone does not establish that decision, and approval does not establish native delivery.
 
-**Identity processing** evaluates identities against configured mappings and access requirements. It is where current identity values and applicable role/lifecycle requirements can lead to access changes.
+Once the applicable conditions are met, the supported delivery path must select the account and establish its required memberships. A pending activity, rejected operation or unfinished human task can leave access incomplete.
 
-Saved access-model changes need the relevant processing to affect identities. For a reviewed set of role, access-profile or application changes, **Apply Changes** initiates that recalculation. Application from those list pages covers the related role, profile and application configurations together; do not treat it as an isolated change to the row you last edited.
+A future start date changes when access is due. If a request is approved today for a later start, lack of current access is not enough to diagnose failed provisioning. Check its date, time zone and current status.
 
-Processing is not proof that the final source write succeeded. It can establish a requirement and start provisioning without validating completed delivery.
+Requestable also does not mean “manager approval always required.” That is supplied configuration here. Applicable local and global settings determine review behavior; turning off local Require Approval does not prove every approval is bypassed.
 
-Here are the two route families we have described:
+The **profile owner** is recorded as responsible for the package. Ownership alone does not insert that person into the reviewer chain.
+
+A requested ISC role uses the role's approval process, rather than automatically invoking the approval settings of each included profile. Inspect the object being requested. Turning off direct requests for a profile is not a complete deny policy for every route to its underlying entitlements.
+
+## Connect the route to delivery without merging their meanings
 
 ```text
-Enabled profile AP-4404
+Enabled profile
 |
 +-- Direct profile request
-|   Requestable + allowed audience
-|   Submit and review as configured
+|   Requestable and allowed request
+|   Decision/timing conditions met
 |
-+-- Automatic assignment
-    Enabled role + matching criteria
-    OR lifecycle access requirement
++-- Configured automatic assignment
+    Matching enabled role
+    OR governing lifecycle requirement
 
-A route establishes required access.
-             |
-             v
-Account selection and provisioning
-             |
-             v
-Verify native memberships and action
+Required account access
+          |
+          v
+Select account and deliver change
+          |
+          v
+Verify native rights and intended action
 
-Enablement alone creates no route.
+Enablement alone selects nobody.
 ```
 
-The top branches show alternative reasons for requiring access. They are not stages everyone must pass through. An automatic assignment does not wait for a direct profile request.
+The branches show the two route families discussed here. They are alternatives, not stages every identity must pass through. A configured automatic assignment does not wait for a direct profile request.
 
-“Allowed audience” means the configured request permissions and visibility allow the intended request. “Lifecycle access requirement” means an actual configured requirement for the person's governing state, not the existence of a state name.
+The direct branch includes the request's applicable decision and timing conditions. The automatic branch requires a real matching role or governing lifecycle requirement. Both still depend on the selected account and supported delivery.
 
-The lower arrows mean that a required account change still needs delivery and verification. They are a simplified teaching sequence, not a private backend architecture or a promise about every service's execution order.
+The lower arrows show responsibilities to establish and verify the account result. They do not specify private backend services, a universal execution order or every way access can be recorded.
 
-Account selection also matters. In the main case, Devi has one account. If she had multiple accounts, supported automatic account-selection criteria and request-time account selection would need separate inspection. Enabling the profile does not identify the correct account by itself.
+Our main account selection is simple because there is one account. With several accounts, supported automatic account-selection criteria and request-time account selection need separate inspection. Profile enablement does not choose the correct account by itself.
 
-Automatic assignment also does not promise automatic source writes. If the source's delivery path requires a manual task, a person must perform that change. The assignment can be automatic while delivery still needs human action and native verification. Our main example instead uses the supported group-membership integration.
+Automatic assignment also does not promise automatic source writes. A **manual provisioning task** is a work item asking someone to carry out a required source change. If that is the configured delivery path, the selection can be automatic while the actual change still needs human action.
 
-## Trace what changed for Devi
+Our main example instead uses supported membership writes. In either arrangement, verify the native result, not only the assignment.
 
-Return to the main automatic-role example. Direct requests remain off.
-
-At **10:00 UTC**, `AP-4404` is enabled, but no role or lifecycle requirement yet includes it. Native evidence shows neither group on `ar-110404`.
-
-At **10:15 UTC**, the reviewed Facilities technician role and its membership criteria have been saved and enabled, and the relevant access-model processing is initiated.
-
-At **10:17 UTC**, the supplied ISC evidence shows Devi assigned to that role. The relevant provisioning activity is still pending. Native inspection still shows neither group.
-
-That is enough to establish an assignment decision, not working access. There is no contradiction in the application continuing to deny an update while delivery is pending.
-
-At **10:24 UTC**, later native inspection shows both `AR-4401` and `AR-4402` on `ar-110404`. With her account enabled and sign-in successful, a controlled update to a North-site work order succeeds. An update to a South-site work order is denied, consistent with the supplied assigned-site restriction.
-
-No direct profile request was submitted. That is expected because the role selected Devi automatically.
-
-The times are fictional observations, not service-time guarantees. The gap between a role assignment and a successful application operation cannot be replaced with a universal waiting period.
-
-Use separate evidence for separate questions:
-
-| Question | Evidence that answers it |
+| Profile configuration and situation | Result supported by those facts |
 |---|---|
-| Can this profile participate, and can it be requested directly? | The exact profile's saved enabled/requestable settings and applicable request configuration. Not its name alone. |
-| Why should this identity receive it? | Current applied identity values, enabled role and criteria or configured lifecycle requirement, plus the observed assignment. |
-| Which account and change are involved? | The selected source/account and provisioning activity or manual task, including the specific operation and result. |
-| Does the intended work now succeed within scope? | Current native memberships and a controlled application action with the required account, sign-in and resource conditions. |
+| Disabled, even if a requestable value remains | Not available for direct profile requests or provisioned through retained role/lifecycle references; existing native rights are separate |
+| Enabled, non-requestable, no applicable assignment | No new recipient selected by enablement |
+| Enabled, non-requestable, included in a qualifying automatic requirement | Direct profile requests are unnecessary; processing and delivery still matter |
+| Enabled and requestable, but no request or automatic requirement | A permitted request route is available; no grant follows merely from offering it |
 
-If someone reports “ISC gave her access without approval,” establish the origin before diagnosing a bypass. A correctly configured automatic assignment does not need the profile-request review chain.
+When a screen shows a setting, identify the object and scope of that setting. When it shows a role assignment, identify the requirement and evaluated inputs. When it shows an activity, inspect its account, operation and result.
 
-If that assignment was inappropriate, investigate the configured criteria and requirement, the applied inputs and the approval of the access-model change. Adding request approvers does not repair an overly broad automatic role rule.
+| Question | Evidence needed |
+|---|---|
+| Is this profile enabled and directly requestable? | The exact saved profile and applicable request configuration |
+| Why should this identity receive it? | Current applied identity inputs, enabled role and criteria or lifecycle requirement, and actual assignment evidence |
+| Which account and change are involved? | Selected source/account and specific provisioning activity or manual task, with its result |
+| Does the intended work succeed within scope? | Current native memberships and a checked action using the required account, sign-in and resource conditions |
 
-## Turning off requests does not take back existing access
+## Turning requests off does not withdraw existing rights
 
-Suppose an independently requested, enabled profile should no longer be offered as a direct request choice. The team turns off Allow Access Requests using the supported configuration.
+Suppose an independently requested profile should no longer be offered as a direct choice. The team turns off Allow Access Requests using supported configuration.
 
-That closes the direct profile-request route. It does not, by itself, remove a membership already granted to an account.
+That closes this direct profile-request route. It does not by itself remove native memberships, disable a role, remove a lifecycle requirement or revoke their assignments.
 
-It also does not disable a role, remove a lifecycle requirement or revoke their existing assignments.
+Our automatic-role example already had requests off when the employee received the groups. The request setting therefore cannot be treated as a universal access switch.
 
-In the main automatic-role case, requests were already off while Devi received the groups. That alone demonstrates why the requestability setting cannot be used as a universal switch for access.
+The current toggle also does not establish what happened to a request already submitted or executing. Inspect that request and its activity. Use an appropriate supported, authorized action if it must be stopped; a catalog-setting change is not cancellation evidence.
 
-Do not infer what happened to an already submitted or executing request from the current toggle alone. Inspect the request and its activity and use a supported, authorized action if it must be stopped. Changing a catalog setting is not evidence of cancellation.
+## Disabling the profile changes another layer
 
-## Disabling the profile pauses its use, not the native memberships
+The team now pauses Work-order maintenance while reviewing its design.
 
-Now the team needs to pause Work-order maintenance while reviewing its design.
+At **11:00 UTC**, the profile is disabled.
 
-At **11:00 UTC**, it disables `AP-4404`.
+A disabled profile is removed from the Request Center if it was offered there. Existing roles and lifecycle configurations can still reference it, but the disabled profile is not provisioned through those references.
 
-A disabled profile is removed from the Request Center if it was previously offered there. Existing roles and lifecycle configurations can still reference it, but it is not provisioned through those references while disabled.
+At the next relevant identity processing, its held-profile association is removed. **Deprovisioning** means removing native access; disabling this standing profile does not deprovision memberships already received.
 
-At the next relevant identity processing, the profile association is removed from identities that held it. However, disabling the profile does not deprovision the entitlements they already received.
-
-At **11:06 UTC**, the supplied processing and identity evidence show Devi no longer associated with `AP-4404`. A fresh native check still shows both groups on `ar-110404`, and her North-site update still succeeds.
+At **11:06 UTC**, supplied processing and identity evidence show the employee no longer associated with the profile. A fresh native check still shows Readers and Editors. A North-site update still succeeds. The account and application conditions are unchanged.
 
 ```text
-Before the pause
-AP-4404 enabled
-Devi associated with AP-4404
-ar-110404 has AR-4401 + AR-4402
-Work-order updates allowed
-          |
-          | disable profile
-          v
+Before disabling the profile
+  Profile enabled and held
+  Account has Readers + Editors
+  North-site update works
+             |
+             | disable, then process
+             v
 After relevant identity processing
-AP-4404 disabled
-Profile association removed
-ar-110404 still has both groups
-Work-order updates still allowed
+  Profile disabled, association removed
+  Account still has Readers + Editors
+  North-site update still works
 
-Native removal needs separate action.
-Disabling is not that action.
+No native removal shown in this change.
 ```
 
-The arrow shows this particular pause followed by relevant processing. It does not show native removal, because the disable action did not perform it.
+The arrow represents disabling followed by relevant processing in this example. No native removal is shown because that action did not remove the groups.
 
-This is not proof that the application ignored ISC. The profile association and the native memberships are different state.
+The profile association and native memberships are different state. A missing profile label is therefore not proof that the application should deny the operation.
 
-If the business intention is “Devi must no longer update work orders,” the team needs an authorized access-removal design appropriate to how her access was assigned. It must review ongoing role/lifecycle requirements and other relevant grants, perform the supported change, and verify the native result.
+If the real requirement is to end work-order maintenance, review how the access was assigned, ongoing requirements and other relevant grants. Use the supported authorized removal design and verify the native result.
 
-Do not assume every overlap preserves access, or that every profile can be revoked directly regardless of its assignment origin.
+Do not assume every overlap preserves access or that a role-derived profile can always be revoked directly. The origin and operation determine which path must be investigated.
 
-A disabled profile can also remain in an existing **certification**, a review of whether existing access should be retained. Disabling does not automatically cancel that review or make its revocation decisions unenforceable.
+A **certification** reviews whether existing access should be retained. A disabled profile can remain in an existing certification, with its revocation decisions still enforceable. Pausing the profile is not cancellation of that review.
 
-## Before enabling it again, inspect what still refers to it
+## Reenabling needs a review of the current model
 
-The disabled profile has not forgotten its place in the access model.
+The disabled profile can retain its place in role and lifecycle configurations.
 
-If the Facilities technician role still includes `AP-4404`, reenabling and applying the configuration can make it available for that role's provisioning again. Review the current population and criteria before doing so.
+If Facilities technician still includes it, reenabling and applying configuration can make it available for that role's provisioning again. Inspect the current eligible population, criteria and entitlement references before doing that.
 
-Also check the saved request setting. “Enable again” is not a reason to assume the profile should become a direct request choice.
+Also inspect the saved requestability setting. Reenabling is not evidence that the profile should now become a direct request choice.
 
-If the profile became disabled unexpectedly, inspect its entitlement references. ISC can disable a profile automatically when all its entitlements are deleted. Verify whether the intended entitlement objects still exist and whether the references remain valid. Do not blindly reenable an empty or incorrectly rebuilt package.
+Unexpected disablement needs investigation too. ISC can disable a profile automatically if all its entitlements are deleted. Check whether the intended entitlement objects still exist and whether their references are valid. Do not blindly enable an empty or incorrectly rebuilt package.
 
-A source's configured provisioning capability, an enabled role, an enabled lifecycle state and an enabled profile are separate parts of the access path. Follow their actual relationships rather than treating one status label as the status of the whole path.
+Source provisioning capability, role status, lifecycle-state status, profile status and native account status belong to different objects. One enabled label does not certify the entire access path.
 
 ## Work through the evidence
 
-### Case 1: Enabled, but nothing selects Devi
+### 1. Enabled, but nobody selects the employee
 
-**Facts:** The profile is enabled and non-requestable. Devi has neither group. No applicable role, lifecycle requirement or other grant route is configured.
+The profile is enabled and non-requestable. Both groups are absent. No role, lifecycle requirement or other grant route applies.
 
-Should enabling the profile have added its groups to her account?
+Should enablement have added the memberships?
 
-**Reasoning:** No. The package is available for use, but the supplied configuration selects no recipient. Establish the intended assignment route. Repeatedly applying an unchanged definition does not invent a missing requirement.
+**Reasoning:** No. No recipient mechanism requires the access. Establish the approved assignment design. Repeating application of an unchanged profile does not invent that missing requirement.
 
-### Case 2: The profile is not requestable, but the role matches
+### 2. Non-requestable, but the role matches
 
-**Facts:** The profile and Facilities technician role are enabled. The role includes the profile. Devi's applied values satisfy both criteria, and relevant processing evaluates them.
+The role and profile are enabled. The role contains the profile, both applied identity criteria match, and relevant processing evaluates them.
 
-Does the non-requestable setting prevent automatic delivery?
+Does direct non-requestability block this automatic assignment?
 
-**Reasoning:** No. It controls direct requests for the profile, not this configured automatic role assignment. Follow the resulting source/account provisioning and verify the native groups before claiming completed access.
+**Reasoning:** No. It controls direct requests for the profile. Follow the automatic requirement through source/account delivery and verify the native memberships before claiming completed access.
 
-### Case 3: The profile is requestable, but nobody requested it
+### 3. Requestable, but nobody requests it
 
-**Facts:** The enabled profile allows direct requests. Nobody submits one. No automatic assignment applies and the groups are absent.
+The profile is enabled and permits direct requests. No request is submitted, no automatic requirement applies and both native groups are absent.
 
-Has marking it requestable selected all eligible requesters as recipients?
+Has requestability selected every eligible requester?
 
-**Reasoning:** No. Availability is not submission or assignment. The setting permits a route where the other conditions are met; it does not execute that route for every person who can see the item.
+**Reasoning:** No. Availability is not submission or assignment. The permitted route still has to be used under its configured conditions.
 
-### Case 4: One condition matches and one does not
+### 4. Only one criterion matches
 
-**Facts:** A different employee has `department = Facilities` and `lifecycleState = prehire`. The enabled role requires Facilities AND working. No other grant route applies.
+Another identity has Department Facilities and Lifecycle State prehire. The role requires Facilities AND working. No other route applies.
 
-Should this role give the employee Work-order maintenance?
+Should this role give the person the package?
 
-**Reasoning:** No. AND requires both conditions. The lifecycle value does not match. Verify the actual applied values and whether the criteria express the approved requirement. Do not weaken the condition simply to make a test account qualify.
+**Reasoning:** No. Both comparisons must match. Inspect current applied values and the approved requirement; do not weaken the rule or falsify identity information merely to make a test identity qualify.
 
-### Case 5: A request is approved for later
+### 5. Approval is for a later start
 
-**Facts:** In an independent request-based variation, Devi has no groups and no automatic assignment. Her profile request is approved today, with a future start date. That start date has not arrived.
+In a request-only variation, the employee has no groups. The request is approved today, with a future start date that has not arrived.
 
-Does the approval alone prove provisioning failed because she cannot update work orders now?
+Does absent access now establish failed provisioning?
 
-**Reasoning:** No. The request's timing conditions do not yet require current delivery. Check the start date and time zone, the request status and the later operation. Approval and the access-start boundary are different facts.
+**Reasoning:** No. The timing condition does not yet require current access. Check the start date and time zone, request state and later delivery evidence. Approval and the access-start boundary are separate facts.
 
-### Case 6: The role still contains a disabled profile
+### 6. An enabled role still references a disabled profile
 
-**Facts:** Facilities technician is enabled and contains `AP-4404`. The profile is disabled. A newly qualifying employee lacks both groups.
+The role is enabled and still includes the disabled profile. A newly qualifying employee lacks both groups.
 
-Does the remaining reference mean the profile's groups should be provisioned anyway?
+Does the reference mean those groups should be delivered through this profile anyway?
 
-**Reasoning:** No. Existing configuration can retain the reference without the disabled profile being provisioned. Verify the profile state and the approved reason for the pause. Do not reenable it merely to make the reference look active.
+**Reasoning:** No. The reference can remain while the disabled profile is not provisioned. Check the state and authorized reason for pausing it rather than reenabling merely to make the reference active.
 
-### Case 7: Processing ended, but the change was rejected
+### 7. Processing finishes, but a write is rejected
 
-**Facts:** The role assignment is recorded. Identity processing finishes. The specific group-add operation reports a source permission rejection, and current native evidence shows the group absent.
+A role assignment is recorded and identity processing completes. The specific group-add operation reports a source permission rejection, and current native evidence shows the group absent.
 
-Can you conclude delivery succeeded because processing completed?
+Did processing completion establish successful delivery?
 
-**Reasoning:** No. The assignment calculation and the source operation have different outcomes. Investigate the recorded operation, selected account and source permissions. Correct the verified cause under authorization, follow the supported recovery path and recheck native access. Changing requestability does not fix a rejected source write.
+**Reasoning:** No. Evaluation and the source change have different outcomes. Inspect the exact operation, account and required source permissions. Use approved correction and supported recovery, then recheck native access. Requestability does not repair a rejected write.
 
-### Case 8: The profile label disappeared
+### 8. The profile association disappears
 
-**Facts:** After disabling and processing, Devi's identity no longer shows `AP-4404`. Native evidence still shows both groups, and a North-site update succeeds.
+After disabling and relevant processing, the employee no longer holds the profile in ISC. Current native evidence shows both groups, and a North-site update succeeds.
 
-Has removing the profile association removed her ability to maintain work orders?
+Has the disappearing association removed the maintenance capability?
 
-**Reasoning:** No. Disabling retained those native entitlements. The observed behavior matches that distinction. If removal is required, establish the supported operation and ongoing assignment requirements, perform the authorized change and verify the actual application outcome.
+**Reasoning:** No. The memberships remain under the supplied disable behavior. If removal is required, establish the correct operation and ongoing requirements, perform the authorized change and verify the account's actual outcome.
 
 ## Try the same reasoning with a license
 
-A fictional design application has an enabled **Design editor** profile containing its editor-license entitlement. Direct profile requests are off. An enabled **Product designer** role includes that profile and selects identities whose applied job code is `DESIGN`.
+A **license** gives an account the right to use a product or feature set under the application's licensing model.
 
-One designer matches the criterion, but the attempted license assignment reports that no license capacity is available. A second employee does not match the role and has no other assignment route.
+An enabled Design editor profile contains its editor-license entitlement. Direct profile requests are off. An enabled Product designer role includes it and selects identities whose applied job code equals `DESIGN`.
 
-Explain why neither employee currently has working editor access, and whether enabling profile requests would solve either cause.
+One designer matches, but the attempted license assignment reports no available license capacity. Another employee does not match and has no other route.
 
-For the designer, the configured automatic requirement exists. The supplied failure is in license delivery. Investigate capacity and the supported recovery process. A new request does not create a spare license.
+Why does neither have working editor access, and would turning on profile requests fix the causes?
 
-For the second employee, the supplied model creates no requirement. Establish whether the employee should qualify for the role, receive an approved exception through another supported route, or remain without access. Do not falsify the job code to force membership.
+**Reasoning:** The first employee has a configured automatic requirement, but the supplied delivery failed because capacity was unavailable. Investigate capacity and the supported recovery path. A new request cannot create a spare license.
 
-If the organization chooses to offer an exception request, it must deliberately configure the request route and its controls. Turning on requestability is only part of that design, not an assignment to the employee.
+For the other employee, the supplied model creates no requirement. Establish whether their real work justifies qualifying for the role, an approved exception through another supported route, or no access. Do not falsify the job code to force a match.
 
-Finally, suppose an existing designer already has the native editor license and the team disables the profile. Do not report the license reclaimed merely because its profile association disappears. Verify the required native license removal and the resulting capacity separately.
+If an exception request is appropriate, deliberately configure its route and controls. Requestability is only part of that design, not an assignment.
 
-Whenever a setting changes, ask which object changed, which route it controls, and what evidence establishes the account's actual access.
+Finally, suppose an existing designer already has the native license when the profile is disabled. A disappearing profile association does not prove the license was reclaimed. Verify the required native removal and resulting capacity separately.
+
+For any setting change, identify the object and route it controls, then choose evidence that establishes the selected account's actual access.

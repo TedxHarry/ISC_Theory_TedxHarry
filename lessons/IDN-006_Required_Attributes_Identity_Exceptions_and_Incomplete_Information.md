@@ -1,324 +1,322 @@
 # The account arrived. Why is the identity incomplete?
 
-Devi is joining as an employee, number `66006`. Human Resources (HR) has supplied her surname, her ISC username and her assigned work email. The account read into SailPoint Identity Security Cloud (ISC) has finished.
+A worker account can reach SailPoint Identity Security Cloud (ISC) with the person's approved surname and still leave Last Name missing on the identity.
 
-Yet Devi appears under **Incomplete Identities**.
+How can both be true?
 
-Should HR resend the record? Should you run the read again? Or is ISC looking at the wrong part of the record?
+The account holds information read from a source. The identity receives values through mappings. If a mapping selects a different field, the presence of the correct surname elsewhere on the account doesn't supply the missing identity value.
 
-Let's follow the value that is actually missing. A successful account read establishes that information reached one boundary. It doesn't establish that every required identity value was produced.
+Let's trace that difference before deciding whether another account read would help.
 
-## First separate the worker account from the identity
+## The required value belongs to the identity
 
-An **account** is a record in a particular connected system. In an HR integration, that can be a worker record rather than a login.
+An **account** is a record in a connected system. In a Human Resources (HR) integration, that can be a personnel record rather than a login.
 
-A **source** is ISC's configured representation of a system or account-data collection. Its **connector** supplies the supported integration behavior. **Account aggregation** reads account information from that collection into ISC.
+A **source** is ISC's configured representation of a system or account-data collection. Its **connector** provides supported integration behavior. **Account aggregation** reads account information into ISC.
 
-An **identity** is ISC's representation of a person or another managed entity. It holds person-level information and relationships to accounts.
+An **identity** is ISC's representation of a person or another managed entity, with person-level information and account relationships.
 
-An **authoritative source** supplies accounts used to establish identities through an **identity profile**. The profile is shared configuration for the identities it governs, including how their identity values are populated.
+An **authoritative source** provides accounts used to establish identities through an **identity profile**. The profile supplies shared configuration, including how identity values are populated.
 
-An **attribute** is a named piece of information. A source account's `familyName` and an identity's Last Name are attributes on different objects. An **identity attribute mapping** selects or calculates the value that goes on the identity.
+An **attribute** is a named piece of information. Account familyName and identity Last Name belong to different records. An **identity attribute mapping** selects or calculates the value to put on the identity.
 
-That distinction is the starting point for Devi's problem. “HR has a surname” and “the ISC identity has its required Last Name” are not the same observation.
+**Null** means no value is present. For each profile, ISC requires mappings and non-null identity values for:
 
-An **identity exception** is a reported identity-data problem, including a missing required value or a duplicate ISC username. It gives you a problem to investigate, not a diagnosis of which team caused it.
-
-## What does ISC require?
-
-**Null** means that no value is present. For each identity profile, ISC requires mappings for these identity attributes and non-null values for the identities:
-
-| Required identity attribute | Requirement and meaning in Devi's example |
+| Required identity attribute | Requirement and example meaning |
 |---|---|
-| User Name, `uid` | The ISC username. It must be unique across identities from all identity profiles. The approved value here is `person66006`. It is not automatically the account identifier of every connected system. |
-| Work Email, `email` | A non-null identity value. The approved assigned address here is `devi66006@example.com`. ISC does not validate this required value as an email address merely by checking its presence. |
-| Last Name, `lastname` | A non-null identity value. The approved surname here is `Rao`; the mapping must actually produce it. |
+| User Name, uid | The ISC username; unique across identities from every profile. The approved example is person-w106, not automatically the identifier of every external account. |
+| Work Email, email | A non-null value; the example assigned address is person-w106@example.invalid. Presence alone doesn't validate email format or prove a usable mailbox. |
+| Last Name, lastname | A non-null identity value. The approved example surname is Worker; the mapping must produce it on the identity. |
 
-A configured mapping can still produce null for one person even when it works for everyone in a different sample.
+The example email is illustrative, not evidence of a real mailbox.
 
-There are therefore two questions:
+There are two checks here. The profile needs a mapping for each required field, and those mappings need to produce appropriate values for each identity.
 
-- Is a mapping configured for each required identity attribute in this profile?
-- Does that mapping produce an acceptable value for this particular identity?
+A mapping that works for one employee can return null for another with different input. A configuration screen showing a selected field doesn't prove that the field contains the needed value.
 
-A populated configuration screen answers the first question only partly. You still need to inspect its selected input and the resulting value.
+Inputs can come from account attributes on different sources or supported calculations. An authoritative HR source doesn't have to supply every required field directly.
 
-The identity fields are the requirement. Their inputs can come from account attributes on different sources or from supported calculations. An authoritative HR source does not have to supply every identity field directly.
+An **identity exception** reports a data problem such as a missing required identity value or duplicate username. It tells you what needs investigation; it doesn't establish which team caused the problem.
 
-For this example, **WorkforceBook Production** is authoritative and **Employees** is the profile governing Devi's identity. We assume her worker account belongs to the intended identity, and that `person66006` is unique. The problem we are investigating is Last Name.
+## Inspect the field the mapping actually reads
 
-## Inspect what ISC has actually collected
+Suppose Employees governs an identity established through HR-Production. Account hr-record belongs to the intended identity, and username person-w106 is verified unique in this supplied example.
 
-Here is selected fictional account data for WorkforceBook account `wb-66006`. This is a readable extract of account attributes, not a complete connector response or an API request.
-
-**JSON** is a way of representing named fields and their values. Quoted values below are text. The unquoted `null` represents no value.
+The account has these collected values:
 
 ```json
 {
-  "workerNumber": "66006",
-  "loginName": "person66006",
-  "workMail": "devi66006@example.com",
-  "familyName": "Rao",
+  "workerNumber": "W-106",
+  "loginName": "person-w106",
+  "workMail": "person-w106@example.invalid",
+  "familyName": "Worker",
   "surname": null
 }
 ```
 
-The source's **account schema** defines the fields used to represent its accounts. In this fictional integration, both `familyName` and the retired field `surname` are still defined. HR now supplies the approved surname in `familyName`.
+**JSON**, JavaScript Object Notation, represents named fields and values. Quoted values are text; unquoted null means no value. This is a selected teaching extract, not a complete connector response or an upload request.
 
-Employees currently maps:
+An **account schema** defines the fields represented on source accounts. Here, both familyName and the retired surname field remain defined. HR supplies the approved surname through familyName.
 
-- User Name from WorkforceBook `loginName`.
-- Work Email from WorkforceBook `workMail`.
-- Last Name from WorkforceBook `surname`.
+Employees has these mappings:
 
-Look at the last selection. The surname exists on the account as `familyName = Rao`, but the mapping reads `surname = null`.
+- User Name reads loginName.
+- Work Email reads workMail.
+- Last Name reads surname.
 
-The supplied observed identity has User Name `person66006`, Work Email `devi66006@example.com`, and no Last Name. It appears in Incomplete Identities, and the profile's exception evidence identifies the missing required value.
+The Last Name mapping uses the account value directly, with no calculation replacing it. That selected value is null.
 
-The collected account and the resulting identity are consistent with the faulty mapping. Reading the same unchanged input again does not make `surname` contain `Rao`.
+The supplied observed identity therefore has uid person-w106 and the example email, but no lastname. It appears in **Incomplete Identities**, with exception evidence identifying missing required Last Name.
 
 ```text
-WorkforceBook account wb-66006 in ISC
-  familyName = Rao
-  surname = null
-          |
-          v
-Employees Last Name mapping
-  reads surname, not familyName
-          |
-          v
-Required identity lastname has no value
-          |
-          v
-Observed: Incomplete Identities
-Evidence: missing required Last Name
+[Collected HR account: hr-record]
+[familyName: Worker / surname: null]
+                 |
+[Employees Last Name mapping]
+[Selected field: surname]
+                 |
+[Identity lastname has no value]
+                 |
+[Observed: Incomplete Identities]
+[Evidence: missing required Last Name]
 ```
 
-The arrows trace an input choice to the missing output and the supplied observations. They do not show internal services or a guaranteed order in which screens update.
+The arrows connect selected input, missing identity output and supplied observations. They don't describe private services or promise that evidence views update in this exact order.
 
-No HR surname correction is needed in this case: the approved value is already present in the collected account. The mapping is the defect.
+familyName contains Worker. But the mapping doesn't select it. The two facts aren't contradictory.
 
-If the collected `familyName` were also missing, that would be a different investigation. The **producer** is the system or process publishing the input; **extraction** selects data from that input for the integration. Compare the producer's record, the extraction and the represented account before deciding where to correct it.
+Reading the unchanged account again doesn't put Worker into surname. The account read can succeed while the selected identity input remains wrong.
 
-## Missing, empty and broken are different conditions
+## Complete the mapping correction
 
-A field that looks blank on a screen can conceal different evidence. Keep the distinctions visible when inspecting a record or calculation.
+The approved surname is already in the collected account. The correction is to select familyName for Employees' Last Name mapping.
 
-| Supplied condition | What it establishes, and what it does not |
+**Preview** evaluates proposed mapping results for selected identity data. In this case, it should show Last Name Worker while User Name and Work Email remain correct.
+
+Before applying a shared change, check representative records too. Include someone represented through a different intake path, an existing record with a different field arrangement and a person with a single legal name. Agree the supported representation with the data owner rather than fabricating a family name.
+
+**Identity processing** evaluates identity information and applicable access requirements under the configuration. A saved mapping and a correct preview aren't yet evidence of an applied identity result.
+
+**Apply Changes** on the profile initiates processing for identities associated with it. This applies the approved configuration to its population; it isn't another read of HR.
+
+Assume that approved correction and successful processing are supplied facts. The verified outcome is:
+
+- hr-record still contains familyName Worker and surname null. No HR surname was changed.
+- Employees now selects familyName for Last Name.
+- The same intended identity has uid person-w106, the expected email and lastname Worker.
+- Current exception evidence no longer reports this missing Last Name, and that identity no longer appears in Incomplete Identities.
+
+Each observation checks a different part of the repair. A reduced exception count wouldn't be enough if this particular identity were still wrong.
+
+Check the other required fields as well. Fixing Last Name while breaking User Name or selecting another person's email isn't a completed correction.
+
+## Choose the operation that reaches the wrong layer
+
+Now change the cause. Suppose familyName itself is missing from the collected account.
+
+A **producer** is the system or process publishing integration data. **Extraction** selects information from that input for the integration.
+
+Compare the approved producer record with what was published, what extraction selected and what ISC actually represents. That locates the defect before you assign the correction.
+
+If HR's approved record lacks the value, its owner needs to resolve the business information. If the producer publishes Worker but the connector represents the wrong field, investigate extraction. If the collected account is right but the profile selects surname, correct the mapping.
+
+```text
+Human investigation:
++-- Wrong producer value
+|   owner corrects -> collect input
++-- Wrong extraction
+|   repair integration -> collect input
++-- Wrong mapping/calculation
+    repair -> Preview -> apply
+
+[Relevant identity processing]
+[Verify identity + current exception]
+[Check required target outcomes]
+```
+
+This is a human correction map. The branches are alternative causes, not an automated ISC repair routine. Collection and processing must reach the corrected input or configuration before you can verify the resulting identity.
+
+After a source-data or extraction correction, use the supported source read and confirm the changed represented account. A relevant source aggregation can be initiated manually or through its approved schedule. Changes to identity data during aggregation can initiate identity processing.
+
+After a mapping correction, preview and apply the approved configuration with the correct population scope.
+
+Processing yesterday's collected information doesn't fetch today's HR correction. A successful read also doesn't prove the selected mapping is now right. If input and mapping are both wrong, both need attention.
+
+## A blank-looking result can have different causes
+
+Inspect the actual value, not just its appearance on a screen:
+
+| Supplied condition | What it tells you |
 |---|---|
-| The field is absent from a JSON object | That extract does not contain the field. It does not establish whether the producer omitted it, extraction dropped it, or an existing ISC account retained an earlier value. Check the actual integration behavior and represented account. |
-| The field is `null` | No value is supplied at that point. Follow how the selected mapping handles it. |
-| The field is `""` | An empty text value is supplied. It is not the same JSON value as null. Don't assume every connector or mapping normalizes it identically. |
-| The field is `"   "` | Text containing spaces is supplied. A visually blank result is not evidence of an approved surname or usable contact value. |
-| The field is `"null"`, `"unknown"` or `"none"` | Literal text is supplied. It is not JSON null and does not become correct business information because it is populated. |
-| The calculation returns an error | Evaluation failed. That is different from a successful calculation returning null or empty text. Inspect the error and its inputs. |
+| Field absent from a JSON object | The extract doesn't contain it. Check whether the producer omitted it, extraction dropped it or the represented account retained an earlier value. Omission isn't a universal instruction to clear existing data. |
+| null | No value at that point; inspect how the mapping handles it. |
+| "" | An empty string, meaning text with zero characters. It is different from null. |
+| "   " | Text containing spaces. Looking blank doesn't make it an approved surname or usable address. |
+| "null", "unknown" or "none" | Literal text, not JSON null. Being populated doesn't establish correct business information. |
+| Calculation error | Evaluation failed; this isn't a successful result containing null or empty text. Inspect the error and inputs. |
 
-The published required-attribute rule establishes non-null values. Don't stretch that into an undocumented claim that every empty or whitespace representation is accepted, rejected or trimmed at every stage.
+The published required-value rule specifies non-null values. It doesn't establish universal acceptance, rejection, trimming or clearing behavior for every representation at every connector and mapping stage.
 
-For a project, agree what counts as usable data: whether surrounding spaces are removed, which placeholder values are prohibited, who approves corrections and how exceptional names are handled. The integration should represent the person's approved information, not invent a surname to satisfy a screen.
+Agree the project's usable-data rules: permitted name representations, space handling, prohibited placeholders, approved corrections and exceptions. The integration must represent the person's approved information.
 
-A **transform** is a configured calculation or lookup used to produce a value. The **First Valid transform**, for example, returns the first non-null result from its ordered inputs.
+A **transform** performs a configured calculation or lookup. The **First Valid transform**, technical operation firstValid, returns the first non-null result from ordered inputs.
 
-Its name doesn't mean “first business-approved value.” An empty string differs from null. Error handling is also explicit: `ignoreErrors` defaults to false, so a failed input evaluation is not automatically a harmless missing value that falls through to the next input.
+A **fallback** is an alternative input or result used under a configured condition. First Valid can implement an approved fallback, but its name doesn't mean “first business-approved value.”
 
-If a fallback suppresses an error and returns `unknown`, you have changed the output and hidden one symptom. You haven't established that the surname or email is correct.
+If its first input successfully returns empty text, that result isn't null. Don't assume it will select a later surname.
 
-## Incomplete is not a general name for every error
+Its ignoreErrors option controls whether evaluation continues after an input error; the documented default is false. An error isn't automatically a harmless missing value.
 
-In the Identities view, **All Identities** includes incomplete identities and identities with errors. **Incomplete Identities** focuses on missing required identity values.
+Suppressing an error and returning unknown can hide the original symptom. It doesn't establish a correct surname or address. Verify the actual output and approved policy instead of inferring business validation from the transform's name.
 
-Those identities must be completed before they can sign in to ISC or be used in actions such as access requests and certifications. An **access request** asks for access to be assigned or removed through the configured request process. A **certification** is a review in which a reviewer decides whether access should remain.
+## Read the specific error before choosing a repair
 
-A **provisioning** operation attempts a supported account or access change in a connected system. The **Identities with Errors** view covers other reported problems too, including email configuration, authentication source mismatches and provisioning issues. An error badge alone doesn't identify a missing Last Name.
+In the Identities view, **All Identities** includes incomplete identities and identities with errors. **Incomplete Identities** concerns missing required identity values.
 
-For example, a profile can require ISC sign-in through a directory account, but the identity has no associated account on that authentication source. **Authentication** is verification of who is signing in. Supplying Last Name doesn't create the missing directory relationship or repair that sign-in configuration.
+These identities must be completed before they can sign in to ISC or be used in actions such as access requests and certifications.
 
-Likewise, a profile might send registration invitations only to an alternate email address that isn't available. Its required Work Email could be populated while the invitation configuration still has a problem.
+An **access request** asks for access to be assigned or removed through the configured request process. A **certification** is a review deciding whether existing access should remain.
 
-Read the specific details. The word “email” in an error is not enough to conclude that required Work Email is null.
+**Identities with Errors** can show different problems, including email configuration, authentication-source mismatches and provisioning issues. **Provisioning** performs supported account or access changes in connected systems.
 
-The profile's **Identity Exceptions** report and the identity's recorded status are related evidence, not interchangeable labels for every failure. A duplicate username is also an identity exception, but it isn't the same condition as a missing required value.
+For example, a profile may use a directory connection for ISC sign-in while the identity has no account on that authentication source.
 
-You can obtain exception evidence from the Identity Profiles view using its CSV or PDF download. **CSV** is a tabular text format; the CSV option downloads a zip file. Use the report to identify the affected records and attributes, then compare them with current data.
+**Authentication** verifies who is signing in. The directory-based configuration needs the intended directory account relationship. Supplying Last Name doesn't create it or change the sign-in configuration.
 
-A downloaded report describes evidence available when it was produced. An old report isn't proof that a corrected identity is still incomplete.
+Another profile may send invitations only to an alternate email that isn't available. An **invitation** asks someone to register for ISC. Required Work Email can be present while that separate invitation configuration has a problem.
 
-## A username collision needs an ownership decision
+The word email in an error doesn't prove that required Work Email is null. Read the details and identify the affected field, relationship or operation.
 
-Suppose a different intake record calculates `uid = person66006`, but that value already belongs to Devi's identity.
+The profile's **Identity Exceptions** report is also specific evidence, not another name for every error. A duplicate username is an exception, but it isn't the same condition as missing Last Name.
 
-This is a **collision**: the proposed username conflicts with an existing identity's username. ISC requires uniqueness across identities from every profile. Moving the new record to another profile doesn't create a separate username namespace.
+Exception evidence can be downloaded from Identity Profiles as CSV or PDF. **CSV**, comma-separated values, is a tabular text format; that download arrives in a zip archive. **PDF** is a document format used for the other report option.
 
-First ask whether the incoming record represents the same person or a different person.
+Identify the affected records and attributes, then compare them with current data. A report describes evidence available when it was produced. An old report doesn't prove that a corrected identity is still incomplete.
 
-Different source account identifiers do not guarantee different identity usernames. A calculation that builds a username from a person's name can produce the same result for two different people. Inspect the final mapped `uid`, not just the distinct worker numbers or account IDs used earlier in the path.
+## A duplicate username asks a different question
 
-If it represents a different person, the naming design must produce a distinct approved username. Don't rename Devi merely because her record was easier to find.
+Suppose another intake record calculates uid person-w106, which already belongs to the main example identity.
 
-If it represents the same person, investigate identity continuity and account ownership. **Account correlation** matches and associates source accounts with identities using configured account-to-identity comparisons. A matching or duplicate username is not, by itself, a supported instruction to merge two existing identities.
+That is a username **collision**. Different source account identifiers don't guarantee different final identity usernames. A name-based calculation can produce the same username for different people.
 
-Compare stable person references, source account identifiers, existing associations and the intended rehire or conversion process. Repeatedly generating new usernames can conceal duplicate identities rather than repair the relationship.
+Inspect the final mapped uid, then establish whether the incoming record represents the same person or a different person.
 
-An **object ID** identifies an ISC object. Changing the visible username does not make two identity objects become one, and deleting an identity to clear a collision can disrupt its relationships and history.
+If the people differ, the naming design needs a distinct approved username. Creating a differently named profile won't help because uniqueness spans identities from all profiles. Don't rename the existing person merely because that record is easier to find.
 
-For new intake, prevent obvious collisions through the approved naming and uniqueness design. Still inspect the actual exception result; a successful preview for one person is not a reservation guaranteeing that no other identity can use the same proposed value.
+If the incoming record represents the same person, investigate continuity and account ownership.
 
-## Correct the layer that is wrong
+**Account correlation** matches and associates source accounts with identities through configured account-to-identity comparisons. Equal or duplicate usernames aren't, by themselves, instructions to merge two existing identities.
 
-Devi's collected WorkforceBook account already contains `familyName = Rao`. The approved correction is to make Employees' Last Name mapping use that field.
+Compare stable person references, source identifiers, current associations and the intended rehire or conversion process. Generating more usernames can conceal duplicate identities instead of fixing the relationship.
 
-**Preview** evaluates mapping results for a selected identity. It is useful for checking the proposed Last Name, alongside User Name and Work Email, before applying a shared configuration change.
+An **object ID** identifies an ISC object. Changing the visible username doesn't combine two identity objects. Deleting an identity to clear the conflict can disrupt relationships and history.
 
-Because the profile governs a population, test representative records too. An employee with only a single legal name, an existing employee whose field is still populated differently, or a record from a different integration path can expose an assumption that Devi's example doesn't.
+Use the approved naming and uniqueness design for new intake, and inspect actual exception results. A successful preview for one proposed username isn't a reservation that prevents another identity from using it.
 
-Don't replace a legitimate naming exception with a fabricated family name. Agree its supported representation with the data owner.
+## Verify current evidence without assuming every view is synchronized
 
-**Identity processing** reevaluates identity values and configured access requirements. Profile configuration changes need to be applied through processing; saving a mapping or seeing the desired preview isn't the same as observing the changed identity.
+After a correction, inspect the exact identity, all required values and current exception evidence. Confirm the profile and account are the ones you intended.
 
-**Apply Changes** on the identity profile initiates processing for identities associated with that profile. It isn't a fresh read of HR. If the source account data is stale, processing the existing data again doesn't fetch the missing producer correction.
+ISC synchronizes identity information with services such as Search. Views and downloaded reports needn't reflect a change at the same instant.
 
-The correction path depends on the cause:
+Compare processing evidence, the identity's current data, the view's scope and report time before treating an old Search result as proof of failure. No fixed display delay is promised here.
 
-```text
-Human investigation: locate the defect
-  |
-  +-- Producer data is wrong
-  |     Owner corrects approved source data
-  |       -> collect corrected account data
-  |
-  +-- Collection/extraction is wrong
-  |     Repair approved integration path
-  |       -> collect and inspect the result
-  |
-  +-- Mapping/calculation is wrong
-        Repair approved profile mapping
-          -> preview and apply processing
+At the same time, don't dismiss every disagreement as delay. A correct preview without applied processing, a stale collected account, another identity with the same display name or a still-failing calculation needs its own investigation.
 
-Then verify the affected identity:
-  expected required values and uniqueness?
-  current exception/status evidence?
-  separate downstream outcomes?
-```
+## Required completeness doesn't certify every project dependency
 
-This is an engineering correction map, not an automatic ISC repair routine. Humans choose an approved correction based on evidence. The arrows show dependencies; exact read and processing actions depend on the defect and the supported integration.
+Suppose uid, email and lastname are present, but Department, Manager or an approved contract end date is missing.
 
-After a source-data correction, manually aggregate the relevant source or use its approved scheduled aggregation, and confirm that the corrected record was collected. Identity changes during aggregation can initiate identity processing.
+That optional-field problem doesn't, by itself, meet the missing-required-value condition for Incomplete Identities. It can still prevent a project process from working correctly.
 
-After a mapping correction, preview and apply the approved configuration with the right population scope. Don't change source data that was already correct just to match the old mapping.
+A **manager relationship** connects an identity to its manager's identity. A manager-dependent approval needs that relationship; populated required fields don't supply it. A department-based access rule needs the correct Department.
 
-If both input and mapping are wrong, both need attention. Running one operation more times is not a substitute for correcting both defects.
+A **lifecycle state (LCS)** describes a business stage, such as active employment or termination, with configured access or account actions. Missing or wrong end-date information can affect its calculation while required fields remain present.
 
-## What proves Devi's correction worked?
+Check the specific calculation, approval and access policy. Don't assume every missing optional field stops all access changes or makes the process fail safely.
 
-Here is the supplied fictional outcome after the approved mapping change and successful processing:
+Likewise, literal none in Work Email isn't evidence of a mailbox, correct recipient or successful message delivery.
 
-- WorkforceBook account `wb-66006` still has `familyName = Rao`; no HR surname was changed.
-- Employees' Last Name mapping now uses `familyName`.
-- The same intended identity has `uid = person66006`, `email = devi66006@example.com` and `lastname = Rao`.
-- Current exception evidence no longer reports Devi's missing Last Name, and she no longer appears in Incomplete Identities.
+Fixing an identity value doesn't prove successful provisioning, external account renaming or access removal. The **target system** is the external recipient of a change; verify its required outcome separately.
 
-Each observation supports a different part of the repair. A new report with fewer exceptions is not enough if you cannot show that Devi's own record is correct.
-
-Recheck the other required fields as well. A shared change that fixes Last Name while breaking User Name isn't a completed correction.
-
-Don't demand that every screen immediately show the same state. ISC synchronizes identity information with views such as Search, and updates can take time to appear there. Compare the affected identity's current data, processing evidence, view scope and report time before concluding that an old search result proves the correction failed.
-
-At the same time, don't dismiss every disagreement as delay. A preview without applied processing, an older source account, a different identity with the same display name or a still-failing calculation needs a different response.
-
-## Complete enough for ISC is not complete enough for every project task
-
-Suppose Department, Manager or an approved contract end date is missing, but the required User Name, Work Email and Last Name are populated.
-
-That missing field does not, by itself, meet the missing-required-attribute condition for Incomplete Identities. It can still be a serious project defect.
-
-A **manager relationship** connects one identity to the identity of its manager. A manager-dependent approval process needs that relationship, not merely three required values. A department-based access decision needs the correct Department, not just a populated surname.
-
-A **lifecycle state (LCS)** describes a stage such as active employment or termination, with configured access or account actions. A missing or wrong end date can affect its calculation even when the identity is technically complete.
-
-Don't assume that a missing optional field automatically stops all access changes. Check the particular calculation, approval or access policy and its behavior when information is missing.
-
-The same caution applies to literal `none` in Work Email. A non-null value is not evidence of a real mailbox, correct recipient or successful message delivery.
-
-Fixing an identity value doesn't prove that provisioning succeeded, that an application account was renamed, or that old access was removed. Verify those outcomes separately in their configured process and **target system**, the external system receiving the attempted change.
-
-An incomplete identity also doesn't prove that existing accounts and permissions in external applications were deleted. A restriction on using that identity in ISC is not the same event as an access-removal operation in another system.
+An incomplete identity also doesn't prove existing external accounts or permissions were deleted. A restriction on using that identity within ISC and an external access-removal operation are different events.
 
 ## Try the evidence before choosing an action
 
-### 1. The source value is already correct
+### 1. The collected surname is already correct
 
-**Facts:** `wb-66006` has `familyName = Rao` and `surname = null`. Employees maps Last Name from `surname`. No calculation changes the value.
+hr-record contains familyName Worker and surname null. Employees selects surname for Last Name, with no calculation replacing it.
 
-Should HR change the surname?
+Should HR change the approved surname?
 
-**Reasoning:** No. The collected approved surname is correct. The wrong input selection produces the missing identity value. Correct and verify the approved mapping, including its effects on the profile's other identities.
+**Worked reasoning:** No. Correct collected input already exists. The mapping selects the wrong field. Review and verify the approved mapping correction across the relevant profile population.
 
-### 2. The record exists only in the producer
+### 2. The correction exists only in HR
 
-**Facts:** HR corrected an employee's surname this morning. ISC's collected account still contains yesterday's missing value. The mapping reads the correct field.
+HR corrected the surname, but the collected ISC account still has yesterday's missing value. The mapping selects the correct field.
 
-Will processing that existing identity alone fetch HR's correction?
+Will processing the identity alone fetch the correction?
 
-**Reasoning:** No. Identity processing evaluates the information available to ISC; it is not a source aggregation. Confirm the corrected record is published and collected through the supported read path, then verify the resulting identity and exception evidence.
+**Worked reasoning:** No. Confirm publication and collection through the supported read path, then inspect the represented input, resulting identity and current exception evidence.
 
-### 3. A fallback sees empty text first
+### 3. First Valid receives empty text first
 
-**Facts:** A First Valid transform evaluates `""` before the approved alternative `Rao`. The first input evaluates successfully as an empty string, not null.
+The first input successfully returns "". The approved alternative Worker comes later.
 
-Can you assume it will choose `Rao`?
+Can you assume Worker will be selected?
 
-**Reasoning:** No. First Valid selects the first non-null result. Empty text is a different value from null. Inspect the actual output and implement the approved empty-value handling; don't infer universal platform validation from the transform's name.
+**Worked reasoning:** No. Empty text isn't null, and First Valid selects the first non-null result. Inspect the output and implement approved empty-value handling without assuming universal required-field validation.
 
-### 4. A calculation fails before a fallback
+### 4. The first input calculation fails
 
-**Facts:** A First Valid input throws an error. `ignoreErrors` is not enabled. A later input contains a non-null value.
+An input throws an error. ignoreErrors isn't enabled; a later input would be non-null.
 
-Is the error equivalent to a missing value?
+Is that equivalent to a successful null result?
 
-**Reasoning:** No. The documented default does not automatically ignore the error. Investigate its cause and the calculation's evidence. An approved error-handling change needs justification; silently choosing a placeholder doesn't establish correct identity information.
+**Worked reasoning:** No. The documented default doesn't silently ignore the error. Investigate it. Any approved handling change needs justification; a placeholder doesn't certify correct information.
 
 ### 5. Another profile already uses the username
 
-**Facts:** A new identity would receive the same `uid` as an identity in a contractor profile. The people are confirmed to be different.
+Two confirmed different people would receive the same uid. One identity is in Contractors and the incoming identity would be in Employees.
 
-Will creating an employee profile with a different name solve the conflict?
+Would a new profile name solve it?
 
-**Reasoning:** No. Username uniqueness spans identities from all profiles. Produce a distinct approved username through the naming design and verify the result. Do not alter the existing person's identity or confuse this collision with account correlation.
+**Worked reasoning:** No. Username uniqueness spans all profiles. Produce a distinct approved uid and verify the result. Don't change the existing person's identity or confuse naming with correlation.
 
-### 6. Required values exist, but sign-in has an error
+### 6. Required fields exist, but directory sign-in has an error
 
-**Facts:** User Name, Work Email and Last Name are present. Error details say the profile uses directory-based authentication but the identity has no account on that authentication source.
+uid, email and lastname are populated. The error says the identity has no account on its profile's configured directory authentication source.
 
-Which configuration or relationship needs investigation?
+What needs investigation?
 
-**Reasoning:** Investigate the intended directory account and its association, or the approved sign-in configuration. The supplied problem is the missing authentication-source relationship, not a missing required surname. Correcting required values cannot create that relationship.
+**Worked reasoning:** The intended directory account relationship or approved sign-in configuration. The supplied problem isn't missing required Last Name; surname repair doesn't create that relationship.
 
-### 7. No incomplete flag, but no manager either
+### 7. Required fields exist, but an approval has no manager
 
-**Facts:** All required values are present. A manager-dependent access approval has no usable manager relationship.
+The identity isn't flagged incomplete, but a manager-dependent approval lacks a usable manager relationship.
 
-Does the absence of an Incomplete flag establish that the request can be approved correctly?
+Does the absent flag prove that approval will work correctly?
 
-**Reasoning:** No. Required-attribute completeness and the approval's data dependency are different checks. Inspect the manager input, relationship and approval configuration. Don't invent a manager or assume the process always fails safely.
+**Worked reasoning:** No. Inspect manager input, association and approval policy. Required-value completeness doesn't certify that dependency. Don't invent a manager or assume the workflow always fails safely.
 
-### 8. The report improves but a group remains
+### 8. The exception cleared, but a target group remains
 
-**Facts:** Devi's current required values are correct, her missing Last Name exception has cleared, and an external application still shows a group that should be removed under a separate approved access policy.
+The main identity's required values are correct and its Last Name exception has cleared. A group remains that should be removed under a separate approved access policy.
 
-Does the group prove the Last Name correction failed?
+Does the group prove the surname correction failed?
 
-**Reasoning:** No. The supplied evidence establishes the required-value correction. Inspect the separate policy, processing, provisioning and target result for removal. Clearing an identity exception does not itself prove access delivery or removal.
+**Worked reasoning:** No. The supplied current evidence establishes that correction. Investigate the separate removal policy, processing, provisioning and target result. Exception clearance isn't proof of external delivery.
 
-## Apply the same reasoning to contractor intake
+## Apply the trace to contractor intake
 
-A contractor feed supplies stable usernames and legal names, but assigned work email arrives from a later directory-account process. The team proposes inserting `unknown` for every missing email and declaring intake complete.
+A contractor feed supplies stable usernames and legal names. Assigned work email arrives through a later directory-account process.
 
-What would you ask before accepting that proposal?
+The team proposes inserting unknown for every missing email and declaring intake complete. What would you establish before accepting that proposal?
 
-Establish the initial identity requirements and the approved source for the eventual work address. Identify which messages, invitations, approval processes or external systems can consume that email value before the real address arrives.
+**Worked reasoning:** Agree the initial identity requirements and approved eventual address source. Identify which invitations, messages, approvals and external systems can consume the value before the assigned address arrives.
 
-A technical placeholder needs an approved dependency and consumer-control design, plus a verified transition to the intended value. It isn't an email address simply because the required field is no longer null.
+A **consumer** is a process or system using that value. A technical placeholder needs an approved dependency design and controls for those consumers. Specify and verify how it is replaced; filling the field doesn't make unknown an address.
 
-Then include changed conditions: a duplicate username, an error in the lookup, an empty rather than null value, and a source correction that hasn't been collected. Decide what evidence would distinguish each case and who owns the repair.
+Test changed conditions too: duplicate username, lookup error, empty rather than null input, and a producer correction that hasn't been collected. Each needs its own evidence and responsible repair.
 
-Explain the result back as an input-to-output trace: which account supplied which value, which mapping evaluated it, which specific requirement failed, what correction reached ISC and what current evidence confirms the outcome. That is a stronger diagnosis than “the aggregation was green” or “the incomplete count went down.”
+Explain which account supplies which input, which mapping evaluates it, which requirement fails and what correction reaches ISC. Then show the current identity and exception evidence. That establishes much more than a successful aggregation badge or a lower incomplete count.

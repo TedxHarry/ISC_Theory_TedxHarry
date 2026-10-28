@@ -1,0 +1,11 @@
+[Required effect on the right object]
+                  |
+[Selected connector supports operation]
+                  |
+[Target behaviour and runtime available]
+                  |
+[Source configured with usable inputs]
+                  |
+[Caller has required authority and scope]
+                  |
+[Result checked against intended effect]

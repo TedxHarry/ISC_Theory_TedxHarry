@@ -1,312 +1,326 @@
 # Which entitlements actually belong in the same bundle?
 
-Devi, employee `110202`, prepares purchase-order drafts in OrderWorks Production, a fictional application. Her account is `ow-110202`. She needs to read orders and create drafts for her assigned business unit. She does not approve orders or export the complete supplier register.
+An employee needs to read purchase orders and prepare drafts for their assigned business unit. Their application account already permits reading, but cannot create drafts. Approving orders and exporting the complete supplier register are outside the employee's work.
 
-The application team identifies five access items in the same system. Three support draft preparation. The others permit approval and broad data export.
+You find five access items in the application. Three are needed for drafting. The other two permit approval and broad export.
 
-Would you put all five into one bundle because they come from the same system?
+Putting all five into one package would make the package larger without making it more suitable. The useful question is which combination gives these recipients the complete capability they are authorized to use.
 
-That would produce a technically convenient package, but it would also give draft preparers capabilities they do not need. The location of the access does not tell us that every item there belongs together.
+The application rules, source configuration and observations below are hypothetical. They supply the conditions for reasoning; they are not a connector specification or real tenant results.
 
-All systems, records, identifiers, permission rules and observations here are fictional. The example supplies a specific integration contract so we can reason about grouping without assuming every connector supports the same access types.
+## Start with what the work actually requires
 
-## Establish what each candidate really permits
+An **account** is the external record through which a person or another entity uses a system. A **permission** allows an action on a resource, such as reading a purchase order.
 
-In SailPoint Identity Security Cloud, or ISC, an **entitlement** represents a source access right, such as a group membership, native role or license assignment. An **access profile** is a named bundle of related entitlements from one source.
+The application can use different access objects when deciding whether to permit that action. A **group** collects members, such as accounts; membership can give those accounts permissions. A **native role** is a role defined inside the application. A **license** gives an account the right to use a product or feature set under the application's licensing model.
 
-A **source** represents a connected system or account-data collection in ISC. The **connector** is the integration used to read its data and, where supported and configured, make changes.
+In SailPoint Identity Security Cloud (ISC), an **entitlement** represents source access, such as one of these group, role or license assignments.
 
-For this example, one source represents OrderWorks Production. Its verified integration supports collecting and assigning the groups, native roles and licenses used below.
+A **source** is ISC's configured representation of a system or collection of account data. The source here is Orders Production. Its **connector** supplies the supported integration for reading data and, where supported and configured, making changes.
 
-An **entitlement type** identifies a kind of access object. Here, `groups`, `roles` and `licenses` are different types. Those names are fictional source definitions, not a promise that all sources expose these three types.
+For this example, the integration supports collecting and assigning all five candidate items. That support must be established for the actual source; calling an item a license does not establish that a connector can assign it.
 
-The team confirms these current native meanings:
+The responsible business contact confirms that draft preparation is the required work. The application contact confirms what each native item currently permits:
 
-| Source access item | Confirmed capability and grouping decision |
+| Candidate access item | Capability and decision for this task |
 |---|---|
-| `groups / 2201`, Order Readers | Read orders within the account's assigned business unit. Required for draft preparation. |
-| `roles / 2201`, Draft Creator | Create order drafts when the required reading group and editor license are also present. Required. |
-| `licenses / 2201`, Draft Editor | Enables the editing feature needed to prepare drafts. Required with the group and native role. |
-| `roles / 2299`, Order Approver | Approve orders. A different responsibility, excluded from the draft-preparation package. |
-| `groups / 2298`, Full Supplier Export | Export the complete supplier register. Not required for preparing assigned-unit drafts, so excluded. |
+| Order Readers group | Read orders within the account's assigned business unit. Required. |
+| Draft Creator native role | Create drafts when Readers and the editor license are also present. Required. |
+| Draft Editor license | Enable the editing feature needed for drafts. Required with the group and native role. |
+| Order Approver native role | Approve orders. Excluded because approval is a separate responsibility. |
+| Full Supplier Export group | Export the complete supplier register. Excluded because draft preparation does not require it. |
 
-The native keys are text values. The repeated value `2201` does not make the first three rows one object. Each belongs to a different native type.
+Notice how the requirement and the application rules answer different questions. The business contact establishes what work is authorized. The native permission rules establish which access combination can perform it. You need both to justify the package.
 
-This table is the result of checking application configuration and confirming the work requirement with responsible application and business contacts. It is not a conclusion drawn from friendly names alone.
+Names alone cannot supply that evidence. If Draft Creator also permitted approval, a description saying “drafts only” would not remove its approval capability. You would need a different native access design or an explicitly justified change to the work requirement.
 
-If “Draft Creator” actually included approval, we would have a different design problem. A description saying “drafts only” would not remove that native approval capability.
+## Give the complete capability a maintained name
 
-## Trace the references before you count the contents
+An **access profile** is a named bundle of related entitlements from one source. The proposed profile, **Order draft preparation**, references Readers, Draft Creator and Draft Editor from Orders Production.
 
-An **account** is the application's login record. An ISC **identity** represents the person. In the main example, `ow-110202` is correctly associated with Devi's identity and is her only account on this source.
+A **reference** points to another record. Including an entitlement reference does not copy its native permission definition or create a replacement access object.
 
-The proposed access profile is **Order draft preparation**. It references the first three entitlements from OrderWorks Production.
+Why include all three?
 
-ISC has its own identifier for each represented entitlement. That identifier is different from the native value used by the application. To keep the references readable, we will call the three ISC records `E-G2201`, `E-R2201` and `E-L2201`.
+Readers lets the account inspect the orders it will work on. Draft Creator permits the draft action, subject to the application's other conditions. Draft Editor enables the editing feature. Removing any one leaves this particular task incomplete.
 
-These are teaching labels, not real ISC identifier formats or an API payload.
+That is the reason they belong together. Sharing a source makes them eligible for this profile; the required outcome makes them a useful package.
+
+A person who only reads completed orders has a different need. Giving them the drafting package would include unnecessary capability and a license they do not need.
+
+**Least privilege** means giving the access required for authorized work without unrelated capability. Here, it excludes approval and full export while retaining the dependencies that make drafting possible. Counting the fewest entries is not the goal if the resulting package cannot do the approved work.
+
+An **enabled** profile is available for supported access-model use; that status does not select recipients. It must contain at least one entitlement. If one verified native role supplied the whole required capability, including the editing feature, without unwanted rights, a one-entitlement profile could be appropriate. Our supplied native role does not do that, so all three relationships remain necessary.
+
+## Check exactly which records you are grouping
+
+An **entitlement type** identifies a kind of source access object. This source exposes `groups`, `roles` and `licenses`. These are supported example types, not a standard list every connector must provide.
+
+The three required native objects deliberately share the text key `2201`:
+
+- In `groups`, it identifies Order Readers.
+- In `roles`, it identifies Draft Creator.
+- In `licenses`, it identifies Draft Editor.
+
+The repeated value helps expose a mistake: the value alone does not identify the access without its type and source context.
+
+ISC has a separate identifier for each represented entitlement record. The profile points to those distinct records. It does not point to one group and interpret that group as a role and license as well.
 
 ```text
 Profile: Order draft preparation
-Source: OrderWorks Production
+Source: Orders Production
 |
-+-- E-G2201
-|   groups / "2201"
-|   Order Readers
++-- reader entitlement record
+|   type groups, native value "2201"
 |
-+-- E-R2201
-|   roles / "2201"
-|   Draft Creator
++-- creator entitlement record
+|   type roles, native value "2201"
 |
-+-- E-L2201
-    licenses / "2201"
-    Draft Editor
++-- editor entitlement record
+    type licenses, native value "2201"
 
-Three distinct ISC references.
-One source, three native types.
+Three represented entitlement records.
+Each has its own ISC identifier.
 ```
 
-Each branch means “the profile references this represented entitlement.” None means “create a new native object” or “turn these items into a parent group.”
+Each branch means “this profile references this represented entitlement.” The branches are relationships, not source writes or a required execution order.
 
-The profile has three entitlement references, even though the native values look identical. When checking a saved bundle, retain the exact source, type and represented record behind each selection.
+If you select the reader record three times, that does not substitute for selecting the creator and editor records. A count of three selected entries is not proof of the intended contents. Likewise, selecting similarly named Test-source records would not provide the Production rights.
 
-Choosing the group record three times would not substitute for the role and license. Choosing similarly named Test records would not provide Production access. A count of three entries is not enough to establish the intended contents.
+An **account attribute** is a field describing an account. A **schema** specifies the fields and how ISC interprets them. In the supplied account data, the relevant fields can contain `groups = ["2201"]`, `roles = ["2201"]` and `licenses = ["2201"]`.
 
-The profile is also not a list of other access profiles. Its entitlement list references entitlements. If you need a wider structure that combines access profiles, use the appropriate access-model object rather than treating a profile reference as an entitlement.
+For this example, each field is marked as entitlement-bearing, supports multiple values, and is linked to its matching entitlement type. Its collected values match that type's native entitlement identifiers. This established linkage explains which represented access each account field describes.
 
-## “Related” means needed for the same useful outcome
+The profile does not invent these mappings. It also does not infer the role and license from a group value with the same spelling.
 
-For the intended draft preparers, each selected item has a reason:
+When reviewing a saved profile, expand the selected entitlement details and verify the source, type and exact represented record. The friendly name helps you read the selection; the record behind it establishes what was selected.
 
-The reading group lets the account inspect the orders it will work on. The creator role permits the draft action. The license enables the editing feature. OrderWorks requires the combination for this task.
+The entitlement list contains entitlements, not other access profiles. For a wider structure that combines profiles, use the appropriate ISC access-model object.
 
-Remove the group and the task's reading requirement is missing. Remove the role and the account lacks the draft action. Remove the license and the editing feature is unavailable.
+## Follow the intended package into one account
 
-That is a meaningful dependency, not simply three names that contain “Order.”
+An **identity** is ISC's representation of a person or another entity. The employee's application account is correctly associated with their identity and is their only account on Orders Production.
 
-Now compare someone who only reads completed orders. That person needs the reader permission but not draft creation or the editor license. Being in the same department does not make the larger package appropriate.
+The account is enabled, sign-in succeeds and its assigned business unit is West. It initially holds Readers only. It has no approval or full-export access through any other route.
 
-Ask whether the people receiving the proposed package genuinely need every included item for the package's stated purpose. If only part of the population needs approval or broad export, those are not harmless extras for everyone else.
+An **access request** asks for an access item for a recipient. For this example, Order draft preparation is enabled, offered through a supported direct request configuration, and requires manager approval. No automatic assignment supplies it to this employee.
 
-The principle is sometimes called **least privilege**: give the access required for the authorized work, without adding unrelated capabilities. Here, it has a concrete result. Approval and full supplier export stay outside Order draft preparation.
+The request is for the defined profile package. The configured manager reviews whether the employee should receive the drafting capability, including its license.
 
-This does not mean every profile must contain the fewest possible entries. A one-item profile that leaves out a required dependency can be unusable. The aim is a complete, justified capability within a clear boundary.
+**Identity processing** evaluates an identity and relevant identity/access-model information. The saved definition has been applied through the relevant processing before this request. Saving the definition and applying it to identities are separate from delivering its native access.
 
-## A dependency is not the same as a menu of alternatives
+**Provisioning** carries out account or access changes. Once the configured request approval is complete, the supported delivery path must establish the profile's required access on the selected account.
 
-The profile's entitlement list names the access items in the package. Listing two items does not mean “give whichever one suits this person.”
+In this supplied successful result, the account keeps its existing Readers membership and receives Draft Creator and Draft Editor. Current native records confirm all three on that same account. An application check permits preparing a draft for a West order. Approval and full supplier export remain unavailable.
 
-Suppose OrderWorks has separate East Editor and West Editor licenses, and each draft preparer needs only their assigned region's license. Putting both licenses into one ordinary profile definition does not express “choose East or West.”
+The package is **standing access**: it does not require a separate just-in-time activation before these entitlements are delivered. The observations do not establish how many connector calls were used or a universal delivery time.
 
-You would be defining a package containing both.
+The basic chain is now connected: the approved work determines the combination, the profile identifies its entitlement records, the recipient mechanism establishes who should receive it, and provisioning delivers the required native relationships. Native evidence and an application check establish what works.
 
-Establish how the native application scopes those alternatives and design the appropriate separate packages or supported higher-level selection. Do not rely on the recipient or a reviewer to notice an inappropriate extra license after it is already part of the bundle.
+Creating the package alone would not have selected the employee or delivered their missing rights.
 
-Likewise, a bundle containing a reader group and a creator role does not mean the requester can choose only the reader part. If read-only use is a different need, give it an appropriately bounded access item.
+## The application still decides whether an action is allowed
 
-An **access request** asks for access to be granted. When an access profile is offered through a configured request route, the requested item is that profile's defined package. A reviewer needs to understand what approving that package includes.
+The profile groups access for management. The application's permission rules determine whether the account can act on a particular order.
 
-The list is not an automatic substitute for a business rule that chooses among alternatives.
-
-## Keep the application's conditions separate from the grouping
-
-The application's permission logic is another layer.
-
-OrderWorks permits draft creation only when the account has the reader group, creator role and editor license. The account must also be enabled, sign-in must succeed, and the order must belong to its assigned business unit.
-
-The relevant **account attributes** are fields describing the account. In the supplied source data, entitlement-valued fields can contain `groups = ["2201"]`, `roles = ["2201"]` and `licenses = ["2201"]`.
-
-The entitlement types and field mappings have been verified to represent the three native relationships correctly. The profile itself does not invent those mappings or infer the role and license from the group.
-
-The application's conditions look like this:
+Under the supplied rules, drafting requires the following conditions together:
 
 ```text
-Account: ow-110202
+Selected application's account
 |
-+-- groups includes "2201"
-+-- roles includes "2201"
-+-- licenses includes "2201"
++-- Order Readers membership
++-- Draft Creator native role
++-- Draft Editor license
 |
-v
-All three access items required
+All three required for drafting
 |
-+ enabled target account
++ enabled account
 + successful sign-in
 + order in assigned business unit
 |
 v
-Native draft creation allowed
+Draft creation permitted
 ```
 
-This is a fictional native permission dependency, not ISC's universal authorization algorithm. The branches state conditions that must hold for the action; they are not the order in which ISC writes entitlements.
+The vertical path combines required conditions. It does not show the order in which ISC provisions the items or a universal ISC authorization algorithm.
 
-Even a correctly delivered bundle does not remove the business-unit boundary. If Devi's account is assigned to West, the package does not grant draft access to an East order merely because all three entitlement values are present.
+The license enables editing, but does not by itself grant draft creation. The creator role supplies the draft action, but does not supply the other required relationships. The account must also be enabled, able to sign in, and working within its assigned unit.
 
-Conversely, the license by itself does not imply permission to create drafts. It enables a feature, while the other native rights and resource conditions still matter.
+For the West account, a West draft succeeds while an East draft is denied. That result agrees with the approved business-unit boundary. Giving broader access to make East succeed would change the requirement, rather than repair the supplied package.
 
-You need this distinction when someone says, “The profile is assigned, so why does the action fail?” Check the exact account, operation and resource rather than assuming every application restriction is a provisioning error.
+Now change the account condition. Even with all three items present, a disabled account cannot satisfy this application's stated conditions. That is why investigating “the profile is assigned, but drafting fails” needs the exact account, action and resource, rather than only the profile name.
 
-## Do not invent inheritance to make the package smaller
+## A required combination is different from a choice
 
-A **native hierarchy** is a relationship within the source, such as one group belonging to another. An application may use those relationships to derive access, according to its own rules.
+Suppose the application offers East Editor and West Editor licenses. Each draft preparer needs only the license for their assigned region.
 
-An access profile is a set of references in ISC. Grouping rights there does not create native hierarchy or make one referenced entitlement imply another.
+An ordinary profile containing both licenses defines a package containing both. The list does not express “choose one according to this employee's region.”
 
-In the supplied OrderWorks contract, the creator role does not automatically grant the reading group or license. All three relationships must be established. You cannot omit the reader merely because its name sounds less specialized than Draft Creator.
+You need separate appropriate packages or a supported higher-level selection design that actually chooses the right access. Adding both to the profile and expecting an approval step to discard one does not express that design.
 
-Now change the application design. Suppose a verified native role already grants every capability and feature needed for the task. A profile referencing that one role could be sufficient, if the integration represents and provisions it correctly and no unwanted rights are included.
+The same applies to reader-only use. A requester asking for the drafting profile is asking for its defined combination, not choosing an arbitrary subset from its entitlement list.
 
-The deciding evidence is the actual permission contract, not a rule that bundles must always have three entries or that broader-sounding roles always include narrower rights.
+Distinguish the question before changing the design: are these dependencies required together, or alternatives required by different recipients? The answer determines whether one package is suitable.
 
-An enabled access profile needs at least one entitlement. It does not need unnecessary duplicate paths just to look complete.
+## Grouping does not create native inheritance
 
-## One source can mean different business applications
+A **native hierarchy** is a relationship inside the source, such as one group belonging to another. The application may derive permissions through such relationships according to its own rules.
 
-Suppose the same job also requires a document-upload permission. If that entitlement belongs to a separate DocumentStore Production source, it cannot simply become a fourth entitlement in the OrderWorks profile.
+The profile's references do not create that hierarchy or make a specialized-sounding role include every simpler right.
 
-A **role** in ISC can express a broader business access requirement and can include access profiles or entitlements. That can provide a wider structure for separate source-specific components where the design calls for it.
+Our application contact has confirmed that Draft Creator does not automatically grant Readers or Draft Editor. Omitting either would leave an unmet condition. Only evidence of a different native permission contract would justify reducing the package.
 
-Be careful with the word “role” here. OrderWorks's Draft Creator is a native role represented as an entitlement. An ISC role is a different access-model object. The native object's type label does not make it an ISC role.
+Where a real source supports native entitlement relationships, their representation and effect need to be verified. Do not use the ISC grouping as evidence that those relationships exist.
 
-The source boundary is also not a rule that a profile can serve only one business application. Directory groups from one directory source can govern permissions in multiple applications.
+## A suitable bundle can still fail during delivery
 
-If the same dispatch task genuinely needs two such groups, they can be considered together within that source. Their business relationship still needs to be established. “Both are directory groups” is not enough.
+Consider a separate delivery variation. The same package is approved for the same account. Current native evidence shows Readers and Draft Creator, but no Draft Editor license. Drafting within West is denied.
 
-Nor should you redraw integration boundaries merely to fit a convenient bundle. A connector's supported data and change operations, account relationships and ownership need a coherent design of their own.
+The absence establishes an incomplete required set. It does not, by itself, establish why the license is missing.
 
-## Agree what belongs together over time
+Now add the relevant operation evidence: the license-assignment event for this account reports rejection because no assignable editor seats remain. The reported error identifies a capacity problem for that attempt. It does not mean the profile should include Order Approver or that another approval will create a license.
 
-A package needs an owner who can explain why its contents remain appropriate. That person is responsible for the bundle's purpose, not automatically a holder of all its permissions.
+After an approved capacity allocation and the appropriate supported recovery, fresh native evidence confirms the editor license on this account. Drafting within West succeeds; approval and broad export remain unavailable. No other relevant account, permission or application-policy change occurred in this variation.
 
-Ask what happens when only part of the package is needed temporarily. If a person reads orders throughout the year but edits drafts only during a short assignment, distinguish the ongoing reading need from the temporary drafting need.
+The corrected outcome supports the specific explanation. It does not establish automatic license purchasing, a retry schedule or successful delivery to other accounts.
 
-One possible design keeps a clearly defined drafting package for the period it is required and models the continuing reading access separately. Another design can use different supported access items for the distinct needs. The appropriate choice depends on the actual assignment and removal mechanisms.
+A named bundle also does not make delivery an all-or-nothing transaction. Partial results need inspection; do not assume earlier successful changes were undone when the license assignment failed.
 
-Do not split or combine packages under the assumption that overlapping permissions always remain when one package is removed. That is not a universal ISC removal rule.
+**Aggregation** reads external data into ISC. A collected view describes what was read, while a delivery activity describes an attempted or reported change. Neither replaces current native evidence when you need to confirm the resulting access.
 
-The design needs to account for the operation that ends the temporary access, its assignment origin and the native outcome. A package that is easy to grant but difficult to remove safely needs more work.
-
-The same applies to approval responsibilities. If draft preparation and order approval have different eligible populations or decision requirements, combining them to save one request changes what every package recipient receives. It does not merely shorten a form.
-
-## Separate a sound design from a successful delivery
-
-**Provisioning** changes accounts or access in a target system. **Aggregation** reads source information into ISC. **Identity processing** evaluates identity data and relevant access-model configuration.
-
-These processes contribute different evidence. A saved profile shows its definition. Processing applies relevant configuration to identities. Delivery activities show the attempted or reported source changes. Current native records show the resulting relationships.
-
-For this example, assume the chosen grant route is approved for Devi, the profile uses **standing access**, and the correct account is selected. Standing access is delivered without a separate just-in-time activation step.
-
-If the group and native role are present but the license assignment fails, the intended draft capability remains incomplete under the supplied OrderWorks rule. The bundle can be well designed even though delivery hit a problem such as no license being available or the integration lacking permission.
-
-Identify the actual error and supported recovery path. Do not add the approver role as a workaround, and do not assume a grouped request provides atomic rollback of every source operation.
-
-When verifying the full result, inspect the exact group, native role and license on `ow-110202`. Then check draft creation on an order within the assigned unit, and confirm that excluded capabilities have not appeared through this change.
-
-A useful comparison is:
-
-| Evidence or test | What it helps establish |
+| Evidence | What you can conclude |
 |---|---|
-| Saved profile references `E-G2201`, `E-R2201` and `E-L2201` from the intended source | The definition matches the chosen three-item package. |
-| Only reader and creator are confirmed on the target account | The native access is not the complete required set; it does not yet establish the reason the license is absent. |
-| A delivery event reports a rejected license assignment | The reported operation failed for the reason in that event; inspect its exact account and current relevance. |
-| All three relationships are current, the account is enabled and sign-in succeeds | The supplied entitlement and account conditions are satisfied; the order's business-unit condition still needs checking. |
-| Draft creation succeeds for West but is denied for East on a West-assigned account | The observations are consistent with the supplied resource boundary, not proof that the group count was wrong. |
-| The definition no longer includes an extra permission | The package changed. This does not prove existing holders lost that permission. |
+| Saved references to the intended reader, creator and editor records | The definition matches the chosen package; this does not establish a recipient or native delivery |
+| Current Readers and Creator, with Editor absent | The required set is incomplete; the absence alone does not identify a capacity or credential defect |
+| Rejected license-assignment event for the exact account | That attempt failed for its recorded reason; check its relevance and the current state |
+| All three native relationships, enabled account and successful sign-in | Those conditions are satisfied; the selected order's unit still matters |
+| West drafting succeeds, East drafting is denied | The observations agree with the supplied resource boundary |
+| An unwanted reference disappears from the definition | The package changed; existing holders' native access needs separate investigation |
 
-## Check existing holders separately when repairing a bundle
+An **integration credential** is the account or authorization used by the connector for source operations. A rejected change could instead identify missing credential permission. Use the actual error to choose the approved correction; the same absent license is compatible with more than one cause.
 
-Suppose an older version of Order draft preparation included the Order Approver entitlement by mistake.
+## Keep the source boundary separate from the job boundary
 
-Removing it from the definition corrects the package's contents. It does not, by itself, remove that entitlement from identities that already held the profile. The removed entitlement can remain as an independent entitlement.
+Suppose the purchasing job also requires document upload from Documents Production.
 
-Investigate who received it, why they hold it now, and which approved change should remove inappropriate native access. Apply the relevant configuration through identity processing and verify the separate removal outcome where one is required.
+That entitlement belongs to another source. A common job does not make it eligible for the Orders Production profile. Keep the source-specific components separate.
 
-An **assignment origin** is how the profile became associated with the identity. **Detection** means ISC recognizing a profile from an existing collected entitlement set. A **lifecycle state** describes an identity's organizational stage and can carry configured access requirements. Those origins are different from a person's earlier approved request.
+An **ISC role** groups related access for a broader business purpose and can include profiles or entitlements across sources. It can provide the wider structure where appropriate.
 
-Do not assume that adding a missing entitlement to a profile updates every existing holder in the same way either. Assignment through a role or lifecycle requirement and a profile held from detection or a previous direct request have different change behavior.
+The word role now refers to two different objects. Draft Creator is an application's native role, represented as an entitlement. The ISC role groups access-model components. The shared word does not make them interchangeable.
 
-Before changing a shared definition, identify the affected population and origins. Testing a representative case is useful, but it is not evidence that every existing holder follows the same path.
+One source can also represent groups that govern more than one business application. Two application names do not necessarily mean two sources. Related directory groups can belong in one profile if they share the source and support a justified common task.
 
-## Work through the evidence
+Do not redesign integration boundaries simply to make a preferred bundle fit. Connector support, represented data, account relationships and operational responsibility need a coherent design of their own.
 
-### Case 1: All five items belong to Production
+## Think about how the need ends
 
-**Facts:** All five candidate items come from OrderWorks Production. Draft preparers need only reading, draft creation and the editor feature.
+An **access profile owner** is responsible for the maintained package. That responsibility includes explaining why its contents remain appropriate; it does not establish that the owner holds the access.
 
-Does the shared source justify including approval and full supplier export?
+Suppose an employee needs reading throughout the year but drafting only during a short assignment. Combining everything into an ongoing grant would fail to express when the editing need ends.
 
-**Reasoning:** No. The source boundary makes the items eligible for consideration in that source's profile, not appropriate for every recipient. Compare each native capability with the stated work. Keep the unrelated rights outside the package and define their own need and decision process.
+You can model the continuing reading need separately and use an appropriate drafting package for the temporary work. Another supported design may fit the actual assignment and removal mechanisms better. Judge the design by both the grant and the intended end state.
 
-### Case 2: Every native value is 2201
+An **assignment origin** is the mechanism through which access became associated with an identity, such as a profile request or a role. The operation and origin matter when access ends. Two packages sharing Readers do not establish that every removal operation will preserve Readers.
 
-**Facts:** The group, creator role and editor license each have text key `2201`. Their represented ISC records are `E-G2201`, `E-R2201` and `E-L2201`.
+Different approval responsibilities also matter. Combining drafting and approval to save a request means every recipient is asking for both capabilities. Separate eligible populations or decision requirements are reasons to examine the package boundary.
 
-Is one selected group entitlement equivalent to selecting all three?
+## Repair the definition and examine existing holders
 
-**Reasoning:** No. Source, type and represented record distinguish the objects. The group selection does not establish the role or license relationship. Inspect all three intended references, not just the repeated native value or the count of entries.
+A **lifecycle state** describes an identity's organizational stage and can carry configured access requirements.
 
-### Case 3: The package contains both regional licenses
+In an independent variation, an older Order draft preparation profile mistakenly included Order Approver. The selected employee received it through a direct request for the profile, not through a role or lifecycle requirement.
 
-**Facts:** A worker needs only West Editor. The ordinary profile definition contains both West Editor and East Editor. No separate selection mechanism chooses one.
+Removing Approver from the definition corrects that package. Under this direct-profile scenario, the earlier entitlement can remain individually held. Relevant processing applies the configuration change; it does not turn this reference deletion into a native revocation.
 
-Does the list express an either/or choice?
+The employee's current approval access therefore needs its own investigation and approved removal path. Confirm why they hold it now and whether another legitimate grant exists, then verify the required native outcome.
 
-**Reasoning:** No. Both are included in the package. Establish the appropriate region-specific design rather than assuming a request or native application will discard the unneeded item. A choice among alternatives requires an actual supported selection design.
+Do not generalize this example into “profile edits never remove native access.” For an enabled ISC role, configured **role access removal propagation** can turn specified access-definition removals, including removal from an associated profile, into deprovisioning, meaning removal of native access. This setting governs supported role-driven removal behavior. The origin, role state and configuration must be checked.
 
-### Case 4: The fourth item belongs to DocumentStore
+Adding an entitlement also needs origin-aware review. **Detection** recognizes a profile from an existing collected full entitlement set; it does not itself create the original native grants.
 
-**Facts:** The document-upload entitlement is from DocumentStore Production, not OrderWorks Production. It supports the same purchasing job.
+A current role or lifecycle requirement and a profile held from detection or a past direct profile request do not have identical addition behavior. For the standing access discussed here, additions enforce current role/lifecycle requirements through provisioning; they do not automatically top up detection-only or previously requested profile holders. Those holders need the revised full set to retain the profile when evaluated.
 
-Can it be included directly in the OrderWorks profile?
+Before changing a shared definition, identify affected identities and origins, apply the relevant configuration, inspect delivery where required, and check resulting native access. One representative account does not establish every holder's outcome.
 
-**Reasoning:** No. Common business purpose does not remove the single-source boundary. Model that source's access separately and consider an ISC role for the wider requirement. Do not confuse the native Draft Creator role with the broader ISC role.
+## Work through the grouping decisions
 
-### Case 5: The creator sounds powerful enough
+### 1. All five items share a source
 
-**Facts:** The native contract says Draft Creator requires the reader group and license. No hierarchy or automatic dependency grant supplies them.
+Draft preparers need Readers, Draft Creator and Draft Editor. Approver and Full Supplier Export are also on Orders Production.
 
-Can you omit the reader and expect the creator assignment to provide it?
+Does the common source justify including all five?
 
-**Reasoning:** No. The supplied contract requires the separate relationship. Neither the name nor access-profile grouping creates inheritance. Include the justified dependency, or obtain evidence of a genuinely different native permission design before changing the package.
+**Reasoning:** No. It establishes the source boundary, not the work need. Match each actual capability to the authorized task. Keep approval and broad export outside this package and evaluate their requirements separately.
 
-### Case 6: Every entitlement is present, but East fails
+### 2. The three native values are identical
 
-**Facts:** `ow-110202` holds all three required items, is enabled and signs in successfully. Its assigned business unit is West. Draft creation for a West order succeeds; an East order is denied.
+The reader group, creator role and editor license each use text key `2201`, within their different native types.
 
-Does the East denial establish a missing entitlement?
+Would selecting the group record supply all three?
 
-**Reasoning:** No. It is consistent with the explicit business-unit restriction. Verify the resource and account scope before diagnosing failed provisioning. Broadening access to all units would change the approved boundary, not repair the supplied three-item package.
+**Reasoning:** No. Source, type and represented record distinguish them. The profile needs the intended three entitlement references. Repeating one group reference, or counting entries without inspecting them, does not establish the role or license assignment.
 
-### Case 7: The approver entitlement was removed from the definition
+### 3. Both regional licenses are listed
 
-**Facts:** The team removes Order Approver from a previously excessive profile. Current native evidence still shows an existing holder has the approver entitlement.
+A worker needs only West Editor. The profile contains West Editor and East Editor; no supported selector chooses one.
 
-Has the observed native access contradicted the definition correction?
+Does the profile express an either/or choice?
 
-**Reasoning:** No. Changing the definition is not the same operation as removing an existing grant. Identify the holder's requirement and assignment history, then carry out any separately approved access removal through its supported path. The new definition alone is not proof that the earlier exposure ended.
+**Reasoning:** No. Both are in the defined package. Establish the appropriate regional package or actual supported selection mechanism. Do not expect a reviewer or provisioning operation to invent that choice from the employee's need.
 
-### Case 8: The person has the items across two accounts
+### 4. Another source supports the same job
 
-**Facts:** In an independent variation, Devi has two OrderWorks accounts. Her ordinary account has only the reader group. Her administrative account has the creator role and editor license. The native rule evaluates each account's own rights for draft creation.
+The document-upload entitlement belongs to Documents Production, while the drafting profile uses Orders Production.
 
-Can the ordinary account create drafts because the person holds all three items somewhere?
+Can the upload entitlement become a fourth item in that profile?
 
-**Reasoning:** No. That account lacks two required relationships. The other account's rights do not combine with it under the supplied application rule. Inspect account selection and intended account use. This conclusion concerns native capability; it does not invent an ISC detection algorithm for aggregating rights across accounts.
+**Reasoning:** No. Represent the other source's access separately and consider an ISC role for the wider requirement. The native Draft Creator role is an entitlement, not that broader ISC role.
 
-## Try the same test across two business applications
+### 5. The creator name sounds sufficient
 
-A fictional directory source, Dispatch Directory Production, contains `D-25`, which permits viewing assigned stock in StockPortal, and `D-26`, which permits submitting dispatch drafts in ShipDesk. The verified application rules use these directory memberships. Both permissions are required for the same approved dispatch task.
+The confirmed native contract requires Readers and Editor as separate assignments. No native hierarchy or automatic dependency grant supplies them.
 
-A third directory group, `D-29`, provides global administration and is not needed. A separate ShipDesk API source supplies a scheduling entitlement.
+Can you omit Readers because the creator sounds more capable?
 
-Explain whether one source-specific dispatch profile can include the first two groups, whether the third belongs, and where the scheduling entitlement fits.
+**Reasoning:** No. Names do not establish inheritance. Retain the required relationships unless verified native permission evidence supports a different complete design.
 
-Two business applications do not automatically mean two ISC sources. The first two rights are represented on one directory source and support the same task, so they can form a meaningful package there.
+### 6. All three are present, but East fails
 
-The administration group fails the work-requirement test even though it shares the source. Exclude it.
+The West account holds all three items, is enabled and signs in successfully. West drafting succeeds; East drafting is denied.
 
-The scheduling entitlement belongs to another source. If the job requires it, represent that access separately and use an appropriate broader access-model design. Do not add it to the directory profile merely because the end user calls both capabilities “ShipDesk access.”
+Does East denial prove a missing entitlement?
 
-Finally, confirm delivery and native behavior in each affected application. A correct directory bundle does not prove every application has consumed the expected membership information.
+**Reasoning:** No. The result agrees with the supplied unit restriction. Inspect account and resource scope before calling it a provisioning defect. Permitting every unit would broaden the requirement.
 
-The useful question is not “Can I add another entitlement?” It is “Does this exact access item belong in the same source-specific package for these recipients and this purpose, and how will we prove the resulting access?”
+### 7. Approver remains after a definition repair
+
+A holder received the old profile through a direct profile request, with no role or lifecycle requirement. Approver is removed from the definition, and relevant processing applies the change. Current native evidence still shows Approver.
+
+Does that contradict the definition correction?
+
+**Reasoning:** No. In this scenario the removed entitlement can remain independently held. Investigate current need and grant history, use any separately approved removal path and verify native access. Role-driven propagation is a different conditional mechanism; the supplied case does not establish it.
+
+### 8. The required rights are split across accounts
+
+In a separate variation, the person has two application accounts. Their ordinary account has Readers only. Their administrative account has Creator and Editor. The native rule evaluates each account's own rights.
+
+Can the ordinary account draft because the person has all three somewhere?
+
+**Reasoning:** No. The ordinary account lacks two required relationships. Rights on the administrative account do not satisfy its per-account rule. Inspect the intended account and selection evidence. This conclusion concerns native capability, not an assumed ISC detection algorithm across accounts.
+
+## Try grouping access across two applications
+
+A directory source represents two groups. Assigned Stock Viewers permits viewing assigned stock in a stock application. Dispatch Draft Submitters permits submitting drafts in a shipping application. The confirmed application rules use these directory memberships, and both capabilities are required for one approved dispatch task.
+
+The same directory also contains Global Administrators, which the task does not require. A separate shipping API source represents a scheduling entitlement.
+
+Which rights belong in the directory profile, and what evidence would establish the result?
+
+**Reasoning:** The two required directory groups share one source and support the same task, so they can form a coherent profile there. Two business applications do not by themselves require two ISC sources.
+
+Global Administrators fails the work-need test even though it shares the source. The scheduling entitlement belongs to another source; represent it separately and consider the appropriate broader role if the job needs it.
+
+Then inspect the intended account's memberships and verify the required behavior in each application. Correct directory memberships do not independently prove that both applications have consumed the expected information.
+
+For any proposed addition, explain the same connection: which exact source access does this reference represent, why does this recipient need it with the other items, and what evidence will establish the intended capability?

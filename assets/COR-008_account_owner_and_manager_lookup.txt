@@ -1,0 +1,18 @@
+Existing account ownership
+  employee HR account -> employee identity
+
+Separate manager lookup
+  employee account: managerRef = P-208
+               |
+               v
+  Manager Name mapping selects this input
+  source manager comparison uses:
+    managerRef -> identificationNumber
+               |
+               v
+  manager's own identity value: P-208
+               |
+               v
+  employee identity -> manager identity
+
+Human check: approved reporting line?

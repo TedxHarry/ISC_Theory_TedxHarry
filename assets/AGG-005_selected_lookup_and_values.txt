@@ -1,0 +1,12 @@
+[Helpdesk selects ISC account]
+              |
+[Connector looks up support-user]
+              |
+[External account returns values]
+[locked true, office HYD]
+              |
+[Extract and represent values]
+              |
+[ISC account now locked / HYD]
+
+[Engineer verifies the record]

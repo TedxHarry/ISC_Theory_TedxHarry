@@ -1,0 +1,17 @@
+Aggregation          Provisioning
+     |                    |
+     v                    v
+modifies an          modifies an
+identity             identity
+     |                    |
+     +---------+----------+
+               |
+               v
+event-based identity processing
+               |
+               v
+evaluate applicable identity data
+and configured access requirements
+
+An attempted read or write alone
+does not establish this condition.

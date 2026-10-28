@@ -1,319 +1,333 @@
 # This entitlement looks wrong. What exactly needs fixing?
 
-Devi, employee `100606`, reviews assigned customer-support cases in CaseBridge Production, a fictional application. She uses account `cb-100606`. Her manager confirms that reviewing those cases is still part of her work.
+An employee's account shows the access value `case-reviewers` in SailPoint Identity Security Cloud (ISC), but the entry has no useful description.
 
-In SailPoint Identity Security Cloud, or ISC, her account shows the access value `G-9601`. The entry has no useful description. Someone looking at the catalog asks, “Is this an old group we can remove?”
+Someone asks whether it is old access that can be removed.
 
-Before answering, let's separate what we have seen from what we have assumed.
+What have we actually established? We have an access value without enough explanation. We have not established that the group is obsolete, that the account should lose it or that the application no longer contains it.
 
-We have seen an access value without enough explanation. We have not yet established that the group is obsolete, that Devi should lose it, or that the application no longer contains it.
+Those are different questions, and they can require different corrections.
 
-All systems, identifiers, times, configurations and observations below are fictional. They illustrate an investigation, not operations performed in a tenant or the behavior of a built-in CaseBridge connector.
+## Give the uncertainty a precise meaning
 
-## Give the uncertainty a precise name
+An **entitlement** is an access right represented in ISC, such as an application group or permission. The **entitlement catalog** is the collection of those represented access items.
 
-An **entitlement** is an access right represented in ISC, such as an application group or permission. The **entitlement catalog** is ISC's collection of those represented access items.
+Unknown describes a gap in our knowledge. It does not identify the cause of that gap.
 
-“Unknown” describes our missing knowledge. It does not identify a cause.
+A raw value can appear because account data supplied it without richer group details. A group can have a readable name but no useful source description. A detailed description can become outdated when the application's allowed actions change.
 
-A raw identifier can appear because ISC learned it from an account but has not obtained richer group information. An understandable name with an empty description can mean the source itself supplies no useful explanation. A detailed description can still be outdated if the native permission has changed.
+A **permission** allows an action on a resource, such as reading assigned cases. **Native** means information or behavior in the external system's context.
 
-Likewise, “stale” needs an object and a comparison. Is the membership old? Is the description old? Does the native group no longer exist? Or is the screen showing an earlier result?
+Stale also needs a specific comparison. Is the membership older than a confirmed account change? Does the description understate today's permission? Has the group been deleted, or does a view merely show an earlier observation?
 
-These are different claims. Write the one you can support.
+Keep the observation separate from the conclusion:
 
 | Observation | What it does not establish |
 |---|---|
-| The display shows `G-9601` without a useful name | That the native group is invalid, unused or deleted. |
-| No collected account currently holds an entitlement | That the source object no longer exists or has no planned use. |
-| A group is absent from one read | That it is absent from the whole source, regardless of filters and permissions. |
-| ISC and the application show different descriptions | That collection failed; maintained fields can have a different update authority. |
-| An owner field is empty | That the permission is harmless, or that an arbitrary account holder can explain it. |
-| A completed run reports a small discovered count | That the count is the whole catalog or covers every entitlement type. |
+| Raw value without a useful name or description | That the native access is invalid or deleted |
+| Zero observed holders | That the object no longer exists or has no planned use |
+| Object absent from one read | That it is absent outside that read's coverage |
+| Source and ISC descriptions differ | That collection failed |
+| No recorded owner | That the access is harmless or any holder can explain it |
+| Completed run with a small discovered count | That it covered the entire catalog or every access type |
 
-The distinction affects the correction. Removing a permission cannot repair a missing description. Writing a description cannot repair an incorrect membership.
+A missing explanation is not repaired by removing access. An incorrect membership is not repaired by improving the explanation.
 
-## Identify the access before interpreting it
+## Identify which access you are investigating
 
-A **source** is ISC's representation of a system or account-data collection. CaseBridge Production is not the same source as CaseBridge Test, even if both contain a group called Case Reviewers.
+A **source** is ISC's configured representation of a system or collection of account data. Cases Production and Cases Test are different sources, even if both contain a group named Case Reviewers.
 
-An **account** is the application's login record. An ISC **identity** represents a person. In our example, `cb-100606` is correctly associated with Devi's identity. That establishes whose account we are examining; it does not explain its permissions.
+An **account** is the external record through which a person or another entity uses a system. An **identity** is ISC's representation of that person or entity. The selected employee account is correctly associated with its identity here.
 
-An **entitlement type** describes a kind of access object, such as groups or native roles. An **account attribute** is a field on the account record; an entitlement attribute contains the access values held by the account. A **schema** describes the available fields and how ISC interprets them.
+A **membership** is the account-to-group relationship. Our question concerns that account's recorded `case-reviewers` membership on Cases Production.
 
-Record the source and environment, the entitlement type, the relevant account attribute and the native access value. Also retain the ISC entitlement identifier when identifying the catalog record. The ISC record identifier and the native group key identify different records.
+The employee's manager confirms that assigned support-case review is still required work. That work requirement does not establish what the group permits; the permission meaning still needs application evidence.
 
-For this example, the source's account attribute is `groups`, its entitlement type is also `groups`, and the native value is `G-9601`. The group schema uses `groupKey` as its identifier and `label` as its display name. These attribute names are fictional source definitions.
+The source, records, configurations, times and outcomes in this example are hypothetical. Supported reads and verified account association are supplied, rather than a real connector test or tenant observation.
 
-So “Case Reviewers in Production, type groups, key G-9601” is more useful than “that old review access.”
+A **native identifier** identifies the external access object in its integration context. An **ISC entitlement ID** identifies its catalog record in ISC. Keep both when recording an investigation, with the source, environment, relevant account and observation time. They identify related but different records.
 
-If a similarly named native role has value `G-9601`, it is not automatically the same object as the group. If a replacement group has the old group's name but a different key, do not merge them by appearance.
+Also retain the **entitlement type**, the supported kind of access object, and the relevant **account attribute**, a named field on the account. A group and a native application role can have the same raw value without being the same object.
 
-This is also why changing an identifier to make two screens match is a risky first move. Establish what each value identifies before considering a schema or data correction.
+A similarly named replacement with a different key also needs its own evidence. A friendly label cannot prove object continuity or permission equivalence.
 
-## Follow the two reads that supplied the picture
+## How did ISC obtain the value without its explanation?
 
-**Aggregation** reads source data into ISC. Account aggregation collects accounts and their entitlement values. Entitlement aggregation separately collects access-object details, where the source supports it.
+**Aggregation** collects external data into ISC. **Account aggregation** reads accounts and their relevant values, including represented access memberships.
 
-Account data can create a simple catalog representation from the values accounts hold. Separate entitlement data can supply names, descriptions and other supported attributes, including access objects that nobody currently holds.
+**Entitlement aggregation** separately reads supported access-object details, such as group identifiers, names and descriptions. It can include groups no account currently holds.
 
-The two reads do not have to cover the same objects at the same time.
+Account-held values can create simple catalog representations. Separate object collection can enrich them. That is why a membership reference can be represented before the detailed group explanation is available.
 
-A **connector** is the integration used to communicate with the source. Its configured read scope, available permissions and supported operations determine what information it can obtain. Here is the supplied evidence for CaseBridge:
+A **connector** supplies the source's supported integration. Its read scope, available permissions and configuration determine which information it can obtain. **Scope** means the objects and relationships the read covers.
 
-- At 09:00 UTC, the account read includes `cb-100606` with `groups = [G-9601]`.
-- At 09:05 UTC, a group-definition read completes successfully for the configured `CurrentTeams` container.
-- At 09:10 UTC, an application administrator confirms that native group `G-9601` exists in a different container, `LegacyTeams`. Its current label is Case Reviewers.
+Let's compare the supplied same-day observations. UTC provides a shared time reference.
 
-A **container** here is an application grouping used to limit the fictional connector's search. These container names and its filter are scenario assumptions, not standard ISC fields or universal connector options.
+- At 09:00, account collection reads the selected account with `groups: [case-reviewers]`.
+- At 09:05, group-definition collection completes successfully for `CurrentTeams` only.
+- At 09:10, the application administrator finds group `case-reviewers` in `LegacyTeams`, with the current label Case Reviewers.
 
-The relationship is easier to see when we keep both reads visible:
+A **container** here is an application grouping used to restrict the hypothetical connector's search. These container names and the filter are supplied integration facts, not standard ISC fields or universal connector options.
+
+The group has not moved between containers during these observations. Its key, membership, permission and the employee's work requirement have not changed.
 
 ```text
-CaseBridge Production
+Cases Production
 |
-+-- account read
-|   cb-100606 -> groups [G-9601]
-|               |
-|               v
-|   ISC membership representation
++-- Account read, 09:00
+|   groups: [case-reviewers]
+|       -> recorded membership
 |
-+-- group definition read
-    filter: CurrentTeams only
-    |
-    +-- G-9601 in LegacyTeams
-        -> excluded from this read
++-- Group read, 09:05
+    CurrentTeams only
+    case-reviewers in LegacyTeams
+        -> outside selected scope
 
-Application evidence:
-G-9601 exists and grants
-read of assigned support cases
+Native check, 09:10:
+Group exists in LegacyTeams.
+Permission meaning checked separately.
 ```
 
-The arrows show where evidence comes from, not an undocumented backend sequence. The account read supplied a membership value. The separate definition read omitted its group because of its stated filter. The application evidence independently confirms that the group exists and what it permits.
+The account read supplied the membership reference. The definition read excluded its group because that group was outside the selected container. The native check independently establishes existence.
 
-A successful read of CurrentTeams can be correct within that scope and still be insufficient for the intended catalog.
+The arrows show evidence paths, not a hidden processing schedule. The times describe this example, not a latency guarantee.
 
-The word “Legacy” in a container name also does not prove retirement. In the supplied facts, the group remains active and supports current work.
+A successful read can be correct for CurrentTeams and still be insufficient for the intended integration. The word Legacy also does not establish retirement. Here, the group exists and the employee still performs the relevant work.
 
-## If the detail was returned, check how it connects
+## Check that the returned value would connect correctly
 
-A missing group definition is one possible cause. A definition that was returned but does not link correctly is another.
+Before changing scope, the team also checks the interpretation rules.
 
-The account's entitlement attribute needs the correct entitlement-type connection. Its values must match the identifier selected for those entitlement objects. For our example, `groups` is marked as an entitlement attribute, permits multiple values, uses type `groups`, and contains `G-9601`. The group definition's `groupKey` also contains `G-9601`.
+A **schema** describes the fields represented for a record kind and their designated uses. Our account schema has a field named `groups`. It is marked **Entitlement**, so ISC interprets its values as access information, and **Multi-Valued**, so it can contain several references.
 
-Those supplied settings agree. The main example therefore points to collection scope, not a failed key comparison.
+The supported native entitlement type is also `groups`. The account field's **Type** setting points to that type.
 
-Now change one fact. Suppose the account returns `G-9601`, but the selected group identifier is `label`, whose value is `Case Reviewers`. The displayed words may look sensible while the matching values disagree.
+The group schema selects `groupKey` as the **Entitlement ID** attribute and `label` as the **Entitlement Name** attribute. The first chooses the field supplying identification; the second chooses readable display text.
 
-You would investigate the integration contract and schema selection. You would not change Devi's native membership to the label simply to make it look readable.
+The account value `case-reviewers` agrees with the native group's `groupKey` value. The source, type relationship and identifying values have been checked and agree.
 
-An identifier or type change can affect existing references and create duplicate representations. Test a proposed correction in a suitable non-production setting and assess existing data before applying it through the organization's controlled process.
+That matters to the diagnosis. We have evidence for an excluded definition, rather than evidence that matching failed. Changing the key or account membership would not address the established omission.
 
-Do not delete an entitlement type as a catalog-cleanup shortcut. Deleting the type does not delete its associated entitlements; it prevents their aggregation or update until an appropriate type exists again.
+## Complete the correction at the layer that was wrong
 
-## A recent timestamp is not a complete answer
+The team confirms that the required LegacyTeams objects belong within the agreed integration scope. It reviews which other objects the proposed scope change would include and the impact on the source's represented data. A filter change is not a private edit to one entitlement.
 
-When you inspect an aggregation result, ask what operation it describes and which source, types and population it included. A recent account read does not prove that group descriptions were refreshed. A recent entitlement read does not independently establish today's membership for every account.
+Under the approved change, the relevant definition read includes the required container. It returns `groupKey: case-reviewers`, `label: Case Reviewers` and the source description “Support access.”
 
-Then check completeness within the intended scope.
+The matching value connects the detail to the existing membership. Check the agreed coverage of the newly included population as well as this selected object before accepting the broader scope change.
 
-A read that stopped after one page is not a complete inventory. A credential that can see only one container cannot establish absence outside it. A query for groups does not establish the inventory of native roles.
+One problem is resolved: the required group detail is now collected and linked.
 
-The **integration credential** is the account or authorization the connector uses to read or change the source. The application's human administrator may see objects that this credential cannot see.
+Another remains: Support access does not explain the permission.
 
-If the administrator finds `G-9601` but the connector does not return it, compare their source, query scope and visibility. Obtain only the read permissions needed for the agreed integration. Giving the connector broad write or administrator rights is not a justified response to a missing description.
+The administrator confirms the group's current rule: read support cases assigned to the account, with no editing or export supplied by this group. The responsible business contact confirms its intended use and accepts responsibility for maintaining its meaning.
 
-For a file-based source, also inspect the file's origin and export time. Uploading a file today does not make yesterday's exported memberships current. Confirm the correct source template, identifiers and included rows rather than pasting a readable name over an unrelated key.
+An **entitlement owner** is the responsible party recorded for that access item. Ownership is separate from holding the permission; the most frequent holder is not automatically the correct owner.
 
-A job's discovered count is not automatically its source's entire catalog count. ISC can already contain entries learned from earlier reads or account-held values. Read the summary in the context of the operation it reports.
+The team records the agreed owner and maintains an accurate ISC description:
 
-## Restore the missing detail without pretending you changed access
+> Read the support cases assigned to the account in Cases Production. This group does not grant editing or export. Intended for staff performing assigned-case review.
 
-Return to the supplied CaseBridge facts.
+The native configuration supports the scope and exclusions. The intended-use sentence guides assignment decisions; it does not implement a new restriction in the application.
 
-The team confirms that LegacyTeams groups belong in this integration's agreed scope. It reviews the proposed filter change for other affected objects rather than treating it as a one-record edit.
+Closing evidence now shows the correct represented group, useful description, accepted owner and matching account reference. Current native evidence confirms that the selected membership and the group's permission remain unchanged.
 
-In the fictional continuation, the approved correction includes the required container. A relevant group-definition read then returns `G-9601`, `label = Case Reviewers`, and its source description, **Support access**. The values link to the existing account-held group through the verified type and identifier.
+The investigation improved collection and understanding. It did not remove or broaden the account's access. These continuation observations are supplied hypothetical facts, not a promise that every source exposes these fields or a claim that checking one object validates every newly included object.
 
-That resolves missing collection detail. It does not resolve poor wording.
+## What changes if the definition was returned but did not link?
 
-The application administrator confirms the current native permission: read assigned support cases, with no editing or export capability supplied by this group. The responsible business contact confirms the intended use and accepts accountability for maintaining the explanation.
+Consider a separate variation. The account returns `case-reviewers`, but the group schema selects `label` for identification, and its value is Case Reviewers.
 
-An **entitlement owner** is the responsible identity recorded for the access item. Ownership is separate from membership. The most frequent holder is not automatically the right owner.
+The identifier values no longer agree. Readable words do not repair that mismatch.
 
-The team records an appropriate owner and maintains a clearer ISC description:
+Check the actual integration contract, field selection and source values. Do not replace the account's native reference with a friendly name just to make a screen look consistent.
 
-> Read the support cases assigned to the account in CaseBridge Production. This group does not grant editing or export. Intended for staff performing assigned-case review.
+Changes to the selected Entitlement ID or Name attributes after aggregation can create duplicate representations. Review existing records and dependent references, validate a proposed correction in a suitable non-production setting, and use the controlled change process.
 
-The native configuration establishes the scope and exclusions. The intended-use sentence guides assignment decisions; the sentence itself does not enforce them.
+Deleting the entitlement type is not a cleanup shortcut. It does not delete its associated entitlements. It prevents their aggregation or update until an appropriate type exists again.
 
-The final evidence compares both layers. The ISC entry now has a useful label, description and owner. Current native evidence still shows Devi's account in `G-9601`, with the same permission. The investigation improved understanding without removing or broadening her access.
+## A recent completion time is not complete coverage
 
-All these continuation results are supplied fictional observations. They are not a prediction that a particular connector will expose the same fields or that changing a filter affects only one object.
+A timestamp belongs to an operation. Identify which read it describes, which source and types it covered, and whether it inspected the needed records.
 
-## When the explanation stays old after collection succeeds
+A recent account read does not establish fresh group descriptions. A recent definition read does not establish current membership on every account.
 
-A description can be wrong even when the correct group was collected.
+**Pagination** retrieves a collection in successive pages. Stopping after the first page leaves the rest unexamined. A groups query also says nothing about native roles it did not request.
 
-First compare the actual returned source field with the schema's description mapping. If the useful text exists in a different field, confirm whether the supported schema maps it. A mapping correction has a wider scope than editing one description.
+The **integration credential** is the account or authorization the connector uses to communicate with the source. A human administrator can have different visibility.
 
-Then inspect whether the ISC description was manually maintained. Manually updated entitlement names and descriptions are protected from replacement by later aggregation.
+If the administrator finds a group the connector does not return, compare their environment, search scope and permissions. Obtain the read permissions needed for the agreed integration. Missing descriptive information does not, by itself, justify adding broad write or administrator rights.
 
-That protection can preserve a good business explanation. It can also preserve outdated wording. Repeating the same successful read does not decide which explanation the organization wants to maintain.
+For a file-based source, inspect the file's origin and export time. Uploading a file today does not make yesterday's exported values current. Verify the correct source template, identifying fields and included rows.
 
-Agree which system owns the field's content, confirm the actual permission, and use the supported maintenance method. Do not clear protection across a source merely to repair one entry.
+A run's discovered total is also different from the accumulated catalog. Earlier account or entitlement reads can have contributed items that this run did not discover. Interpret the count within the operation's scope.
 
-Also remember the opposite boundary: editing an ISC display name or description does not send that edit to the native source. If the application's own help text is wrong, that needs its own correction.
+## Why might the description remain old after a correct read?
 
-## Zero holders and a missing object are different findings
+First compare the returned source field with the schema's description mapping. Useful text in a different field needs supported mapping; a mapping change can affect more than one object.
 
-Suppose `G-9602`, Monthly Reviewers, has no holders in a confirmed complete, current account population. The application administrator confirms that the native group exists and is reserved for an approved periodic review.
+Then inspect **provenance**, the field's origin and maintenance history. A manually maintained ISC description can have a different update authority from source-collected text.
 
-Zero current holders is a meaningful count. It does not make the definition invalid. Check future use and dependencies before proposing retirement.
+Manually updated entitlement names and descriptions are protected from later aggregation overwriting them. This can preserve a useful business explanation or retain wording that is now outdated.
 
-An **access profile** bundles related entitlements from one source. A **role** represents a broader business access requirement and can include access profiles or entitlements. Either can reference an item even when no current account holds it.
+Repeating the same successful read cannot decide which explanation should govern. Confirm the native meaning, agree where the description is maintained and use the supported correction for the exact field. Do not clear protection across a source to solve one entry.
 
-An **access request** asks for access to be granted. A **requestable** item is made available through a configured access-request mechanism. Turning that setting off is not the same as removing access already held by an account. It is also not proof that no automatic assignment or access-model reference exists.
+The reverse boundary matters too: an ISC name or description edit is not sent to the source. Wrong application help text needs its own correction.
 
-Now consider a different group, `G-9603`, Old Exporters. The application team provides an approved retirement record and confirms deletion of that exact group in Production. A sufficiently authorized, complete native check confirms its absence. Historical evidence shows that this object was previously collected through entitlement aggregation.
+## Does zero holders mean retirement?
 
-This is stronger evidence of a retired native object than a zero-holder count.
+Suppose a different group, Monthly Reviewers, has no holders in a complete current account population. The administrator confirms it exists, and the owner confirms an approved periodic use.
 
-ISC does not offer a general direct catalog-delete action for entitlements. For a source object collected through entitlement aggregation, the documented removal path is source deletion followed by entitlement aggregation. Account aggregation never deletes catalog entitlements merely because memberships disappear.
+The count concerns assignment now. It does not establish an obsolete definition.
 
-There is a qualification: entitlements created solely through account aggregation are an exception to that general entitlement-aggregation removal path. Establish how the record was created and consult the supported handling for that source instead of promising that another account read will remove it.
+An **access profile** bundles related entitlements from one source. An **ISC role** groups access for a business purpose and can include access profiles or entitlements. These objects can reference access that no account currently holds.
 
-None of this authorizes deleting a live native group to tidy a screen. Native group deletion can affect every member and dependency. Confirm retirement, ownership, access-model references and the approved change before any destructive action.
+An **access request** asks for an access item for a recipient. **Requestable** means available through the applicable request configuration. Turning that setting off does not remove existing membership or establish that automatic assignment and access-model references are absent.
 
-## Choose the layer that is actually wrong
+Before retirement, investigate current existence, future use, responsible ownership and dependencies. A dependency is something that relies on the access item, such as a stored access-profile reference.
 
-**Provisioning** changes accounts or access in a target system. It is separate from reading information or improving a description.
+Now take a stronger case. Old Exporters has an approved retirement record. The application team confirms deletion of that exact native group in Production, and a sufficiently authorized, complete check confirms absence. Historical evidence shows that entitlement aggregation previously collected the group. Only account aggregation has run since deletion.
 
-If a permission is valid but one person's access is no longer justified, the target may be that account's membership. If the permission definition itself is too broad, the target may be a shared application policy. Those changes have different effects.
+ISC does not provide a general direct catalog-delete action for entitlements. For a native object previously collected through entitlement aggregation, the documented removal path is source deletion followed by entitlement aggregation. Inspect the relevant run and catalog outcome for the correct source and type.
 
-Keep the investigation and correction responsibilities separate:
+Account aggregation never deletes entitlement catalog records merely because memberships disappear. Another account read is not the catalog-removal mechanism here.
+
+There is an important boundary: entitlements created solely through account aggregation are an exception to that general entitlement-aggregation removal path. Establish the record's origin and supported source handling. Do not promise another account read will delete it or invent a cleanup operation.
+
+These mechanisms do not authorize deleting a live group to tidy the catalog. Native deletion can affect all members and dependencies. Retirement must be established and approved independently of display cleanup.
+
+## Match the correction to the finding
+
+**Provisioning** performs account or access changes. It is separate from reading records and maintaining descriptive information.
+
+If a valid permission is no longer needed by one employee, the correction may concern that account's membership. If the permission itself is too broad, it may concern a shared application rule. Those changes have different effects and verification needs.
 
 ```text
-Identify exact source/type/key
-              |
-              v
+Identify source, type and native key
+                |
+                v
 Compare current native evidence
-              |
-      +-------+-------+
-      |               |
-    found         not found
-      |               |
-      v               v
-Check read path   Verify coverage
-and field origin  before absence
-      |               |
-      +-------+-------+
-              |
-              v
+                |
+       +--------+--------+
+       |                 |
+     found           not found
+       |                 |
+       v                 v
+Check read path     Verify coverage
+and field origin    before absence
+       |                 |
+       +--------+--------+
+                |
+                v
 Choose scoped approved correction
-              |
-              v
-Verify that layer's result
-+ any affected access outcome
+                |
+                v
+Verify that layer and affected access
+
+Not found is not deletion permission.
 ```
 
-“Not found” means investigate coverage before declaring absence. It does not mean delete. “Found” means compare the collection path and the field's origin; it does not mean approve access.
+Found means compare the read path and field origin; it does not mean approve access. Not found means verify coverage before asserting absence; it does not mean delete.
 
-The final verification follows the chosen correction. An improved catalog entry needs matching identity, meaningful content and correct linkage. A membership change needs evidence for the exact account and entitlement, plus the relevant native result. A shared permission change needs checks for the affected population.
+This is a human investigation map, not an ISC job order or a requirement to change something in every investigation.
 
-This is a human decision map, not an ISC processing order or a rule that every investigation must change something.
+Match the closing evidence to the established cause:
 
-| Established cause | Appropriate correction and closing evidence |
+| Finding | Correction and closing evidence |
 |---|---|
-| The intended group is excluded by the read scope | Review the scope change and its impact, then verify returned detail and correct linkage. |
-| Source description is vague, but native meaning is confirmed | Agree content ownership, maintain an accurate explanation and check the saved result. |
-| Returned keys do not match the selected schema identifier | Validate the contract and controlled mapping correction, including existing references and duplicate risk. |
-| One holder no longer needs a valid permission | Use the approved account-access change process and verify its native outcome. |
-| A native object is confirmed retired | Resolve dependencies and follow the supported catalog-synchronization path for that record's origin. |
-| The evidence remains incomplete | Record the precise gap and accountable next check; do not disguise uncertainty with a guessed label or deletion. |
+| Intended object excluded from read scope | Reviewed scope correction, returned detail, correct linkage and population checks |
+| Source wording vague but native meaning confirmed | Agreed content authority, accurate explanation and verified saved result |
+| Returned values disagree with schema identification | Controlled contract/mapping correction, existing references and duplicate-risk checks |
+| One holder no longer needs valid access | Approved account-access change, relevant delivery evidence and native outcome |
+| Native object confirmed retired | Addressed dependencies and supported catalog synchronization for that record's origin |
+| Evidence incomplete | Precise remaining question, accountable next check and no invented conclusion |
 
-If unknown access could expose sensitive information, do not silently mark it harmless while waiting. Escalate the evidence gap and use the organization's approved risk-handling process, including any authorized interim restrictions. Uncertainty is not automatic approval, and it is not permission for an unreviewed broad deletion.
+If the unknown capability may expose sensitive information, use the organization's approved risk-handling process for the evidence gap and any authorized interim restriction. Incomplete knowledge is not approval to retain access or permission for broad unreviewed deletion.
 
-## Work through the evidence
+For an access change, inspect the correct source, account, entitlement and operation or manual task. A clearer catalog is not evidence that delivery happened. If membership remains when removal was required, the outcome is unmet; that fact alone does not identify an unobserved technical failure stage.
 
-### Case 1: The administrator found the missing group
+## What would you conclude from these facts?
 
-**Facts:** CaseBridge's group read completed for CurrentTeams. Native `G-9601` is confirmed in LegacyTeams. Its key matches Devi's account value.
+Each question supplies an independent variation.
 
-Does the completed run prove a connector failure?
+### 1. The administrator found the excluded group
 
-**Reasoning:** No. The configured scope explains the omission. The read can succeed for its query while missing an object the integration was meant to cover. Compare the approved scope with the actual query, review a controlled correction, and verify returned detail. Do not change the group identifier or remove Devi's membership to repair the missing explanation.
+The successful definition read covered CurrentTeams. Native `case-reviewers` is confirmed in LegacyTeams, and its key matches the selected account value.
 
-### Case 2: The label matches, the key does not
+Does the missing definition establish a failed connector operation?
 
-**Facts:** The account holds group value `G-9601`. A returned group has `groupKey = G-9699` and label Case Reviewers. No replacement or migration evidence is supplied.
+**Reasoning:** No. The read was limited to CurrentTeams, while the group was in LegacyTeams. It can succeed within that scope while the integration's intended coverage remains incomplete. Compare intended and actual scope, review the correction's wider effect and verify returned detail. Changing the key or removing membership would address a different layer.
 
-Can you treat the returned definition as the account's group?
+### 2. A readable label has a different key
 
-**Reasoning:** No. A common display name does not establish identity. Find the definition for the exact source, type and key, or obtain evidence explaining a replacement. Do not merge records or assume the new group's permission is equivalent.
+The account holds `case-reviewers`. A returned group has key `case-reviewers-v2` and the same label Case Reviewers. No replacement or migration evidence is supplied.
 
-### Case 3: Nobody holds Monthly Reviewers
+Can its definition be used as the held group's definition?
 
-**Facts:** A complete current account read shows zero holders of `G-9602`. The native group exists, and its owner confirms an approved periodic use.
+**Reasoning:** No. Find the exact source/type/key or obtain replacement evidence. Matching display text does not establish the same object or equivalent permission, and does not justify merging them.
 
-Should account aggregation remove its catalog entry?
+### 3. Monthly Reviewers has nobody assigned
 
-**Reasoning:** No. Account aggregation does not delete entitlements from the catalog. The existing native definition and future-use evidence also defeat the assumption that zero holders means obsolete. Retain or change it according to the agreed business design, not a holder-count cleanup rule.
+A complete current account read shows no holders. The native group exists and its owner confirms approved periodic use.
 
-### Case 4: A deleted group remains visible
+Should account aggregation remove the catalog entry?
 
-**Facts:** Approved deletion of native `G-9603` is confirmed. The catalog item was previously collected through entitlement aggregation. Only account aggregation has run since deletion.
+**Reasoning:** No. Account aggregation does not delete catalog entitlements. The native existence and planned use also contradict the assumption that zero current holders means obsolete.
 
-Is another account read the documented catalog-removal mechanism?
+### 4. A deleted native group remains visible
 
-**Reasoning:** No. Check the relevant entitlement-aggregation path and its outcome for the exact source and type. Also confirm that dependent access-model items have been addressed. The supplied evidence explains why disappearing memberships alone do not establish catalog deletion.
+Approved deletion of Old Exporters is confirmed. Entitlement aggregation previously collected it, and only account aggregation has run since deletion.
 
-### Case 5: The new source description did not replace the old one
+Is another account read the documented catalog-removal path?
 
-**Facts:** A relevant successful entitlement read returns the intended source description. ISC retains an older manually maintained description for the same item.
+**Reasoning:** No. Check the relevant entitlement aggregation and its outcome, after confirming dependencies and approved retirement. Disappearing memberships alone do not remove the catalog definition.
 
-What would you investigate next?
+### 5. Correct returned text does not replace manual wording
 
-**Reasoning:** Manual-update protection and the agreed authority for that field. Establish the desired current meaning and maintain it through the supported method. The mismatch alone does not establish a failed connection, and repeating collection does not resolve which text should be authoritative.
+A relevant successful entitlement read returns the intended source description, but ISC retains an older manually maintained description.
 
-### Case 6: Only the first page was examined
+What should be checked next?
 
-**Facts:** An investigator cannot find an entitlement in the first page of a native query. More pages are available. No independent exact-key lookup has been performed.
+**Reasoning:** Inspect manual-update protection and content authority. Confirm the current meaning and use the supported maintenance method. The mismatch alone does not establish failed collection, and another identical read does not choose the authoritative text.
 
-Can they record the object as deleted?
+### 6. The first page contains no match
 
-**Reasoning:** No. The supplied search is incomplete. Complete the relevant search or obtain an appropriately authorized exact-key check before asserting absence. “Not yet observed” is the supported conclusion. A partial search does not authorize deletion or a classification based on a guessed permission.
+A native query's first page does not contain the object. More pages remain, and no authorized exact-key lookup has been performed.
 
-### Case 7: Removing the type seems quicker
+Can the object be recorded as deleted?
 
-**Facts:** An entitlement type has poorly described entries. Someone proposes deleting the type to remove those entries and starting again.
+**Reasoning:** No. Complete the relevant search or obtain a suitable exact-key check. Not yet observed is the supported conclusion; incomplete evidence cannot establish absence or justify a guessed classification.
 
-Would that perform the proposed cleanup?
+### 7. The team proposes deleting the type
 
-**Reasoning:** No. Type deletion does not delete the associated entitlements and stops their aggregation or update until an appropriate type exists. Investigate collection, field content and schema mapping instead. The proposed action damages the update path without establishing what is wrong with the access items.
+An entitlement type has poorly described entries. Someone proposes deleting the type and starting again.
 
-### Case 8: The catalog is clearer, but access was supposed to be removed
+Does this remove those entitlements?
 
-**Facts:** An approved decision requires removing `G-9601` from `cb-100606`. The completed work changed only the ISC description. Current native evidence still shows the membership.
+**Reasoning:** No. It retains associated entitlements while stopping their aggregation or update until an appropriate type exists. Investigate field content, scope and mapping instead of damaging the update path.
 
-Has the required correction been delivered?
+### 8. Description work was completed instead of removal
 
-**Reasoning:** No. The task required an account-access change, not a description improvement. Inspect the appropriate provisioning activity or manual task and confirm the exact native result. The facts establish an unfulfilled access outcome; they do not identify an unobserved technical failure stage.
+An approved decision requires removing the selected membership. Only the ISC description was changed, and current native evidence still shows the account in the group.
 
-## Try it with a license instead of a group
+Was the required correction delivered?
 
-A fictional design application shows entitlement `L-706` as Standard, with description “Default license.” A current, complete account read shows no assigned accounts. A supported native license-definition read confirms that `L-706` exists, permits editing and export, and is reserved for a project beginning next month. The responsible business contact confirms that planned use is approved.
+**Reasoning:** No. Inspect the appropriate provisioning activity or manual task and verify the exact native change. The supplied evidence establishes an unmet outcome, not which unobserved technical stage failed.
 
-Another license, `L-709`, is also displayed as Standard but permits viewing only. The source's identifiers distinguish the two. No retirement decision or access change has been approved.
+## Try the investigation with licenses
 
-Explain what needs investigation, whether the empty holder list makes `L-706` stale, and what you would correct.
+A **license** gives an account the right to use a product or feature set under an application's licensing model.
 
-The zero-holder evidence concerns assignment now. The native definition and approved planned use explain why the item can remain valid. No evidence establishes retirement.
+A supported design-application source has two native license definitions, `standard-edit` and `standard-view`, both displayed as Standard. The first permits editing and export; the second permits viewing only.
 
-The duplicate display wording is a usability problem, not proof that the licenses are duplicates. Preserve their separate keys and confirm their feature boundaries.
+A complete current account read shows nobody holds `standard-edit`. A supported native definition read confirms it exists, and an accountable business contact confirms its approved use for a project starting next month. Its description is “Default license.” No retirement or access change has been approved.
 
-Obtain an accountable application contact and replace “Default license” with an accurate explanation of the actions and intended use. Check the supported mapping and field-maintenance authority before changing how descriptions are supplied.
+Explain whether the item is stale, whether the two definitions are duplicates, and what needs correction.
 
-A clearer catalog does not assign a license, change its native features or establish that a future worker should receive it. That needs the worker's requirement and the appropriate decision and delivery process.
+**Reasoning:** Zero current assignments do not establish retirement when the definition and approved future use remain. The matching labels obscure different capabilities; they do not make the separate native keys duplicates.
 
-When you close an entitlement investigation, say exactly what was unknown, which evidence resolved it, which layer changed and how you checked the result. If evidence is still missing, name the missing evidence and who will obtain it. That is more useful than calling the item “stale” and leaving the next person to guess what you meant.
+Confirm the feature boundaries and accountable application contact. Maintain a description that explains actions, intended use and limits, after checking mapping and field-maintenance authority. Preserve the identifier distinctions.
+
+A clearer catalog does not assign a license or change its features. A future worker still needs an appropriate work requirement, decision and supported delivery.
+
+When closing an investigation, state what was unknown, which evidence resolved it, which layer changed and how its result was checked. If a gap remains, name the missing evidence and who will obtain it.

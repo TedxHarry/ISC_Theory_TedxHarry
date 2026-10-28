@@ -1,0 +1,14 @@
+[Employees identity profile]
+  |
+  +-- Authoritative population
+  |   HR-Production workers
+  |
+  +-- Identity attribute mappings
+  |   Selected input for each value
+  |
+  +-- ISC sign-in/security settings
+  |   Applicable authentication path
+  |
+  +-- Lifecycle configuration
+      State mapping + enabled states
+      Access requirements + actions

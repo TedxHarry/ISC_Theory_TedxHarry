@@ -1,0 +1,18 @@
+Only Readers held
+  Required set incomplete
+  No Comments grant from detection
+
+Separate approved profile request
+             |
+             v
+Attempt to add Comments membership
+             |
+       +-----+------+
+       |            |
+    rejected     delivered
+       |            |
+       v            v
+Check absence   Verify membership
+and error       and intended action
+
+These are alternative outcomes.

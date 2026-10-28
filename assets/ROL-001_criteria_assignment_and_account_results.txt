@@ -1,0 +1,16 @@
+Applied values + enabled role
+              |
+      relevant identity evaluation
+              |
++-- Conditions not all met
+|   No assignment by this rule
+|
++-- All conditions met
+    Role assigned
+         |
+    Required source changes
+         |
+    +-- Requests account result
+    +-- Knowledge account result
+         |
+    Verify each intended native task

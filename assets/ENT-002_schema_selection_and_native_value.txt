@@ -1,0 +1,17 @@
+Case Files Production source
+
+Group schema selects field names
+  identityAttribute: groupKey
+  displayAttribute: label
+              |
+              | interprets group data
+              v
+ISC entitlement record
+  id: <ISC entitlement ID>
+  value: case-readers
+  name: Case Review Readers
+              ^
+              | source and type groups
+              | matching native value
+Collected employee account
+  groups: [case-readers]

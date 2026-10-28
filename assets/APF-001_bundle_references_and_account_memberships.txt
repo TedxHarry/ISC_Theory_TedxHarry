@@ -1,0 +1,13 @@
+ISC: Invoice intake access profile
+|
++-- source: Invoices Production
+|
++-- entitlement references
+    +-- invoice-readers
+    +-- invoice-draft-entry
+
+Native application
+  Selected account's group memberships
+      -> application permission rules
+
+The profile is not a native group.

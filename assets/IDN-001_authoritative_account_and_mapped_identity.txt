@@ -1,0 +1,13 @@
+[HR worker record: worker-a]
+              |
+[Supported account aggregation]
+              |
+[ISC HR source account]
+              |
+[Authoritative source + Employees]
+[Required mapped inputs valid]
+              |
+[ISC identity: uid worker-w101]
+[identificationNumber: W-101]
+
+[No application account proven]

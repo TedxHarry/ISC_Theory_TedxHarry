@@ -1,0 +1,17 @@
+For the selected identity:
+Read HR-Primary departmentCode
+                 |
+       Supplied non-null string
+                 |
+        Match a table key?
+          /              \
+        yes               no
+         |                 |
+Return paired value   Default present?
+                       /         \
+                     yes          no
+                      |            |
+                Return default   Error
+
+FIN -> Finance
+ZZZ -> UNMAPPED with this default

@@ -1,336 +1,351 @@
 # HR names a manager. How does ISC know which identity that means?
 
-Devi, employee `78008`, already has an employee identity in SailPoint Identity Security Cloud (ISC). Her HR record contains a reference to her manager.
+An HR record contains a manager reference. SailPoint Identity Security Cloud, or ISC, needs to identify the person that reference points to.
 
-That reference is text. ISC needs to connect it to the correct manager identity before a process can use the relationship.
+The reference could be a worker number such as `P-208`. That text is an input. The result ISC needs is a relationship from the employee's identity to the manager's identity.
 
-Those are different things: information saying who the manager should be, and an established relationship to that person.
+Why does the distinction matter? A manager's name or number can be present while the relationship is unresolved. A previous manager can also remain visible after a new reference fails to match.
 
-A manager's name displayed somewhere in a record does not prove the relationship is correct. Nor does a corrected relationship prove that an earlier approval or certification has been reassigned.
+Follow the selected reference, the identity it should identify and the resulting relationship. Then check each process that uses that manager.
 
-Let's follow the reference before looking at the processes that depend on it.
+## Which two records should be connected?
 
-## Start with the employee's record and the manager's identity
-
-An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a connected system. An **attribute** is a named piece of information on a record.
-
-A **source** is ISC's configured representation of a system or account-data collection.
-
-In this fictional design, **RosterHR Production** is authoritative for Employees. Its worker accounts establish employee identities through the Employees **identity profile**, the shared configuration governing those identities and their attribute mappings.
-
-Devi's RosterHR account `rh-78008` is already associated with her identity. We'll call that identity `I-78008`, a teaching label rather than an actual ISC object ID.
+An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a connected system. A **source** is ISC's configured representation of a system or collection of account data.
 
 **Account correlation** establishes which identity an account belongs to. **Manager correlation** establishes which other identity is the employee's manager.
 
-It does not move Devi's HR account under her manager's identity.
+These relationships answer different questions. The employee's HR account still belongs to the employee. Establishing a manager doesn't move that account under the manager's identity.
 
-An **identity attribute mapping** supplies an identity field from selected information or a calculation. In our design, each person's own approved person reference supplies their Identification Number, `identificationNumber`.
+An **attribute** is a named field on a record. The employee account can contain the employee's own reference and a separate manager-reference attribute. Manager correlation uses the second value to look for the manager.
 
-A **candidate identity** is an identity considered as a possible match. Here we are considering candidates for Devi's manager, not candidates for ownership of her HR account.
+Consider these hypothetical current values:
 
-Here is the supplied starting evidence:
-
-| Record or configuration | What is established |
+| Record | Relevant information |
 |---|---|
-| Devi's HR account `rh-78008` | Own person reference `P-78008`; `managerRef = P-89008`. The approved worker registry confirms this manager. |
-| Devi's identity `I-78008` | Already established from HR, with applied `identificationNumber = P-78008`. |
-| Intended manager identity `I-89008` | Already established from HR account `rh-89008`, with applied `identificationNumber = P-89008`. |
-| Another manager identity `I-89009` | Already established from HR account `rh-89009`, with applied `identificationNumber = P-89009`; used in a later approved-change variation. |
-| Profile Manager Name mapping | Employees maps Manager Name from RosterHR Production's `managerRef` account field. No competing manager-mapping source applies in the main example. |
-| Source manager-correlation configuration | Account attribute `managerRef` is compared with `identificationNumber` on potential manager identities. The selected identity field is eligible and populated. |
-| Candidate and execution conditions | The manager references identify distinct people; no duplicate candidate or custom rule applies. Relevant collection and processing occur before the supplied relationship result is observed. |
+| Employee's collected HR account | Own person reference `P-108`; `managerRef = P-208`. Approved worker records confirm this reporting line. |
+| Employee's existing identity | Current `identificationNumber = P-108`; already associated with the employee's HR account. |
+| Intended manager's existing identity | Current `identificationNumber = P-208`; this field is prepared for correlation and uniquely identifies the intended manager. |
+| Another existing manager identity | Current `identificationNumber = P-209`; used only in later changed-input examples. |
 
-The comparison is:
+A **candidate identity** is an identity being considered as a possible match. Here the candidates are possible managers. We aren't trying to find a new owner for the employee's HR account.
 
-Devi's account `managerRef = P-89008` against a candidate manager identity's own `identificationNumber`.
+The employee account supplies `managerRef = P-208`. The lookup examines the candidate manager's own `identificationNumber`. The intended manager holds `P-208`, so those selected values match.
 
-It is not Devi's own person reference `P-78008`. It is not the candidate manager's reference to their manager, which would take us another step up the reporting chain.
+Comparing the employee's own `P-108` would answer a different question. Reading the candidate manager's manager reference would go one level further up the reporting chain.
 
-Searching the selected field across identities finds `I-89008` in our supplied example. ISC establishes the manager relationship from Devi's identity to that identity.
+The important direction is employee's manager reference to manager's own identity reference.
 
-## Two configurations cooperate to establish the relationship
+## How does ISC know where to take that reference?
 
-The documented setup requires **Manager Name** to be mapped in each identity profile and a **Manager Correlation** configuration on the source containing the matching account data.
+Two configurations cooperate.
 
-The mapping identifies the source information that supplies the employee's manager reference. The source configuration identifies which account field to compare with which field on manager identities.
+An **identity profile** holds identity mappings and other settings for a population of identities. Its **authoritative source** supplies the accounts used to establish that population. An **identity attribute mapping** selects the source information or calculation used to supply an identity value.
 
-The label Manager Name does not mean that the value must be a person's friendly display name. Our value is the approved person reference `P-89008`.
+The profile's **Manager Name** mapping identifies the source information used for the employee's manager reference. The documented setup requires Manager Name to be mapped in each identity profile.
 
-A human-readable name can be duplicated or changed. Choose a reference with the intended meaning and suitable uniqueness, and confirm that it exists on the manager's identity in the selected representation.
+The label doesn't require the value to be a friendly name. A friendly name can be duplicated or changed. A dependable person reference can be the useful input; check its meaning, uniqueness and representation on both records.
 
-Mapping a manager reference without configuring how it resolves to a manager identity leaves part of the design missing.
+The selected source also needs a **Manager Correlation** configuration. It specifies the account field that identifies the employee's manager and the identity field to examine on potential managers.
 
-Configuring the comparison while the profile has no suitable Manager Name mapping also leaves part missing.
+For the main example:
 
-The source's manager-correlation section appears within the account-correlation configuration area. Sharing a configuration page does not make the two relationships identical.
+The Employees profile maps Manager Name from the `managerRef` account field on `HR-Primary`.
 
-If you change account-owner correlation to compare an employee's manager reference with identity Identification Number, you risk assigning the employee's account to the manager. That is not how you establish a reporting relationship.
+That source's Manager Correlation configuration compares `managerRef` with `identificationNumber` on manager identities.
+
+The account input and the manager's current identity value are both `P-208`. Relevant collection and processing occur, and the supplied result is that the employee's identity is linked to that intended manager identity.
+
+Both identities already exist. The example uses standard field matching, with no competing mapped manager source or duplicate candidate. It supplies a unique intended match and a verified relationship, not an observation from a live tenant.
 
 ```text
-Existing account ownership:
-  rh-78008 -> Devi I-78008
-    -> this relationship stays separate
+Existing account ownership
+  employee HR account -> employee identity
 
-Manager reference on employee account:
-  rh-78008 managerRef = P-89008
-    -> Manager Name mapping source
-    -> manager comparison configuration
+Separate manager lookup
+  employee account: managerRef = P-208
+               |
+               v
+  Manager Name mapping selects this input
+  source manager comparison uses:
+    managerRef -> identificationNumber
+               |
+               v
+  manager's own identity value: P-208
+               |
+               v
+  employee identity -> manager identity
 
-Candidate manager's own identity field:
-  I-89008 identificationNumber = P-89008
-    -> matching manager identity
-
-Supplied manager relationship:
-  Devi I-78008 -> manager I-89008
+Human check: approved reporting line?
 ```
 
-The arrows separate data selection, matching and the resulting identity relationship. They are a conceptual trace, not a private backend architecture or a promise about every operation's timing.
+The upper line preserves the employee's account ownership. The manager trace shows input selection, configured comparison and the identity-to-identity result. Its arrows describe logical dependencies, not private ISC services or a mandatory sequence of separate jobs.
 
-Both identities already exist. A manager reference does not create the missing manager identity or approve access for either person.
+Why are both configurations necessary? The profile mapping identifies where the employee's manager input comes from. The source configuration explains how that input identifies a manager identity. One doesn't supply the other's missing instruction.
 
-## Check which source actually supplies the manager
+A correctly mapped manager number alone doesn't complete the source comparison. A source comparison alone doesn't establish the required Manager Name mapping.
 
-Do not assume that looking only at the employee's governing profile explains every manager result.
+The source's manager configuration appears in the account-correlation configuration area. Sharing a page doesn't make the two relationships interchangeable. Putting the manager reference into account-owner matching could associate the employee's account with the manager instead of establishing a reporting relationship.
 
-The documented manager-selection behavior considers identity profiles in priority order. **Profile priority** is their configured ordering; a lower priority number means higher priority.
+## Which manager source wins when there is more than one?
 
-**Null** means no value is present. For each profile's Manager Name mapping, ISC checks the corresponding source. The first source with a non-null manager attribute value supplies manager correlation.
+The employee may have relevant account information available from more than one mapped source.
 
-Choosing the first non-null source is not the same as trying sources until one produces a successful manager match.
+**Profile priority** is the configured ordering of identity profiles. A lower priority number means a higher priority. The documented manager-selection behavior considers profile Manager Name mappings in that order.
 
-Consider a separate situation where both mapped account inputs are available for the employee:
+**Null** means no value is present. A non-null input contains a value.
 
-Employees has priority `10` and maps RosterHR's manager reference. Contractors has priority `20` and maps **PartnerHR Production**'s manager reference.
+For each mapping, ISC checks the corresponding source. The first source with a non-null manager attribute value supplies manager correlation.
 
-RosterHR supplies `P-99999`, which is non-null but matches no manager identity. PartnerHR supplies the approved `P-89009`.
+Selecting the first non-null input is different from trying sources until one produces a successful manager match.
 
-The higher-priority non-null RosterHR input is selected. You cannot assume ISC ignores it and tries PartnerHR merely because PartnerHR's value would match.
+Consider a separate example in which both source-account inputs are available for this employee:
 
-If the RosterHR input is instead null and PartnerHR supplies `P-89009`, the lower-priority non-null source can supply the manager lookup.
+Employees has priority `10` and maps Manager Name from `HR-Primary.managerRef`. That input contains `P-99999`. No manager identity has that reference.
 
-Our main example has no competing non-null mapped source, so `P-89008` from RosterHR supplies it.
+Contractors has priority `20` and maps Manager Name from `HR-Secondary.managerRef`. That input contains the approved `P-209`, which would identify the intended new manager.
 
-This selection behavior is why “HR is correct” needs an exact source, profile mapping, input value and observation time behind it. Changing identity-establishment authority or shared profile priority to force one manager result can affect more than that one employee.
+Priority 10 is considered first. Its input is non-null, so that source supplies the lookup. The unsuccessful `P-99999` match doesn't establish an automatic fallback to priority 20.
 
-## The value must reach ISC and receive evaluation
+The lower-priority source has a usable-looking answer, but it wasn't selected. That is why correcting only `HR-Secondary` might leave the observed result unchanged.
 
-**Account aggregation** reads account information into ISC. **Identity processing** evaluates identity data and configured requirements, including manager correlation.
+Now change only the higher-priority input to null. If `HR-Secondary` still supplies non-null `P-209`, that lower-priority source can supply manager correlation.
 
-Manager relationships are recalculated when source aggregation or identity processing evaluates the relevant changes.
+An identity has one governing profile. This manager-source selection behavior doesn't mean the identity simultaneously acquires two governing profiles. It means you must inspect the documented manager mappings and source-selection order rather than assuming that inspecting only its governing profile explains every manager result.
 
-A correct manager reference on an HR screen is not proof the integration published it, ISC collected it, or the relationship was reevaluated against current candidate identities.
+The main `P-208` example has no competing input.
 
-A mapping **Preview** evaluates selected identity mappings. It can help inspect the input without proving the actual current manager relationship has changed.
+Shared profile priority can affect more than one person's manager lookup and identity-profile selection. Establish the actual selected input before changing priority or identity-establishment responsibility merely to force a particular result.
 
-In **optimized aggregation**, an unchanged account record is skipped and account correlation and manager correlation are not evaluated for that record.
+## Did the current input actually reach the comparison?
 
-**Unoptimized aggregation** recalculates those correlation processes even for unchanged account data. It does not repair missing candidates, unsuitable references or wrong source selection.
+**Account aggregation** reads source account data into ISC. **Identity processing** evaluates identity data and configured requirements, including determining the manager relationship.
 
-After a configuration or identity-data change, choose the supported processing scope for that cause and inspect the actual relationship. A saved mapping, a completed job and a manager displayed on the identity answer different questions.
+Source aggregation and identity processing can recalculate manager relationships as relevant identity data changes. A saved mapping or an HR screen showing the right number isn't evidence that the new relationship has been established.
 
-If a **custom identity attribute**, an organization-defined identity field, is selected for manager matching, it must be marked searchable for that correlation purpose. Being queryable in the separate Search interface is not equivalent. Verify its preparation and populated values rather than assuming the field's existence makes it ready.
+First establish the actual collected input. Then check that the intended manager identity exists and its selected identity field contains the current value. Finally, establish relevant evaluation and inspect the actual relationship.
 
-The main example uses an already eligible and applied Identification Number.
+A mapping **Preview** evaluates mappings for a selected identity. It helps explain a proposed result. It doesn't demonstrate that the current employee-to-manager relationship has changed.
 
-## A changed reference can clear, replace or preserve a relationship
+In **optimized aggregation**, an existing unchanged account is skipped and neither account correlation nor manager correlation is evaluated for that record.
 
-Begin each variation below with Devi currently linked to manager `I-89008`.
+**Unoptimized aggregation** reevaluates those correlations even for unchanged account data. This addresses the unchanged-record skip. It doesn't create missing manager identities, repair an unsuitable reference or change which mapped source wins.
 
-Assume the stated input is actually selected, collected and evaluated; no other mapped source replaces it and no custom rule changes the behavior.
+An identity-side or configuration change can therefore require a different investigation from an account-data change. Choose supported processing for the actual cause and scope; verify the relationship instead of inferring completion from a job badge.
 
-| Changed evidence | What follows for the manager relationship |
+A **custom identity attribute** is an additional organization-defined identity field. If used for manager matching, it must be marked searchable for that correlation purpose. This is separate from being queryable in the Search interface.
+
+Verify preparation and populated values. Defining the field or seeing it in Search doesn't establish that the manager comparison can use it.
+
+## Why can the previous manager remain?
+
+Begin each variation here with an existing relationship to the manager whose own reference is `P-208`.
+
+The stated input is selected, collected and evaluated. No other mapped source supplies a replacement value, and only standard field matching applies.
+
+| Selected changed input | Documented behavior and relevant check |
 |---|---|
-| Approved new reference `P-89009`, with the intended manager identity already available and uniquely matching | The relationship can resolve to `I-89009`; verify that actual result rather than inferring it from the new field alone. |
-| Selected reference changes to null | The documented manager relationship changes to null. This is different from a non-null value failing to match. |
-| Selected reference changes to non-null `P-99999`, which cannot correlate to a new manager | The documented behavior retains the existing manager relationship. A displayed old manager does not prove the new input matched. |
-| New intended manager's identity is not available with the selected value | The lookup lacks its intended candidate. Verify identity establishment and mapped values; typing a reference does not create that identity. |
-| A reference matches multiple possible manager identities | The data does not uniquely identify the intended person. Resolve approved reporting-line and representation evidence and inspect supported results; do not invent a first-candidate winner. |
+| Approved `P-209`, with the intended manager identity already available and uniquely matching | The relationship can resolve to that new manager. Verify the recorded identity, not only the reference field. |
+| Null | The manager relationship changes to null under these source and evaluation conditions. |
+| Non-null `P-99999`, unable to correlate to a new manager | The existing manager relationship is retained. The old manager being visible doesn't mean the new input matched. |
+| Reference to an intended manager whose identity or selected value isn't available | The intended candidate is missing. Establish identity readiness; reference text doesn't create the manager identity. |
+| Reference that identifies several possible managers | Ownership of the reporting line remains ambiguous. Investigate approved person and reference evidence; don't invent a first-candidate winner. |
 
-The null behavior is scoped to the selected input and source conditions. If another mapped source supplies a non-null value, source selection must be traced before applying the null variation.
+The null and no-match rows are different operations on different evidence. Null supplies no manager input. A changed non-null value attempts to identify someone but can't resolve to a new manager; the documented result retains the existing relationship.
 
-The non-null no-match behavior is especially easy to miss. A manager may remain visible precisely because the new reference could not resolve.
+That explains how a manager can remain visible even after HR changes the reference. Presence alone doesn't establish correctness.
 
-An employee with no earlier manager does not acquire a correct manager merely because the new reference is non-null. Establish the actual candidate and relationship rather than extending the retained-manager example beyond its conditions.
+The null-clearing row also depends on source selection. If another mapped source supplies a non-null value, trace that choice before applying the single-source null example. A field that merely looks blank needs its actual representation checked.
 
-Also inspect references that point back to the employee or create a reporting cycle. Those are business-data and hierarchy concerns to investigate. Do not assume ISC's standard field comparison automatically repairs them.
+If the employee had no previous manager, the retention example doesn't establish a new correct one. You still need an actual matching manager identity and the resulting relationship.
 
-## A manager relationship and an approval are different records
+A manager can be established through a different identity profile from the employee. The configured lookup searches identities' selected fields; it isn't limited to finding a similarly named HR account.
 
-An **access request** asks for an access item for an identity. An **approval** records a review decision required by the configured request process.
+Also investigate references that point back to the employee or create a reporting cycle. A **reporting cycle** is a chain that eventually points back to someone already in that chain. A matching field doesn't by itself demonstrate that the hierarchy is valid or automatically repair it.
 
-An **entitlement** represents a permission or membership. An **access profile** groups related entitlements from one source; a **role** groups access profiles for a business access need. Their request configuration determines how review is handled.
+A programmatic **manager correlation rule** can implement requirements more complex than a single field match. That is a separate extension. If one is configured, inspect its supported logic rather than treating the standard example as proof of what that custom design does.
 
-When a standard role or access-profile request uses Manager as a reviewer, it means the manager of the identity receiving access.
+## Whose manager reviews a request submitted by someone else?
 
-The person submitting the request can be someone else.
+An **access request** asks for a particular access item for an identity. An **approval** is a review decision required by the configured request process.
 
-Suppose a colleague submits a new request for Devi. If Manager review is configured, the relevant relationship is Devi's manager, not automatically the colleague's manager.
+An **entitlement** represents a permission or membership. An **access profile** groups related entitlements from one source. A **role** groups access profiles for a business access need. These access items have request and review configuration that determines how review is handled.
 
-That still does not mean every request requires manager approval. The requested item's process and applicable approval configuration determine its reviewers.
+When a standard role or access-profile request uses Manager as a reviewer, that option refers to the manager of the identity receiving access.
 
-If a reviewer cannot be resolved in the standard role/access-profile process, documented missing-reviewer handling can select another valid reviewer through its escalation, fallback or ownership paths. That is request-review behavior, not manager correlation inventing a manager relationship.
+Suppose a colleague submits a request for the employee in our example. The colleague is the submitter; the employee is the recipient. The relevant Manager relationship is the recipient's.
 
-A request reaching another reviewer therefore does not prove Devi has a valid manager. Missing manager data does not mean the request is automatically approved.
+That doesn't make manager review mandatory for every request. Inspect the requested item's process and applicable approval configuration, then the actual task and reviewer.
 
-After correcting a manager, inspect any existing approval's actual reviewer and state. Do not assume every already-created task is automatically reassigned from the current identity value.
+If a reviewer is missing or cannot be resolved, the standard role/access-profile process has documented reassignment behavior using available escalation, fallback and ownership options.
 
-## A certification uses its own point-in-time evidence
+A **fallback approver** is an alternate reviewer available through that request-review configuration. Reaching an alternate reviewer doesn't create a manager relationship on the employee identity.
 
-A **certification** is a review of whether existing access should be retained or removed. A **campaign** groups those reviews and their reviewers.
+So a request arriving at someone else isn't proof that manager correlation succeeded. Missing manager data alone also doesn't mean access was automatically approved.
 
-For a standard Manager Campaign, identities without a defined manager are excluded. The Identities Without Managers report helps locate them before campaign generation.
+After correcting a manager, inspect existing approvals separately. Their actual reviewers and states are evidence for those tasks. A new current relationship doesn't establish that every already-created approval has moved.
 
-Campaigns are generated as a snapshot in time. Adding a manager after generation does not make that newly added manager appear in the existing campaign.
+## Why doesn't a new manager appear in yesterday's campaign?
 
-This is different from a current identity lookup.
+A **certification** reviews whether existing access should be retained or removed. A **campaign** groups those reviews and their reviewers.
 
-If Devi lacked a manager when a Manager Campaign was generated, fixing her relationship afterward does not prove that campaign now includes her for that manager's review.
+For a standard **Manager Campaign**, identities without a defined manager are excluded. The **Identities Without Managers report** helps locate these missing relationships before generation.
 
-Review the campaign's actual population and assignments and use the approved certification-management process. Do not claim every certification type has the same missing-manager behavior.
+A generated campaign is a snapshot in time. It reflects its generated population and assignments, rather than repeatedly looking up the current manager for every later change.
 
-A wrong retained manager can be harder to detect than a null relationship. The identity may not be in the no-manager report, while the business reporting line is still wrong.
+If the employee had no manager when that campaign was generated, adding the manager today doesn't demonstrate inclusion in the existing campaign. Managers added after generation don't appear simply because the current identity was corrected.
 
-Check manager correctness as well as manager presence.
+Inspect the campaign's actual population and assignments and use its approved management process for any required correction. Other certification types have their own population and reviewer configuration; this exclusion isn't a rule for every possible certification.
 
-## Updating a directory's manager is another operation
+A retained wrong manager can be harder to find than a missing one. The identity may be absent from the no-manager report while its reporting line is still wrong. Verify manager correctness as well as presence before starting the review.
 
-An ISC manager relationship is not an external directory's manager field.
+## The directory's manager field needs a separate write
 
-**Provisioning** attempts supported account or access changes in an external system. **Attribute synchronization** is a configured identity-to-account write path for existing correlated accounts.
+An ISC employee-to-manager relationship isn't the external directory's manager value.
 
-The built-in Manager identity attribute can be used in a Create Account definition, which describes values used when creating an account. It cannot be used directly for attribute synchronization.
+**Provisioning** attempts supported account or access changes in an external system. **Attribute synchronization** is a configured write path from identity values to fields on existing correlated accounts.
 
-For manager synchronization, the documented approach uses a custom identity attribute, such as `managerToSync`, with an appropriate mapping and source configuration.
+A **Create Account definition** describes values supplied when creating an account. The built-in Manager identity attribute can be used there, but it can't be used directly for attribute synchronization.
 
-The correct representation depends on the target. A directory can require a manager account reference rather than a friendly name or HR number. Confirm the connector-specific contract, selected manager account and supported operation before expecting a write.
+The documented manager-sync approach uses a custom identity attribute, such as `managerToSync`, with an appropriate mapping and source configuration.
 
-An attribute named managerToSync is not itself a working integration. It still needs a correct calculated or mapped value and eligible provisioning/sync configuration.
+Naming a field `managerToSync` doesn't implement the calculation or the write. It needs the right manager information, the target's required representation and eligible configured synchronization.
 
-A correct ISC manager can coexist with an unchanged or incorrect directory manager because delivery has not been configured or has failed.
+For example, a directory can require a reference to the manager's directory account rather than the worker reference used for ISC matching. Confirm the connector-specific requirements and selected manager account. The fact that ISC matched `P-208` doesn't establish that writing those characters into a directory manager field would work.
 
-Conversely, a correct directory field does not prove ISC resolved its own manager relationship correctly.
+Then verify the attempted operation and actual target value.
 
-The main RosterHR example supplies no external manager write, access request or campaign execution. Its successful result is Devi's verified relationship to `I-89008`.
+A correct ISC manager can coexist with an unchanged directory manager because delivery wasn't configured or failed. A correct directory value likewise doesn't establish that ISC resolved its own manager relationship.
+
+The main example supplies no external manager write, request or campaign execution. Its successful result is the verified employee-to-manager identity relationship.
 
 ```text
 Verified ISC manager relationship
-    -> check each dependent process
+               |
+               v
+Check each relevant process separately
 
-Request review:
+Request approval
   configured reviewer and actual task
-    -> not proof of access delivery
+  -> review routing isn't access delivery
 
-Manager Campaign:
-  generation snapshot and assignments
-    -> not a live identity lookup
+Manager Campaign
+  generated population and assignments
+  -> snapshot isn't a live manager lookup
 
-External manager update:
-  separate mapping and supported write
-    -> verify actual target value
+External manager update
+  target representation and mapped write
+  -> verify actual directory value
 ```
 
-This map separates consumers of manager information. It does not promise that all three run after every manager change or in the order shown.
+The branches separate processes that can use manager information. They aren't jobs that must run after every manager change or in the order drawn.
 
-A corrected relationship does not automatically undo an earlier review decision, move every existing task or reverse an external write.
+Correcting the relationship doesn't automatically undo an earlier review decision, move every task or reverse an external write. Each required outcome needs evidence from its own record or system.
 
-## Investigate the exact relationship, not just a name
+## Trace the exact reference when the result looks wrong
 
-Keep the employee identity, selected manager source account and actual manager reference together.
+Keep the employee identity, selected manager source account and actual reference together. Then inspect Manager Name mappings, profile priorities, source manager configuration and the candidate manager's current selected field.
 
-Then inspect the Manager Name mappings and profile priorities, the selected source's manager configuration, and the candidate manager's applied identity field.
+Use collected account details for what ISC received, identity details for the candidate's applied values, and relevant activity for what was evaluated. Inspect the actual resulting manager identity and compare it with the approved reporting line.
 
-Check that the candidate is the intended person, not merely a person with the same displayed name. A manager can have their identity established through a different profile; the configured lookup searches identities, not only a same-name HR account.
+Record observation times. A current reference and an older relationship observation may describe different moments.
 
-Use account details for collected values, identity details for applied identity information, available activity for processing, and the actual resulting manager relationship. Observation times matter when comparing them.
+Aggregation history can show timing, status, scanned records and optimization. Available identity events can show recorded successful or failed actions. Neither should be expanded into an invented transcript of every manager candidate compared.
 
-Aggregation history can show timing, status, scanned records and optimization. It is not automatically a complete per-identity transcript of every candidate checked.
+Where evidence is missing, state what is unresolved: source choice, data delivery, manager identity readiness, evaluation or the relationship itself.
 
-Where the reference cannot be resolved, investigate whether the manager identity exists, its field is populated, the source was selected as expected and the relevant evaluation actually occurred.
-
-A programmatic **manager correlation rule** can implement requirements more complex than a single field match. It is a separate extension, not an assumption hidden inside the standard example. Inspect its actual supported logic if one applies.
-
-Do not delete identities, rewrite correct person references or change unrelated account-owner correlation merely to make a manager field look populated.
+Don't delete identities, rewrite correct person references or change unrelated account-owner correlation just to populate a manager display.
 
 ## Work through the changed evidence
 
-### 1. The wrong person reference is compared
+### Which person's reference belongs on each side?
 
-**Facts:** Devi's own reference is `P-78008`; her account's manager reference is `P-89008`. The intended manager identity's own Identification Number is `P-89008`.
+The employee's own reference is `P-108`, their HR account has `managerRef = P-208`, and the intended manager's own identity reference is `P-208`.
 
 Which values should the manager comparison connect?
 
-**Reasoning:** The employee account's `managerRef = P-89008` and the candidate manager's own `identificationNumber = P-89008`. Comparing Devi's own reference answers the wrong question; comparing the manager's manager reference goes another level up.
+### Only the profile mapping is configured
 
-### 2. Only the profile mapping exists
-
-**Facts:** Manager Name maps to the correct HR field. No manager-correlation configuration exists on the selected source.
+Manager Name maps to the correct HR field. The selected source has no Manager Correlation configuration.
 
 Is the design complete?
 
-**Reasoning:** No. The profile mapping and source manager comparison are both required. Verify the selected account field and the field on candidate manager identities, then evaluate and inspect the relationship.
+### The intended manager has no identity yet
 
-### 3. HR names a manager who has no identity yet
+The approved reference is present, but the intended person has no established ISC identity with the selected value.
 
-**Facts:** The approved manager reference is present, but its intended person has no established ISC identity with that selected value.
+Does that reference create the missing manager identity?
 
-Does the reference itself create the manager identity?
+### Null and unmatched text are treated alike
 
-**Reasoning:** No. Reconcile the approved identity-establishment population and mapped values first. Manager correlation needs a candidate identity; it does not create that person from the reference.
+The employee currently reports to the manager identified by `P-208`. In separate selected and evaluated single-source cases, the input becomes null or unmatched non-null `P-99999`.
 
-### 4. Null and no match are treated alike
+Do both necessarily clear the old relationship?
 
-**Facts:** Devi currently has manager `I-89008`. In separate evaluated variations, the only selected source supplies null, or supplies unmatched non-null `P-99999`.
+### The lower-priority value would match
 
-Do both variations necessarily clear the old manager?
+The available priority-10 source supplies non-null `P-99999`; the priority-20 source supplies valid `P-209`.
 
-**Reasoning:** No. Under the supplied single-source conditions, null clears the relationship. The documented non-null no-match behavior retains the existing manager. Inspect both input and actual relationship before declaring the change correct.
+Does the successful lower-priority match mean that source must be selected?
 
-### 5. The lower-priority value would match
+### A colleague submits the request
 
-**Facts:** Available profile mappings have priorities 10 and 20. The priority-10 source supplies non-null `P-99999`; priority 20 supplies valid `P-89009`.
+A new role request is for the employee, submitted by a colleague. Its configured reviewer is Manager, and the recipient has the verified manager relationship.
 
-Must ISC use priority 20 because its value matches?
+Whose manager does that option mean?
 
-**Reasoning:** No. Documented selection uses the first non-null source, not the first successful match. Trace the selected input and any retained existing relationship; do not assume a failed lookup causes source fallback.
+### The campaign was generated before the correction
 
-### 6. A colleague submits Devi's request
+A standard Manager Campaign was generated while the employee had no manager. The correct relationship was added afterward.
 
-**Facts:** A new role request is for Devi, submitted by a colleague. The configured reviewer is Manager and Devi has the verified manager relationship.
+Does the current correction demonstrate inclusion in that existing campaign?
 
-Whose manager does this reviewer option refer to?
+### The built-in Manager field is chosen for sync
 
-**Reasoning:** The manager of Devi, the access recipient. The submitter's manager is not substituted merely because the colleague submitted it. Verify the actual approval configuration and task; routing is not provisioning success.
+ISC resolves the intended manager. The design expects that built-in identity attribute to be used directly in directory attribute synchronization.
 
-### 7. The campaign was generated yesterday
+Which separate requirements still need attention?
 
-**Facts:** A standard Manager Campaign was generated while Devi had no manager. Her correct manager was added today.
+## Compare your reasoning
 
-Has today's change demonstrated her inclusion in yesterday's campaign?
+The employee account's `managerRef = P-208` matches the manager's own `identificationNumber = P-208`. The employee's own number and the manager's manager reference answer different questions.
 
-**Reasoning:** No. Manager Campaigns exclude identities without a manager, and the generated campaign is a snapshot. Inspect the actual campaign and use approved remediation rather than assuming retroactive inclusion.
+The mapping-only design is incomplete. Both Manager Name mapping and the source's manager comparison are required. Verify the selected account field, candidate identity field and actual evaluated relationship.
 
-### 8. The built-in Manager field is selected for sync
+A reference doesn't create a manager identity. Reconcile legitimate identity establishment and current mapped values, then establish that the intended candidate is ready for matching.
 
-**Facts:** ISC resolves the correct manager. The team expects the built-in Manager identity attribute to be used directly for attribute synchronization to a directory.
+With the stated single-source and evaluation conditions, null clears while changed unmatched non-null input retains the existing manager. Trace the actual selected input and resulting relationship; the old visible manager doesn't prove the new reference matched.
 
-Is the relationship alone enough to make that design work?
+Priority selection uses the first non-null source, not the first successful match. The priority-10 value is selected despite the lower-priority value being usable. A failed lookup doesn't establish source fallback.
 
-**Reasoning:** No. The built-in Manager attribute is not eligible for direct attribute sync. Use the documented custom-attribute approach with the target's required representation and supported configuration, then verify actual delivery.
+The Manager reviewer is the access recipient's manager. Inspect actual approval configuration and task; submitter identity alone doesn't change that meaning, and routing isn't proof of access delivery.
 
-## Review a reporting-line change before calling it complete
+The generated standard Manager Campaign excluded the managerless identity and is a snapshot. Inspect its actual contents and use approved correction processes; today's identity value isn't proof of retroactive inclusion.
 
-A reorganization affects 120 employees. Review finds 70 with suitable current references and manager identities, 20 with wrong non-null references despite their intended managers already existing, 10 with missing manager input, 10 whose legitimate manager identities are not yet established, 5 with competing profile/source inputs and 5 with duplicate or invalid hierarchy references.
+The built-in Manager attribute isn't a direct attribute-sync input. Establish the documented custom mapping, target-specific manager-account representation and eligible configuration, then verify delivery. A correct ISC relationship alone doesn't complete that design.
 
-The team wants to start a Manager Campaign as soon as an aggregation succeeds.
+## Review a reporting-line change
 
-What would you check first?
+A reorganization affects 120 employees, placed into these primary investigation groups:
 
-Separate the causes. The 70 prepared cases still need relevant processing and verified resulting relationships. The 20 wrong references need approved input repair; an old visible manager can survive a failed new lookup.
+- 70 have suitable current references and existing intended manager identities.
+- 20 have wrong non-null references despite their intended managers already existing.
+- 10 have missing manager input.
+- 10 lack their legitimate manager's established identity.
+- 5 have competing profile/source inputs.
+- 5 have duplicate references or invalid hierarchy evidence.
 
-For the 10 missing inputs, check actual source selection and whether null or another mapped source applies. For the 10 absent manager identities, reconcile legitimate identity establishment rather than copying names into the employee record.
+The team proposes starting a Manager Campaign as soon as an aggregation succeeds.
 
-The 5 competing-source cases need profile/mapping/priority evidence. The 5 duplicate or hierarchy cases need approved person and reporting-line clarification, not arbitrary candidate selection.
+What would you require before accepting that plan?
 
-Before campaign generation, verify manager presence and correctness against the approved reporting structure. Review existing requests and campaigns as their own records. Check external manager delivery separately if it is in scope.
+The groups total 120 in this example. An actual employee can have additional issues; check each record instead of assuming its primary category explains everything.
 
-A successful read is one piece of evidence. Completion means the intended relationship and each required dependent outcome are demonstrated.
+The 70 prepared cases still need relevant evaluation and verified results. The 20 wrong references need approved input repair; an old manager can remain when a changed non-null lookup fails.
+
+For the 10 missing inputs, establish source selection and actual null versus another available mapped value. For the 10 missing manager identities, reconcile legitimate identity establishment rather than copying a name into a field.
+
+The 5 source conflicts require profile, mapping, priority and collected-input evidence. The 5 duplicate or hierarchy cases need approved person and reporting-line clarification.
+
+Before generating the campaign, verify manager presence and correctness against the approved reporting structure. Review existing requests and campaigns as separate records. If external manager delivery is in scope, verify that target separately.
+
+Completion requires the intended relationships and each required dependent outcome. An aggregation success badge alone doesn't establish them.

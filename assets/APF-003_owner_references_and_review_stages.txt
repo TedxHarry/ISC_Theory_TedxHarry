@@ -1,0 +1,18 @@
+Configured direct-profile request
+  Recipient's manager
+       |
+       | approves
+       v
+  Primary Owner
+       |
+       | approves
+       v
+  Continue toward access delivery
+
+Alternative reviewer stage
+  All Owners
+  Primary OR additional owner
+       |
+       | one approves this stage
+       v
+  Continue through configured process

@@ -1,114 +1,74 @@
 # A fallback returned a value. Is it the right value?
 
-Devi, employee `84004`, already has an employee identity in SailPoint Identity Security Cloud (ISC). HR has no preferred given name for her, but her given name is `"Devi"`.
+A display field needs to use a preferred given name when one is recorded, otherwise the given name. The available record has no preferred name, but its given name is `"Ana"`.
 
-The organization wants a display field to use the preferred name when one is recorded, otherwise the given name. Using the approved alternative is reasonable.
+Using the given name makes sense under that agreement. But would the same calculation work if the preferred field contained an empty string? What if it contained `"UNKNOWN"`, or reading it failed?
 
-But what if the preferred-name field contains an empty string rather than no value? What if reading it fails? What if it contains `"UNKNOWN"`?
+These conditions need different decisions. A **fallback** is an alternative input or result used when a defined condition prevents using the preferred one. The condition is part of the rule: “use the given name when no preference is recorded” does not authorize replacing a value whenever anything goes wrong.
 
-Those conditions can look similar on a screen. They do not represent the same input or lead to the same calculation.
+## Establish what the alternative is allowed to supply
 
-## Establish what the alternative is allowed to mean
+An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a connected system, and an **attribute** is a named field on a record.
 
-A **fallback** is an alternative input or result used when a defined condition prevents using the preferred one.
+A **source** represents a system or collection of account data in ISC. In this hypothetical configuration, **HR-Primary** represents worker records. The existing identity is governed by the **Employees identity profile**, shared configuration that includes how identity fields obtain their values.
 
-The condition matters as much as the alternative. “Use given name when no preferred name is recorded” is not the same instruction as “use given name whenever anything goes wrong.”
+HR-Primary is its **authoritative source**: its worker accounts establish identities through that profile. **Account aggregation** has already read the account into ISC. **Account correlation** has associated it with the correct identity. There is exactly one associated HR-Primary account supplying our fields.
 
-An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a connected system. An **attribute** is a named field on a record.
+The organization has added **Display Given Name**, technical name `displayGivenName`, as a **custom identity attribute**. “Custom” means the organization defined the field. Its name does not give it built-in behavior.
 
-A **source** is ISC's configured representation of a system or collection of account data. Here, **StaffBase Production** represents HR worker records.
+An **identity attribute mapping** supplies a field from selected data or a calculation. The Employees mapping will calculate this display field from HR's `preferredName` and `givenName`.
 
-The Employees **identity profile** is shared configuration governing employee identities, including how their identity fields receive values. StaffBase is authoritative for that population: its worker accounts establish employee identities through the profile.
+A **string** is text. **Null** represents no value. The data owner's agreement says an unrecorded preferred name is null; a recorded one is a usable name string. The approved order is preferredName, then givenName. A failed retrieval must be investigated, and neither field supplying a usable name does not authorize inventing one.
 
-Devi's collected account `sb-84004` already belongs to her identity, which we'll label `I-84004`. That is a teaching label, not an actual ISC object ID. Exactly one StaffBase account supplies the fields in this example.
+For our main evaluation, preferredName successfully returns null and givenName returns `"Ana"`. Other required identity fields are valid. This custom display field does not determine employment status, access or account ownership.
 
-**Account aggregation** reads account data into ISC. The relevant record is already collected. We are reasoning about using its data, not claiming a fallback repairs a failed collection.
+Both alternatives have the right meaning for this use, and the owner has approved their priority. The fallback is using available name information, rather than filling the field with unrelated text.
 
-The organization has added a custom identity field called **Display Given Name**, with internal name `displayGivenName`. A custom field is an organization-defined identity attribute, not a special built-in behavior implied by its name.
+## Follow the first non-null result
 
-Its approved rule is:
+A **transform** is a configurable ISC object that retrieves or manipulates attribute data and returns a result. Its **inputs** supply data to the calculation; its **output** is the result returned.
 
-- Use StaffBase `preferredName` first.
-- If that value is null, use StaffBase `givenName`.
-- Do not invent a person's name if neither supplies an acceptable value.
-- Treat a failed read or calculation as an error to investigate, not ordinary absence.
+The `firstValid` operation considers configured options in order and returns the first result that is **non-null**, meaning it has a value rather than null.
 
-A **string** is text. The HR agreement says an unrecorded preferred name is null, while a recorded one is a usable name string. For the main supplied evaluation, preferredName returns null without an error, and givenName returns `"Devi"`.
+Here, “valid” names the operation. Its selection test does not establish that a string is an approved name, a real email address or a correct department.
 
-Other required identity attributes are already valid. This custom field does not determine employment status, access or account ownership.
+For the supplied input, the first option returns null. There is no value to select, so firstValid considers the next option. That option returns `"Ana"`, which is non-null. FirstValid returns `"Ana"`.
 
-These conditions make the fallback meaningful: both fields describe this person's given name, and the owner has approved their priority.
+The order expresses preference. If preferredName instead supplies an approved `"Anu"`, the first option supplies the result. The later given name does not replace it because it is longer, newer or looks more suitable to someone reading the output.
 
-## First separate absence, text and failure
+FirstValid does not combine or vote between the options. The configured order determines which non-null result wins.
 
-**Null** means no value. An **empty string**, `""`, is a text value with no characters. **Whitespace-only text**, such as `"   "`, contains characters even though they are hard to see. The text `"null"` contains four letters; it is a string, not a null value.
-
-An **absent field** is not present in the supplied record or response. That observation alone does not tell you whether a particular retrieval operation returns null or reports an error.
-
-An **invalid value** exists but fails the field's business requirement. For this naming agreement, `"UNKNOWN"` is invalid even though it is a nonempty string.
-
-An **evaluation error** means an operation could not produce its normal result. A null result and a failed operation are different outcomes.
-
-| Observation or returned result | What it tells us |
-|---|---|
-| Field absent from a response | Check collection, field extraction and retrieval behavior; do not assume a successful null result |
-| Retrieval returns null | No value was returned by that option; null-based fallback can consider the next option |
-| Retrieval returns `""` | A non-null empty string exists; it is not automatically skipped by a null-based selector |
-| Retrieval returns `"   "` | Non-null text containing three ordinary spaces; it needs a separate suitability decision |
-| Retrieval returns `"UNKNOWN"` | Text exists, but this example's naming rule rejects its meaning |
-| Retrieval reports an error | There is a failed operation, not merely an unrecorded preferred name |
-
-If a screen shows a blank, use evidence that distinguishes these cases. The visible blank alone cannot tell you whether there is null, empty text, spaces or an error elsewhere in the calculation.
-
-## What does firstValid actually select?
-
-A **transform** is a configurable ISC object that retrieves or manipulates attribute data and returns a result. Its **inputs** are the values supplied to it; its **output** is the result it returns.
-
-ISC's `firstValid` operation considers configured options in order and returns the first one that evaluates to a non-null value.
-
-The word “valid” in its name does not mean “approved business data.” Its selection test is non-null, not “a name that looks right,” “a real email address” or “the correct department.”
-
-The options belong in descending preference order. For Devi, preferredName comes before givenName.
-
-If both are available, that order chooses the preferred name. If the preferred result is null, it allows the given name to supply the result.
-
-It does not combine the fields or vote between them. It does not search for the newest or most trustworthy value among all non-null results.
-
-This conceptual flow shows the selection decision for the supplied null-and-name case. Arrows mean which value is considered or returned, not separate private ISC services.
+The arrows below follow that selection for the supplied results. The selected identity is context; these are value decisions, not private ISC services or guaranteed log events.
 
 ```text
-Evaluating for identity I-84004
-StaffBase Production / sb-84004
-                |
+For the selected identity:
+HR-Primary account already collected
+
 Option 1: preferredName returns null
-                |
-         No value to select
-                |
-Option 2: givenName returns "Devi"
-                |
-           Non-null result
-                |
-         Return "Devi"
+                 |
+       No non-null value selected
+                 |
+Option 2: givenName returns "Ana"
+                 |
+       First non-null result
+                 |
+             Return "Ana"
 
 Order expresses approved preference.
-Returned text still needs valid meaning.
+A null result is not an error.
 ```
 
-A later option cannot replace an earlier non-null result just because you consider it better. The array order expresses that preference before selection.
+The null result is a successful retrieval with no value. That distinction matters when we configure what should happen to an actual error.
 
-Putting a literal value such as `"Not supplied"` first would select that non-null text before the dynamic name options. A constant intended only as a last resort belongs after preferred choices, and only if its meaning is approved.
+## Read the retrieval and error settings together
 
-## Read the definition and its error policy together
+The `accountAttribute` operation retrieves a named field from an account associated with the identity being evaluated, on the specified source.
 
-An **identity attribute mapping** supplies an identity field from selected data or a calculation. Employees uses the following illustrative definition for displayGivenName.
+Our definition uses two such retrievals as its options. It uses **JSON**, a text format for structured data. Braces group named properties and settings. The `values` property contains an **array**, an ordered list inside square brackets. Nested objects describe the retrieval instructions whose returned values are considered.
 
-The `accountAttribute` operation retrieves a named field from an associated account on the configured source. Here, each option explicitly names StaffBase and its account field.
+The firstValid setting `ignoreErrors` controls whether selection can continue to the next option after an option fails. We explicitly set it to `false` because this agreement treats a failed retrieval as an error to investigate.
 
-The definition uses **JSON**, a structured text format. The `values` property contains an **array**, an ordered list. Nested objects describe the retrieval calculations whose returned results are considered.
-
-`ignoreErrors` is the firstValid setting controlling whether a failed option can be skipped so the next option is considered. We set it explicitly to `false` because this agreement does not treat a failed retrieval as ordinary absence.
-
-JSON `true` and `false` are boolean values, meaning yes/no settings, not quoted strings. Each retrieval also sets `accountReturnFirstLink` to true so it can return the first selected account's field even when that value is null.
+JSON `true` and `false` are **booleans**, yes/no settings rather than quoted text. Each retrieval also has `accountReturnFirstLink: true`. That separate setting lets the retrieval return the first selected account's field even when the value is null.
 
 ```json
 {
@@ -120,7 +80,7 @@ JSON `true` and `false` are boolean values, meaning yes/no settings, not quoted 
       {
         "type": "accountAttribute",
         "attributes": {
-          "sourceName": "StaffBase Production",
+          "sourceName": "HR-Primary",
           "attributeName": "preferredName",
           "accountReturnFirstLink": true
         }
@@ -128,7 +88,7 @@ JSON `true` and `false` are boolean values, meaning yes/no settings, not quoted 
       {
         "type": "accountAttribute",
         "attributes": {
-          "sourceName": "StaffBase Production",
+          "sourceName": "HR-Primary",
           "attributeName": "givenName",
           "accountReturnFirstLink": true
         }
@@ -138,21 +98,57 @@ JSON `true` and `false` are boolean values, meaning yes/no settings, not quoted 
 }
 ```
 
-This is a complete illustrative definition, not a tenant upload or evidence of an actual run.
+This is an illustrative definition. The outer, or **root**, operation is firstValid. Its settings contain the explicit error policy and the preferred-name retrieval before the given-name retrieval.
 
-The `accountReturnFirstLink` setting belongs to accountAttribute, not firstValid. Setting it to true tells that retrieval to return the first selected account's attribute value even if it is null, rather than searching later accounts for a non-null value.
+The retrieval settings belong to their accountAttribute objects. `accountReturnFirstLink` does not belong to firstValid and does not suppress retrieval errors. With true, it returns the field from the first selected account even if null, instead of searching later accounts for a non-null value.
 
-The example has one associated account, so there is no competing-account choice. The setting makes the null-return intent explicit; it is not an instruction to suppress retrieval errors.
+Our example has one account, so no competing account supplies an alternative. The setting makes the null-return intention explicit.
 
-Notice the two levels of selection. AccountAttribute selects account data for each option. FirstValid then selects among the returned option values. Changing firstValid's preference order does not repair a wrong account selection inside one option.
+There are two different selections here. AccountAttribute selects account data for an option. FirstValid selects among the options' returned results. Reordering preferredName and givenName cannot repair a wrong account selection within one retrieval.
 
-For the supplied evaluation, the first retrieval successfully returns null. That is not an error, so ignoreErrors false does not prevent trying the next option. The second retrieval returns `"Devi"`, which firstValid returns.
+For the main case, the first retrieval succeeds and returns null. Because no error occurred, `ignoreErrors: false` does not prevent considering the next option. The second retrieval supplies `"Ana"`, and firstValid returns it.
 
-The mapping determines that this result belongs in displayGivenName. The transform name does not choose the destination or create an automatic display convention.
+The mapping establishes that this result supplies identity `displayGivenName`. The transform name does not choose the destination or create a display-name convention.
 
-## Empty text will not trigger this null fallback
+## Complete the path to the identity value
 
-Here is a separate fixed-value illustration:
+The identity-profile **Preview** evaluates mappings for a selected identity using available data. Here, the expected result is `"Ana"`, supplied by givenName after the successful null result from preferredName.
+
+**Identity processing** reevaluates identity information and applicable decisions. Applying a profile mapping change initiates processing for identities associated with the profile, so review the shared population and the configurations using the field before applying the change.
+
+For the successful continuation of this example, assume that review is complete, the intended definition and mapping are saved, the null-return case and error policy have been checked, Preview returns `"Ana"`, and authorized relevant processing completes. Current identity evidence then confirms `displayGivenName = "Ana"`.
+
+The collected HR account still has preferredName null and givenName `"Ana"`. The fallback has not filled HR's preferred-name field or repaired a collection problem.
+
+A **consumer** is a configuration or system that uses a value. **Provisioning** performs account or access changes in a connected system. A returned fallback value does not establish that a target change is configured or complete.
+
+The supplied continuation establishes this custom identity field's value. It supplies no target write, account matching, employment-status change or access grant.
+
+## A blank-looking field can contain different things
+
+An **empty string**, `""`, contains no characters. A **whitespace-only string**, such as `"   "`, contains characters even though it can look blank. The string `"null"` contains four letters; it is different from the null value.
+
+An **absent field** is not present in the supplied record or response. That observation alone does not establish whether a retrieval will return null or report an error.
+
+An **invalid value** is present but fails the field's business requirement. Under our naming agreement, `"UNKNOWN"` is invalid even though it is nonempty text.
+
+An **evaluation error** means an operation could not produce its normal result. It is different from successfully returning null.
+
+| Observation or returned result | What needs to be established |
+|---|---|
+| Field absent from a response | Whether collection, extraction and retrieval supply a successful null or an error |
+| Retrieval returns null | No value from this option; a null-based selector can consider the next |
+| Retrieval returns `""` | Non-null empty text; it is not automatically skipped |
+| Retrieval returns `"   "` | Non-null text with three spaces; suitability needs a separate decision |
+| Retrieval returns `"null"` | Literal text, not the null value |
+| Retrieval returns `"UNKNOWN"` | Present text that this business agreement rejects |
+| Retrieval reports an error | A failed operation requiring the configured error policy |
+
+A blank on the screen cannot distinguish all these states. Inspect the collected value and actual evaluation evidence before deciding which condition you have.
+
+## Empty text is still selectable
+
+This separate fixed-value illustration makes the selection test visible:
 
 ```json
 {
@@ -160,199 +156,158 @@ Here is a separate fixed-value illustration:
   "type": "firstValid",
   "attributes": {
     "ignoreErrors": false,
-    "values": ["", "Devi"]
+    "values": ["", "Ana"]
   }
 }
 ```
 
-The result is `""`, not `"Devi"`. The first item is already non-null.
+It returns `""`. The first option is non-null, so it is selected before `"Ana"`.
 
-These literals demonstrate selection; they are not a replacement for per-person source retrieval.
+The literals demonstrate selection; they are not a replacement for per-identity account retrieval.
 
-Likewise, if the preferred-name option returns three spaces, firstValid can select those spaces. If it returns `"UNKNOWN"`, it can select that string.
+The same distinction applies to three spaces and to `"UNKNOWN"`: bare firstValid can select them because they are non-null. Changing ignoreErrors to true would not make successfully returned text into an evaluation error.
 
-An operation called `trim` removes surrounding whitespace. Trimming three ordinary spaces returns an empty string, not null. Therefore, adding trim does not by itself make firstValid skip that option.
+The `trim` operation removes surrounding whitespace. Trimming three ordinary spaces returns an empty string. It does not return null, so trim alone does not make firstValid skip that option.
 
-You need a separate **suitability check**: a defined decision about whether the returned text meets the field's requirement. “Non-null” and “usable name after approved trimming” are different tests.
+A blank-aware requirement needs a separate **suitability check**, a defined decision about whether a candidate meets the field's requirement.
 
-For example, an agreed decision could treat null and whitespace-only text as “no preferred name,” while rejecting designated placeholder text for correction. That decision needs to be expressed in supported configuration or enforced by the producing data process.
+For example, an approved rule could treat null and whitespace-only text as “no preferred name,” but require designated placeholder text to be corrected. The producing data process or supported calculation must actually implement that decision.
 
-Do not describe that additional decision as behavior built into firstValid. If you prepare candidates for a null-based selector, an approved rejected candidate must actually become null for selection purposes, not merely become an empty string.
+If the design prepares candidates for firstValid, a rejected candidate must become null for selection purposes, or an explicit decision must choose the alternative by another supported route. Merely changing spaces into empty text is insufficient.
 
-A retrieval error needs its own branch; it must not silently become “no preference” unless the error policy explicitly authorizes that treatment.
+That is additional logic, not behavior already present in the two-option definition. A failed read also needs a separate error decision; it must not silently become an unrecorded preference without authorization.
 
-The main HR agreement already supplies null for an unrecorded preference. If HR starts sending empty strings instead, that is a changed input contract. Revisit the producer agreement or implement the approved suitability decision, rather than insisting the original two-option definition already handles it.
+If HR changes from supplying null to supplying empty strings, the input agreement has changed. Revisit the producer contract or implement the approved suitability logic. Do not assume the original definition already handles the new condition.
 
-## A failed option is a different branch
+## An error follows a different branch
 
-Suppose the preferred-name retrieval now throws an evaluation error. The given-name option could return `"Devi"`.
+Suppose the preferred-name option reports an evaluation error. The given-name option could return `"Ana"` if considered.
 
-With ignoreErrors false, firstValid does not proceed past that failed option to use the alternative. The selection fails at that point; this does not mean the entire tenant stops processing.
+With `ignoreErrors: false`, selection does not continue past the failed option to use the alternative. This calculation fails at that point. It does not mean the entire ISC tenant stops processing.
 
-With ignoreErrors true, firstValid can skip the failed option and consider the next one. Under the supplied second-option result, it returns `"Devi"`.
+With `ignoreErrors: true`, firstValid can skip that failed option and consider the next. Under the supplied next-option result, it returns `"Ana"`.
 
-Both behaviors can be intentional. They express different decisions about whether a name should remain available while a preferred input is broken.
+These are different operational policies. Continuing can keep the display value available, but it does not repair the failed read, establish that the error is harmless or validate the alternative.
 
-Setting true does not repair the failed read, prove the error is harmless or validate the replacement. If you allow continued operation, define how the underlying defect remains visible and who corrects it.
+If continued operation is approved, decide how the defect remains visible and who corrects it. Set and check the error policy explicitly rather than relying on the transform's name or assuming the setting catches failures outside its option evaluations.
 
-Set the error policy explicitly and test it. Do not infer it from a transform's friendly name or assume every failure is caught by one option-handling setting.
+The comparison below supplies givenName `"Ana"` as the next option:
 
-| Supplied first-option outcome, with second option `"Devi"` | Result of this selection |
-|---|---|
-| Successful null result, ignoreErrors false | Consider the second option; return `"Devi"` |
-| Successful empty-string result, ignoreErrors false | Return `""`; there was no error and no null |
-| Error, ignoreErrors false | Do not continue past that option; the selection reports failure |
-| Error, ignoreErrors true | Skip that failed option and consider the second; return `"Devi"` under these facts |
-| Successful `"UNKNOWN"` result, either setting | Select `"UNKNOWN"`; ignoreErrors does not reject business-invalid text |
+| Preferred option outcome | Explicit false | Explicit true |
+|---|---|---|
+| Successfully returns null | Continue; return Ana | Continue; return Ana |
+| Successfully returns empty text | Select empty text | Select empty text |
+| Successfully returns UNKNOWN | Select UNKNOWN | Select UNKNOWN |
+| Reports an evaluation error | Do not continue past that failure | Skip failed option; return Ana under these facts |
 
-This is why “turn on ignoreErrors” is not a general cure for missing data. It affects failed evaluation, not whether empty or misleading text counts as non-null.
+Error continuation and data suitability answer different questions. Turning on ignoreErrors does not make empty or misleading text acceptable.
 
-## What if no acceptable alternative exists?
+## What happens when neither name is available?
 
-Suppose both name retrievals successfully return null. There is no non-null name option to select.
+If both retrievals successfully return null, there is no non-null name option to select. The two-option design has not supplied a usable display name.
 
-The design has not supplied a usable name. Verify the actual evaluation result or error in its use context, and resolve the missing information or agree on an explicit no-name policy. Do not infer that the identity is automatically cleared, that an old value is safely retained, or that a target should receive a blank.
+Inspect the actual evaluation result or error in its use context and resolve the input problem or agree on an explicit no-name policy. Those facts do not establish automatic clearing of the identity field, safe retention of its old value or a blank write to a target.
 
-A final fixed string can ensure that a later option is non-null, but it changes what the field means.
+Adding a final constant can provide a non-null option, but it changes what the field communicates.
 
-For a field explicitly defined as a display label, an owner might approve `"Name not supplied"` as a visible marker. That does not make the marker a person's actual name. It also needs a correction process and restrictions on where it may be reused.
+For a display label, an owner might approve `"Name not supplied"` as a visible marker. That marker is not a person's name. Its permitted uses and correction process must be defined.
 
-For an employee number, a made-up fallback can destroy uniqueness or link the wrong records. For a department used in access decisions, defaulting unknown people to Finance can create an unjustified business fact.
+Position also matters. Placing a non-null literal such as `"Not supplied"` first selects it before the dynamic name options. A last-resort constant belongs after preferred options, and only where its meaning is approved.
 
-A safe fallback is not necessarily a constant, and a constant is not safe simply because it removes a visible error.
+For an employee number, a made-up constant can destroy uniqueness or connect the wrong records. For a department used in access decisions, defaulting to Finance creates a business fact that may be unjustified.
 
-The alternative should have the right meaning, an approved authority and a defined scope. If the field influences security decisions, inspect those decisions before introducing a default.
+An approved alternative can be another authoritative field rather than a constant. Establish its meaning, authority, scope and priority. Its availability alone does not authorize its use.
 
-## Keep the unresolved condition visible
+## Keep the reason for the alternative visible
 
-A **consumer** is a configuration or system that uses a value. A name label displayed to a reader and a department used to assign access are different consumers with different risks.
+The applied field may show a usable string while the preferred input remains unresolved. Preserve the distinction between normal absence, rejected data and a failed operation.
 
-If a fallback masks missing data or an operation error, the current field value alone may no longer reveal why the preferred option was not used.
+Inspect the selected source and field, available candidate results, the reason fallback was permitted and the correction responsibility. A result of `"Ana"` alone does not prove its source if both candidate fields could contain that same text.
 
-Keep evidence of the actual selected source and field, the option outcomes where available, the reason an alternative was allowed and the correction responsibility. Do not assume ISC stores a dedicated history of every firstValid branch or exposes a log for each candidate.
+Use source records, collection evidence, actual evaluation errors and reviewed configuration to establish the explanation. Do not assume ISC stores a dedicated history of every firstValid branch or exposes a log for every candidate. Required branch monitoring needs to be designed and verified.
 
-You can distinguish normal absence from defects through reviewed source records, collection evidence, actual evaluation errors and your operational checks. If branch-specific monitoring is required, design and verify it; a fallback definition does not create it automatically.
-
-This diagram is a human investigation sequence, not a second algorithm that firstValid performs automatically:
+The diagram below is a person's investigation, not another algorithm that firstValid automatically runs. Its excluded-text branch applies only when a separate suitability rule has actually been implemented.
 
 ```text
-Fallback result is visible
-             |
-Which option supplied that result?
-             |
+Human checks on a fallback result
+                 |
+Which option supplied the result?
+                 |
 Why was the preferred option not used?
-       /           |            \
-     null      rejected text     error
-      |             |             |
-Approved       Suitability     Explicit
-absence?       rule applied?   error policy?
-      |             |             |
-Check data      Check rule      Investigate
-contract        and producer    failed operation
-       \            |            /
+      /             |             \
+    null       excluded text      error
+     |              |              |
+Approved       Implemented       Explicit
+absence?       suitability       error
+     |         rule?             policy?
+     |              |              |
+Check input    Check rule       Inspect
+contract       and producer     failure
+      \             |             /
         Is the alternative approved?
                     |
-        Verify applied value and uses
+       Verify applied value and uses
 
-Non-null output does not close a defect.
+Text exclusion needs a separate rule.
+A returned value does not close a defect.
 ```
 
-The “rejected text” branch requires an implemented suitability rule. It is not a claim that bare firstValid rejected that text.
+A display label and an access-driving department have different permitted uses. A fallback that makes one field readable does not make its output suitable for every consumer.
 
-## A preview and an applied value answer different questions
+## A later preferred value can take priority again
 
-The identity-profile **Preview** evaluates mappings for a selected identity using available data. In the main case, the expected preview result is `"Devi"` from givenName.
+Suppose the main continuation has applied `"Ana"` from givenName. HR later records preferredName `"Anu"`.
 
-**Identity processing** reevaluates identity data and related decisions against the applicable configuration. Applying shared mapping changes can affect other identities governed by Employees, not just Devi.
+When that updated value is available to the calculation, the same ordered definition selects `"Anu"`. Choosing a fallback earlier did not permanently lock the calculation to givenName.
 
-**Provisioning** makes account or access changes in a connected system. A returned fallback value does not establish that a target change was configured or completed.
+Collection, relevant reevaluation and application are separate evidence. If the new value is collected and Preview returns `"Anu"`, you have established the selected calculation's new result. Verify relevant processing and the current identity field before concluding that Anu is applied. Verify any required target effect separately.
 
-In the supplied fictional continuation, the team verifies the null-return case and error policy, checks the shared mapping's affected uses, previews Devi and completes authorized processing. Current identity evidence shows `I-84004.displayGivenName = "Devi"`.
+## Work through the changed conditions
 
-The collected HR account still has preferredName null and givenName `"Devi"`. The fallback did not fill the preferred-name field in HR.
+1. Preferred-name retrieval successfully returns null; given-name retrieval returns `"Ana"`. The main definition explicitly sets ignoreErrors false. Does false prevent using the alternative?
 
-If HR later records preferredName `"Dee"`, the same ordered definition can return `"Dee"` when evaluated using that updated available data. Choosing a fallback once does not permanently lock the lower-priority value into the calculation.
+2. Preferred-name retrieval returns approved `"Anu"`; given-name retrieval returns approved `"Ana"`. Preferred is first. Which result is selected, and why?
 
-Collection, relevant reevaluation and application still need evidence. No target update, account matching, employment-status change or access grant is supplied in this example.
+3. Preferred-name retrieval returns `""`; givenName returns `"Ana"`; ignoreErrors is true. Will true make firstValid select the given name?
 
-## Test the distinction with changed facts
+4. A separately proposed candidate calculation trims `"   "` to `""` before supplying it as the first option. The second option is `"Ana"`. Has trimming made null-based fallback work?
 
-### 1. The first option returns null successfully
+5. Preferred-name retrieval returns `"UNKNOWN"`; given-name retrieval could return `"Ana"`. The agreement rejects UNKNOWN as a name. Does bare firstValid enforce that rejection?
 
-**Facts:** Preferred-name retrieval returns null without an error. Given-name retrieval returns `"Devi"`. The main definition explicitly sets ignoreErrors false.
+6. The first retrieval reports an evaluation error. If considered, the second returns `"Ana"`. Compare explicit ignoreErrors false and true. What remains unresolved with true?
 
-Does false prevent the fallback?
+7. Both options successfully return null. There is no final constant or approved no-name policy. Can you call the mapping successful merely because two options were configured?
 
-**Reasoning:** No. The first outcome is null, not an error. FirstValid can consider the next option and return `"Devi"`. Error policy and null selection are separate decisions.
+8. The main continuation applied `"Ana"`. Later preferredName `"Anu"` is collected and Preview returns Anu. No subsequent application or target evidence is supplied. What can you conclude?
 
-### 2. Both options contain names
+### Compare your reasoning
 
-**Facts:** Preferred-name retrieval returns `"Dee"`; given-name retrieval returns `"Devi"`. Both are approved strings, and the preferred option is first.
+**1.** No. A successful null result is not an error. FirstValid can consider the next option and return `"Ana"`. Null selection and error handling are separate.
 
-Which one is selected?
+**2.** `"Anu"` is the first non-null result. FirstValid does not choose by string length or combine the names. Reversing the options would change their priority.
 
-**Reasoning:** `"Dee"`. It is the first non-null result. FirstValid does not prefer the longer string or combine the names. Reversing the options would change the agreed priority.
+**3.** No. Empty text is non-null and was returned successfully. FirstValid selects it. IgnoreErrors does not supply a blank-aware suitability rule.
 
-### 3. The first option returns an empty string
+**4.** No. Trim returned empty text, which is still non-null. Implement the approved candidate rejection or explicit selection decision if whitespace-only preference is meant to trigger an alternative. Do not describe trim as returning null here.
 
-**Facts:** Preferred-name retrieval returns `""`, given name is `"Devi"`, and ignoreErrors is true.
+**5.** No. Bare firstValid selects the non-null placeholder. Inspect the producer contract and any actual suitability rule. Business-invalid text does not automatically become an evaluation error.
 
-Will true make firstValid use the given name?
+**6.** False prevents continuation past the failed option. True allows the next option and returns `"Ana"` under the supplied facts. The original failure still needs visibility, investigation and correction.
 
-**Reasoning:** No. Empty text is a non-null result, not a failed operation. FirstValid selects it. A blank-aware business requirement needs a separate suitability decision; ignoreErrors does not supply one.
+**7.** No. There is no non-null candidate to supply a usable name. Inspect the actual evaluation and resolve the input or approve an explicit response. The option count proves neither success nor clearing, retention or delivery.
 
-### 4. Spaces have been trimmed
-
-**Facts:** A separately proposed candidate calculation trims preferred text `"   "` to `""`, then supplies that result as firstValid's first option. The second option is `"Devi"`.
-
-Has trimming made the fallback work?
-
-**Reasoning:** No. The trimmed result is still non-null. It must be converted into the approved “unavailable candidate” representation or handled by an explicit selection decision if the policy says whitespace-only preference should fall back. Do not describe trim as returning null here.
-
-### 5. A placeholder looks present
-
-**Facts:** Preferred-name retrieval returns `"UNKNOWN"`. Given-name retrieval could return `"Devi"`. The naming agreement rejects UNKNOWN as a name.
-
-Does firstValid enforce that rejection?
-
-**Reasoning:** No. It selects the non-null placeholder. Inspect the producer contract and any implemented suitability rule. A business-invalid string is not automatically an evaluation error.
-
-### 6. The preferred retrieval fails
-
-**Facts:** The first retrieval reports an evaluation error. The next option returns `"Devi"` if considered.
-
-Compare explicit ignoreErrors false and true.
-
-**Reasoning:** False stops selection at the failed option. True allows the next option to be considered and, under the supplied facts, returns `"Devi"`. With true, the underlying error still needs investigation and visibility; the alternative's availability does not repair it.
-
-### 7. Every supplied option returns null
-
-**Facts:** Both retrievals successfully return null. No final constant or approved no-name policy is configured.
-
-Can you call the mapping successful because firstValid has two options?
-
-**Reasoning:** No. There is no non-null candidate to supply the required business value. Inspect the actual evaluation result/error and correct the input or agree on an explicit response. The option count does not establish success, clearing, retention or delivery.
-
-### 8. The preferred value arrives later
-
-**Facts:** The main supplied continuation applied `"Devi"` from givenName. HR later supplies preferredName `"Dee"`, the updated value is collected, and Preview returns `"Dee"`. No subsequent application or target evidence is supplied.
-
-What can you conclude?
-
-**Reasoning:** The current evaluation follows the higher-priority option and returns `"Dee"`. Preview does not establish that the new value is applied to the identity or delivered elsewhere. Verify relevant processing and current identity evidence before extending that conclusion.
+**8.** The new selected evaluation follows the higher-priority option and returns `"Anu"`. Preview does not establish application to the identity or target delivery. Check processing and current identity evidence before extending the conclusion.
 
 ## Review a proposed department fallback
 
-A project proposes this rule: use the recorded department when non-null; otherwise use the literal `"Finance"`. Department can influence access assignments. The owner has approved no such default.
+A project proposes using the recorded department when non-null, otherwise the literal `"Finance"`. Department can influence access assignments, and its owner has approved no such default.
 
-For one record the department is null. For another it is `"UNKNOWN"`.
+One record has department null. Another has `"UNKNOWN"`. Would firstValid make both records safe?
 
-Would firstValid solve both records safely?
+It could select Finance for the null case, fabricating an unapproved department. It would select UNKNOWN for the other because that string is non-null. Neither output establishes the actual department.
 
-No. It could select Finance for the null case, but that would fabricate an unapproved department. It would select UNKNOWN for the other case because the string is non-null. Neither result establishes the person's real department.
+Establish the approved department authority, the meaning of missing and placeholder values, the response when no usable department exists, and the dependent access decisions. Define error handling separately.
 
-Ask for the approved department authority, the meaning of missing and placeholder values, the response when no usable department exists, and the dependent access decisions. Define error handling separately from missing-value handling.
+If another source is proposed as an alternative, verify the person/account selection, field meaning, freshness and priority. Another available value is not automatically an authorized one.
 
-If an approved alternative source is introduced, verify the person/account selection, field meaning, freshness and priority before treating it as a fallback. Another available value is not automatically an authorized one.
-
-A fallback is complete only when you can explain why the preferred option was not used, why the selected alternative is permitted and what happens to any unresolved defect.
+Before accepting a fallback, explain why the preferred option was not used, why the alternative is permitted, and how any unresolved defect will be corrected.

@@ -1,0 +1,9 @@
+[Existing Employees identity]
+[identificationNumber: W-101]
+               ^
+               |
+[ISC correlates matching inputs]
+               |
+[Collected application account]
+[key: application-user]
+[employeeRef: W-101]

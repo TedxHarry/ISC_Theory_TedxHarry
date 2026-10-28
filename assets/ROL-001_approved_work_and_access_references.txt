@@ -1,0 +1,14 @@
+Work: customer request intake
+              |
+ISC role: Customer request intake
+|
++-- Requests Production
+|   Request intake access profile
+|   Queue Readers + Intake Drafts
+|   -> selected Requests account
+|   -> North reading and drafting
+|
++-- Knowledge Production
+    Published Guide Readers entitlement
+    -> selected Knowledge account
+    -> published guide reading

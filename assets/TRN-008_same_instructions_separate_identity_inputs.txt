@@ -1,0 +1,13 @@
+Same definition: Trim HR cost center
+
+First identity       Second identity
+HR-Primary account   HR-Primary account
+       |                    |
+   " 0042 "             " 0088 "
+       |                    |
+      trim                 trim
+       |                    |
+    "0042"               "0088"
+
+Each evaluation uses its own account.
+Result alone is not application proof.

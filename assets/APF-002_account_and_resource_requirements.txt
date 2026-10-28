@@ -1,0 +1,14 @@
+Selected application's account
+|
++-- Order Readers membership
++-- Draft Creator native role
++-- Draft Editor license
+|
+All three required for drafting
+|
++ enabled account
++ successful sign-in
++ order in assigned business unit
+|
+v
+Draft creation permitted

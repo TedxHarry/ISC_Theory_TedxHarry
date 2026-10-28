@@ -1,301 +1,265 @@
 # The job started. Why do the screens still disagree?
 
-Devi is due to receive access for an evening support assignment. The job reevaluating her identity has started, but the search screen still shows the earlier value. An account change is waiting, and an account report does not show the new group.
+A job reevaluating a person's information has started, but a search view still shows the earlier value. A required account change is pending, and an account report doesn't show the new group.
 
-Should you wait, start processing again, reload the account, or investigate a failed change?
+Should you wait, process again, reload the account or investigate a failure?
 
-The answer depends on which work has actually happened.
+First, identify which result each observation describes. Starting work, applying a person-level value, delivering access and displaying updated information are different events. An old value in one place doesn't explain what happened in all the others.
 
-SailPoint Identity Security Cloud (ISC) does not turn every participating record and screen into one simultaneous observation. A business condition becoming true, an identity value being applied, an access change reaching a target, and a view displaying the result are different boundaries.
+## Establish the value and the access it should require
 
-**Identity processing** reevaluates mapped person-level information and applicable relationships and access requirements. **Search** provides a searchable representation of identity and access information; it is not a direct query of every connected target system.
+In SailPoint Identity Security Cloud, or ISC, an **identity** is the record representing a person across their accounts. An **account** is that person's record in a particular system. An **attribute** is a named field on a record.
 
-Let's follow the evidence without assuming that every old value has the same cause.
+The person already has a valid identity and correctly associated HR-Primary and Directory-Primary accounts. A **source** is ISC's configured representation of a system's account data.
 
-## Establish the dependency before looking at the clock
+HR-Primary is **authoritative** for this population: its worker accounts participate in establishing and maintaining the identities. The Employees **identity profile** supplies shared instructions. A **mapping** specifies how an identity field receives a value; a **transform** calculates or prepares that value.
 
-Devi's employee number is 97007. Her ISC **identity** is the person record. We will label it I-97007; this is a teaching label, not an actual ISC object ID.
+A custom identity attribute, supportWindow, uses this approved calculation:
 
-Her worker account `sr-97007` on StaffingRegister Production is correctly associated with that identity. A **source** is ISC's configured representation of a system's account data. StaffingRegister is authoritative for this population, meaning its worker records establish and maintain the related identities.
-
-The Employees **identity profile** holds shared instructions for calculating their identity values. An identity **mapping** specifies where a value comes from. A **transform** performs a calculation when direct copying is not sufficient.
-
-A custom **identity attribute**, supportWindow, is a field on the person record. Its approved calculation is:
-
-- Read assignmentStart from Devi's selected StaffingRegister account.
-- Compare the evaluation time with that instant.
+- Read assignmentStart directly from the associated HR account.
+- Compare evaluation time with that moment.
 - Return Scheduled before it, and On duty at or after it.
 
-The selected input is already collected into ISC and contains `2026-10-23T20:00:00.000Z`. The Z means UTC, the shared time reference used for all observations in this example.
+The selected account input is already collected into ISC:
 
-The comparison reads its required account input directly. It does not depend on another identity field being calculated first.
+`assignmentStart = 2026-10-23T20:00:00.000Z`
 
-Devi's **identity state**, the setting controlling participation in particular ISC processes, is Active. The tenant's configured time zone is UTC.
+That is October 23 at 20:00 UTC, Coordinated Universal Time. The Z suffix identifies UTC. The calculation's `now` is the moment it evaluates, not a continuously running update to the stored field.
 
-An enabled automatic **role**, Night Support, tests whether identity supportWindow equals the exact text On duty. A role groups access requirements and can assign them through configured conditions.
+An enabled automatic Night Support **role** tests identity supportWindow equal to the exact text On duty. A role groups access requirements and can assign them through configured conditions.
 
-Night Support contains the enabled Night Tools **access profile**, a bundle of related access from OperationsDirectory. Its required **entitlement**, the governed access item, is ordinary membership in group `NIGHT-BASE`.
+It includes the enabled Night Tools **access profile**, a bundle of access from one source. The required **entitlement**, ISC's representation of a source permission, is ordinary membership in directory group `NIGHT-BASE`.
 
-Devi already has correctly associated OperationsDirectory account `od-97007`. Initially, it lacks NIGHT-BASE. The source supports group addition and has provisioning enabled. There is no separate activation step, new account creation, access removal or attribute-sync write in this example.
+The existing directory account lacks that group. Directory-Primary supports adding it and provisioning is enabled. **Provisioning** carries out required account or access changes through a supported automatic or manual path. Execution still needs permission and a successful result.
 
-**Provisioning** performs the required change in the connected system. The role assignment records the requirement; it does not itself prove membership on od-97007.
+There is no separate activation, account creation, access removal or account-field sync in this case. Configuration and input were applied and checked before the evening; no competing data or configuration changes occur during the supplied observations.
 
-The calculation's periodic reevaluation requirement is configured, and roles are implemented in this tenant. Devi therefore meets the Active-state condition for the evening recurring identity-processing population.
+The identity state, the setting controlling participation in ISC processes, is Active. The tenant's configured time zone is UTC, roles are implemented, and the calculation is marked for periodic reevaluation. The example therefore meets the stated evening recurring population conditions.
 
-The input, saved instructions and assignment configuration were applied and checked before this evening. No configuration changes or competing data changes occur during the observations below.
+All records and observations below are hypothetical. They aren't measurements from a tenant.
 
-These records, configuration and outcomes are fictional. No real tenant, job or target account is changed.
+## Follow the dependency before drawing an execution order
 
-## A dependency tells you what must be available
+**Identity processing** evaluates mapped identity information, relationships and applicable access requirements.
 
-For this calculation to produce the intended result, ISC needs the selected account's assignmentStart and an evaluation at or after that instant.
+Our calculation needs the selected account's assignmentStart and evaluation time. The role condition needs the relevant applied supportWindow. Group delivery needs a supported operation for the intended directory account.
 
-For Night Support to qualify through this condition, the relevant identity supportWindow must be On duty. Delivering the role's group membership then requires a supported provisioning operation to the intended account.
+A **dependency** means a result relies on particular information or another outcome. It doesn't let us prescribe a private order for every ISC field or service.
 
-**Dependency** means a result relies on particular information or a preceding outcome. It does not mean you can prescribe a universal internal execution order for every ISC field or service.
-
-The useful relationship is:
+**Search** provides a searchable representation of identity and access information. It isn't a live query of every target system. An updated identity result becoming visible there is separate from the target group addition.
 
 ```text
-Collected assignmentStart + current time
-  -> supportWindow calculation
-  -> verify applied identity value
+Collected assignmentStart + now
+                |
+supportWindow calculation
+                |
+verify applied identity value
+                |
+       +--------+---------+
+       |                  |
+role condition      identity result
+requires NIGHT-BASE visible in Search
        |
-       +-> Night Support role condition
-       |     -> NIGHT-BASE requirement
-       |     -> provisioning
-       |     -> verify target membership
+provisioning to intended account
        |
-       +-> updated identity view in Search
+verify target membership
 
-Later account collection
-  -> fresh collected membership evidence
+A later account read supplies
+new collected membership evidence.
+These are dependencies, not job order.
 ```
 
-The arrows describe inputs, consumers and evidence boundaries. They do not show private worker services or queues, and they do not promise that Search updates before or after provisioning.
+The arrows show inputs, consumers and evidence. They don't require Search to update before or after provisioning.
 
-The separate account-collection path is a way to obtain fresh account evidence. It does not claim every connector waits for another aggregation before ISC can represent its own provisioning changes.
+**Aggregation** collects account information into ISC. A fresh account read supplies evidence of what the target returned at that read. It isn't necessarily what creates a membership or the only way an integration can update its account representation.
 
-**Aggregation** collects account data from a source. A fresh account read can establish what a target returned at that read. An old account snapshot cannot establish what the target contains now.
+Keep that collection path separate from the write. Otherwise, you can mistake a later observation of access for the action that granted it.
 
-You can reason that correct inputs and configuration call for On duty and Night Support after the boundary. You still need evidence that the relevant calculation was applied and the required membership was delivered.
+## What queued, running and completed actually establish
 
-## Queued is not running, and running is not finished
+Work is **asynchronous** when initiation and the completed result are separate events. Inspecting another screen immediately after initiation doesn't establish that all dependent work has finished.
 
-Work is **asynchronous** when initiating it and receiving its completed result are separate events. The initiating action does not establish that every dependent operation has completed before you inspect another screen.
+**Queued** means waiting to execute. **Running** means execution has begun. **Completed** needs the scope of the particular job or operation: what work reached its own result?
 
-A job being **queued** means it is waiting to execute. A job being **running** means execution has begun. A completed job has reached its own completion boundary, which you must identify.
+These are reasoning terms here, not universal status labels for every ISC screen or API.
 
-These are reasoning terms, not a universal set of status values used by every ISC page or API.
+Recurring jobs are queued at their scheduled times, and other work can delay their start. In the explicitly UTC-configured tenant, this evening's queue time is 20:00.
 
-Recurring identity-processing jobs are queued at their configured times. Other queued or in-progress work can delay their start. Here the relevant evening queue time is 20:00 in the configured UTC tenant.
+Queueing doesn't establish an applied On duty value at 20:00. A running job doesn't establish that this person's evaluation is finished or that their target update completed.
 
-A queued job does not mean that Devi's identity value changed at 20:00. A running job does not prove that her identity has already been reached or that her access change finished.
+If the business needs usable access exactly at 20:00, a 20:00 queue time isn't a readiness guarantee. That requirement needs an appropriate supported timing and delivery design with verified results.
 
-If the business requires usable access exactly at 20:00, the 20:00 queue time is not a readiness guarantee. That requirement needs an appropriate supported design and delivery verification; the schedule alone cannot establish it.
+The Active Jobs view helps inspect running processing. Current identity observations and individual provisioning activities establish further results. Identity-processing completion doesn't validate successful access provisioning after starting that work.
 
-Completion of identity processing does not validate that provisioning subsequently delivered the access successfully.
+## Complete the supplied timeline before interpreting the disagreement
 
-The Active Jobs view helps you inspect running work. Relevant job records, current identity information and individual provisioning activities answer further questions. Do not use one broad status to replace all of them.
+At 19:58, current supportWindow is Scheduled and Night Support isn't assigned. The start moment is still in the future.
 
-## Put the observations in order, not the imagined backend
-
-At 19:58, Devi's current supportWindow is Scheduled and Night Support is not assigned. The configured start instant is still in the future.
-
-The supplied observations on October 23, 2026, are:
+The remaining observations are:
 
 ```text
-All times UTC; October 23, 2026
+All observations: October 23, UTC
 
-20:00 recurring processing job queued
+19:58 current Scheduled / no role
+20:00 recurring job queued
 20:04 job observed running
-20:06 current supportWindow: On duty
-      Night Support assignment verified
-20:07 Search still shows Scheduled
-20:08 group-add activity Status: Pending
-20:09 add confirmed; target group seen
+20:06 current On duty / role verified
+20:07 Search still Scheduled
+20:08 overall activity Status: Pending
+20:09 add result + target group confirmed
 20:12 Search shows On duty
-20:21 fresh collected account shows group
+20:21 fresh account read shows group
+
+No fixed duration or ordering promise.
 ```
 
-At 20:06, relevant identity processing and Devi's current value and role are verified. That observation does not state that every identity in the tenant has finished processing.
+At 20:06, relevant processing, current On duty and the role assignment are verified for this identity. That isn't a claim that processing for every identity in the tenant has finished.
 
-At 20:08, Pending is the overall account-activity Status field for this specific group addition. It says the activity has not yet been attempted and is scheduled for an attempt. It is not a failed result.
+At 20:08, Pending names the **overall account-activity Status** field for the group addition. Under its documented meaning, the activity hasn't been attempted yet and is scheduled for an attempt. It isn't a failure result.
 
-At 20:09, both the specific addition result and a fresh target check confirm NIGHT-BASE on od-97007. We can now establish that membership at that time.
+At 20:09, the specific addition result and a fresh target check confirm NIGHT-BASE on the intended account.
 
-The later 20:12 Search observation establishes that its identity result now shows On duty. The 20:21 account collection supplies another membership observation.
+Search shows On duty at 20:12. Fresh collected account evidence shows membership at 20:21.
 
-These are supplied observation times, not a promise that jobs wait four minutes, processing takes two minutes, provisioning takes one minute or Search catches up within six minutes.
+These observations complete different claims at different times. They don't establish four-minute queue delays, one-minute provisioning or a fixed Search-update allowance. Another case can expose the target change and Search update in a different order.
 
-A target change and a view update can become observable in a different order in another case. The dependency diagram does not require these timestamps.
+## When is an old Search result a visibility problem?
 
-## Separate a stale view from an unapplied result
+At 20:07, we have independently verified current On duty at 20:06, while Search still shows Scheduled for that same identity.
 
-Search results are evidence from that view, rather than a live observation of every source account.
+That difference supports investigating how the view is updated. ISC synchronizes identity information across services, including Search; visibility can lag an established update.
 
-ISC synchronizes updated identity data across services, including Search. That visibility can lag an update. This is **visibility delay**: an available view has not yet displayed a change established elsewhere.
+**Visibility delay** means the view hasn't yet displayed a change established elsewhere. It doesn't mean every old value should be diagnosed that way.
 
-At 20:07, we have a current identity observation from 20:06 showing On duty, while Search still shows Scheduled for the same identity.
+Suppose we change the facts: no correct current identity result has been verified, and both the identity detail and Search still show Scheduled.
 
-The disagreement supports investigating propagation to that view. It does not, by itself, justify changing the transform or adding the role manually.
+A visibility-only explanation isn't established. The job might still be waiting, the identity might not be included, the selected input might be wrong, or evaluation might have returned that result.
 
-Now change the facts. Suppose there is no verified current identity result, and both the identity detail and Search still show Scheduled.
+Check the actual identity, query, filters, permissions and observation time as well. A query that excludes On duty records won't become correct by waiting.
 
-You have not established a visibility-only problem. The selected input could be wrong, the job could still be waiting, the identity might not have been included, or the mapping could have returned another result. Check those possibilities before labelling the result stale.
+Time passing alone proves neither success nor failure. Compare progress with the operational requirement and look for the expected next evidence.
 
-The same discipline applies when a result is missing rather than old. Verify the exact identity, query, filters, permissions and observation time. A query that excludes On duty records will not become correct by waiting.
+## A report opened later can contain older information
 
-There is no fixed delay that proves success or failure for every change. Time passing is a reason to check progress against the operational requirement, not proof that the intended result exists.
+Suppose an account report opened at 20:10 contains data captured at 19:50. It shows no NIGHT-BASE.
 
-## An old account report is a different kind of old evidence
+That doesn't contradict the fresh 20:09 target observation. Opening the report later didn't make its contents newer.
 
-Suppose the OperationsDirectory account report you are reading at 20:10 was captured at 19:50. It shows no NIGHT-BASE.
+**Observation time** is when the data was actually checked or captured. It differs from when you opened or downloaded a view containing it.
 
-The report is consistent with the initial state. It cannot contradict the fresh 20:09 target observation merely because you opened the report later.
+The fresh 20:21 collection supplies another membership observation. It didn't create the group membership already confirmed at 20:09.
 
-Separate the **observation time**, when data was actually checked, from the time you opened or downloaded a view containing it.
+Compare the same source, account and group. One identity's personal and administrator accounts aren't interchangeable, nor are groups with similar display names.
 
-At 20:21, a fresh collection shows the group too. That makes the collected account evidence more recent; it is not what originally created the membership.
+If a current account view and a target check disagree, inspect their actual update paths and freshness. Don't assume every connector uses one universal rule for representing provisioning changes.
 
-In a real investigation, compare the same source, account identifier and group identifier. A personal account and an administrator account on one identity are not interchangeable. Neither are two groups with similar display names.
+A general connection test can't establish this account's membership either. It tests connectivity or a supported connection capability, not this particular access outcome.
 
-If ISC's current account view and a target observation disagree, investigate their actual update paths and freshness. Do not assume all source-account changes have one universal write-back or collection rule.
+## Read Pending and Finished with the field name
 
-A generic connection test also cannot settle the membership question. It checks a connection capability, not whether this particular account currently has this particular group.
+An account activity can contain changes to multiple accounts. Its overall **Status** describes the activity; its **Stage** describes progress. An individual **account request** is a part of that broader action for a source account, with its own status.
 
-## Read the status field, not just its word
+A **connector** is the integration that communicates with the source system. Sending a request to it and confirming the requested change aren't the same result.
 
-The word Pending does not have one meaning everywhere.
-
-ISC distinguishes overall account-activity Status, the activity's Stage and the status of an individual account request within that activity. A broad activity can involve more than one account or action.
-
-Use the field and record together:
-
-A **connector** is the integration that communicates with the source system. Sending work to it is not the same observation as a successful group addition.
-
-| Field and value | Meaning relevant to investigation |
+| Field and value | Documented meaning to use |
 |---|---|
-| Account-activity Status: Pending | The activity has not been attempted yet; it is scheduled for an attempt. |
-| Individual account-request status: Pending | Actions on that account are in progress. This is a different field from overall Status. |
-| Individual account-request status: Committed | Requests have been sent to the connectors. That is not confirmed successful delivery. |
-| Individual account-request status: Finished | Results were confirmed on the source, whether successful or failed. Inspect the actual result. |
+| Overall account-activity Status: Pending | The activity hasn't been attempted; it is scheduled for an attempt. |
+| Individual account-request status: Pending | Actions on that account are in progress. |
+| Individual account-request status: Committed | Requests have been sent to the connectors. Successful delivery isn't yet established by that value. |
+| Individual account-request status: Finished | Results were confirmed on the source, whether successful or failed. Inspect the result. |
 
-At 20:08 in our timeline, the evidence explicitly names the overall Status field. Without that context, “it says Pending” would be ambiguous.
+That is why "it says Pending" isn't enough. Name the field and the related operation.
 
-Finished is another word worth inspecting closely. It does not turn a failed permission check into a successful write just because the attempt has reached an end.
+Finished doesn't convert a permission failure into a successful addition. It tells you that results are available at that boundary.
 
-An activity's overall Complete badge also needs its context. For example, an access request asks for access for a person; a rejected request can still show a Completed badge although no account changes took place. Completion of the request's handling does not mean the requested access was granted.
+Overall completion needs context too. An **access request** asks for specified access for a person. A rejected access request can display a Completed badge even though no account actions took place. Its handling reached completion; the requested access wasn't granted.
 
-Use the specific operation, account, outcome and any error details to explain what completed.
+Inspect the operation, account, outcome and error details to explain what completed.
 
-## Waiting cannot manufacture a missing dependency
+## Waiting can't supply the wrong or missing input
 
-Suppose the real StaffingRegister assignmentStart is 20:00, but ISC's selected collected account still contains tomorrow's date.
+Suppose the producer has the approved 20:00 assignmentStart, but the selected collected account in ISC still contains tomorrow's date.
 
-Waiting for Search will not correct the calculation's input. A successful evaluation using that later date could correctly return Scheduled according to the data available to it.
+An evaluation using tomorrow's date can return Scheduled consistently with that input. Waiting for Search doesn't repair the data dependency.
 
-Trace the dependency: the approved producer value must reach the selected source account data; then relevant identity processing must evaluate the intended input; then applicable access delivery must complete.
+Establish the correct selected account value, relevant processing, applied result and required delivery. A manual access grant wouldn't correct the wrong source input either.
 
-Likewise, a saved mapping correction is not proof that the current identity value has been recalculated. A correct Preview is evidence of a selected evaluation, not proof of an applied identity or delivered group.
+Similarly, saving a mapping correction doesn't establish a recalculated current value. **Preview** evaluates mappings for a selected identity; a correct Preview isn't proof of application or target delivery.
 
-There is also an unsupported dependency you should avoid creating. The identityAttribute transform is not intended for use inside another identity-profile attribute calculation. Such a design cannot assume that a peer field has already been calculated and contains current data.
+Avoid creating a dependency on unsupported field order. The `identityAttribute` transform reads an identity field, but isn't intended inside another identity-profile attribute calculation. Identity-field calculations can overlap, with no guarantee that a peer value is current or even available.
 
-If one identity field is built by reading a supposedly “just calculated” peer field, a longer wait or repeated processing is not a substitute for a supported input design. Use the required account inputs and a suitable calculation rather than assuming field order.
+A longer wait, repeated processing or one successful Preview doesn't make that design safe. Use the required available account inputs and a suitable supported calculation.
 
-This is different from a real cross-system dependency, such as needing an account identifier generated by a target before another integration can use it. In that case, establish how the identifier is produced, collected and made available to the next consumer. A guessed sleep interval does not establish that the identifier exists.
+A real cross-system dependency needs evidence too. If a target generates an account identifier that another integration needs, establish how it is produced, collected and made available to the next consumer. A guessed sleep interval doesn't establish that the identifier exists.
 
-## Choose the next action from the boundary that is missing
+## Choose the next action from the missing result
 
-Use a small evidence record for the issue: identity identifier, source and account, expected value or membership, relevant configuration, job or activity reference, field-level status, observation time and last confirmed result.
+Keep a compact evidence record: the identity, source/account/group, expected value, applicable configuration, actual job or activity reference, field-level status, observation time and last confirmed result.
 
-Do not invent one common transaction identifier joining all systems. Use the actual references available for each operation and connect them through the intended identity, account and change.
+Use the real references available for each operation. Don't invent one common transaction identifier joining every system.
 
-| Last confirmed boundary | Useful next check |
+| Last confirmed result | Useful next check |
 |---|---|
-| Expected job is queued, with no start evidence | Check that job's current execution state and selection requirements before submitting more work. |
-| Current identity is correct; only Search is old | Verify the same record/query and follow view-update evidence rather than recalculating a correct value. |
-| Role is assigned; target operation is Pending | Inspect the specific activity's field, stage and progress. Target membership is not yet established. |
-| Attempt ended with an error, or target state is wrong | Investigate that operation and approved recovery; do not rename the problem “visibility delay.” |
+| Job queued, no start established | Inspect execution and selection requirements before submitting more work. |
+| Current identity correct, only Search old | Confirm the same record/query and investigate view updates rather than replacing a correct calculation. |
+| Role assigned, target operation Pending | Inspect the exact status field, stage and progress; membership remains unverified. |
+| Attempt ended with an error or target state is wrong | Investigate the operation and approved recovery, rather than calling it visibility delay. |
 
-Repeated submission can add work without addressing the cause. It can also make it harder to determine which observation belongs to which attempt.
+Before repeating work, check whether the earlier attempt is still running, whether it failed, what the new scope would be and whether repetition is supported and appropriate.
 
-Before repeating anything, establish whether the earlier operation is still running, whether it failed, whether the new attempt has an appropriate scope, and whether the operation is safe and supported to repeat.
+Repeated submission can add work and make it harder to relate observations to attempts without addressing the cause.
 
-Retry handling is process-specific. Provisioning recognizes particular retryable errors; that does not make every failure retryable or guarantee completion at the next nominal retry time.
+Retry handling is process-specific. Some provisioning errors are retryable; not every error is, and queued work can delay a nominal retry time.
 
-A fixed sleep is therefore a weak completion test. A useful check asks whether the required result has been established. If progress is absent or the required access deadline is at risk, use the approved operational escalation path with the evidence gathered.
+A fixed wait isn't a completion test. Identify the required next observation and a review point. If progress is absent or the access deadline is at risk, follow the approved operational escalation path with the evidence gathered.
 
-Waiting should have a reason, an expected next observation and a review point. It should not hide an uninvestigated failure.
+Cancellation also needs an evidence check. Terminated aggregation details can show data collected before termination. Cancellation doesn't establish that no records changed, that completed effects were reversed or that every intended account was reached.
 
-## Work through the competing explanations
+## Work through these competing explanations
 
-Treat these variations independently.
+Each question is an independent variation.
 
-### 1. The schedule says 20:00
+### Questions
 
-**Facts:** The job is queued at 20:00. At 20:02, no execution start or current On duty result has been verified.
+1. The recurring job is queued at 20:00. At 20:02, no execution start or current On duty result is verified. What can be concluded?
+2. Current On duty was verified at 20:06, but Search shows Scheduled at 20:07 for the same identity. Should the transform be treated as failed?
+3. A report opened at 20:10 contains 19:50 account data with no group. A fresh target check confirmed NIGHT-BASE at 20:09. Do those observations contradict each other?
+4. One record has overall activity Status Pending; another has individual account-request status Pending. Do those values mean the same thing?
+5. An individual account request is Finished, with a result reporting insufficient permission for the group addition. Was the group delivered successfully?
+6. A proposed supportWindow calculation reads a newly calculated identity assignmentStart using identityAttribute and assumes that mapping always finishes first. Does one correct run validate this design?
+7. The approved producer date is 20:00, but the selected collected input is tomorrow's start. The calculation returns Scheduled. Is waiting for Search the needed repair?
+8. An aggregation is terminated after its execution details show an updated account was collected. Does termination prove nothing changed or that the whole intended population completed?
 
-**Reasoning:** Queue time is not completion time. Check execution and the specific identity's inclusion and result. The facts do not establish a failed transform, a completed role assignment or a two-minute processing guarantee.
+### Work through the reasoning
 
-### 2. Search still says Scheduled
+**1. Queueing is established; later results aren't.** Check execution, this identity's inclusion and its current result. Don't infer transform failure, role assignment or a two-minute completion guarantee.
 
-**Facts:** At 20:07, the same identity's current applied supportWindow was verified as On duty at 20:06, but Search still shows Scheduled.
+**2. Investigate the view and exact query.** The independent current result distinguishes this from an unproven application. Without that evidence, a visibility-only diagnosis wouldn't be justified.
 
-**Reasoning:** Investigate the view's update and exact query rather than assuming the calculation failed. The current identity observation provides the distinction. Without it, a visibility-only explanation would remain unproven.
+**3. Compare observation times.** The older report can show the initial state while the later target check confirms the change. Opening time doesn't change captured data. Obtain a fresh read if current collected evidence is needed.
 
-### 3. The report does not show the group
+**4. Name the record and field.** Overall Pending means not attempted yet; individual Pending means account actions are in progress. Neither establishes membership or failure by its word alone.
 
-**Facts:** A report opened at 20:10 contains account data captured at 19:50. A fresh target check confirmed NIGHT-BASE at 20:09.
+**5. The attempt produced a failure result.** Finished isn't success. Investigate the permission and supported recovery, then verify membership. A Search update can't repair the failed write.
 
-**Reasoning:** The old report does not contradict the later target observation. Compare observation times, not opening times. Use a fresh account read if current collected evidence is required.
+**6. The peer-field order isn't guaranteed.** Use supported independent inputs. One successful run or repeated attempts don't establish a safe current-data dependency.
 
-### 4. Two records say Pending
+**7. Repair the input dependency.** A Scheduled answer can fit the wrong collected date. Verify collection and selection, then application and delivery. Waiting or manually granting access doesn't correct that data.
 
-**Facts:** One record shows overall account-activity Status Pending. Another shows an individual account-request status Pending.
-
-**Reasoning:** The first describes an activity not attempted yet; the second describes account actions in progress. Neither establishes successful membership, and neither word alone proves failure. Inspect each field and the exact related operation.
-
-### 5. Finished includes a permission failure
-
-**Facts:** The individual account request is Finished, and its result says the group addition failed for insufficient permission.
-
-**Reasoning:** The attempt reached its result boundary; it did not deliver the group successfully. Investigate the permission and supported recovery. Waiting for Search cannot convert that failed write into a successful one.
-
-### 6. The mapping reads a peer field first
-
-**Facts:** A proposed supportWindow calculation reads a newly calculated identity assignmentStart using identityAttribute. The designer assumes the assignmentStart mapping always runs first.
-
-**Reasoning:** That order is not a supported guarantee for another identity-profile calculation. Use a supported dependency design based on the required available inputs. A successful run once does not validate the ordering assumption.
-
-### 7. The intended date was never collected
-
-**Facts:** The producer has the approved 20:00 start, but the account input selected in ISC still contains tomorrow's start. The calculation uses that collected input.
-
-**Reasoning:** Investigate collection and input selection first. An evaluation returning Scheduled can be consistent with that wrong input. Neither waiting for Search nor manually granting access repairs the data dependency.
-
-### 8. The aggregation was cancelled partway through
-
-**Facts:** An aggregation is terminated. Its execution details show account data was collected before termination, including an updated record for one employee.
-
-**Reasoning:** Termination does not establish that nothing changed. Review the collected records and any resulting identity or delivery evidence. Do not assume cancellation reverses completed effects or proves every account in the intended population was reached.
+**8. Inspect the actual partial effects.** Review collected records and resulting identity or delivery evidence. Termination is neither automatic rollback nor proof of complete population coverage.
 
 ## Try a more urgent disagreement
 
-A departing employee's assigned **lifecycle state**, the business-stage configuration that can drive access and account actions, is Terminated. Its reviewed configuration requires disabling an existing directory account.
+A departing worker's current assigned **lifecycle state**, the business-stage configuration that can drive account and access actions, is Terminated. Its reviewed requirement is to disable an existing directory account.
 
-The current identity shows the expected lifecycle assignment. Search still shows the earlier business stage. The exact account-disable activity has ended with a permission error, and a fresh target check finds the account enabled.
+Search shows the earlier stage. The exact disable operation has ended with a permission error, and a fresh target check finds the account enabled.
 
-An administrator proposes waiting for Search to catch up before taking any other action.
+An administrator proposes waiting for Search before taking further action. What does that miss?
 
-What does that proposal miss?
+There are two issues: an old view of a current assignment and a failed disable with an incorrect current target state.
 
-There are two separate issues. Search has an old representation of an assignment already verified elsewhere. The directory disable has a specific failed attempt and a fresh incorrect target state.
+Search could catch up without disabling the account. Follow the approved urgent recovery or escalation path using the exact account, operation and error evidence. A changed lifecycle label doesn't establish that the account is secured.
 
-A later Search update could resolve the visibility disagreement without disabling the account. Follow the approved urgent recovery or escalation process for the failed disable, using the exact account, operation and error evidence. Do not claim the account was secured because the lifecycle label changed.
+After recovery, verify the required target state separately from the view. The supplied facts don't establish which recovery will be used or its outcome.
 
-After recovery, verify the target account's required state separately from the view. Do not assume the recovery mechanism or its outcome from the supplied facts.
-
-For Devi, we can state that On duty and Night Support were verified at 20:06, NIGHT-BASE was confirmed at 20:09, and Search displayed the updated value at 20:12. We cannot replace those separate observations with “everything finished at 20:00.”
-
-That is the difference between following a dependency and guessing from a clock.
+For the support example, the evidence establishes current On duty and the role at 20:06, membership at 20:09 and updated Search at 20:12. It doesn't establish that everything completed at 20:00.

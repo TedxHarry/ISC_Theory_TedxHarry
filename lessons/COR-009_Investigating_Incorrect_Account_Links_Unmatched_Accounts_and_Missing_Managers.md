@@ -1,338 +1,363 @@
 # The account or manager looks wrong. Where would you start the investigation?
 
-Devi, employee `79009`, already has an employee identity in SailPoint Identity Security Cloud (ISC).
+Support receives three complaints about one employee. An application account appears under another person. A second account is missing from the employee's account list. The employee's manager is missing too.
 
-Support receives three complaints. One application account appears under another person. A second account is absent from Devi's account list. Her manager is also missing.
+Someone suggests running aggregation again.
 
-“Run the aggregation again” sounds like one answer to all three.
+Before choosing an operation, establish what each complaint actually describes. The second account might never have reached SailPoint Identity Security Cloud, or ISC. It might be present without an identity relationship. It might belong to the wrong identity.
 
-Before choosing that action, we need to establish which records exist, which relationships are wrong and which input or instruction needs attention.
+Those situations can look similar from one screen while requiring different corrections.
 
-The same visible symptom can lead to different investigations. An account absent from an identity's page may be uncollected, uncorrelated or attached to someone else.
+## Find the record before explaining its relationship
 
-Let's separate those possibilities using actual records.
+An **account** is a record in an application or another connected system. An **identity** is ISC's representation of a person or another managed entity. A **source** is ISC's configured representation of a system or collection of account data.
 
-## Establish what each complaint is about
+Keep the source environment with the account key. A test account and a production account with the same login aren't the same record.
 
-An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a connected system. An **attribute** is a named piece of information on a record.
+**Account aggregation** reads account information into ISC. **Account correlation** establishes which identity a source account belongs to.
 
-A **source** is ISC's configured representation of a system or account-data collection. Keep its environment with its name: a test source is not the production source.
+If an account is absent from the employee's account list, first look for that exact source account elsewhere in ISC. Its stable account key and source identify what you're investigating more reliably than a displayed name.
 
-In this fictional design, **TeamLedger Production** is authoritative for Employees. Its worker accounts establish employee identities through the Employees **identity profile**, the shared configuration governing those identities and their attribute mappings.
+Finding it under another identity establishes that the account was collected. You now have a relationship problem to investigate.
 
-Devi's TeamLedger account `tl-79009` already belongs to her identity. We'll call that identity `I-79009`, a teaching label rather than an actual ISC object ID.
+Finding it without an identity link is different. In this human-account situation, an **uncorrelated account** is a collected account that hasn't been associated with an established human identity. Its external account can still exist, work and have a legitimate owner.
 
-An **identity attribute mapping** supplies an identity field from selected data or a calculation. Employees has already populated Devi's Identification Number, `identificationNumber`, with approved person reference `P-79009`.
+If the account really isn't in ISC, inspect the source read: collection scope and filters, the actual response or file, field extraction and relevant execution issues. A successful source-level run doesn't demonstrate that this record was included.
 
-**WorkspaceDesk Production** represents the application. It does not establish employee identities in this design.
+Likewise, absence from a returned collection isn't, by itself, proof that the external account was deleted. Establish the response's scope and the actual external state.
 
-**Account correlation** establishes which identity a source account belongs to. An **uncorrelated account** is a collected account not associated with an authoritative identity.
+## Does the intended identity exist with the right value?
 
-**Manual correlation** is a persistent explicit account-to-identity link. Changed data or another read does not automatically release it.
+An **attribute** is a named field on a record. For matching, the account's selected attribute needs corresponding information on the intended identity.
 
-**Manager correlation** establishes a relationship from the employee's identity to the manager's identity. It is not an instruction to move the employee's account under their manager.
+An **identity profile** holds mappings and other settings for an identity population. Its **authoritative source** supplies the accounts used to establish that population. An **identity attribute mapping** selects the input or calculation that supplies an identity field.
 
-A **candidate identity** is an identity considered as a possible match. For account correlation, that means a possible account owner; for manager correlation, a possible manager.
+If the legitimate intended person has no established identity, investigate the approved worker population, required identity data, mappings and processing. Changing an application's matching configuration doesn't create the missing person.
 
-**Equals** compares the selected attribute values. A correct value somewhere else in the account does not help if the configured comparison selects another field.
+If the identity exists but its matching value is absent or incorrect, follow its governing profile and actual selected input. A correct reference on a worker record isn't automatically a correct applied value on the identity.
 
-Here is the supplied investigation evidence, not output from a real tenant:
+**Manager correlation** establishes which other identity is the employee's manager. It doesn't assign the employee's HR account to the manager.
+
+**Identity processing** evaluates identity data and configured requirements, including mappings and manager correlation.
+
+A mapping **Preview** evaluates mappings for a selected identity. It can explain a proposed value without demonstrating that the current identity already holds it.
+
+These checks locate the missing object or value before you change anything. In the main example below, the employee and intended manager both already exist with suitable current identity values.
+
+## Put the three complaints beside the evidence
+
+Here are hypothetical investigation facts. Approved application records and the worker registry establish that both application accounts belong to the same employee and identify the employee's intended manager.
+
+The employee's existing identity is governed by the Employees identity profile, whose authoritative source is HR-Primary.
+
+**Null** means no value is present. The second account exists, but its selected person-reference field is null.
+
+A **correlation criterion** pairs a selected account field with a selected identity field. The standard account-correlation operation is **Equals**, which compares their values.
 
 | Record or configuration | Current evidence |
 |---|---|
-| Devi's identity `I-79009` | Exists with applied, correlation-eligible `identificationNumber = P-79009` and identity `name = worker79009`. |
-| Other identity `I-79010` | Different person; `identificationNumber = P-79010`; `name = worker79010`. |
-| Intended manager `I-89909` | Already exists with applied, eligible `identificationNumber = P-89909`. The approved worker registry identifies this person as Devi's manager. |
-| WorkspaceDesk account `wd-601` | Login `drao.wd`; collected `personRef = P-79009`; linked to `I-79010`. Retained investigation evidence establishes an incorrect manual assignment. |
-| WorkspaceDesk account `wd-602` | Login `drao.review`; collected `personRef = null`; already evaluated and recorded uncorrelated. No manual association applies. Null means no value is present in that field. |
-| WorkspaceDesk matching configuration | Complete configured list: account `personRef` Equals identity `identificationNumber`. No additional criterion or identity-name match for either login applies. Intended candidate `P-79009` is unique. |
-| Approved application ownership | Application records and the worker registry confirm that both accounts belong to Devi. Account keys and logins are legitimate and should remain unchanged. |
-| Manager inputs and configuration | TeamLedger `tl-79009.managerRef = P-89909` is collected. Source manager configuration compares `managerRef` with the manager identity's `identificationNumber`, but Employees has no Manager Name mapping. No competing mapped source or custom rule applies. |
-| Reported manager result | Devi has no resolved manager relationship. No external manager write or dependent access change is supplied. |
+| Employee's existing identity | Applied, correlation-ready `identificationNumber = P-509`; identity `name = worker509`. |
+| Another person's identity | `identificationNumber = P-510`; identity `name = worker510`. It represents a different person. |
+| Intended manager's existing identity | Applied, correlation-ready `identificationNumber = P-609`; uniquely identified by the approved manager reference. |
+| Account `app-51` on `Application-Production` | Login `workspace.user`; collected `personRef = P-509`; attached to the person identified by `P-510`. Retained history establishes a mistaken explicit assignment. |
+| Account `app-52` on the same source | Login `review.user`; collected `personRef = null`; already evaluated and recorded uncorrelated; no existing explicit association. |
+| Complete configured account comparison | Account `personRef` Equals identity `identificationNumber`. No additional configured comparison applies. Only the intended employee identity has `P-509`. |
+| Employee's collected HR account | On `HR-Primary`, already owned by the employee; `managerRef = P-609`. Source manager comparison is configured, but Employees has no mapping selecting this manager input. |
+| Current manager result | No resolved manager relationship. No external write or dependent access change is supplied. |
 
-The source's **account schema** defines its represented fields and its Account ID and Account Name designations. WorkspaceDesk uses the account key as Account ID and the login field as Account Name.
+The selected fields matter. A correct person reference somewhere on the account can't help a comparison that selects the account key instead.
 
-The separate **default correlation** path compares the designated Account Name with identity `name`, case-insensitively, when configured correlation cannot establish an association. It is not configurable.
+The source's **account schema** defines its represented fields. **Account ID** designates the field identifying the source account; **Account Name** designates its naming field.
 
-Our supplied logins have no default match. That matters when explaining the overall uncorrelated result; one failed configured comparison alone would not establish every possible relationship outcome.
+Here, the account key is Account ID and the login is Account Name. A person's reference is a different kind of identifier.
 
-## First find the record, then investigate its relationship
+There is also a separate **default correlation** path when configured correlation cannot establish an association. It compares designated Account Name with identity `name`, ignoring differences in letter case. That default isn't configurable.
 
-**Account aggregation** reads account information into ISC.
+Neither application login matches any identity's name in the supplied evidence. The recorded uncorrelated result for `app-52` belongs with those default/configured conditions and its actual stated evaluation. Null in one field alone wouldn't establish every possible outcome.
 
-If an account does not appear on Devi's identity, begin by checking whether that exact source account exists elsewhere in ISC.
-
-The account's source and stable key are more dependable than its displayed name for this question.
-
-In the supplied evidence, both WorkspaceDesk accounts already exist. Recollecting them as though neither has ever arrived would not explain their different relationships.
-
-`wd-601` is attached to the wrong identity. `wd-602` is collected but uncorrelated.
-
-If a different account really is absent from ISC, investigate the source read first: scope and filters, the actual returned record, field extraction and relevant execution issues.
-
-A completed source-level run does not prove every expected record was included. An account absent from a collection response also does not, by itself, prove the external account was deleted.
-
-Next confirm that the intended identity exists. If it does not, investigate the approved authoritative population, required identity data and profile processing rather than treating an application correlation change as identity creation.
-
-In the main case, Devi and her intended manager already exist. That lets us rule out missing identity establishment as the cause of these three complaints.
+We can now state the three faults precisely: `app-51` has a wrong existing relationship, `app-52` lacks its intended matching input, and the employee's manager setup is incomplete.
 
 ```text
-Human investigation:
+Human investigation; choose by evidence
 
-Exact source account exists in ISC?
-  no -> investigate collection
-  yes -> inspect actual association
+Exact source account present in ISC?
+  no  -> inspect collection and scope
+  yes -> inspect its actual association
 
-Intended identity exists and is usable?
-  no -> investigate identity intake
+Intended identity present and ready?
+  no  -> inspect approved identity intake
   yes -> inspect selected matching data
 
-Existing link is wrong?
-  -> check link origin and persistence
+Wrong existing link?
+  -> inspect origin and persistence
 
-Account is uncorrelated?
-  -> check inputs, criteria, evaluation
+Collected but uncorrelated?
+  -> inspect inputs and evaluation
 
-Manager relationship is missing?
-  -> check manager mapping, comparison
+Manager missing or incorrect?
+  -> inspect manager-specific setup
 
-After approved correction:
-  -> verify each actual relationship
+Verify each approved correction's result.
 ```
 
-These branches organize evidence. They are not ISC's private execution algorithm or a requirement to run every operation in that order.
+This is a human investigation map. Its arrows identify the next evidence question for a finding; they aren't ISC's private algorithm or an instruction to run every operation in that order.
 
-Keep the external account's existence, ISC's account representation, the intended identity and the relationship between them separate.
+The distinction between an external account, its ISC representation, an intended identity and their relationship remains useful throughout the investigation.
 
-## Why wd-601 needs relationship correction
+## The first account needs its relationship corrected
 
-The account contains the approved reference `P-79009`. The intended identity contains the same reference. The current configured comparison selects those fields.
+Account `app-51` contains `P-509`, and the intended identity's selected field contains `P-509`. The saved comparison selects those fields.
 
-Yet the account is linked to `I-79010`.
+Yet the account is associated with the person identified by `P-510`.
 
-That does not mean the values should be changed to make the old link look consistent. It means we must investigate the existing association.
+Changing the correct reference to make that wrong relationship look consistent would damage good evidence. Investigate how the existing link was established.
 
-Here retained evidence identifies a mistaken manual assignment. The current source data and current criterion did not create that mistaken instruction.
+**Manual correlation** creates an explicit persistent account-to-identity relationship. Retained history in this example establishes a mistaken manual assignment.
 
-A manual association persists after source-data changes. **Unoptimized aggregation**, which recalculates correlation logic even for unchanged account data, does not remove manual correlation.
+The current equality doesn't remove that instruction. Source-data changes don't automatically release a manual link.
 
-The supported account-management capability **Update Correlation** can correct an account associated with the wrong identity. An approved manual-correlation correction is another documented relationship-management path.
+**Unoptimized aggregation** reevaluates correlation even for unchanged account data. It doesn't remove manual correlation, so another broad reread isn't the relationship correction this case needs.
 
-The instruction must identify this exact production account and the verified intended identity. A display name or guessed file identifier is not enough.
+ISC's supported **Update Correlation** capability can correct an account associated with the wrong identity. A documented manual-correlation correction is another supported relationship-management path.
 
-After approved correction, inspect both the old and intended identity contexts and the account's actual association.
+The approved instruction must identify this exact production account and the verified intended identity. Use the identifiers required by the chosen interface; don't substitute a displayed name or guessed file identifier.
 
-If the origin evidence were unavailable, record that uncertainty. Today's matching fields cannot reconstruct the old assignment history on their own.
+After correction, inspect the actual account association and both former and intended identity contexts. The acceptance condition is that this account belongs to its approved person and is no longer associated with the wrong one.
 
-Accounts created through ISC can also have `manuallyCorrelated=true`, a Boolean yes/no flag indicating manual-correlation treatment. No manual file import does not prove the account has an ordinary automatic link.
+If origin evidence were missing, keep that uncertainty visible. Today's suitable values don't reconstruct the historical decision.
 
-Do not change a real flag or association merely to test a theory. Establish the supported correction and its consequences first.
+Accounts created through ISC can also have `manuallyCorrelated=true`. Here, **true** is a Boolean yes/no value. A missing file-import history therefore isn't proof of ordinary automatic treatment.
 
-## Why wd-602 needs an input repaired
+Changing a flag or relationship is a real correction, not a harmless way to test a guess. Establish the approved owner, supported action and affected operations first.
 
-The second account has no usable value on the selected account side: `personRef` is null.
+## The second account needs its input delivered
 
-The intended identity's value is already applied and eligible. Changing a correct identity mapping would repair the wrong layer.
+For `app-52`, the intended identity is ready and the configured fields are suitable. The account's `personRef` is null.
 
-The application owner confirms that the approved reference should be `P-79009`. The integration feed omitted it.
+The application owner confirms that this account should supply `P-509`. Investigation establishes that the integration feed omitted it.
 
-That diagnosis requires more than a blank-looking screen. Inspect the actual collected field and the feed's relevant output. A missing field, null, empty text, spaces and a placeholder are not interchangeable representations.
+That is an account-input defect. Rewriting a correct identity mapping would affect the wrong layer.
 
-Do not assume every connector clears a previous value when a response omits a field. In this supplied case, the current collected value is explicitly null.
+Inspect the actual feed output and current collected field. An absent field, null, empty text, spaces and a placeholder carry different evidence. The string `UNKNOWN`, for example, isn't the person's approved reference merely because it is non-null.
 
-The approved feed correction must supply the intended reference, reach the represented account and receive supported correlation evaluation.
+An omitted response field also doesn't prove that every connector would clear a previously collected value. Our example explicitly supplies the current null account value and the diagnosed feed defect.
 
-**Optimized aggregation** skips an unchanged account for account and manager correlation. Therefore a successful read of unchanged records is not proof those relationships were reevaluated.
+The approved correction supplies `P-509` through the feed. It must reach the collected `app-52` account and receive relevant correlation evaluation.
 
-Choose the supported operation and scope for the actual defect. A saved criterion or mapping is not an evaluated record. An unoptimized run can revisit more than this one account, so it also needs an approved scope and dependency review.
+For the successful outcome here, the corrected value is collected and evaluated, the intended identity still uniquely holds the eligible current reference, and no persistent manual association takes precedence. The supplied result links `app-52` to the intended employee identity.
 
-A single-account reload has a limited scope. It does not establish that identity values were recalculated or that an external account change was delivered. Check what the selected operation actually updates.
+What changed? The missing account reference and its relationship. The account key, login and existing person identity weren't replaced.
 
-For the main successful outcome, we supply that the corrected `wd-602.personRef = P-79009` is collected and evaluated, the candidate remains unique and eligible, and no persistent manual link applies to that account.
+A **candidate identity** is an identity considered as a possible match. For account correlation it is a possible account owner; for manager correlation it is a possible manager.
 
-Its resulting association is then checked directly.
+If the value instead found no intended identity, investigate reference meaning and legitimate identity readiness. If several identities shared it, investigate ownership and data. Neither case supplies authority to choose a first candidate or create another person automatically.
 
-If multiple identities shared that reference, or the reference found no intended candidate, that would require different evidence and correction. Do not invent a first-candidate winner or create another identity merely because matching failed.
+## Check which operation actually evaluated the record
 
-## Why the manager needs its own mapping and evaluation
+A saved comparison, an updated field and a completed run establish different things.
 
-Devi's collected HR account already has `managerRef = P-89909`. The intended manager identity also exists with that value in its own Identification Number.
+In **optimized aggregation**, existing unchanged account records are skipped for account and manager correlation. If only configuration changed, an unchanged account can be read without receiving the new comparison.
 
-But the Manager Name mapping is missing.
+Unoptimized aggregation addresses that skip by reevaluating unchanged records. It can revisit a wider population, so its actual scope and dependent operations need review. It doesn't release manual links or supply a reference still missing from the feed.
 
-Manager correlation requires both the profile's **Manager Name** mapping and the selected source's manager-correlation configuration.
+Choose the operation for the proven cause, then verify its record-level result.
 
-The mapping identifies the source information supplying the manager reference. The source configuration identifies the employee account field and the field on potential manager identities.
+The documented single-account reload has a narrower purpose: it loads that account's current source data and status. It doesn't synchronize the new data into identity attributes or perform external account or access changes.
 
-The label Manager Name does not require a friendly personal name. This design uses `P-89909`.
+Seeing a refreshed account through that path therefore doesn't demonstrate that an identity mapping was applied or an external change was delivered. Establish those outcomes separately.
 
-For the main correction, the approved mapping selects TeamLedger's `managerRef`. **Identity processing** evaluates mapped identity data and configured requirements, including manager correlation. The relevant supported evaluation and its resulting manager relationship must be checked.
+The main `app-52` result explicitly includes supported evaluation. It doesn't assume that every kind of reload has identical effects.
 
-A mapping **Preview** evaluates a selected identity's mappings; it does not demonstrate that the current manager relationship is already correct.
+## The manager needs its own missing instruction
 
-If multiple manager mappings can apply, inspect **profile priority**, the configured ordering in which a lower number means higher priority. Documented manager selection uses the first mapped source with a non-null manager value, not the first source whose value successfully matches.
+The employee's HR account already contains `managerRef = P-609`. The intended manager identity has `identificationNumber = P-609`.
 
-Do not assume a bad non-null higher-priority reference will be ignored in favor of a lower-priority source.
+That comparison uses the employee account's manager reference and the manager's own identity field. It doesn't use the employee's own `P-509` or the manager's manager reference.
 
-Also distinguish a missing manager from an incorrect retained manager. When an evaluated manager reference changes to unmatched non-null text, documented behavior retains an existing manager. When the selected reference changes to null, the relationship changes to null, subject to the actual source-selection conditions.
+Manager correlation requires two cooperating configurations. **Manager Name** must be mapped in each identity profile, and the source containing the manager input needs its Manager Correlation configuration.
 
-Those changed-input variations do not describe our main missing-mapping case. They are reasons to inspect the actual relationship rather than trusting either a populated or empty display.
+The profile mapping identifies where the employee's manager input comes from. The source configuration identifies which account field is compared with which field on potential manager identities.
 
-A **custom identity attribute** is an organization-defined identity field. If one is selected for matching, verify its correlation-searchable eligibility, populated values and documented processing preparation. Search query visibility is not proof of that eligibility. A custom manager rule, if configured, needs its own logic inspected; none applies here.
+The label Manager Name doesn't require a friendly personal name. The selected value here is `P-609`.
 
-## Review effects before making the correction
+In this main case, the source comparison already exists. Employees lacks the Manager Name mapping, so add the approved missing mapping to `HR-Primary.managerRef`, then establish relevant evaluation and inspect the resulting manager relationship.
 
-An **entitlement** represents a permission or membership. Correcting an account owner can change whose represented account and access ISC shows.
+The employee's HR account remains owned by the employee. The new result is an employee-to-manager identity relationship.
 
-It does not automatically approve those permissions.
+Other manager complaints can have different causes. **Profile priority** is the configured ordering in which a lower number means higher priority. Documented manager selection uses the first mapped source with a non-null manager value, rather than trying sources until a lookup succeeds.
 
-**Provisioning** attempts supported account or access changes in an external system. **Attribute synchronization** is a configured identity-to-account write path for existing correlated accounts.
+A bad non-null higher-priority reference isn't automatically skipped in favor of a lower-priority reference that would match.
 
-Moving an account to an identity with different values can trigger configured synchronization. Review relevant identity mappings and dependent operations before moving `wd-601`.
+Also distinguish missing relationships from retained wrong managers. In a separate case with an existing manager, a selected and evaluated changed non-null reference `P-99999` that cannot identify a new manager retains the previous relationship. That doesn't prove the new input matched.
 
-A corrected link does not demonstrate that a resulting target write succeeded, and restoring an earlier criterion does not automatically reverse a completed write.
+When the selected input changes to null, the relationship changes to null under the documented conditions. Trace any competing non-null source before applying that result. These variations assume standard matching and the stated actual source selection and evaluation.
 
-An **access request** asks for an access item for an identity. Its actual review task is another record to inspect after a manager correction; do not assume every existing approval moved automatically.
+A **custom identity attribute** is an additional organization-defined identity field. If used for matching, verify its correlation-searchable eligibility, populated values and required preparation. Account-correlation preparation includes the documented manual processing for all identities before source aggregation. Manual processing means an administrator initiates identity processing. Being queryable in Search isn't proof of that readiness.
+
+A programmatic manager correlation rule can implement more complex requirements. If that extension is configured, inspect its supported logic rather than assuming the standard field-match example explains it. No such extension applies in the main case.
+
+## Review the effects before calling a correction complete
+
+An **entitlement** represents a permission or membership. Correcting account ownership can change whose account and access ISC represents. It doesn't establish business approval for every permission.
+
+**Provisioning** attempts supported account or access changes in an external system. **Attribute synchronization** is a configured write path from identity values to fields on existing correlated accounts.
+
+Moving `app-51` to an identity with different values can trigger configured synchronization. Review mappings that read the account and other operations that use its relationship.
+
+The link can be correct while a resulting write fails. A completed write also isn't automatically undone by restoring a previous correlation criterion. Inspect actual operation and target evidence.
+
+An **access request** asks for an access item for an identity. Its review task is another record to inspect after a manager correction. The new manager relationship doesn't establish that every existing review task was reassigned.
 
 A **certification** reviews whether existing access should be retained or removed. A **campaign** groups those reviews.
 
-Standard Manager Campaigns exclude identities without managers and are generated as snapshots. A manager added later does not retroactively establish inclusion in an existing campaign.
+A standard **Manager Campaign** excludes identities without a manager and is generated as a snapshot. Adding a manager later doesn't establish retroactive inclusion in that existing campaign.
 
-For the main successful correction below, no attribute-sync write, access request or campaign execution is supplied. The outcomes are account associations and the manager relationship only.
+If an external directory's manager must change, treat that as separate delivery. The built-in Manager attribute can't be used directly for attribute synchronization. The documented approach uses a mapped custom identity field, eligible configuration and the manager representation required by the target.
 
-If an external directory manager must also change, treat that as separately configured delivery. The built-in Manager attribute cannot be used directly for attribute synchronization. The documented approach uses a mapped custom identity field with eligible sync configuration and the manager value required by the target; the relationship alone does not establish that delivery path.
+The main example supplies no external write, access-request execution or campaign execution. Its verified outcomes are two account relationships and one manager relationship.
 
-Do not reset the source or delete accounts or identities to clear these complaints. Removing an ISC account record is also different from deleting an external account, and neither is merely a synonym for selecting a new relationship.
+Don't replace a relationship correction with a source reset or account/identity deletion merely to clear the complaints. Removing a represented account from ISC and deleting an account externally have different effects; neither is simply another name for selecting an identity.
 
-## Verify three results, not one completed job
+## Verify the three intended results
 
-Here are the supplied results after the approved, supported corrections and relevant evaluation:
+After the approved supported corrections and relevant evaluation, the supplied evidence establishes:
 
 ```text
-Wrong account relationship:
-  wd-601 -> I-79010 before correction
-  wd-601 -> I-79009 after correction
-    -> old and new contexts checked
+Wrong persistent account link
+  app-51: owner P-510 -> owner P-509
+  verify former and intended contexts
 
-Missing account input:
-  wd-602 personRef null -> P-79009
+Missing account input
+  app-52: personRef null -> P-509
   collected and evaluated
-    -> wd-602 linked to I-79009
+  -> intended owner P-509 verified
 
-Missing manager mapping:
-  Manager Name selects managerRef
-  relevant processing completed
-    -> I-79009 manager is I-89909
+Missing manager mapping
+  Manager Name selects HR managerRef
+  relevant evaluation occurs
+  -> employee P-509 reports to P-609
 
 Same account keys and logins
 No external write result supplied
 ```
 
-This is a before-and-after evidence summary, not a promise that one aggregation performs every correction. Human approvals, relationship correction, feed repair and manager configuration are different work.
+This is an outcome summary. It doesn't claim that one aggregation performs a manual correction, repairs a feed and supplies a missing manager mapping.
 
-The workspace account remains `wd-601` with login `drao.wd`. The review account remains `wd-602` with login `drao.review`. Devi remains `I-79009`.
+The workspace account remains `app-51` with login `workspace.user`. The review account remains `app-52` with login `review.user`. The employee remains the same existing person identified by `P-509`.
 
-The fields and relationships that needed correction have changed; unrelated object identities have not been replaced.
-
-Use different evidence for each acceptance condition:
+Different acceptance conditions require different evidence:
 
 | Acceptance condition | Evidence that establishes it |
 |---|---|
-| The wrong link is corrected | Exact source/account now points to the approved identity and is no longer associated with the wrong one; supported change and dependent effects are reviewed. |
-| The unmatched account is resolved | Approved reference is on the actual collected account, relevant evaluation occurred and the intended resulting association is observed. |
-| The manager relationship is correct | Selected mapping/source/input and manager's own applied field support the approved reporting line; actual manager relationship is verified. |
-| A data defect is closed | The approved upstream correction is delivered through the integration and confirmed in represented data; a manual link alone is insufficient. |
-| A dependent task or write is complete | Its actual reviewer, campaign population or target state is verified independently of relationship success. |
-| The cause is understood | Current facts, retained history and remaining uncertainty are separated; no unsupported historical trace is claimed. |
+| Wrong link corrected | Exact account now associates with the approved person, with former and intended identity contexts checked and relevant effects reviewed. |
+| Uncorrelated account resolved | Approved reference is present on the collected account, relevant evaluation occurred and the intended link is observed. |
+| Manager correct | Selected mapping/source/input and manager's own current identity field support the approved reporting line; actual relationship is verified. |
+| Data defect closed | Approved upstream correction reaches represented data; a manual link alone doesn't prove repair. |
+| Dependent task or write complete | Actual reviewer, campaign population or target state is checked independently. |
+| Cause understood | Current facts, supported history and remaining uncertainty stay distinct. |
 
-Use aggregation history for the relevant run's timing, status, scope clues and optimization. Manual Correlation history concerns file imports, not every possible account-level correction.
+Use aggregation history for run timing, status, scope clues and optimization. Manual Correlation history concerns file imports, not every possible account-level correction.
 
-Use current account and identity records for current values and relationships. Available events can help establish changes, but they do not guarantee a complete candidate-by-candidate explanation of a past match.
+Current account and identity views establish current represented values and relationships. Available events can help identify recorded changes; they don't guarantee a complete candidate-by-candidate explanation of an old match.
 
-Keep observation times together. A Search result and a newer account detail view can describe different observations without proving another relationship change.
+Keep observation times with exact objects. An older Search result and newer account detail can describe different observations without proving another move.
 
-If evidence is missing, say what is missing and leave that acceptance condition open. Do not turn an incomplete investigation into a confident diagnosis by repeating the same read.
+If an acceptance condition lacks evidence, state what is missing and keep it open. Repeating the same read doesn't turn an incomplete investigation into an established cause.
 
 ## Work through the changed evidence
 
-### 1. The account is absent from Devi's page
+### The account is missing from one person's page
 
-**Facts:** Global account evidence finds `wd-601` under `I-79010`; approved ownership identifies Devi.
+Account evidence finds `app-51` under the other person's identity. Approved records identify the employee as its owner.
 
-Is this primarily an account that was never collected?
+Is the account uncollected, or is its relationship the issue?
 
-**Reasoning:** No. The represented account exists. Investigate its incorrect association and origin, then choose the approved correction. Absence from one identity's page is not absence from ISC.
+### The right value exists in an unselected field
 
-### 2. A correct value is in the wrong selected field
+A variation contains `personRef = P-509`, but the saved criterion compares the account key `app-52` with identity Identification Number.
 
-**Facts:** A variation has `personRef = P-79009`, but its saved criterion selects account key `wd-602` against Identification Number.
+Would you replace the person's reference with that account key? What configuration would you inspect?
 
-Should you replace the person's reference with the account key?
+### A replacement instruction was saved
 
-**Reasoning:** No. Verify the criterion's selected fields and their meaning. Correct a proven configuration error rather than damaging valid person data to satisfy an unsuitable comparison.
+The replacement criterion is correct, but the account is unchanged and skipped during an optimized aggregation. No later evaluation evidence exists.
 
-### 3. The instruction changed but the record was skipped
+Has the old relationship been demonstrated as reconsidered?
 
-**Facts:** A correct replacement criterion is saved. The account is unchanged and skipped during an optimized aggregation. No later evaluation evidence is supplied.
+### The wrong manual link survives a reread
 
-Does the new configuration prove the old relationship was reconsidered?
+Account `app-51` contains the correct reference but has its mistaken persistent link. An unoptimized aggregation finishes.
 
-**Reasoning:** No. Establish relevant supported evaluation and the actual result. A save and a read are not that evidence, and persistent manual treatment still needs separate review.
+Must the account now belong to the intended employee?
 
-### 4. The wrong link survives a broad reread
+### The manager reference and identity are both present
 
-**Facts:** `wd-601` has correct input but an incorrect manual link. An unoptimized aggregation runs.
+The employee's HR account contains `P-609` and the manager identity exists with that reference. Employees still has no Manager Name mapping.
 
-Must it now belong to Devi?
+Is manager setup complete?
 
-**Reasoning:** No. Unoptimized aggregation does not remove manual correlation. Use the supported approved relationship correction and verify old/new identity contexts and dependent effects.
+### A manager remains visible after a bad reference
 
-### 5. The HR field and manager identity both exist
+In a separate standard-matching case, an employee already has a manager. Its selected and evaluated input changes to unmatched non-null `P-99999`; no competing source applies.
 
-**Facts:** TeamLedger contains `P-89909`, and manager `I-89909` exists. Employees has no Manager Name mapping.
+Does the displayed old manager demonstrate a successful new match?
 
-Do those two facts alone complete manager setup?
+### The report improves after arbitrary assignments
 
-**Reasoning:** No. Both profile mapping and source manager configuration are required. Add only the approved missing configuration, evaluate the relevant identity and inspect the relationship.
+All unmatched accounts are assigned to the source administrator without verified ownership. The uncorrelated count falls.
 
-### 6. A manager is still displayed after a bad reference
+What has the lower count failed to demonstrate?
 
-**Facts:** In a separate variation, an employee has an existing manager. Its selected, evaluated reference changes to unmatched non-null `P-99999`; no competing source or custom rule applies.
+### The association is correct but delivery failed
 
-Does the displayed old manager prove the new reference matched?
+A separate approved move establishes the intended relationship. A configured synchronization write fails, and the target retains its old value.
 
-**Reasoning:** No. Documented behavior retains the existing manager when the new non-null reference cannot correlate. Investigate the input and approved reporting line; presence is not correctness.
+Must both tasks have the same result?
 
-### 7. The count improved after assigning everything
+## Compare your reasoning
 
-**Facts:** A team manually assigns all unmatched accounts to the source administrator without verified owner evidence. The uncorrelated count falls.
+For the missing page entry, the exact account exists in ISC under another person. Investigate its incorrect association and origin. Absence from one identity's page isn't absence from ISC.
 
-Has the project demonstrated correct ownership?
+For the unselected value, inspect the criterion's actual account and identity fields and their meanings. Repair a proven selection error; changing a correct person reference to an account key would damage data.
 
-**Reasoning:** No. The associations may conceal wrong owners. Verify individual business ownership and supported classification; administrative responsibility is not proof of personal account ownership.
+For the saved instruction, the supplied optimized skip leaves reevaluation unproven. Establish supported evaluation and actual outcome. Persistent manual treatment remains a separate question.
 
-### 8. The relationships are right but delivery failed
+For the manual link, unoptimized aggregation doesn't release it. Use the approved supported relationship correction, then verify old/new identity contexts and dependent effects.
 
-**Facts:** A separate approved account move establishes the right association. A configured synchronization write fails, leaving the previous value externally.
+For the manager, both configurations are required. The collected value and existing candidate don't replace the missing Manager Name mapping. Establish the approved mapping, relevant evaluation and actual relationship.
 
-Must the relationship task and delivery task have the same outcome?
+For the retained manager, changed unmatched non-null input can preserve the earlier relationship under the supplied conditions. Inspect input and approved reporting line; presence isn't proof of correctness.
 
-**Reasoning:** No. Retain the verified association result while keeping delivery unresolved. Investigate the actual write failure and verify any approved recovery against the target; repeating correlation is not automatic delivery repair.
+For arbitrary assignments, the count establishes fewer missing associations. It doesn't establish legitimate owners. Source administration doesn't prove personal account ownership.
 
-## Turn a mixed exception queue into separate investigations
+For the failed write, preserve the verified relationship result while retaining the delivery issue. Investigate the actual failure and verify any approved recovery against target state. Repeating correlation isn't automatic write repair.
 
-A project has 90 investigation records: 20 absent source accounts, 20 collected accounts without usable selected references, 15 accounts with wrong persistent links, 10 whose legitimate intended identities are not established, 10 missing or incorrect manager relationships, 10 ambiguous or contradictory identity candidates and 5 non-person accounts needing classification review.
+## Separate a mixed exception queue
 
-The project manager asks whether one new matching rule and another aggregation can close the queue.
+A project has 90 investigation records, placed into these primary groups:
 
-How would you explain the work?
+- 20 source accounts are absent from ISC.
+- 20 collected accounts lack usable selected references.
+- 15 accounts have wrong persistent links.
+- 10 lack their legitimate intended identities.
+- 10 have missing or incorrect manager relationships.
+- 10 have ambiguous or contradictory candidate evidence.
+- 5 are non-person accounts needing classification review.
 
-The 20 absent records need collection-scope and execution evidence. The next 20 need approved input delivery. The 15 wrong persistent links need supported relationship correction and consequence review, not a promise that a broad reread releases them.
+The project manager proposes one new comparison and another aggregation to close the queue.
 
-The 10 missing-identity cases need approved identity-establishment investigation. The 10 manager cases need manager-specific mapping, source selection, candidate and processing evidence.
+How would you explain the work and establish completion?
 
-The 10 ambiguous cases need person-reference and ownership clarification without guessing a winner. The 5 non-person accounts need a supported responsibility and classification design rather than arbitrary personal assignment.
+The groups total 90 here. An actual record can have additional issues, so preserve its evidence and review secondary problems too.
 
-Preserve the exact account and identity references, proposed correction, scope and acceptance evidence for each record. Review shared causes when many records have the same defect.
+The 20 absent records need collection-scope and execution evidence. The 20 unusable-input cases need approved reference delivery. The 15 wrong persistent links need supported relationship correction and consequence review.
 
-Then report which outcomes are confirmed and which still need evidence. You are not trying to make every symptom disappear through one operation; you are demonstrating the intended result for each relationship.
+The 10 missing-identity cases need approved population, data and identity-establishment investigation. The 10 manager cases need manager-specific mapping, source selection, candidate and evaluation evidence.
+
+The 10 ambiguous or contradictory cases need person-reference and ownership clarification without guessing a winner.
+
+A **machine account** is a non-human account related to an application or service. For the 5 non-person cases, establish use, responsible ownership and supported classification instead of assigning a convenient employee.
+
+Preserve exact account and identity references, proposed correction, scope and acceptance evidence for each record. Review shared causes when many accounts have the same defect.
+
+Report confirmed outcomes separately from work still needing evidence. Completion comes from demonstrating each intended relationship and required effect.

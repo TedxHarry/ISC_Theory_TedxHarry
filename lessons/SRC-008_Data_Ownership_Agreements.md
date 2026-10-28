@@ -1,371 +1,368 @@
 # HR approved the extension. Who makes sure the new date reaches the right place?
 
-Devi, worker number `48008`, is a fixed-term project coordinator. Her approved contract end date has changed from 30 November to 31 December 2026.
+Human Resources (HR) has approved extending a fixed-term worker's contract from 30 November to 31 December 2026.
 
-Human Resources (HR) shows the extension. SailPoint Identity Security Cloud (ISC) still shows the earlier date. Her existing GrantDesk account, `grant-48008`, also retains the earlier expiry date.
+ISC still has the earlier date. The worker's project application account also retains its earlier expiry.
 
-The integration ran after HR approved the extension. So why isn't the date correct everywhere?
+The integration ran after approval. But did it receive the approved value, calculate the intended identity value and deliver the application change?
 
-In this fictional investigation, the connector faithfully read the integration export. That export still contained the older worker record.
+Those are separate things to establish. Knowing who is responsible for each one helps you correct the failed handoff without changing data that was already right.
 
-“HR fixed it” was true. “The integration received the correction” wasn't.
+## An approved value can have several representations
 
-The worker records, export defect, responsibilities, times and corrected results below are supplied examples. No real tenant execution is claimed.
+An **account** is a record in an external system. In SailPoint Identity Security Cloud (ISC), an **identity** represents a person or another entity, connecting relevant information, accounts and access.
 
-## Which value needs correcting, and where?
+A **source** is ISC's configured representation of a system or collection of account data. Its **connector** provides supported integration behaviour.
 
-An **account** is a record in an external system. An **identity** is ISC's representation of a person or another entity, connecting information, accounts and access.
+For this hypothetical design, `HR-Production` supplies worker information. `Projects-Production` represents a separate application, where the existing account is `project-user`.
 
-A **source** is ISC's configured representation of a system or collection of account data. Its **connector** provides the supported integration behavior.
+The HR worker record and project account are already associated with the same intended ISC identity. That relationship is supplied, rather than inferred from similar-looking identifiers.
 
-Here, PeopleLedger Production supplies worker information. The selected PeopleLedger worker record is identified by `PL-W-48008`. GrantDesk Production is a separate source for application accounts.
+An **attribute** is a named piece of information. The field `contractEnd` on a worker record, `contractEnd` on the ISC identity and `expiryDate` on an application account belong to different records.
 
-Devi's PeopleLedger and GrantDesk records are already associated with her ISC identity in this example. That association is supplied, not inferred merely because their numbers look similar.
+An **identity attribute** is a value on the ISC identity. A **mapping** specifies which input supplies or is converted into an output value. Matching field names don't make those values one shared field.
 
-An **attribute** is a named piece of information, such as contractEnd on a worker record or expiryDate on an application account.
+A **data ownership agreement** establishes who decides a value's meaning, who delivers it, who maintains the integration and how discrepancies are corrected and verified.
 
-An **identity attribute** is a value on the ISC identity, rather than on one external account. A **mapping** selects or converts inputs into an output attribute. That mapping determines which input supplies the identity value; matching field names don't make all those records one shared value.
+This is an engineering and operating agreement. It isn't a special ISC object that automatically validates every field or settles disagreements.
 
-A **data ownership agreement** establishes who decides a value's meaning, who supplies it, who maintains its integration, and how errors are corrected and verified.
+For this date, the question is: who can approve the extension, and who must carry that approval into each dependent record?
 
-This is an engineering and operating agreement. It isn't a special ISC object that automatically validates every input or resolves disagreements between systems.
+All records, assignments, times, defects and results below are supplied examples. No real tenant operation or observed worker event is claimed.
 
-The useful question isn't simply, “Who owns PeopleLedger?”
+## Give the decisions and handoffs identifiable owners
 
-Ask, “Who is allowed to decide this end date, and who is responsible for carrying that decision into each dependent record?”
+A **business data owner** decides the approved business meaning and value. A **data steward** handles the agreed day-to-day quality checks and corrections.
 
-## Give each responsibility a clear job
+A **producer** supplies integration data, such as an export, report or API response. An **API**, or application programming interface, lets software exchange information through supported operations.
 
-A **business data owner** decides the approved meaning and authoritative business value. A **data steward** handles agreed day-to-day data-quality and correction work.
+The producer may be operated by a reporting team that cannot approve contract changes. Correctly publishing an approved date and deciding what that date should be are different responsibilities.
 
-A **producer** supplies the integration data, such as an export, report or API response. An **API**, application programming interface, allows software to read or change information through supported operations.
+An **integration owner** maintains supported collection, mappings and operational behaviour. A **consumer** is a system or process using the value.
 
-The producer's team can differ from the people who approve the HR record. A reporting team can operate an export without having authority to extend a contract.
+For this design, the assignments are:
 
-An **integration owner** maintains the supported read, mapping and operational behavior. A **consumer** is a system or process that uses the supplied value.
-
-For this example, the organization agrees these responsibilities:
-
-| Responsibility | Assigned party in this example | Evidence of completing its part |
+| Responsibility | Responsible party | Evidence for its part |
 |---|---|---|
 | Approve the contract end | HR data owner | Approved worker record and change history |
-| Publish the approved worker data | PeopleLedger export team | Correct identified row in the delivered export |
-| Represent and calculate the ISC values | Identity integration team | Collected source account, mapping and resulting identity value |
-| Maintain the application's expiry behavior | GrantDesk application team with identity operations | Supported update result and actual target expiry configuration |
+| Publish approved worker data | HR export team | Correct identified row in the delivered export |
+| Represent and calculate ISC values | Identity integration team | Collected account, applicable mapping and resulting identity value |
+| Maintain project-account expiry | Application team with identity operations | Supported update result and actual target expiry configuration |
 
-These are illustrative assignments, not mandatory SailPoint job titles. One team can hold more than one responsibility, but the separate decisions still exist.
+One team can hold several responsibilities. That doesn't eliminate the separate decisions or the need to check each handoff.
 
-ISC also records a **Source Owner** for a configured source. That assignment doesn't, by itself, document every field's business meaning, producer obligation or correction route.
+ISC also records a **Source Owner** for a configured source. That assignment doesn't itself document every field's business authority, delivery rules or correction route.
 
-Likewise, a person's access to an administration screen doesn't establish authority to approve a business change.
+Likewise, permission to edit an administration screen doesn't establish authority to approve a contract extension.
 
-## “Authoritative” needs a field and a purpose
+## First follow the date when everything works
 
-An **authoritative source** participates in establishing ISC identities through an **identity profile**. The profile configures an identity population and the mappings that supply its attributes.
+Assume HR approves contractEnd = `2026-12-31` on the intended worker record, revision 18. The producer publishes that approved record, preserving its stable identifier.
 
-A **transform** calculates or formats a value using supported logic.
+**Account aggregation** collects account records and their attributes into ISC. With the correct delivered row and supported read, the HR source account contains the new date.
 
-Making PeopleLedger authoritative for identities doesn't mean that every identity attribute must come from it or that every application field must overwrite HR.
+An **identity profile** configures an identity population, including the mappings supplying its attributes. An **authoritative source** supplies accounts used to establish identities through that profile.
 
-In our agreement:
+Here HR-Production is configured as the authoritative source for this existing identity. Assume its applicable profile mapping takes contractEnd from the correct HR source account. **Identity processing** evaluates identity information under the relevant profile and access configuration. In the supplied normal result, the identity's contractEnd becomes `2026-12-31`.
 
-HR owns the approved contract end and employment status. The corporate directory team supplies the work email address. The integration team implements the selected mappings, but doesn't approve a contract extension by editing a transform.
+Now consider the project account. **Attribute synchronization** keeps configured account attributes aligned with corresponding identity values.
 
-**Account correlation** associates an account with its owning identity using configured matching. It doesn't decide which competing end date is the approved business value.
+It needs an eligible account field and supported configuration. The account field must be included in the source's **Create Account definition**, which supplies account-creation values, and mapped directly from an identity attribute there.
 
-If HR says 31 December and an application still says 30 November, don't select the later date just because it preserves access. Don't select whichever system was read last either.
+Synchronization uses that configured relationship for existing accounts; it doesn't create them. **Account correlation** associates an account with its appropriate ISC identity through configured matching. Attribute synchronization applies to existing correlated accounts, with the relevant identity-profile mapping.
 
-Establish which field is responsible for which decision. Then investigate why the other value differs.
+Here, assume expiryDate supports updates, is directly mapped from identity contractEnd in the applicable definition, and has synchronization configured. A configured identity or account value change that leaves them different can cause ISC to update the account field to the identity value.
 
-A downstream value can be an observation of what is configured today, rather than the authority for what should be configured.
+**Provisioning** performs supported external account or access changes. The project-account update is a provisioning operation, rather than another read of HR.
 
-## Write an agreement that a real record can satisfy
+In the supplied normal outcome, the actual target expiryDate is confirmed as `2026-12-31`.
 
-A **schema** defines represented attributes and their designated uses. It tells you more than a list of column headings, but it doesn't replace the business agreement behind those fields.
+```text
+[HR approves the business value]
+                 |
+[Producer delivers the approved record]
+                 |
+[ISC collects the source account]
+                 |
+[Profile mapping supplies identity value]
+                 |
+[Supported target update]
+                 |
+[Human check: actual target expiry]
+```
 
-For PeopleLedger, the team records the following selected field rules:
+The arrows identify data dependencies and responsibility handoffs. They don't promise one private transaction, a universal execution order or exact completion time. The final box is a human verification of the target result.
 
-| Field or concern | Agreed meaning | What needs verification |
+A correct HR record supports the approval. A correct collected account supports delivery into ISC. A correct identity value supports the mapping result. The target's actual expiry supports the stated external outcome.
+
+Each observation answers its own question.
+
+## Being authoritative doesn't mean deciding every field
+
+The HR source's identity-origin responsibility doesn't mean every identity value must come from HR.
+
+In this agreement, HR approves contract dates and employment status. A corporate directory team supplies work email. The integration team implements the selected mappings.
+
+A **transform** calculates or formats a value using supported logic. Editing one doesn't give the integration team business authority to extend a contract.
+
+Account correlation doesn't choose which conflicting date is approved either. It establishes an account's association with an identity.
+
+If HR says 31 December and the application says 30 November, choosing whichever date is later isn't an authority rule. Choosing whichever system was read last isn't one either.
+
+The application value may describe what is configured today, while HR describes what is approved. The discrepancy then needs a failed-handoff investigation, rather than a new business decision invented by the integration.
+
+## Make the field agreement precise enough to check
+
+A **schema** defines represented attributes and their designated uses. It describes the data structure, but doesn't supply the business meaning behind every field.
+
+For the selected HR record, the team agrees:
+
+| Field or concern | Meaning in this design | What to check |
 |---|---|---|
-| workerKey | Stable identifier of this PeopleLedger record | Present, unique in the intended source context, not casually reassigned |
-| personNumber | Reference to the person under the agreed matching design | Correct owner, supported format and handling of multiple worker records |
-| employmentStatus | Agreed worker status code | Meaning of each allowed code and handling of unknown values |
-| contractEnd | Last authorized calendar day for this fixed-term record | Required for this worker category, correct date and agreed time-zone boundary |
-| managerNumber | Reference to the responsible manager | Valid reference or an explicitly handled exception |
-| recordRevision | Producer's version of this worker record | Which approved revision was published, not merely when a file was created |
-| Delivery scope | Agreed worker population and full/change contract | Correct population, completeness, effective period and export time |
+| workerKey | Stable identifier of this HR record | Present, unique in intended source context and not casually reassigned |
+| personNumber | Person reference under the matching design | Correct owner, supported format and multiple-record handling |
+| employmentStatus | Agreed worker-status code | Allowed values and treatment of unknown codes |
+| contractEnd | Last authorized calendar day for this fixed-term record | Required for this category, approved date and agreed time boundary |
+| managerNumber | Reference to the responsible manager | Correct reference kind and valid match or explicit exception |
+| recordRevision | Producer's version of this worker record | Which approved revision was delivered |
+| Delivery scope | Intended population and full/change meaning | Completeness, effective period and export time |
 
-A **snapshot** represents the agreed population at a defined time. A **change feed** supplies selected changes rather than repeating that complete population. The delivery agreement must say which one it supplies.
+A **snapshot** describes the agreed population at a defined time. A **change feed** supplies selected changes instead of repeating the complete population. The delivery agreement must distinguish them.
 
-Agree how corrections, deliberately deleted records and temporarily unavailable data are represented. A worker missing from a partial or changes-only delivery hasn't automatically been terminated, deleted from the source, or stripped of access.
+Agree how corrections, deliberate record deletions and temporarily unavailable data are represented. A row missing from a partial or changes-only delivery doesn't by itself prove termination, source deletion or access removal.
 
-workerKey identifies an HR record. personNumber identifies the person under this project's agreement. Multiple records for one person need a deliberate design; don't force those two identifiers to mean the same thing.
+`workerKey` identifies the worker record; `personNumber` refers to the person under this agreement. One person can have multiple worker records, so those references needn't have the same purpose.
 
-For managerNumber, agree whether the value is the manager's person reference, account key or another identifier, and which configured matching uses it. A non-empty reference doesn't itself establish the correct manager relationship.
+For managerNumber, establish whether it contains a manager's person reference, account key or another identifier, and which configured matching uses it. A non-empty reference doesn't prove the correct manager relationship.
 
-A **data type** describes the kind of value, such as text, a whole number or a true/false Boolean. **Cardinality** describes whether a field holds one value or a collection.
+A **data type** describes the kind of value, such as text, a whole number or true/false. **Cardinality** describes one value versus a collection. Agree those properties too. A textual reference isn't automatically an arithmetic quantity; a list isn't automatically one joined string.
 
-Agree those properties alongside the business meaning. A textual reference isn't automatically a number suitable for arithmetic, and a list isn't automatically one joined string.
-
-A selected corrected row could look like this in **JSON**, JavaScript Object Notation. Curly braces contain a named-property object; quoted values are text, and the unquoted revision is a number.
+A selected corrected row in **JSON**, JavaScript Object Notation, could be:
 
 ```json
 {
-  "workerKey": "PL-W-48008",
-  "personNumber": "48008",
+  "workerKey": "worker-record",
+  "personNumber": "W-28",
   "employmentStatus": "ACTIVE",
   "contractEnd": "2026-12-31",
-  "managerNumber": "48001",
+  "managerNumber": "M-4",
   "recordRevision": 18
 }
 ```
 
-This is a selected record fragment, not a complete authoritative-source feed or an instruction to create an identity. The other required attributes and supported account identification are assumed to be correctly configured.
+Curly braces enclose named properties. Quoted values are text; the unquoted revision is a number.
 
-A **record revision** is a version assigned by this fictional producer. Its presence doesn't make ISC automatically reject older rows or choose the highest version. Any ordering protection needs a supported, explicitly implemented design.
+This fragment isn't a complete authoritative-source feed or an instruction to create an identity. Other required identity inputs and supported account identification are assumed correctly configured.
 
-## Required for what?
+A **record revision** is a version assigned by this example's producer. Merely including it doesn't make ISC reject older rows or select the highest number automatically. Ordering protection needs a supported, explicitly implemented design.
 
-A field can be required by the source schema, by an ISC feature, by a target operation, or by the organization's own decision logic. Those aren't interchangeable requirements.
+## Required by which decision or operation?
 
-ISC identity profiles require mapped, non-null User Name, Work Email and Last Name values. User Name must be unique across identities. Work Email being non-null doesn't mean ISC has verified that it is a usable email address.
+A source schema, an ISC feature, a target operation and the organization can each require different fields.
 
-Separately, this organization requires contractEnd for fixed-term workers. That is a project rule, not a claim that every ISC identity must have a contract end date.
+ISC identity profiles require mapped, non-null User Name, Work Email and Last Name values. User Name must be unique across identities, including those in other profiles. Non-null Work Email doesn't mean ISC has validated it as a usable email address.
 
-**Validation** checks whether input meets specified conditions. Presence is only one condition. A manager reference can be present but identify the wrong person; an end date can parse correctly but contradict the approved record.
+ContractEnd is separately required here for fixed-term workers. That is this project's rule, rather than a universal required field for every ISC identity.
 
-Decide where each check happens. The source, producer, integration and consumer can enforce different checks. A written requirement alone doesn't prove that software enforces it.
+**Validation** checks whether input satisfies specified conditions. Presence is only one check. A manager reference can be populated but identify the wrong manager; a date can parse correctly but disagree with the approval.
 
-When a required value is missing, assign the investigation and correction route. Don't manufacture an email address, default every unknown status to ACTIVE, or give a fixed-term worker an invented distant expiry simply to make processing continue.
+Agree where each check is enforced. The producer, integration and consumer can perform different checks. Writing down a requirement doesn't prove that any software enforces it.
 
-A **fallback** supplies an agreed alternative under specified conditions. It isn't permission to conceal a broken input.
+If a required value is missing, assign the correction route. A fabricated email, an unknown status converted to ACTIVE or an invented distant expiry can conceal the defect while changing the meaning.
 
-If a record cannot be safely used, the organization needs an approved exception process. That might involve correcting or holding a delivery in the producer's process, or a supported integration-specific response. Don't assume ISC offers a universal automatic quarantine for every bad field.
+A **fallback** supplies an agreed alternative under specified conditions. It doesn't authorize guessing business data.
 
-The correct security response isn't always “keep all access” or “disable everyone.” Responsible owners must agree the response for the affected operation and risk.
+An unusable record needs an approved exception process. That could include correcting or holding delivery in the producer's process, or supported integration-specific handling. ISC isn't assumed to provide a universal automatic quarantine for every invalid field.
 
-## Empty doesn't settle the business meaning
+Responsible owners must agree the response for the affected operation. Neither “keep everything” nor “disable everyone” substitutes for that decision.
 
-An omitted property, an explicit null, empty text and an empty collection are different inputs.
+## Agree what an empty value means in each direction
 
-**Null** is an explicit no-value representation in formats that support it. A missing managerNumber doesn't automatically mean “remove the manager relationship.” A missing contractEnd doesn't automatically mean “permanent employee.”
+An omitted property, explicit null, empty text and empty collection are different inputs.
 
-Define whether a supplied blank means unknown, unchanged, not applicable, or an intentional clearing instruction for the actual operation. If those meanings need separate representations, agree them rather than overloading one blank.
+**Null** is an explicit no-value marker in formats that support it. Missing managerNumber doesn't automatically instruct removal of the manager relationship. Missing contractEnd doesn't automatically mean the worker is permanent.
 
-**Attribute synchronization** can keep configured existing account attributes aligned with corresponding identity values. It requires eligible account configuration and existing accounts correlated to identities.
+For the actual operation, define whether absence means unknown, unchanged, not applicable or intentional clearing. If those meanings differ, give them distinguishable representations.
 
-The account field must be included in the **Create Account definition**, the configuration that supplies values for account creation, and mapped directly from an identity attribute. Synchronization uses that configured mapping for existing accounts; it doesn't create those accounts. An agreement or identity mapping alone doesn't enable synchronization.
+Write behaviour needs particular care. In documented attribute synchronization, a null identity value produced by its profile mapping can propagate to the account attribute.
 
-In that documented mechanism, a null identity value from a profile mapping can propagate to the synchronized account attribute.
+You therefore can't universally interpret a blank as “leave the target unchanged.”
 
-So “leave it blank and the application will keep its old value” isn't a safe universal assumption.
+Reading unavailable information, calculating an identity value and provisioning an account update are different mechanisms. An agreement covering both read and write needs both meanings, rather than a single blanket null rule.
 
-**Provisioning** performs supported changes to external accounts or access. Reading missing information, calculating an identity value and submitting an account update are different operations with different consequences.
+A target-side manual deviation also isn't guaranteed to persist. When configured synchronization detects disagreement, it can restore the identity value on the account. A temporary exception needs its owner, scope, duration and reconciliation plan.
 
-An agreement needs both read meanings and write meanings where the project performs both.
+## A date's meaning includes when it applies
 
-## A date needs more than a format
+An **effective date** says when a business fact applies. A **recorded time** says when it was entered or corrected. A **delivery time** says when the integration data was produced or sent.
 
-An **effective date** states when a business fact applies. A **recorded time** states when that fact or correction was entered. A **delivery time** states when integration data was produced or sent.
+Those can differ legitimately. A change can be approved today for the future. A late correction can describe a fact that should already have applied.
 
-Those times can differ without a processing failure. A future-approved change can be recorded today and become effective later. A late correction can describe something that should already have applied.
+In our example, HR approves the extension on 20 November 2026 at 08:45 UTC. **UTC**, Coordinated Universal Time, is the common time reference used here.
 
-For Devi, HR approves the extension on 20 November 2026 at 08:45 UTC. **UTC**, Coordinated Universal Time, is the common time reference used for this example.
+The agreement interprets contractEnd as the last authorized calendar day in UTC:
 
-The agreed contractEnd value is date text in year-month-day format. The business interprets it as the last authorized day in UTC.
+- `2026-11-30` gives the required boundary `2026-12-01T00:00:00Z`.
+- `2026-12-31` gives the required boundary `2027-01-01T00:00:00Z`.
 
-Under that specific agreement, 2026-12-31 gives a required access-ending boundary of 2027-01-01T00:00:00Z. The earlier 2026-11-30 value gives 2026-12-01T00:00:00Z. The Z indicates UTC.
+Z indicates UTC. These boundaries are explicit business choices, rather than ISC defaults or evidence that a target action executes at that precise instant.
 
-These are supplied business boundaries, not ISC's default date interpretation or a promise that an external change executes at that exact instant.
+Agree whether the target accepts a date or timestamp, which clock rules apply and what timing evidence satisfies the requirement. A regional time zone can have clock changes that a fixed offset doesn't describe.
 
-Agree whether a target accepts a date or a timestamp, which clock rules apply, and what timing evidence satisfies the requirement. A regional time zone can have clock changes that a fixed numeric offset doesn't describe.
+The `dateFormat` transform converts supported date representations. Formatting doesn't approve an extension or decide what “last day” means.
 
-Formatting a date doesn't choose those policies. ISC's dateFormat transform can convert supported date representations; it doesn't approve an extension or decide what “last day” means.
+A **lifecycle state** represents an identity's organizational status and can drive configured access changes. HR's status code needs an appropriate mapping or calculation to connect it to that behaviour.
 
-A **lifecycle state** represents an identity's organizational status and can drive configured access changes. An HR status code and an ISC lifecycle state need a mapping or calculation; matching English labels alone doesn't implement that relationship.
+Storing a future date alone doesn't schedule every dependent operation. The relevant collection, identity calculation and access-change handling still need configuration and evidence.
 
-**Account aggregation** collects account records and attributes into ISC. **Identity processing** evaluates identity information under the applicable profile and access configuration.
+## A newly generated export can still contain an old record
 
-A date correction needs the relevant collection, calculation and access-change handling. Don't assume that merely storing a future date schedules every dependent operation.
+Now change the delivery part of the successful path.
 
-## A fresh file can carry an old decision
+HR has approved revision 18 with contractEnd `2026-12-31`. The export is generated at 09:20 UTC that day, and ISC reads it at 09:30.
 
-On that same day, the PeopleLedger export is generated at 09:20 UTC, after the 08:45 approval. ISC reads it at 09:30 UTC.
-
-But the row still contains revision 17 and contractEnd 2026-11-30. The approved HR record is revision 18 with contractEnd 2026-12-31.
+The delivered row for the same workerKey still contains revision 17 and `2026-11-30`.
 
 ```text
-[Approved worker: revision 18]
+[Approved record: revision 18]
 [contractEnd: 2026-12-31]
               !=
-[Exported worker: revision 17]
+[Delivered record: revision 17]
 [contractEnd: 2026-11-30]
 ```
 
-The comparison is between two identified records for PL-W-48008. It isn't a new matching algorithm or an automatic ISC revision check.
+This compares the approved and delivered versions of one identified record. It isn't an automatic ISC revision check or a matching algorithm.
 
-The export's new timestamp proves when that delivery was generated. It doesn't prove that the producer selected the latest approved worker revision.
+The supplied cause is a stale export view. The connector and identity mapping faithfully consume the older date they receive.
 
-The supplied defect is a stale export view. The connector and identity mapping faithfully use the old date they receive.
+The 09:20 timestamp proves when that delivery was generated. It doesn't prove which approved business revision it contains.
 
-Reprocessing the same old input doesn't create the approved extension. Editing the calculated identity date to hide the discrepancy doesn't repair the producer's data either.
+Re-reading the same old row won't supply the extension. Editing the identity date to conceal the disagreement won't repair the producer's stale data.
 
-**Freshness** must therefore identify what is fresh: the delivery, the included business record, the collected account, the calculated identity value, or the target state.
+**Freshness** therefore needs an object: the delivery, included business record, collected account, calculated identity value or target state.
 
-A promised delivery every hour is a service expectation, not proof that each row's business value is at most an hour old. Define how missed deliveries, stale rows and late corrections will be detected and escalated.
+An hourly-delivery commitment doesn't prove that every included row's business value is at most an hour old. Agree how stale rows, missed deliveries and late corrections will be detected and escalated.
 
-## Fix the responsible boundary and follow the result
+## Correct the failed handoff and verify the next one
 
-In this example, HR has approved the business change. The export still needs a correction: its team fixes the stale view and publishes the approved revision 18 for the same workerKey.
+HR has already completed its approval in this case. The export team corrects the stale view and publishes revision 18 for the same workerKey.
 
-The integration team then checks the appropriate collection and identity-value calculation. Starting identity processing doesn't itself prove successful external delivery.
+The integration team checks the appropriate collection and mapped identity result. In the supplied corrected outcome, both source account and identity contain `2026-12-31`.
 
-GrantDesk's expiryDate is assumed to support updates and to be configured for attribute synchronization from the agreed identity contract-end value. The applicable target operation and actual target expiry are checked separately.
+The configured project-account update and actual target expiry are checked separately. The supplied target result is also `2026-12-31`.
 
-The dependency and responsibility handoff is:
+That establishes the stated values. It doesn't prove a future expiry operation, uninterrupted sign-in or every future access decision.
 
-```text
-[HR approves the business change]
-                 |
-[Producer publishes corrected data]
-                 |
-[ISC collects and calculates values]
-                 |
-[Supported target update is verified]
-```
+The failing boundary determines the correction. If HR is correct but the export is wrong, fix the producer. If the delivered input is right but its mapping is wrong, correct that integration configuration through the supported change process.
 
-The lines describe required handoffs and evidence. They aren't one private transaction, a universal ISC execution order, or a guarantee that every downstream system supports the requested update.
+If the identity is right but a target update is denied, investigate that operation, its inputs and authority. Changing correct HR data isn't a repair for a target permission error.
 
-In the supplied corrected result, the source account and identity both contain 2026-12-31, and GrantDesk's actual expiryDate is confirmed as 2026-12-31.
+A **correction** repairs an incorrect fact or representation. A new business change approves a different fact.
 
-This confirms those stated values. It doesn't prove every future access decision, guarantee uninterrupted sign-in, or demonstrate a future expiry operation.
+The extension approves a new contract date. Repairing the stale export corrects how it represents that approval. Those responsibilities remain different even though both concern contractEnd.
 
-If the HR value is correct but the export is wrong, correct the producer. If the received value is correct but its mapping is wrong, correct the integration mapping through the supported change process. If the identity value is correct but the target update fails, investigate that operation, its inputs and authority.
+If an earlier access action has already happened, correcting the date doesn't automatically reverse every completed action. Establish the actual state and authorized recovery needed.
 
-Don't change approved HR data merely to compensate for a downstream permission error.
+## Give the receiving team evidence it can act on
 
-A **correction** fixes an incorrect fact or representation. A new business change approves a different fact. Keep those reasons distinct even when both travel through the same field.
+A correction request needs the source and environment, stable identifiers, affected fields, previous and approved values, effective date, approval evidence and relevant delivery or processing references.
 
-The extension changes Devi's approved contract. Repairing the stale export corrects its representation of that approval. Those are different responsibilities, even though both concern contractEnd.
+Include the producer revision where available. Use the controlled record and references needed for the investigation, with approved handling of personal information, rather than an unrestricted HR export.
 
-If a correction arrives after an access action already happened, correcting the record doesn't automatically undo every completed action. Establish what actually changed and the authorized recovery needed.
+Agree who acknowledges the issue, fixes it, checks downstream consumers and confirms closure. “Forwarded to HR” is a handoff status, rather than evidence of completion.
 
-## Agree what a correction must carry
+Late, repeated and out-of-order deliveries need rules too. Revision 17 arriving after revision 18 doesn't become approved truth because it arrived later.
 
-For an incident, the receiving team needs enough evidence to identify the record and the failed handoff.
+The producer and integration must implement their supported ordering and recovery design. The revision field alone doesn't provide it.
 
-Record the source and environment, stable identifiers, affected fields, previous and approved values, applicable effective date, approval evidence, producer revision if available, and relevant delivery or processing references.
+Repeated delivery of a correction also shouldn't be a reason to create another account. Preserve stable identification and verify supported repeated-processing behaviour, without inventing an exactly-once guarantee.
 
-Don't send an unrestricted HR export when the investigation only needs one controlled record and its references. Use approved access and handling for personal information.
+If an authorized manual exception is needed, record its reason, owner, scope, expiry and reconciliation plan. Otherwise, one team can believe the target edit is permanent while another expects identity synchronization to replace it.
 
-Agree who acknowledges the issue, who fixes it, who checks downstream consumers, and what closes the incident. “Forwarded to HR” isn't evidence of a completed correction.
+## Accept the result using record-level evidence
 
-Also agree late, repeated and out-of-order delivery handling. A revision 17 file arriving after revision 18 doesn't become the approved business truth just because it arrived later.
+**Acceptance criteria** are observable conditions for deciding whether the integration meets its agreed requirement.
 
-Repeated delivery of the same correction shouldn't be used as a reason to create another account. Preserve stable identification and verify the supported repeated-processing behavior; don't invent an exactly-once guarantee.
+For this extension, inspect the approved revision, exported row, collected account, mapped identity value and actual application expiry. A successful job alone doesn't establish all of them.
 
-If a temporary manual exception is approved, record its owner, reason, scope, expiry and reconciliation plan. A target-side edit can be overwritten by configured attribute synchronization if it differs from the identity value.
+The **user interface**, or UI, displays different records. Source account details show collected attributes; identity details show identity values; profile mappings explain their input.
 
-An undocumented permanent exception can leave two teams believing that the other system is responsible.
+Mapping Preview helps inspect a calculation using selected data. It isn't proof that a target update completed. Starting identity processing or receiving a successful provisioning response likewise needs to be interpreted within its actual scope.
 
-## Make acceptance mean more than “the job finished”
+A modified timestamp doesn't identify which field changed or establish agreement with HR.
 
-**Acceptance criteria** are observable conditions used to decide whether the integration meets its agreed requirement.
+Before accepting the design, test representative conditions: a normal worker, missing required input, duplicate identifiers, a future change, late correction, repeated delivery and denied downstream update. Define the expected evidence for each.
 
-For the extension, those criteria include the approved worker revision, the correct exported row, the intended collected account, the calculated identity value and the confirmed GrantDesk expiry.
+A **schema change** alters field definitions or designated uses. Post-aggregation Account ID/Name changes are strongly discouraged because they can break references or create duplicates; the designated Account Name is documented as immutable.
 
-A successful aggregation, a mapping preview and a successful provisioning request each establish something different. Check the actual resulting state rather than combining those observations into one general success label.
+Treat a proposed key or field redesign as an integration change, rather than routine cleanup. Version the agreement, identify consumers and establish compatibility and recovery before renaming contractEnd or changing it from one date to a collection.
 
-The source's account details show collected attributes. The identity's details show identity values. Profile mappings explain where those values come from. Mapping Preview helps inspect a calculation using selected data; it isn't evidence that a target update completed.
+Even adding a new column can break a consumer if the old required input disappears.
 
-A modified timestamp alone doesn't identify which field changed or whether the value agrees with HR.
+The agreement needs evidence for both correct data and correct access. Neither replaces the other.
 
-Before accepting the agreement, test representative cases: a normal worker, a missing required field, duplicate identifiers, a future change, a late correction, a repeated delivery and a downstream update failure.
+## Work through the handoffs
 
-A **schema change** alters field definitions or designated uses. Changing selected account identification or naming attributes after aggregation is strongly discouraged: it can break references or create duplicates, and the designated Account Name is documented as immutable. Treat a proposed key or field redesign as a reviewed integration change, not routine data cleanup.
+### 1. The export runs after approval
 
-Version the agreement, identify affected consumers, and agree compatibility and recovery before a producer renames contractEnd or changes it from one date to a collection. A new column can still break a consumer if its old required input disappears.
+HR approves revision 18 at 08:45 UTC. The 09:20 export still contains revision 17. Does the later time prove delivery of the extension?
 
-The owner should be able to state which evidence demonstrates correct data and which evidence demonstrates correct access. One doesn't replace the other.
+**Worked reasoning:** No. Compare the identified row, revision and value with the approval. The supplied defect is a stale producer view. Re-reading the same old input won't supply revision 18.
 
-## Work through these handoffs
+### 2. Two systems show different dates
 
-### 1. The job ran after the approval
+HR approves 31 December; the project application shows 30 November. Is “always choose the later date” an adequate rule?
 
-HR approved revision 18 at 08:45 UTC. The 09:20 export still contains revision 17.
-
-Does the export time prove that ISC received the extension?
-
-**Worked reasoning:** No. Compare the identified row and approved revision, not just delivery time. In the supplied case, the producer's stale view is the defect. Re-reading that same old row won't supply revision 18.
-
-### 2. Two systems disagree
-
-HR approves 31 December. GrantDesk still shows 30 November. Someone proposes choosing the later date whenever systems disagree.
-
-Is that an adequate authority rule?
-
-**Worked reasoning:** No. Establish who approves this field and the intended source-to-consumer direction. Investigate the stale target or failed handoff. Choosing the later or last-read value can grant unauthorized time in a different case.
+**Worked reasoning:** No. Establish field authority and intended direction, then investigate the handoff. Later-date or last-read selection can authorize extra time without a business approval in another case.
 
 ### 3. A required email is unavailable
 
-A worker lacks a usable work email. A developer proposes a made-up address so the identity is no longer missing a value.
+A developer proposes a made-up address to satisfy a missing Work Email value. Has that met the requirement?
 
-Has that solved the data requirement?
+**Worked reasoning:** No. Non-null and usable are different conditions. ISC requires the mapped value to be non-null but doesn't validate it as an email address. Follow the approved missing-input process and obtain or calculate only an authorized valid value.
 
-**Worked reasoning:** No. Non-null and usable are different conditions. ISC requires the mapped Work Email value to be non-null but doesn't validate it as an email address. Follow the approved missing-value process and obtain or calculate only an authorized, valid value.
+### 4. The target is corrected manually
 
-### 4. The target is fixed by hand
+An authorized temporary exception changes expiryDate while the identity still has the earlier date. Synchronization remains configured. Is the target edit guaranteed to persist?
 
-An authorized temporary exception changes GrantDesk expiryDate while ISC still contains the earlier value. Attribute synchronization remains configured for that field.
+**Worked reasoning:** No. Configured synchronization can enforce the identity value. Correct the responsible input and calculation, and document the exception's ownership, duration and reconciliation.
 
-Is the target edit guaranteed to persist?
+### 5. A synchronized identity value becomes null
 
-**Worked reasoning:** No. Configured synchronization can enforce the identity value on the account. Correct the responsible input and calculation, and record the exception's ownership, duration and reconciliation plan.
+Someone assumes null always means “keep the existing target value.” Can that rule be used here?
 
-### 5. A blank date arrives
+**Worked reasoning:** No. A null produced by the profile mapping can propagate through configured attribute synchronization. Establish intended read/write meanings and supported handling before treating absence as an instruction.
 
-The identity mapping produces null for a field configured for attribute synchronization. Someone says null always means “keep the target's old value.”
+### 6. An older revision arrives later
 
-Can that assumption be used safely?
+Revision 18 is approved and published. A delayed delivery carries revision 17. Should arrival order make it authoritative?
 
-**Worked reasoning:** No. The documented synchronization mechanism can propagate a null identity value to the account attribute. Establish intended read/write meanings and supported handling before using blank data as an instruction.
+**Worked reasoning:** No. Follow the expressly designed producer/integration ordering and recovery rules. Arrival time doesn't establish approval, and recordRevision doesn't automatically give ISC stale-row rejection.
 
-### 6. Yesterday's file arrives later
+### 7. The identity is right but the update is denied
 
-Revision 18 has been approved and published. A delayed delivery contains revision 17.
+The collected account and identity have 31 December. The target denial identifies insufficient write permission. Should HR change the date again?
 
-Should later arrival alone make revision 17 authoritative?
+**Worked reasoning:** No. The stated defect is target-operation authority. Investigate it through the responsible team while preserving the approved value, then verify the actual target result after an authorized correction.
 
-**Worked reasoning:** No. Arrival order doesn't establish business authority or version precedence. Follow the agreed producer and integration ordering/recovery design. Merely including recordRevision doesn't make ISC implement that protection automatically.
+### 8. The date has a consistent format
 
-### 7. The identity value is correct
+`contractEnd` is 2026-12-31, but no start/end-of-day or time-zone meaning is agreed. Is expiry handling fully specified?
 
-The collected account and identity contain 31 December, but the target update is denied. The denial identifies insufficient write permission.
+**Worked reasoning:** No. Agree the business boundary, target representation and required processing/delivery evidence. This example's next-day UTC boundary is an explicit agreement, rather than an ISC default.
 
-Should HR change the contract end date again?
+## Review a laboratory project's agreement
 
-**Worked reasoning:** No. The supplied defect is in the target-changing operation's authority, not the approved date. Investigate the supported operation and permissions through the responsible team; verify the resulting target state after an authorized correction.
-
-### 8. The date is formatted correctly
-
-contractEnd contains 2026-12-31, but nobody has agreed whether it means the start or end of that day, or which time zone applies.
-
-Has formatting made the expiry requirement complete?
-
-**Worked reasoning:** No. Agree the business boundary, target representation and required processing/delivery evidence. The example's next-day UTC boundary is an explicit agreement, not a universal ISC default.
-
-## Review a different project's agreement
-
-A laboratory application receives worker references, manager references and training status from separate providers. The proposal says, “The source owner owns everything. Missing values mean no change. The latest file wins. If the job is green, support can close the issue.”
+A laboratory application receives worker references, manager references and training status from separate providers. Its proposal says: “The Source Owner owns everything. Missing means no change. Latest file wins. A green job closes the issue.”
 
 What would you replace?
 
-**Worked reasoning:** Assign field-specific business authority, producer responsibility, supported mappings, operational ownership and consumer verification. A configured Source Owner doesn't document all those decisions.
+**Worked reasoning:** Assign field-level business authority, producer delivery, supported mappings, operational responsibility and consumer verification. The configured Source Owner doesn't document all those decisions.
 
-Agree stable identifiers and manager-reference meaning, requiredness for each use, allowed training-status values, and explicit missing/clearing semantics for each operation. Don't infer authority or ordering from file arrival.
+Agree stable worker identifiers, manager-reference meaning, requiredness for each use, allowed training statuses and explicit missing/clearing semantics for each operation.
 
-Establish scope, completeness, freshness, effective times and approved responses to unknown or late data. Agree correction references and evidence for each handoff, with controlled handling of personal information.
+Define scope, completeness, freshness, effective times, ordering and approved handling of unknown or late data. Use controlled correction evidence and personal-information handling.
 
-Define acceptance for the source record, collected representation, identity calculation and each intended target change. Preserve unresolved outcomes instead of closing them under a general job-success label.
+Set acceptance for the source record, collected representation, identity calculation and each required target change. Keep unresolved outcomes open rather than closing them under a general success label.
 
-Explain it to the owner: “We need to know who decides each value, who delivers it, how ISC uses it, and what evidence proves the intended result. Owning a system and completing a job aren't substitutes for that agreement.”
+Explain the responsibilities directly: “This party approves the value. This producer delivers it. These mappings and processes use it. These records demonstrate the intended result, and this owner resolves a failed handoff.”

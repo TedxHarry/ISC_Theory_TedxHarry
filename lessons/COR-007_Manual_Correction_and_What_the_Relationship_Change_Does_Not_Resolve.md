@@ -1,328 +1,334 @@
 # The account is on the right identity now. What did the manual correction actually fix?
 
-Devi, employee `77007`, already has an employee identity in SailPoint Identity Security Cloud (ISC). Her document-review account has been collected into ISC, but it is not attached to her identity.
+An application account is visible in SailPoint Identity Security Cloud, or ISC, but it isn't connected to the person who uses it. The account's person-reference field is empty.
 
-The application owner checks the account against the worker registry and confirms it belongs to her.
+The application owner checks the account against approved worker records and confirms the intended person. You can now establish that relationship manually, even though the reference that should have supported automatic matching is still missing.
 
-You can establish the correct relationship manually. But the account's missing person reference does not become correct just because you chose the right person.
+After the correction, the account appears on the right identity. Has the missing reference been repaired too?
 
-That leaves two separate outcomes to follow: the account-to-identity relationship and the data that should have supported automatic matching.
+Look at the two results separately. Choosing the correct owner establishes a relationship. Supplying a missing reference repairs data. One can succeed while the other still needs work.
 
-Let's start with the records you are actually changing.
+## What does a manual correction change?
 
-## Confirm the account and the intended person
+An **account** is a record in an application or another connected system. An **identity** is ISC's representation of a person or another managed entity. A **source** is ISC's configured representation of a system or collection of account data.
 
-An **identity** is ISC's representation of a person or another managed entity. An **account** is a record in a connected system. An **attribute** is a named piece of information on either record.
+**Account aggregation** reads account information into ISC. **Account correlation** establishes the relationship between a source account and an identity.
 
-A **source** is ISC's configured representation of a system or account-data collection.
+For automatic matching, a **correlation criterion** selects an account field and an identity field for comparison. Each field is an **attribute**, a named piece of information on its record. The standard operation is **Equals**, which compares the selected values.
 
-In this fictional design, **StaffPath Production** is authoritative for Employees. Its worker accounts establish employee identities through the Employees **identity profile**, the shared configuration governing those identities and their attribute mappings.
+For example, account `personRef` can be compared with identity `identificationNumber`. A dependable person reference on both records can identify the intended owner. If the account doesn't supply that reference, the comparison lacks the input it was meant to use.
 
-StaffPath account `sp-77007` is already associated with Devi's identity. We'll call that identity `I-77007`, a teaching label rather than an actual ISC object ID.
+**Manual correlation** establishes an explicit persistent account-to-identity relationship. An authorized operator identifies the exact account and intended identity using approved ownership evidence, then uses a supported correction path.
 
-An **identity attribute mapping** supplies an identity value from selected information or a calculation. Here the Employees mapping has already populated Identification Number, `identificationNumber`, with Devi's approved reference `P-77007`.
+That is why a manual assignment can establish the relationship while the comparison field remains empty. The operator's approved choice identifies the destination identity; the operation isn't a request to fill in the missing source field.
 
-**ProjectSpace Production** represents the document-review application. It is not authoritative for establishing employee identities in this design.
+The ownership evidence still matters. Manual selection gives you a way to state an association explicitly. It doesn't make a guess about the owner correct.
 
-**Account correlation** matches and associates source accounts with identities. A **correlation criterion** pairs an account attribute with an identity attribute. **Equals** compares the selected values.
+## Follow one approved correction through the records
 
-An **uncorrelated account** is a collected account not associated with an authoritative identity. That describes an ISC relationship, not whether the external account has a legitimate business owner.
+Here are the supplied facts for a hypothetical personal application account. The person's identity already exists.
 
-**Manual correlation** establishes a persistent explicit account-to-identity link. It does not require you to invent a matching source value to justify the choice.
+**Null** means no value is present. In this case, the collected account exists and its `personRef` value is null.
 
-Here is the supplied evidence before the correction:
+The identity already holds its approved person reference, and the selected identity field is prepared for correlation. The missing input is on the application account.
 
-| Record or decision | What has been established |
+An **uncorrelated account**, in this human-account situation, is a collected account that hasn't been linked to an established human identity. It can still have a legitimate business owner and work in the application.
+
+| Record or evidence | What is known before correction |
 |---|---|
-| Devi's identity `I-77007` | Applied, correlation-eligible `identificationNumber = P-77007`; identity `name = worker77007`; email `devi.rao@learn.example`; displayed name Devi Rao. |
-| Another identity `I-77008` | `identificationNumber = P-77008`; identity `name = worker77008`; email `another.devi@learn.example`; also displayed as Devi Rao. It is a different person. |
-| ProjectSpace account `ps-512` | Login `drao.ps`; `personRef = null`; already collected and evaluated; recorded uncorrelated. Null means no value is present in that field. |
-| Selected account fields | Account ID uses the account key `ps-512`; Account Name uses `userLogin`, whose value is `drao.ps`. |
-| Complete saved criterion | Account `personRef` Equals identity `identificationNumber`. No other configured criterion applies; no identity `name` matches `drao.ps`. |
-| Approved ownership | Application records and the worker registry establish that `ps-512` is Devi's personal account, with approved person reference `P-77007`. |
-| Approved immediate change | Associate this exact ProjectSpace Production account with existing identity `I-77007`; do not create another account or identity. |
-| Separate data defect | The application's integration feed has omitted the required person reference. The data-owner investigation remains open. |
+| Collected account `app-41` | Production application source; login `review.user`; `personRef = null`; evaluated and recorded uncorrelated. |
+| Intended existing identity | Current `identificationNumber = P-407`; identity `name = worker407`; displayed label `Review User`. |
+| A different identity | Reference `P-408`, name `worker408`, and the same displayed label `Review User`. It represents a different person. |
+| Complete saved configured comparison | Account `personRef` Equals identity `identificationNumber`; no other configured pairing. |
+| Approved ownership evidence | Application records and the worker registry establish that production account `app-41` belongs to the person identified by `P-407`. That reference uniquely identifies the intended person in this design. |
+| Approved immediate change | Associate this exact account with the verified existing identity. The missing-reference defect in the application's integration feed remains a separate open issue. |
 
-The two identities share a display name. Selecting the first “Devi Rao” is therefore not enough.
+The two identity records have the same displayed label. Selecting the first `Review User` therefore doesn't establish which person you chose.
 
-Check the intended identity's approved person reference, actual object reference and authoritative context. Check the source environment and account key too. An identically named account in a test source is not this production account.
+Use the approved person reference to identify the intended individual, then verify the actual selected identity record and the approved worker records behind it. Also verify the source environment and account key. An account with the same login in a test source isn't the production account in this change.
 
-The source's **account schema** defines its represented fields and the Account ID and Account Name designations. Those designations are not the same thing as a person's business reference.
+The **account schema** defines the source's represented account fields. It designates one field as **Account ID**, identifying the source account, and one as **Account Name**, supplying its naming value.
 
-The separate **default correlation** path compares the designated Account Name with identity `name`, case-insensitively, when configured correlation cannot establish an association. It is not configurable. Here `drao.ps` supplies no such match; the current uncorrelated result is supplied evidence, not a conclusion drawn from null alone.
+Here, Account ID uses the account key `app-41`; Account Name uses the login field containing `review.user`.
 
-`ps-512` identifies the application account. `P-77007` identifies its approved person in this design. `I-77007` is only our teaching label for the ISC identity.
+There is a separate **default correlation** path when configured correlation cannot establish an association. It compares designated Account Name with identity `name`, ignoring differences in letter case. That default isn't configurable.
 
-Do not paste a teaching label or a guessed display name into a real correction file. Each supported interface has its own required identifiers.
+No identity's name matches `review.user` in the supplied evidence. The account's uncorrelated state belongs with those configured/default conditions and its stated evaluation, rather than being inferred from null alone.
 
-## The correction changes a relationship, not the missing field
+Keep the references distinct: `app-41` identifies the application account, while `P-407` is the approved business reference for its person. The displayed label helps a human recognize a record; it doesn't uniquely identify it.
 
-The supported account-management capability called **Update Correlation** lets an authorized operator select the account's classification and intended identity.
+A supported interface or import file can require a particular identifier for the target identity. Verify that requirement. An **ISC object ID** identifies a record within ISC. A person reference, displayed name and ISC object ID aren't automatically interchangeable. The values here aren't a real correction-file template.
 
-A **human account** is an account associated with a human identity. A **machine account** is a non-human account related to an application or service; it can include shared automation accounts. Do not classify a service account as someone's personal login simply to reduce the uncorrelated count. Use the features and responsibility model supported for that account and tenant.
+## The supported instruction selects an account and an identity
 
-For a personal employee account, the intended classification is Human and the target is the verified human identity. This is not choosing a new application permission.
+ISC's account-management capability **Update Correlation** lets an authorized operator choose the account classification and intended identity.
 
-The manual-correlation file process is another documented way to establish explicit account-to-identity associations. A file contains proposed relationship instructions; uploading it is not evidence that every row is correct or that every proposed change succeeded.
+A **human account** is associated with a human identity. For this approved personal account, the intended classification is Human and the destination is the verified person's identity.
 
-Whichever supported path is used, the logical instruction needs an exact account and an exact intended identity.
+A **machine account** is a non-human account related to an application or service, including service or shared automation use. Such accounts need an appropriate classification and responsible-ownership design using the features supported for that tenant and account type.
 
-For our main example, the supplied approved correction succeeds. Current evidence shows `ps-512` associated with `I-77007`.
+Choosing Human for every exception would hide that distinction. Source administration doesn't make an automation account the administrator's personal login.
 
-The account is still `ps-512`. Its login remains `drao.ps`. Its collected `personRef` remains null.
+A manual-correlation file is another documented way to submit explicit account-to-identity association instructions. Each proposed row still needs an exact account, an exact intended identity and approved ownership. Submitting the file doesn't establish that every row succeeded.
 
-The configured comparison remains `personRef` Equals `identificationNumber`. Manual assignment did not replace the source's shared matching configuration.
+For the main example, the approved supported correction succeeds. Current account evidence shows `app-41` associated with the intended identity whose approved reference is `P-407`.
+
+What remains the same? The account key is still `app-41`, the login is still `review.user`, and the collected `personRef` is still null. The shared source configuration still compares `personRef` with `identificationNumber`.
 
 ```text
-Before:
-  ProjectSpace ps-512
-  personRef = null
-    -> no identity association
+Before
+  app-41: personRef = null
+  no identity association
+             |
+             v
+Human verifies owner independently
+  approved person reference: P-407
+             |
+             v
+Approved manual relationship change
+  same app-41 -> intended identity
+  same login: review.user
+  personRef remains null
 
-Human verifies approved owner:
-  Devi, reference P-77007
-    -> approved manual correction
-
-Supplied result:
-  same ps-512 -> existing I-77007
-  same login drao.ps
-  personRef still null
-    -> relationship fixed
-    -> feed defect remains open
+Verified: intended association
+Still open: missing feed reference
 ```
 
-The arrows separate ownership verification, the approved relationship change and the observed result. They are not an undocumented backend execution pipeline.
+The arrows connect the supplied before-state, human ownership verification and approved relationship change. The result is the intended association with an unchanged missing input. This isn't a private backend pipeline or a claim about mandatory separate jobs.
 
-This correction does not create an employee identity, merge the two people named Devi Rao, rename the account or repair the integration feed.
+No new account or identity was needed. The two people with the same display label haven't been merged. The integration feed hasn't been repaired by selecting the destination identity.
 
-If an uncorrelated report no longer lists `ps-512`, that is consistent with the new relationship. The report does not establish that its matching field is now populated or that all its access is approved.
+For this main case, no automatic writes from identity fields to application-account fields are configured, and no access-change operation is supplied. The successful result here is the relationship.
 
-## A manual link is not a temporary suggestion until the next read
+An uncorrelated report may now stop listing the account. That is consistent with its new relationship. It doesn't establish that the reference has been populated or that every permission the account holds is approved.
 
-**Account aggregation** reads account data into ISC.
+## The explicit link persists after another read
 
-In **optimized aggregation**, unchanged account records are skipped for relevant correlation evaluation. **Unoptimized aggregation** recalculates correlation logic even for unchanged account data.
+A manual relationship isn't merely a suggestion that disappears as soon as source values change.
 
-Neither mode is an automatic release mechanism for a manual association.
+**Optimized aggregation** reads accounts and checks for changes. An existing unchanged record is skipped for correlation evaluation. **Unoptimized aggregation** reevaluates correlation even for unchanged account data.
 
-The documented manual link persists even when source account data changes. Unoptimized aggregation does not remove that correlation.
+Neither mode automatically releases a manual association. The documented explicit link persists when source account data changes, and unoptimized aggregation doesn't remove it.
 
-Suppose an approved feed correction later supplies `personRef = P-77007` for `ps-512`. Once collected, that value agrees with the intended owner.
+Suppose the feed is later corrected and the same account is collected with `personRef = P-407`. That value now agrees with the verified owner.
 
-You have repaired an input while preserving the existing relationship. Agreement between the field and the link does not prove the link has converted into an ordinary automatic association.
+You have evidence of an input repair and a continuing relationship. The agreement doesn't establish that the explicit link has automatically become an ordinary automatic association.
 
-Now consider a different variation. The same account is collected with `personRef = P-77008`, while independent owner evidence still supports Devi, `P-77007`.
+Now change the facts. The account remains approved for the person identified by `P-407`, but a later collected value is `P-408`.
 
-Do not expect the persistent manual link to move automatically to the other identity. Investigate why the reference changed. It may be wrong, or the business ownership evidence may need an approved update.
+The new field points toward another person. It doesn't, by itself, authorize a move or establish that business ownership changed. Investigate whether the value is wrong or the approved ownership records need updating.
 
-A changed field and a changed legitimate owner are not interchangeable facts.
+The persistent manual link doesn't automatically move just because the field changed and an unoptimized read ran.
 
-If the design requires removing or replacing explicit treatment, use the supported relationship-management process after reviewing ownership and consequences. Repeated reads and a changed criterion are not a substitute.
+If the approved design requires removing or replacing explicit treatment, use the supported relationship-management process and verify the result. A changed criterion or repeated reads don't substitute for that work.
 
-Accounts created through ISC can also have `manuallyCorrelated=true`. Here **true** is a Boolean yes/no value. That documented treatment can exist without a manual-correlation file upload, so file-import history alone cannot establish every link's origin.
+Accounts created through ISC can also have `manuallyCorrelated=true`. Here, **true** is a Boolean yes/no value. This treatment can exist without a manual-correlation file upload. File-import history therefore doesn't explain every persistent association.
 
-## A wrong existing link needs more than a better-looking report
+## Persistence doesn't make a wrong link impossible to correct
 
-Consider a separate ProjectSpace account, `ps-513`.
+Consider a separate account, `app-42`. It is manually associated with the identity whose reference is `P-408`, but approved ownership evidence identifies the person with reference `P-407`. The account already contains the correct `personRef = P-407`.
 
-It is manually linked to `I-77008`, but approved application records establish `I-77007` as the intended owner. Its current `personRef` is already the correct `P-77007`.
+There is a relationship, so the account may be absent from an uncorrelated report. The relationship is still wrong.
 
-The account is correlated, but incorrectly. It may not appear in an uncorrelated report at all.
+ISC's supported correlation-update capabilities include incorrectly associated accounts, whether the error originated in manual assignment or aggregation. Persistence means you shouldn't assume source-data matching will automatically replace the link. It doesn't prevent an approved explicit correction.
 
-ISC's supported correlation-update capabilities cover incorrectly associated accounts, including errors originating in manual assignment or aggregation. The correction must target this exact relationship.
+After the supplied approved move, current evidence confirms `app-42` is associated with the intended identity and no longer appears as that account on the former identity. Verify both identity contexts and the exact account key.
 
-After an approved move, verify `ps-513` is associated with the intended identity and no longer associated with the wrong one. Check both identity contexts rather than inspecting only the destination.
+Don't rewrite a correct reference to agree with the wrong identity. Nor should you alter the target person's correct worker data to make the old association appear valid.
 
-Do not rewrite a correct person reference to agree with the wrong identity. That would damage the source evidence while hiding the association error.
+Keep the earlier cause under investigation. Was the wrong record selected because labels were duplicated? Was an identifier in a correction file misunderstood? Did unsuitable data support an earlier automatic match?
 
-Do not change the target identity's correct employee data to make the old link look valid.
+Retained configuration, actual records and available activity can help distinguish those causes. Current matching values alone don't reconstruct the full history.
 
-The original cause also remains a separate question. Was the wrong person selected because names were duplicated? Was a correlation-file identifier misunderstood? Did unsuitable source data support an earlier automatic match?
+## Close the relationship task without losing the data defect
 
-Use retained configuration, actual records and available activity evidence to distinguish those explanations. Today's values do not reconstruct the full history by themselves.
+The main `app-41` relationship is now correct, while its missing-reference issue remains open.
 
-## Repair the cause without losing sight of the immediate result
+Trace where the reference should originate, who owns it, what the integration publishes and what ISC actually collects. A value visible on an application screen isn't automatically the field returned in its integration response.
 
-The main `ps-512` case has an approved owner and a verified new association. Its feed still needs repair.
+The current null value and the feed's omitted input are supplied observations in this example. They aren't a claim that every connector clears an existing value whenever a response omits a field.
 
-Trace where the person reference should have come from, who owns that information, what the integration publishes and what ISC actually collects.
+If the missing value is on the identity side instead, follow how that identity receives information. An **identity attribute mapping** defines its selected input or calculation. An **identity profile** holds those mappings and other settings for a population. Its **authoritative source** supplies the accounts used to establish that population's identities.
 
-A correct value on the application screen is not automatically the value in the integration response or the represented ISC account.
+**Identity processing** evaluates identity attributes and configured requirements, including those mappings. A mapping **Preview** evaluates a selected identity's proposed result. A correct preview doesn't demonstrate that the value has already been applied.
 
-If the missing input is instead on the identity side, follow the governing profile and its mapping. **Identity processing** evaluates identity attributes and configured access requirements. A mapping **Preview** evaluates a selected identity's mapping result; it does not prove the value is already applied.
+Locate the defective layer before selecting the repair. Changing the relationship, fixing account input and applying a correct identity value are different actions.
 
-The correction belongs at the proven defective layer.
+For a recurring population of missing links, inspect source data and shared matching configuration. Manually assigning each new account can leave the same underlying defect to affect the next account.
 
-For a large recurring population of uncorrelated accounts, review the correlation configuration and source data. Repeated manual assignment of each new account can conceal a common design problem.
-
-There can be an approved reason to retain an explicit association. In that case, record its purpose, owner evidence and review conditions. Do not quietly treat it as self-correcting.
+There can also be an approved reason to retain an explicit relationship. Record that reason, its owner evidence and the conditions for reviewing it. A persistent exception needs understood ownership.
 
 ```text
-Verified ps-512 -> I-77007
-    -> association outcome established
+Verified association for app-41
+             |
+             v
+Separate human follow-up tracks
 
-Separate follow-up tracks:
+Input repair
+  approve and deliver the reference
+  verify the collected account value
 
-Input repair:
-  approve reference in the feed
-  collect and verify account value
-    -> check matching design
-
-Persistent-link review:
-  confirm why explicit link remains
+Persistent-link review
+  document why explicit link remains
   approve any later relationship change
 
-Other effects:
-  check operations using the link
-  verify any external account changes
+Dependent effects
+  inspect operations using the link
+  verify any external writes separately
 ```
 
-These are human follow-up tracks, not a promise that ISC performs them in that order or automatically fixes each one.
+These are separate human follow-up tracks. The arrows don't promise an automatic repair or prescribe a backend execution order.
 
-You can close the narrowly defined relationship task while keeping the data defect open, provided the approved acceptance criteria allow that distinction. You cannot close the feed defect merely because a different task succeeded.
+Whether you can close the narrowly defined relationship task depends on its approved acceptance conditions. You can demonstrate the intended link while keeping input repair open. The feed issue needs its own delivery and collected-value evidence before it can be closed.
 
-## A relationship correction can have external consequences
+## The right link doesn't approve every permission
 
-An **entitlement** represents a permission or membership. Associating an existing account with an identity can change whose represented account and access ISC shows.
+An **entitlement** is a represented permission or membership. Associating an existing account with an identity can change whose account and access ISC represents.
 
-That is not the same as approving those permissions.
+That doesn't establish business approval for all those permissions.
 
-**Provisioning** attempts supported account or access changes in an external system. An **access request** asks for a particular access item for an identity; its approval and fulfillment are separate from choosing the correct owner of an existing account.
+An **access request** asks for a particular access item for an identity. Any required approval and the fulfillment of that request are separate from identifying the correct owner of an existing account.
 
-Manual correlation is not a replacement for those decisions.
+**Provisioning** attempts supported account or access changes in an external system. Manually correlating an existing account isn't a substitute for deciding whether its owner should receive additional access.
 
-**Attribute synchronization** is a configured identity-to-account write path for existing correlated accounts. It specifies which eligible account fields should follow mapped identity values.
+There can be external effects from a relationship change, however. **Attribute synchronization** is a configured write path from identity values to fields on existing correlated accounts. The configuration selects which eligible account fields should follow mapped identity values.
 
-Moving or correlating an account to an identity with different values can trigger that configured synchronization.
+When an account is moved or correlated to an identity with different values, that change can trigger the configured synchronization.
 
-Suppose a separate wrong-link correction moves an account from a person whose department is `Support` to Devi, whose department is `Engineering`. If department synchronization is configured, the move can cause a department write to the external account.
+For a separate variation, suppose a wrongly linked account moves from someone whose department is `Support` to its approved owner, whose department is `Engineering`. Department synchronization and its required mappings are configured.
 
-If that write fails, the association can still be correct while delivery remains unresolved. If it succeeds, restoring an old correlation criterion does not automatically undo it.
+The move can cause a department write to the external account. If the write fails and the target retains the previous value, the relationship can still be correct while delivery remains unresolved.
 
-Review mappings that use the account and other configured consumers of the relationship. Do not assume every manual correction is operationally isolated.
+If the write succeeds, restoring an old correlation criterion doesn't automatically undo it. Inspect the actual current target value and approve any necessary corrective change separately.
 
-For the main `ps-512` example, attribute synchronization is not enabled and no access-change operation is supplied. The successful result is the relationship only.
+Review mappings that read from the account and other configured operations that use its associated identity. A manual correction can have effects beyond the link you see on a screen.
 
-A later account observation or sign-in test answers a different question from whether the approved identity now owns the represented account.
+The main `app-41` example supplies no such synchronization or access-changing operation. Its successful result is the account's relationship. A later target-account observation or sign-in test would answer a different question.
 
-## Choose evidence for the outcome you are claiming
+## Choose evidence for the result you claim
 
-A submitted selection, an uploaded file and a smaller exception count are incomplete evidence for different reasons.
+A submitted identity selection, an uploaded file and a lower exception count each establish less than a verified individual relationship.
 
-| Claim being checked | Evidence that addresses it |
+| Result to establish | Evidence that addresses it |
 |---|---|
-| The operator selected the intended records | Approved source/environment/account key and target identity reference agree with the change instruction; duplicated names are disambiguated. |
-| The explicit association changed correctly | Current account association shows the intended identity; a wrong-link move is checked in both old and new identity contexts. |
-| A correlation-file operation completed | Import status and reported issues are reviewed, then the intended account results are reconciled individually; a badge alone does not establish owner correctness. |
-| The missing reference was repaired | Approved input is delivered through the integration and appears on the actual collected account; the association alone is insufficient. |
-| The shared matching design is suitable | Saved comparisons, actual account/identity inputs, eligibility and relevant evaluation support approved ownership across the intended population. |
-| A dependent external write completed | Relevant provisioning activity and actual target state support the specific write; correct association is not delivery evidence. |
-| The operational exception is resolved | Each approved acceptance condition is met, with unresolved data, ownership or consumer work explicitly retained. |
+| The intended records were selected | Approved source/environment/account key and target identity reference agree; duplicated labels are disambiguated. |
+| The relationship changed correctly | Current account association identifies the approved person; a wrong-link move is checked in both former and intended identity contexts. |
+| A correlation-file operation completed | Import status and issues are reviewed, then proposed account results are reconciled individually. |
+| The missing reference was repaired | Approved input travels through the integration and is present on the actual collected account. |
+| Shared matching is suitable | Saved criteria, actual inputs, identity-field readiness and relevant evaluation support approved ownership across the intended population. |
+| A dependent write completed | Relevant operation activity and actual target state establish the specific external change. |
+| The exception is resolved | Each approved acceptance condition is met; remaining data, ownership or dependent-operation work stays visible. |
 
-The source's Latest Manual Correlation summary and Manual Correlation aggregation-history filter concern file imports. An account-level update should be checked through its actual records and available relevant events; do not require every supported correction path to create a file-import entry.
+The source's **Latest Manual Correlation** summary and the **Manual Correlation** aggregation-history filter concern file imports. An account-level update must be checked through its actual records and available relevant events. Don't require every supported correction path to produce a file-import entry.
 
-Available identity events can show successful and failed actions. They are not a guaranteed complete transcript of every historical candidate comparison.
+If a file containing 12 proposed corrections reports issues, inspect those issues and reconcile the intended account relationships. Without individual evidence, you can't declare all 12 complete. Don't invent an all-or-nothing result, retry behavior or row-order winner from the presence of a summary badge.
 
-Keep observation times with the exact objects. Different views can reflect updates at different times, so reconcile the account and identity records before interpreting a display difference as another move.
+Available identity events can show successful and failed actions. They aren't a guaranteed complete transcript of every historical matching candidate.
 
-## Do not confuse correcting a link with removing an account
+Keep observation times with the exact source, account and identities. Different views can reflect changes at different times; reconcile those observations before interpreting a display difference as another account move.
 
-Removing an account record from ISC and deleting the external account are different operations.
+## Removing an account is a different change
 
-The documented **Remove Account** operation removes the account from ISC, not from the source system. A later full aggregation can bring the account back.
+ISC's **Remove Account** operation removes the represented account from ISC, not from the external source. A later full aggregation can load the account again.
 
-That is not a harmless synonym for “move this link.” It changes represented data and can have wider effects. Removing an authoritative account can affect the identity's profile or visibility.
+It changes represented data. It isn't simply another name for selecting a different identity. Removing an account on an authoritative source can also affect the identity's profile or visibility.
 
-**Delete Account**, where supported, concerns deletion from the external source and follows its configured request process, including any required approval.
+**Delete Account**, where supported, concerns deletion from the external source and follows the configured request process, including any required approval.
 
-Neither operation is justified merely because an account is on the wrong identity.
+A **source reset** is broader again: it removes that source's aggregated accounts and entitlements from ISC.
 
-A source reset has a broader scope again: it removes the source's aggregated accounts and entitlements from ISC. It is not a routine cleanup for one mistaken relationship.
+These operations have different outcomes and scope. A legitimate account with a wrong relationship doesn't automatically need any of them. Select the supported operation that fits the approved correction and assess its effects.
 
-Choose the supported correction appropriate to the approved change. Do not erase records, delete identities or reset the source just to make an exception list smaller.
+Deleting identities, erasing accounts or resetting a source merely to shrink an exception list doesn't demonstrate correct ownership.
 
 ## Work through the changed evidence
 
-### 1. Two identities have the same displayed name
+### Two identities share a displayed label
 
-**Facts:** Both `I-77007` and `I-77008` display Devi Rao. Approved worker-registry evidence identifies `P-77007` as the owner of `ps-512`.
+Both identities display `Review User`. Approved worker records identify `P-407` as the owner of production account `app-41`.
 
-Is selecting the first matching name enough?
+Is selecting the first label sufficient? What records would you verify?
 
-**Reasoning:** No. Verify the identity's approved reference and actual object context, together with the source and account key. A display label does not distinguish these two people.
+### The account disappears from the report
 
-### 2. The account disappears from the uncorrelated report
+The approved manual correction links `app-41` to the intended identity. Its collected `personRef` remains null.
 
-**Facts:** After the approved manual correction, `ps-512` is linked to `I-77007`. Its collected `personRef` is still null.
+Which outcome has been demonstrated, and which issue stays open?
 
-Which issue has been demonstrated as fixed?
+### A later reference indicates another person
 
-**Reasoning:** The intended association, not the missing input. Keep the feed defect open until approved delivery and the actual account value demonstrate its repair.
+The manually associated account remains approved for the person identified by `P-407`. A later collected reference is `P-408`, and an unoptimized aggregation runs.
 
-### 3. A later value points to the other person
+Must the account move? What would you investigate before approving a different owner?
 
-**Facts:** A manually linked account remains approved for Devi. A later collected reference is `P-77008`, and an unoptimized aggregation runs.
+### An explicit wrong link is corrected
 
-Must the account move to `I-77008`?
+Account `app-42` was manually attached to the wrong identity. An approved supported correction moves it to the intended one, with current evidence in both identity contexts.
 
-**Reasoning:** No. Manual correlation persists. Investigate the changed reference and ownership evidence; do not use the new field or a broad reread as authority for an unapproved move.
+Does manual persistence make that explicit correction impossible?
 
-### 4. A wrong link is corrected
+### The import reports issues
 
-**Facts:** `ps-513` was manually attached to `I-77008`. Approved correction moves it to `I-77007`; current evidence confirms the intended association and its absence from the former identity.
+A manual-correlation file contains 12 intended corrections. Its summary reports issues, and no account-by-account reconciliation has occurred.
 
-Does the earlier manual mistake make supported correction impossible?
+Can all 12 be marked complete?
 
-**Reasoning:** No. Persistence prevents automatic reassignment from being assumed; it does not prohibit an approved explicit correction. Preserve the before/after evidence and investigate dependent effects and original cause.
+### Someone proposes Remove Account
 
-### 5. The file import reports issues
+The external account is legitimate and must remain. Its ISC relationship is wrong.
 
-**Facts:** A manual-correlation file contains 12 intended corrections. The upload summary reports issues, and no account-by-account reconciliation has occurred.
+Is Remove Account just another name for moving the link?
 
-Can the team mark all 12 complete?
+### The association is correct but a write failed
 
-**Reasoning:** No. Review the reported issues and verify each intended relationship. Keep unverified rows open; neither submission nor a single summary supplies all individual outcomes or proves ownership.
+A separate approved move establishes the correct association. A configured department-sync write fails, and the target still contains the previous value.
 
-### 6. Someone suggests Remove Account
+Must the relationship have failed as well?
 
-**Facts:** The external account is legitimate and should remain. Only its ISC relationship is wrong.
+### The owner hasn't been established
 
-Is Remove Account simply another name for moving it?
+The account's reference is missing, and no approved application or worker evidence identifies its owner. Someone proposes assigning it to the source administrator.
 
-**Reasoning:** No. It removes the represented account from ISC, not just a relationship selection, and is distinct from external deletion. Assess the supported relationship correction rather than substituting a broader operation.
+What remains unresolved before a personal assignment can be approved?
 
-### 7. The link is correct but synchronization failed
+## Compare your reasoning
 
-**Facts:** A separate approved move establishes the right association. A configured department-sync write is attempted and fails; the target still has the previous value.
+For duplicate labels, verify the person's approved reference and the actual identity record, then the source environment and account key. A shared display label doesn't distinguish the two people.
 
-Has the association necessarily failed too?
+For the report, the intended association is established. The missing feed input remains unresolved until approved delivery and the collected account value demonstrate its repair.
 
-**Reasoning:** No. Relationship success and write success are separate outcomes. Keep delivery unresolved, investigate its actual failure and verify any approved recovery against target state.
+For the changed reference, manual persistence prevents assuming an automatic move. Investigate the source value and legitimate ownership. A newly observed field isn't authority for an unapproved reassignment.
 
-### 8. The owner is not yet verified
+For the wrong-link correction, persistence and explicit correction are different mechanisms. The approved supported move can correct the relationship. Preserve before-and-after evidence, investigate its original cause and review dependent effects.
 
-**Facts:** An account's person reference is missing. No application or worker-registry evidence identifies its intended owner. Someone suggests assigning it to the source administrator.
+For the 12-row file, review reported issues and reconcile each proposed account result. Keep unverified instructions open. Submission and summary status don't prove every owner or outcome.
 
-Should you make that personal assignment to close the case?
+For Remove Account, distinguish represented-account removal, a relationship update and external deletion. Choose the approved supported correction rather than silently substituting a change with a broader effect.
 
-**Reasoning:** No. Source administration is not account ownership. Keep the ownership question open and establish the account's use and supported classification before approving a relationship change.
+For the failed write, the supplied association can be correct while delivery failed. Investigate the actual operation failure and verify any approved recovery against target state.
 
-## Review a proposed correction file as an engineer
+For the unverified owner, keep ownership unresolved and establish the account's use and supported classification. Integration administration doesn't make the account a personal login.
 
-A project proposes 80 correction rows: 40 verified uncorrelated personal accounts, 10 known wrong links, 15 records without verified owners, 5 shared automation accounts and 10 duplicate or contradictory proposed rows.
+## Review a proposed correction file
 
-These are proposed rows, not necessarily 80 distinct accounts.
+A project proposes 80 correction rows:
 
-The team wants to upload the whole file and close the issue when the count falls.
+- 40 describe verified uncorrelated personal accounts.
+- 10 describe known wrong links.
+- 15 lack verified owners.
+- 5 describe shared automation accounts.
+- 10 are duplicate or contradictory proposals.
 
-How would you separate the work?
+These are proposed rows, not necessarily 80 distinct accounts. The team wants to upload everything and close the issue when the report count falls.
 
-The 40 verified personal-account cases can proceed only after exact record selection, approval, persistence and dependent-effect checks. The 10 wrong links also need old/new relationship evidence and investigation of consequences already produced.
+How would you decide what can proceed and what still needs investigation?
 
-The 15 unknown-owner rows need ownership evidence before assignment. The 5 automation accounts need appropriate classification and responsibility, not a guessed employee.
+The 40 verified personal-account cases still need exact record selection, approval, persistence and dependent-effect checks. The 10 wrong links additionally need former/new identity evidence and investigation of consequences already produced.
 
-The 10 duplicate or contradictory rows need reconciliation by actual account and intended identity. Do not assume file order means the last row is the approved answer.
+The 15 unknown-owner proposals need ownership evidence before assignment. The 5 automation accounts need appropriate classification and responsibility, rather than a guessed employee.
 
-Establish the supported file contract and identifier requirements before preparing a real import. Preserve the approved change set and reconcile actual results against it.
+Reconcile the 10 duplicate or contradictory instructions by actual account and intended identity. File order isn't evidence that the last proposal is the approved answer. The number of rows alone can't tell you the number of distinct accounts or successful corrections.
 
-Then keep association completion, root-cause repair and dependent delivery as separate acceptance conditions. An authorized manual correction can be the right immediate action without being the whole solution.
+Before a real import, establish the supported file structure and identifier requirements. Preserve the approved change set, then reconcile actual account results against it.
+
+Keep relationship completion, underlying data repair and dependent delivery as separate acceptance conditions. That allows an approved immediate correction to be completed without hiding the work that remains.

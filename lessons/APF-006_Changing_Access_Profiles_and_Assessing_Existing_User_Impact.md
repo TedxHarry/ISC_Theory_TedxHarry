@@ -1,324 +1,322 @@
 # The profile changed. What happens to people who already have it?
 
-Devi, employee `110606`, records incoming stock in StockLedger Production, a fictional application. Her account, `sl-110606`, can read stock records and enter receipts.
+An employee can read stock records and enter receipts. The business now wants receiving staff to add notes about delivery discrepancies.
 
-The business now wants receiving staff to add notes about delivery discrepancies. The ISC administrator adds the corresponding entitlement to the existing access profile.
+An administrator adds that permission to the existing access profile in SailPoint Identity Security Cloud (ISC). The profile keeps its identifier and familiar name.
 
-The profile still has the same name. Its identifier has not changed.
+Will everyone who already had the profile receive the new permission?
 
-Does everybody who already had that profile receive the new permission?
+The answer depends on what currently requires that person's access. A role requirement, an earlier request for the profile and recognition of an existing combination do not have identical change behavior.
 
-Before answering, we need to know why each person had the profile. An existing role requirement is not the same as an old request for the profile itself. Neither is the same as ISC recognizing a collection of permissions that was already present.
+The records, rules, configurations, times and outcomes below are hypothetical. Each representative person has one correctly associated account on the source. The example uses standing access, without a separate just-in-time activation requirement.
 
-That difference determines the change's impact.
+## Identify the exact difference in the package
 
-All people, records, identifiers, application rules, configurations and results below are fictional. The example uses standing access, which is available without separate Just-In-Time activation, and one correctly associated account per person on this source.
+An **entitlement** represents source access, such as a group membership. An **access profile** is a named bundle of related entitlements from one source.
 
-## Start with the definition, not just its name
+A **source** is ISC's configured representation of a system or collection of account data. Its **connector** supplies the supported integration for reading data and, where supported and configured, making changes.
 
-In SailPoint Identity Security Cloud, or ISC, an **access profile** is a named bundle of related entitlements from one source. An **entitlement** represents an access right, such as membership in an application's group.
+Here, Stock Production supports reading accounts and groups and adding or removing the memberships used below. A **permission** allows an action on a resource. A **group** collects members, such as accounts, and its native rules can give those accounts permissions. **Native** means belonging to the external application itself.
 
-A **source** represents the system or account-data collection being managed. Its **connector** provides the integration for reading data and, where supported and configured, changing it.
+The application contact confirms these meanings:
 
-Here the source represents StockLedger Production. Its supplied integration supports reading accounts and groups and adding or removing these memberships.
-
-Devi's **identity** is ISC's representation of her as a person. Her **account** is the application's login record. **Account correlation** associates that account with the correct ISC identity. Her only StockLedger account is correctly correlated.
-
-The application team has verified these group meanings:
-
-| Native group | Confirmed capability in StockLedger |
+| Group | Native capability |
 |---|---|
-| `SL-6601`, Stock Readers | Read stock records for the account's assigned site. |
-| `SL-6602`, Receipt Entry | Enter receipts when the same account also has Stock Readers. |
-| `SL-6603`, Discrepancy Notes | Add discrepancy notes when the same account also has Stock Readers. It does not approve stock adjustments. |
+| Stock Readers | Read stock records within the account's assigned site |
+| Receipt Entry | Enter receipts within the assigned site when the same account also has Readers |
+| Discrepancy Notes | Add notes within the assigned site when the same account also has Readers; does not approve stock adjustments |
 
-“Native” means in StockLedger itself, rather than just in ISC's records.
+An **identity** is ISC's representation of a person or another entity. An **account** is the external record through which that person uses the application. **Account correlation** matches and associates a source account with the appropriate ISC identity.
 
-Devi's account is enabled, sign-in works, and its assigned site is North. These application conditions remain necessary; an access-profile definition does not replace them.
+The selected accounts are correctly associated, enabled and able to sign in. Each has an assigned site; the role-holder account we will investigate uses North. Those application conditions still matter after access is delivered.
 
-The profile is **Stock receiving**, which we will call `AP-6606`. Its initial definition references ISC entitlement records `E-6601` and `E-6602`, representing the first two groups.
+The profile is **Stock receiving**. A **reference** points to another record. Its initial entitlement references identify Readers and Receipt Entry; the proposed edit adds the represented Discrepancy Notes entitlement.
 
-The proposed definition adds `E-6603`. These short ISC identifiers are teaching labels, not real ID formats or an API payload.
+The difference is precise: two required items become three. Nothing is removed in this first change.
 
-The precise difference is:
+The profile's ISC identifier identifies the existing record through the edit. Its unchanged name does not tell you whether the entitlement list changed. Inspect the exact references and source behind the selections, not just labels or an entry count.
 
-- Before: Stock Readers and Receipt Entry.
-- After: Stock Readers, Receipt Entry and Discrepancy Notes.
-- No entitlement is removed in this first change.
+## Check where the profile is used and who currently holds it
 
-The profile and the relevant roles and lifecycle states are enabled. The affected accounts already exist. There are no concurrent assignment changes or other grants of the new permission in the main comparison.
+You need two inventories.
 
-## Separate a wording change from an access change
+Configurations using the profile are its **consumers** in this discussion. Identities associated with it are its **holders**. These words describe relationships, not additional ISC object types.
 
-Renaming Stock receiving to Stock receiving and discrepancy notes changes how a person reads the package.
+A consumer inventory finds dependencies, including a configuration that might select more people tomorrow. A holder inventory finds current people and their reasons for having the profile.
 
-Adding `E-6603` changes what the package contains.
+An **assignment origin** is the mechanism through which the access association or requirement arose.
 
-Those are different changes, even if an administrator performs them together. A new description saying “includes discrepancy notes” cannot supply the missing entitlement reference. Conversely, adding the reference while leaving an old description unchanged can produce a technically expanded package that a reviewer misunderstands.
+An **ISC role** groups access for a business responsibility. An automatically assigned role can use configured criteria or an identity list to select identities. A role can also be granted through a request.
 
-**Metadata** is descriptive or governance information about the object, such as its description or owner. It can matter to decisions and configured routing without being the application's permission mechanism.
+A **lifecycle state** describes an identity's organizational stage and can carry access requirements. Its governing **identity profile** configures how the population's identity values and lifecycle behavior are managed; it is different from an access profile.
 
-A useful change record therefore separates the exact entitlement-list difference from changes to the name, description, owner, request settings or account-selection logic. Do not label every field change “cosmetic.” A request-setting change can alter who can ask for access, even when it adds no group to an existing account.
+An **access request** asks for an access item for a recipient. An **approval** is the decision that the request may proceed. The source changes that deliver it are separate.
 
-Also check whether the application's meaning of an existing group has changed. If StockLedger adds adjustment approval to Stock Readers while preserving the group key, the profile's entitlement list can remain identical while its risk changes substantially.
+**Access-profile detection** recognizes during identity evaluation that a person already holds the full profile entitlement set. Recognition does not establish that ISC originally granted those native rights.
 
-A reference comparison answers “which objects changed?” Application permission evidence answers “what can those objects now allow?”
+Let's compare four representative holders:
 
-## Find the profile's consumers and its holders
+- The current role holder receives Stock receiving through the enabled Receiving clerk role and still meets its assignment criteria.
+- The current lifecycle holder receives it through an enabled lifecycle state's access requirement, which still applies.
+- The previous direct-request holder received the profile through a completed request for Stock receiving itself.
+- The detected holder already had the original pair; ISC recognized that combination and associated the profile.
 
-A **consumer**, in this discussion, is a configuration that uses this profile. For example, a role can include it, or a lifecycle state can require it.
+Initially, all four accounts hold Readers and Entry, none has Notes, and the recorded memberships are current. The profile and relevant roles/states are enabled for their configured use. No concurrent assignment change or other grant supplies Notes.
 
-A **holder** is a person currently associated with the profile. The person's **assignment origin** explains how that association arose.
+A current access list can make these people look alike. Their current requirements and origins explain why an edit affects them differently.
 
-These two inventories serve different purposes. Looking only at today's holders can miss a configured role that will select another employee tomorrow. Looking only at roles can miss people who received the profile through a direct request or detection.
+## Why the addition does not produce one result for everyone
 
-A **role** models access required for a business responsibility. An automatically assigned role uses configured conditions or a membership list to select identities.
+**Identity processing** evaluates an identity and relevant access-model configuration. **Provisioning** carries out account or access changes through a supported integration or manual process.
 
-A **lifecycle state** represents a stage such as working or departed. Its configuration can require access for identities in that state within the governing identity profile. An **identity profile** defines how a population's identities are created and managed; it is not an access profile.
+For the current role and lifecycle holders, the ongoing requirement uses the revised bundle. Notes becomes part of what that requirement calls for. Provisioning must deliver it, and its result needs checking.
 
-Devi holds Stock receiving through the enabled Receiving clerk role. She still meets that role's assignment criteria.
+A completed direct request for the profile itself does not automatically become a requirement to deliver every future addition. Detection is also recognition of a set already held, not a continuing instruction to top up the account.
 
-A second representative account, `sl-lcs`, holds the profile through a lifecycle-state requirement. That requirement also still applies.
-
-A third, `sl-request`, holds it because somebody previously submitted and completed a direct access request for Stock receiving. An **access request** asks for a specified access item for an identity; applicable review and fulfillment are separate parts of that route.
-
-A fourth, `sl-detect`, already had the original pair of groups. ISC recognized that complete set and associated the profile. This is **access-profile detection**, not evidence that ISC originally granted the groups.
-
-Initially, all four accounts have Readers and Receipt Entry, but none has Discrepancy Notes. Their recorded memberships are current.
-
-They can look similar in a current access list. Their reasons for holding the package are not interchangeable.
-
-## Follow the addition through each origin
-
-An existing role or lifecycle requirement can enforce the revised bundle. A previous direct request or detection does not automatically become an instruction to grant every later addition.
-
-For the four accounts above, the documented distinction is:
-
-| Existing origin | Effect of adding Discrepancy Notes |
+| Current reason for holding the profile | Effect of adding standing Notes |
 |---|---|
-| Current role requirement: Devi | The new standing entitlement is provisioned to enforce the requirement; delivery must still be checked. |
-| Current lifecycle requirement: `sl-lcs` | The new standing entitlement is provisioned to enforce the requirement; delivery must still be checked. |
-| Previous direct request for the profile: `sl-request` | No automatic addition from this definition edit. Without the full revised set, the profile is no longer retained after evaluation. |
-| Detection: `sl-detect` | No automatic addition from this definition edit. Without the full revised set, the profile is no longer retained after evaluation. |
+| Applicable role requirement | The new entitlement is provisioned to enforce that requirement; native success is separate evidence |
+| Applicable lifecycle requirement | The new entitlement is provisioned to enforce that requirement; native success is separate evidence |
+| Previous direct request for this profile | No automatic addition from this edit; the revised full set is required to retain the profile on evaluation |
+| Detection only | No automatic addition from this edit; the revised full set is required to retain the profile on evaluation |
 
-For the last two rows, losing the profile association does not mean that Readers and Receipt Entry were removed from StockLedger.
+For the last two accounts, Notes is absent, so the revised three-item set is incomplete. The profile association is no longer retained after relevant evaluation.
 
-The represented bundle changed. Those accounts no longer hold its complete revised contents. The old two native memberships can still exist.
+That does not mean Readers and Entry were removed. The definition changed; the accounts can still retain the old native pair and perform the original work.
 
-If either account already held Discrepancy Notes independently, it would meet the new complete set and could retain the revised profile without needing a new grant.
+Change one fact: suppose the detected holder already acquired Notes independently, and ISC has current, correctly linked evidence of all three. The revised full set is present, so retaining the profile does not require a new Notes grant from the edit.
 
-Notice the wording “previous direct request for the profile.” A person who requested a **role** containing this profile is holding it through that role. Do not classify that person as a direct-profile-request holder merely because a request appeared somewhere in the history.
-
-The relevant question is what currently requires this profile, not whether anybody ever clicked Request.
+Also distinguish a requested role from a requested profile. Someone who requested a role containing Stock receiving holds this profile through that current role. A request appearing somewhere in history does not put them into the previous-direct-profile-request row.
 
 ```text
-Saved profile: Readers + Entry + Notes
+Revised bundle: Readers + Entry + Notes
                   |
-         relevant evaluation
+          relevant evaluation
                   |
-       inspect current origin
-          /               \
-   role / lifecycle    request / detection
-          |                    |
- enforce new Notes       no new Notes
-          |                    |
- check source result    full revised set?
-          |              /           \
- verify native use     yes           no
-                    retain    lose profile
-                               keep groups
++-- Current role/lifecycle requirement
+|   Provision Notes; verify result
+|
++-- Past direct profile request
+    or detection only
+    No automatic Notes addition
+    Revised full set already held?
+      Yes: retain profile
+      No: lose profile association
+          old native rights can remain
 ```
 
-The arrows show dependencies in this comparison, not a private engine sequence or a promise that every account completes at the same time. The request branch refers to a previous request for the access profile itself.
+The paths summarize this comparison's dependencies. They are not private engine stages, equal-duration operations or a promise that every account completes together. “Past profile request” means a request for the profile itself.
 
-Just-In-Time entitlements have different activation behavior. Do not apply the example's immediate standing-membership expectation to an entitlement that must first become available for activation.
+The expectation concerns standing entitlements. A just-in-time entitlement has separate activation behavior; availability for activation is different from an immediately usable native membership.
 
-## Save, evaluate and deliver are separate events
+## Save the definition, apply it, then inspect the account operations
 
-**Identity processing** evaluates identity information and applicable access requirements. **Provisioning** performs account or access changes through the supported fulfillment route.
+Saving records the revised configuration. It does not establish that affected identities were evaluated or source writes succeeded.
 
-Saving the edited definition records the new configuration. It does not prove that every affected identity has been evaluated or that every source change succeeded.
+The profile-list Apply Changes action starts relevant identity processing. Its list-page scope includes identities in ISC's **Active** or **Inactive (short-term)** processing status, rather than **Inactive (long-term)**.
 
-The access-profile list's **Apply Changes** action starts identity processing across eligible identities: those with Active or Inactive (short-term) identity status, rather than Inactive (long-term). These are ISC processing statuses, not the application's account-enabled flag. All four example identities are Active. The role, access-profile and application configurations are processed together through these list-page actions.
+These statuses describe ISC's processing state. They are distinct from an application's account-enabled flag and from the organizational lifecycle requirement selecting access. All four representative identities here are Active.
 
-This matters when planning a change. Opening Devi's identity in another browser tab does not turn a shared profile edit into a one-person edit. Nor should the administrator assume Apply Changes will apply only the newly edited profile while ignoring other saved access-model changes.
+The role, profile and application configurations are processed together through these list-page actions. Review other saved changes and the affected population. Opening one person's record does not isolate a shared profile edit to that person.
 
-Consider these supplied observations, all on the same date in UTC:
+An **integration credential** is the account or authorization used by the connector for source operations.
 
-- At 10:00, the revised profile is saved.
-- At 10:05, the administrator starts the agreed processing.
-- At 10:12, provisioning activity shows a Notes addition for Devi, rejected because the integration credential lacks update permission for her account.
-- At 10:14, the Notes addition for `sl-lcs` is reported successful.
-- At 10:20, native checks find Devi still has only Readers and Entry. The lifecycle account has all three groups and can add a note at its assigned site.
+Use these supplied observations from the same day, in UTC:
 
-The two outcomes do not contradict one another. They concern different account operations.
+- **10:00:** The three-item definition is saved.
+- **10:05:** The administrator starts the reviewed processing.
+- **10:12:** The role holder's Notes-add operation is rejected because the integration credential lacks the required update permission for that specific account.
+- **10:14:** The lifecycle holder's separate Notes addition is reported successful.
+- **10:20:** Fresh native checks show the role account still has Readers and Entry only. The lifecycle account has all three and can add a note within its assigned site.
 
-The saved profile proves what ISC is configured to require. Devi's failed operation proves that an attempted addition did not complete successfully. Her native check establishes the observed application state.
+The missing permission is explicitly scoped to the role-holder account here, so the other account's success is not contradictory.
 
-A successful change for `sl-lcs` does not prove that Devi succeeded too.
+The successful lifecycle path completes the chain: the current requirement includes the revised profile, processing evaluates that requirement, provisioning supplies the membership, and native evidence plus the intended action confirm the selected result.
 
-The investigation should preserve the exact source, identity, account, entitlement, operation, result and observation time. If a supported fulfillment route uses manual work rather than a connected write, inspect that task and completion evidence instead of inventing an automated connector success.
+The role-holder path has a different result. The requirement exists, but the recorded addition failed. Reediting the bundle does not explain or repair the credential permission.
 
-Do not repeatedly edit the profile to compensate for a credential failure. The intended requirement may already be correct. Fixing the authorized integration problem and following the supported recovery process is different from changing the access model.
+Under an approved account-specific permission correction and supported recovery, a later native check confirms Notes on that account. A North-site note succeeds, while South-site use and adjustment approval remain denied. No other relevant native rights, account or application-policy changes occurred in this recovery example.
 
-## Removing a reference is not always removing a membership
+The observations are not fixed latency or retry guarantees. They establish separate account outcomes, not success for the whole population.
 
-Now consider a separate proposed change, starting from a confirmed three-entitlement profile and accounts that hold all three groups.
+Preserve source, identity, account, entitlement, operation, result and time when investigating. A **manual provisioning task** asks a person to carry out a source change; where that is the supported path, inspect its actual completion and native result instead of assuming a connector write.
 
-Receipt Entry is no longer required. The administrator removes `E-6602`, leaving Readers and Discrepancy Notes.
+## A description change and an entitlement change answer different questions
 
-First establish an important condition: **Enable Role Access Removal Propagation is off** in this example. This is an organization-level setting affecting removal after certain role-definition changes.
+Renaming the package Stock receiving and discrepancy notes changes its explanation. Adding the Notes reference changes its contents.
 
-Under that condition, removing Entry from the profile does not itself reclaim the existing Entry membership. Existing users can retain it as an independent entitlement, detached from this profile.
+A description promising Notes cannot supply a missing entitlement reference. An added reference with unchanged old wording can instead leave reviewers misunderstanding an expanded package.
 
-“Independent” describes its relationship to the revised bundle. It does not mean approved, harmless, or impossible to remove.
+**Metadata** is descriptive or governance information about an object. The **profile owner** is recorded as responsible for maintaining the package. Name, description and ownership changes can affect meaning and configured responsibilities without changing the native permission list.
 
-Devi can therefore meet the new two-item profile and still have Receipt Entry in StockLedger. If the business intended to stop her entering receipts, the definition edit alone has not achieved that outcome.
+Other fields need their own impact review. Request settings control a direct request route; account-selection configuration can affect where supported provisioning targets access. Calling every non-entitlement edit “cosmetic” would hide those effects.
 
-Do not turn this into a universal rule that profile edits can never remove access.
+Also inspect native permission meaning under unchanged references. If the application changes Readers to include stock-adjustment approval, the saved list can remain identical while the actual capability broadens.
 
-With role access removal propagation enabled, removing an entitlement from a profile associated with an **enabled role** is a documented role-change removal path. Role state matters: changes made while a role is disabled are not simply propagated by enabling it later.
+Compare references to establish which represented objects changed. Check native permission evidence to establish what those objects allow.
 
-This setting does not control access additions. Nor does it make every detected or direct-request profile association equivalent to a role requirement.
+## Removing an item needs another set of conditions
 
-For a removal assessment, identify the actual applicable path, role state, setting and other access requirements before predicting a native deletion. Access required by another role needs separate consideration; a familiar profile label is not a complete dependency inventory.
+Start an independent removal example from a confirmed three-item profile and accounts holding all three groups. Receipt Entry is no longer required. The revised profile contains Readers and Notes.
 
-There are three different questions here:
+First establish the configuration: **Enable Role Access Removal Propagation is off**.
 
-- Did the definition stop including Entry?
-- Did an applicable removal process initiate an Entry removal for this account?
-- Did Entry actually disappear from the native account, with the intended effect?
+This organization-level setting controls supported removal after specified role access-definition changes. **Deprovisioning** means removing native access.
 
-A yes to the first question is not evidence for the other two.
+With propagation off in this example and no other removal action, deleting the Entry reference does not reclaim the existing Entry membership. It can remain independently held, detached from the revised bundle.
 
-## Why restoring the old definition may not undo the change
+“Independent” describes its relationship to the package. It does not mean justified, harmless or impossible to remove.
 
-Return to the addition example, with role access removal propagation off.
+The role holder can therefore satisfy Readers plus Notes and still retain Entry. If the business wanted receipt entry to stop, editing the definition has not established that outcome.
 
-Suppose the Notes addition succeeds for Devi after an authorized recovery. A later business review decides that only discrepancy specialists should have Notes, not every receiving clerk.
+Now change the setting in a separate variation. With propagation on, removing an entitlement from a profile associated with an enabled role is a documented removal path.
 
-The administrator restores the old profile definition: Readers and Entry.
+The role must be enabled for that access change to propagate. An edit made while the role was disabled is not simply replayed by enabling it later. The removal setting also does not control additions.
 
-It is tempting to call this a rollback and close the change. But restoring a saved definition and reversing completed account writes are different operations.
+This is why “profile edits never remove native access” and “removing any reference always removes everyone's rights” are both unreliable predictions.
+
+Inspect the applicable path, role state, setting, account and other access requirements. Access also required by another role needs consideration; a profile label alone does not describe all dependencies.
+
+Then distinguish the outcomes: the definition excludes Entry, an applicable process attempts removal, and current native evidence confirms whether Entry is gone. The first fact does not prove the others.
+
+## Restoring the old definition may leave completed grants behind
+
+Return to the addition example, with removal propagation off. Notes has now been delivered to the role account after the approved recovery.
+
+A later review decides that only discrepancy specialists should have Notes. The administrator restores the original definition, Readers and Entry.
+
+A **rollback** reverses a change. Restoring saved configuration reverses the reference-list edit, but under these conditions it does not reverse the completed Notes grant.
 
 ```text
-Original profile: Readers + Entry
-                  |
-           add Notes reference
-                  |
-        Notes delivered to account
-                  |
-      restore original definition
-                  |
-      propagation OFF in this example
-                  |
+Profile: Readers + Entry
+          |
+          | add Notes to definition
+          v
+Notes delivered to an account
+          |
+          | restore old definition
+          v
+Removal propagation OFF here
 Profile: Readers + Entry
 Account: Readers + Entry + Notes
-                  |
-     assess authorized Notes removal
-                  |
-       verify actual native result
+          |
+          v
+Assess authorized corrective removal
+          |
+          v
+Verify native rights and capability
 ```
 
-Here, the old definition is restored, but Notes remains on the account until an applicable removal action actually removes it.
+The restored profile has the old pair. The account can still hold all three until an applicable removal action removes Notes.
 
-A **compensating action** is an authorized corrective action addressing effects that have already occurred. It is not merely replacing a configuration file.
+A **compensating action** is an authorized correction addressing effects that have already occurred. Here it may require removing an actual Notes grant, after checking whether another valid requirement needs it.
 
-Work out which accounts received Notes, which attempts failed, which were never selected and which already had Notes for another valid reason. Removing Notes from everyone who currently has it could affect access unrelated to this change.
+Do not remove Notes from everybody who currently holds it merely because this change added Notes to the profile. Separate accounts that received it from this change, failed to receive it, were never selected, or already held it for another valid reason.
 
-That is why retaining the before-state and per-account delivery evidence is practical, not paperwork. It identifies what actually needs reversing.
+Their before-state and delivery evidence identify what needs reversing. A restored definition by itself cannot make that distinction.
 
-If propagation is enabled for an applicable enabled-role path, reassess the expected removal behavior rather than importing this off-setting outcome unchanged.
+If an applicable enabled-role path has propagation on, reassess its expected removal behavior instead of importing this off-setting result.
 
-## Assess the shared change before applying it
+## Assess the shared population before applying the edit
 
-Suppose there are 180 holders, but the change ticket mentions only Devi.
+Suppose a change ticket mentions one employee, but 180 identities hold the profile. That count begins the assessment; it does not tell you 180 identical outcomes.
 
-The number 180 is not an impact answer. It is the starting population for classification.
+Identify the exact profile and compare before/after references, source, native meanings, approved work and exclusions.
 
-Find the exact profile object and compare its saved entitlement references before and after. Confirm the source, native meanings and intended work, including what must remain excluded.
+Inventory both configurations using it and current holders. Classify current requirements and origins, keeping mixed-origin or unknown cases visible. Today's holder list alone can miss people a configured role will select later.
 
-Then identify configurations using the profile and the origins of current holders. Where origins overlap or history is incomplete, keep those cases visible rather than forcing them into a guessed category.
+Predict outcomes separately: required addition, no automatic addition, loss of an incomplete profile association, retained old membership, or removal dependent on a supported enabled-role propagation path.
 
-For each relevant group, predict a specific outcome: a required addition, no automatic addition, possible loss of the profile association, retained old memberships, or a removal dependent on the enabled-role propagation path.
+Keep expected results separate from observed results. “Requires Notes” and “native Notes membership confirmed” belong in different parts of the change evidence.
 
-Separate desired outcomes from evidence already obtained. “Should receive Notes” and “native Notes membership confirmed” belong in different columns of a change record.
+Agree the application scope and review other saved configuration changes. A request for a small pilot does not make a shared definition edit a one-person change. A separately designed pilot needs its own controlled configuration and approval.
 
-Agree the application scope and review other pending configuration changes before starting broad processing. A request for a small pilot does not justify applying a shared definition to everybody without recognizing that wider effect. A separately designed pilot needs its own controlled configuration and approval.
+After application, reconcile the intended identities and selected accounts against actual operation and native results. Include exceptions rather than only a success total.
 
-After application, reconcile expected identities and exact account outcomes. Include exceptions, not just a success total.
-
-If an origin is unknown, say what is unknown and collect the evidence needed to resolve it. A current screenshot cannot reconstruct a missing approval history or prove which original grant should be reversed.
+If origin or earlier approval is unknown, identify the missing evidence. A current screenshot cannot reconstruct the original grant or establish which effect should be undone.
 
 ## Work through the changed conditions
 
-### Case 1: The wording promises Notes, but the list has two entries
+### 1. The description promises Notes, but the list still has two items
 
-**Facts:** The description says “read, enter receipts and add discrepancy notes.” The saved references are still only `E-6601` and `E-6602`. Devi cannot add notes.
+The wording says reading, receipt entry and discrepancy notes. The saved references contain only Readers and Entry. The role holder cannot add notes.
 
-**Reasoning:** The package wording and its contents disagree. First confirm the approved work and exact entitlement references. Do not diagnose a failed Notes write before establishing that Notes was actually part of the configured requirement.
+What should you establish before investigating a failed Notes write?
 
-### Case 2: The role still applies, but provisioning failed
+**Reasoning:** Confirm the approved work and exact configured references. The wording and contents disagree. Do not diagnose failed delivery before establishing that Notes was part of the requirement.
 
-**Facts:** Devi still holds the Receiving clerk role. The revised profile includes Notes. Her Notes addition reports a credential-permission failure.
+### 2. The role applies, but its source operation fails
 
-**Reasoning:** The requirement exists, but delivery failed. Inspect the exact rejected operation and authorized credential correction, then the supported recovery and native outcome. Removing and readding the profile is not an explanation of the permission failure.
+The employee still holds the current Receiving clerk role. The revised profile includes Notes, but the account-specific addition reports missing credential permission.
 
-### Case 3: The old direct request succeeded
+Does that require removing and readding the profile?
 
-**Facts:** `sl-request` received Readers and Entry through a completed request for Stock receiving last month. Notes was not in that profile then. Notes is added today; no other requirement selects it.
+**Reasoning:** The requirement exists; delivery failed for the recorded operation. Investigate that account and permission, obtain an approved correction, use supported recovery and verify native results. Recreating the association is not an explanation of the failure.
 
-**Reasoning:** The earlier completed request does not automatically deliver the later addition. After evaluation, an account missing Notes no longer satisfies the revised profile. Its previous Readers and Entry memberships can remain. A historical success is not evidence of current three-item delivery.
+### 3. The old direct profile request succeeded
 
-### Case 4: Detection survives the larger definition
+A holder received the original pair through a completed request last month. Notes is added today; no other requirement supplies it.
 
-**Facts:** `sl-detect` independently acquired Notes before the edit. ISC has current, correctly linked records showing all three memberships on its one account.
+Does that earlier success deliver Notes now?
 
-**Reasoning:** The revised full set is already present. Retaining the profile does not establish that the definition edit granted Notes. Establish origin from grant evidence, not from the profile's continued appearance.
+**Reasoning:** No. This direct-profile-request origin does not automatically receive the later addition. Without Notes, the revised set is incomplete after evaluation, while the old native pair can remain.
 
-### Case 5: Entry was removed, propagation is off
+### 4. The detected holder already has the larger set
 
-**Facts:** Devi has all three groups. Entry is removed from the profile. Role access removal propagation is off. No other removal action occurs.
+The detected holder acquired Notes independently before the edit. Current, correctly linked records show all three on their only account.
 
-**Reasoning:** Do not report that receipt-entry capability was reclaimed. The revised definition can exclude Entry while the account retains it independently. If withdrawal is intended, assess and carry out the applicable authorized removal, then verify the application result.
+Does retaining the revised profile prove this edit granted Notes?
 
-### Case 6: The relevant role path has propagation enabled
+**Reasoning:** No. The full revised set was already held. Use actual grant evidence to establish origin rather than the profile's continued appearance.
 
-**Facts:** In an independent variation, propagation is on and the profile is associated with an enabled role. Entry is removed from the profile. No other role requires Entry.
+### 5. Entry is removed with propagation off
 
-**Reasoning:** This is a documented role-change removal path, not the off-setting case. Expect the relevant removal to be processed, then inspect the actual account operation and result. If the role had been disabled during the edit, do not assume later enablement would replay that earlier access change.
+The account holds all three groups. Entry is removed from the definition, propagation is off and no other removal occurs.
 
-### Case 7: The same reference now permits approval
+Has receipt-entry capability been reclaimed?
 
-**Facts:** The saved profile references have not changed. StockLedger's application team changed Stock Readers so that its members can approve adjustments as well as read stock.
+**Reasoning:** No. The native membership can remain independently held. If withdrawal is intended, assess the appropriate authorized removal path and verify the native action outcome.
 
-**Reasoning:** A clean profile-list comparison does not establish unchanged capability. Confirm the native permission change, affected membership population and approved duties. Renaming the profile or improving its description cannot remove the added approval permission.
+### 6. The enabled-role removal path has propagation on
 
-### Case 8: The definition is restored after partial delivery
+In a separate variation, propagation is on, the profile is associated with an enabled role, and Entry is removed. No other role requires Entry.
 
-**Facts:** Notes succeeded for 12 accounts and failed for 3. The profile is restored to its original pair. Propagation is off; no corrective account action has occurred.
+Is this the same retention case as the off-setting example?
 
-**Reasoning:** Do not report all 15 accounts as restored. Preserve the successful and failed populations separately. Assess the 12 actual grants, including any independent requirements, and verify each required compensating removal. A failed addition should not be counted as a successful grant that was later undone.
+**Reasoning:** No. This is a documented role-change removal path. Follow relevant evaluation, the actual account operation and native result. An edit made while the role was disabled would not be replayed merely by later enablement.
+
+### 7. An unchanged reference now permits approval
+
+The profile references are unchanged. The application team modifies Readers to permit adjustment approval as well as reading.
+
+Does an unchanged list establish unchanged capability?
+
+**Reasoning:** No. Confirm the native change, affected holders and approved duties. A name or description edit cannot remove the broadened permission; the justified access design needs attention.
+
+### 8. The definition is restored after partial delivery
+
+Notes succeeded for 12 accounts and failed for three. The original pair is restored, propagation is off and no corrective account action has occurred.
+
+Can all 15 accounts be reported as restored?
+
+**Reasoning:** No. Separate the actual grants from failed attempts. Assess the 12 successful additions and any independent requirements, then verify each required compensating removal. Do not count a failed addition as a grant later undone.
 
 ## Apply the reasoning to a license change
 
-A design application has a profile containing a project-reader group. The proposed change adds a paid Editor license. Its enabled role still applies to 20 people.
+A **license** gives an account the right to use a product or feature set under an application's licensing model.
 
-Ten others hold the profile only through completed direct requests for the profile itself. None of the 30 accounts currently has Editor.
+A design profile contains a project-reader group. The proposal adds a paid Editor license. An enabled role currently requires the profile for 20 people.
 
-Assume the integration supports license assignment, the records are current, and no other route grants Editor. Available license capacity is not yet known.
+Another ten hold it only through completed direct requests for the profile itself. None of the 30 accounts currently holds Editor. The integration supports its assignment, recorded access is current and no other route grants it. Available license capacity is unknown.
 
-Before reading on, decide:
+Which population has a requirement for Editor, and what would establish successful delivery?
 
-- Which population has a requirement for the new license?
-- Should the 10 previous direct-request holders be counted as new license deliveries?
-- What evidence would establish the number of successful assignments?
-- If the license reference is later removed with role removal propagation off, has capacity necessarily been reclaimed?
+**Reasoning:** The 20 role holders require additions. They are not 20 confirmed successful licenses. The ten previous direct-profile-request holders do not automatically receive the addition and, without Editor, fail the revised full-set condition after evaluation.
 
-The role's 20 people are the population for required additions, not 30 confirmed successful licenses. The direct-request population does not automatically receive this later addition and, without Editor, no longer satisfies the revised bundle after evaluation.
+Unknown capacity prevents a promise that every required addition succeeds. Reconcile per-account operation results, native license assignments and relevant application conditions.
 
-Unknown capacity prevents a promise that all 20 assignments will succeed. Inspect per-account fulfillment results and current native license assignments, then reconcile failures and any other application conditions.
+Now remove the license reference with role removal propagation off. Does that establish reclaimed capacity?
 
-Removing the license reference with propagation off is not proof that completed license grants were reclaimed. Verify the applicable authorized removals and native capacity afterward.
+No. Confirm which licenses were actually delivered, assess applicable authorized removals and check native assignments and resulting capacity. Reference removal alone does not establish reclamation.
 
-The application and entitlement type changed, but the reasoning did not: exact definition, current requirement, applicable processing, account operation and native result each answer a different question.
+Exact definition, current requirement, relevant evaluation, account operation and native outcome remain separate evidence even when the entitlement type changes.

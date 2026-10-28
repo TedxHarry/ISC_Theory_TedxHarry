@@ -1,0 +1,19 @@
+Enabled profile
+|
++-- Direct profile request
+|   Requestable and allowed request
+|   Decision/timing conditions met
+|
++-- Configured automatic assignment
+    Matching enabled role
+    OR governing lifecycle requirement
+
+Required account access
+          |
+          v
+Select account and deliver change
+          |
+          v
+Verify native rights and intended action
+
+Enablement alone selects nobody.

@@ -1,83 +1,129 @@
 # An account schema: which fields describe the account, and which ones identify it?
 
-Devi, employee number `44004`, works in billing operations. InvoiceTrack gives her a standard account for daily work and an approved administrative account for specific support tasks.
+One person can have a standard application account for daily work and a separate administrative account for approved support tasks.
 
-Both accounts belong to Devi. Both carry employee number `44004`.
+Both accounts can contain the same employee number. That number helps identify their owner, but it cannot distinguish one account from the other.
 
-An onboarding proposal says, “Use employee number as the account identifier. It's unique for each employee.”
+Suppose you're preparing to collect these records into SailPoint Identity Security Cloud (ISC). How should ISC know which account a returned record represents? Which field should name that account? And where do the other values, such as department and office, belong?
 
-Unique for each employee, yes. But does it distinguish these two accounts?
+Those choices are part of the account schema. Let's look at the records they need to describe.
 
-That is the problem an account schema must help us solve. Before deciding how to match an account to its owner, we need to represent the right account in the first place.
+## The person and the account aren't the same record
 
-## Look at the records before choosing the fields
+An **account** is a record in an external system. An ISC **identity** represents a person or another entity and connects relevant information, accounts and access.
 
-An **account** is a record in an external system. In SailPoint Identity Security Cloud (ISC), an **identity** represents a person or another entity, connecting relevant information, accounts and access.
+Here, one person's standard and administrative accounts are legitimate separate records. Representing both doesn't require creating two employee identities.
 
-Here, one person has two external account records. Two accounts don't require two employee identities.
+A **source** is ISC's configured representation of a system or collection of account data. Its **connector** supplies the supported integration behaviour. **Aggregation** collects account or entitlement information into ISC.
 
-A **source** is ISC's configured representation of a system or collection of account data. Its **connector** provides supported integration behavior. **Aggregation** collects account or entitlement information into ISC.
-
-An **attribute** is a named piece of information. In the fictional InvoiceTrack setup, the relevant account data is:
+Assume a billing application's supported read returns these two accounts for a source named `Billing-Production`. The records and values below are hypothetical teaching inputs.
 
 | External field | Standard account | Administrative account |
 |---|---|---|
-| accountKey | inv-acct-44004 | inv-admin-acct-44004 |
-| loginName | inv-44004 | inv-admin-44004 |
-| employeeNumber | 44004 | 44004 |
-| fullName | Devi Rao | Devi Rao |
+| accountKey | acct-standard | acct-admin |
+| loginName | billing-user | billing-admin |
+| employeeNumber | E-24 | E-24 |
+| fullName | The person's full name | The same person's full name |
 | department | Billing Operations | Billing Operations |
 | officeCode | BLR | BLR |
 | costCentre | 044 | 044 |
-| groups | invoice-read | invoice-support |
+| groups | billing-read | billing-support |
 
-Assume these are separate, legitimate accounts in the intended production environment. Their account keys and login names are supplied as stable, distinct values under this fictional application's integration contract.
+An **attribute** is a named piece of information. In the table, `accountKey` is an attribute name, while `acct-standard` is a value supplied by one account. The fullName cells describe the repeated human name; they aren't proposed account identifiers.
 
-An **integration contract** is the agreed meaning and behavior of the data exchanged between systems. Here, it includes which field identifies an account, what values the connector returns and which changes the application supports.
+For this example, the application owners have established that accountKey and loginName are distinct and stable for these accounts. The two records belong to the intended production environment.
 
-Look at the accountKey row. It distinguishes the records.
+That agreement is part of the **integration contract**: what the exchanged fields mean, what the connector returns and which behaviours the application supports.
 
-Now look at employeeNumber. It tells us that both records refer to the same employee. That is useful information, but it answers a different question.
+Now compare the rows. AccountKey distinguishes the two records. EmployeeNumber connects them to the same employee. FullName describes the owner, and department describes an aspect of the account's business context.
 
-The fullName values don't distinguish either account. Neither does department, officeCode or costCentre.
+Each field is useful, but they have different jobs.
 
-A value can be correct and useful without being a suitable account identifier.
+## A schema defines fields; an account supplies values
 
-## The schema describes the shape and designated uses
+An **account schema** defines the attributes a source represents and how those attributes are organized. It also designates which attribute supplies Account ID and which supplies Account Name.
 
-An **account schema** defines the account attributes a source represents and how those attributes are organized. It includes field definitions and the attributes designated as Account ID and Account Name.
+Think about the difference between “this source has a field called office” and “this account has office = BLR.”
 
-A field definition describes a named slot, such as office. A particular account supplies a value for that slot, such as BLR.
+The first describes a definition shared by the represented account records. The second describes one account's data. Defining the field doesn't supply a value for every account.
 
-The definition and the value aren't the same thing. A schema can define office while an individual account has no office value.
+The schema also describes how to interpret values. A **string** is text. A **Boolean** represents true or false. A **multi-valued attribute** holds a collection of values rather than just one.
 
-The schema also records information needed to interpret fields. For example, a **string** represents text, a **Boolean** represents true or false, and a **multi-valued attribute** can hold a collection rather than one value.
+Why does that matter? If costCentre is a business code, the leading zero in `044` may be significant. Treating that code as text can preserve its agreed meaning. Choosing a number simply because the code contains digits can lose information the business needs.
 
-If costCentre is a business code, `044` and `44` need not mean the same thing. Treating it as text can preserve the significant leading zero under the agreed data design. Don't choose a numeric type merely because a code contains digits.
+Likewise, an account can belong to more than one group. A field intended to represent those memberships needs the connector's supported multi-value arrangement. The schema setting and the returned data must agree; neither the field's name nor its appearance in a table settles that design.
 
-An **entitlement** is an assignable access right. An account attribute can be designated as representing entitlements, such as the groups associated with an account. The relevant field settings and entitlement definitions must agree with the connector's supported representation.
+An **entitlement** is an assignable access right. A groups field can be designated as representing entitlements, with the relevant entitlement definitions and connector behaviour. That tells ISC how to interpret the collected memberships. It doesn't assign those rights or grant the connector permission to change them.
 
-Those settings describe how to interpret collected information. They don't grant the access or give the connector permission to change it.
+The schema represents information exposed through this source. It isn't a copy of the application's entire database. An application may store fields that the selected connector, software interface or export doesn't expose.
 
-The schema isn't a copy of every table or internal field in the target application. It describes the account data represented through this source. An application can hold information that its selected software interface, export or connector doesn't expose.
+## Choose a field for the account's identity and a field for its name
 
-## Account ID and Account Name have designated jobs
+The schema selects one attribute as **Account ID** and one as **Account Name**.
 
-The source schema selects one attribute as **Account ID** and one as **Account Name**.
+Account ID supplies the account-identifying value under the source's schema and connector arrangement. It answers “which account record is this?”
 
-Account ID provides the account-identifying value under the source's schema and connector arrangement. Account Name provides the designated naming/display value for that account representation.
+Account Name supplies the designated naming/display value for that account representation. It is a configured role for an attribute, rather than a label you can infer from whichever text looks most readable on a page.
 
-For InvoiceTrack Production, the proposed design is:
+For the supplied billing records, the design is:
 
-| Use | Selected account attribute | Why it fits this example |
+| Purpose | Selected attribute | What its value tells us |
 |---|---|---|
-| Account ID | accountKey | Distinguishes the two accounts and is stable under the supplied application contract |
-| Account Name | loginName | Supplies the distinct, supported account name for each record |
-| Person-matching input | employeeNumber | Connects both accounts to the intended employee under configured matching |
+| Account ID | accountKey | Which of the two distinct accounts this record represents |
+| Account Name | loginName | The supported designated account name |
+| Person-matching input | employeeNumber | Which employee owns the account under separate matching configuration |
 
-The third row isn't another Account ID designation. It is an attribute used for a separate ownership relationship.
+The last row isn't a third schema designation. It identifies information used to establish a different relationship.
 
-You can encounter the schema property names `identityAttribute` and `displayAttribute` in technical representations. For this example, the selected properties are:
+If you select employeeNumber as the Account ID here, both separate accounts supply `E-24`. The value distinguishes the person from other people, but doesn't distinguish that person's standard account from the administrative one.
+
+You haven't solved account identification merely because the value is a good employee identifier.
+
+The chosen fields must meet the actual connector's requirements. These hypothetical accountKey and loginName choices don't establish that every application's similarly named fields are stable, unique or supported.
+
+## Follow a returned record into ISC
+
+In this example the connector reads the application through an **API**, or application programming interface: a supported software interface for exchanging requests and results.
+
+Assume the configured account read includes the intended records and fields. A **mapping** specifies which input supplies an output value. The connector's supported field mapping associates the returned data with the source-account attributes represented in ISC.
+
+For the standard account, accountKey supplies `acct-standard`, loginName supplies `billing-user`, and the other returned fields supply their applicable account values.
+
+Where the external field and represented field have different names, the mapping must connect them. For example, this design represents the returned officeCode as the account attribute office. With the correct mapping and supplied input, office becomes BLR.
+
+The schema describes those fields and their designated uses. The account record holds the collected values.
+
+```text
+[External account record]
+              |
+    supported read and field mapping
+              |
+              v
+[Values in source account attributes]
+              |
+    interpreted under account schema
+              |
+              v
+[ISC representation of that account]
+```
+
+The arrows show the relationship between external data, supported mapping and account representation. They don't assert a private internal sequence or separate backend services.
+
+The administrative record is represented with its own key, `acct-admin`, and its own designated name, `billing-admin`. Shared employee information doesn't collapse these into one account.
+
+Nothing in this read creates a new billing account. Both already existed externally. **Provisioning** carries out supported account or access changes in the external system; reading and representing a record is a different responsibility.
+
+You can inspect that distinction in the **user interface**, or UI. The source's Account Schema view shows definitions and designations. An individual account's details show values collected for that particular record.
+
+Finding office in the schema answers “is this field defined?” Finding office = BLR on an account answers “what value does this represented account currently contain?” Neither screen alone establishes that every account has the value or that the target application was changed.
+
+When identifying an account on a screen, check the source context, account key, selected naming attribute and actual collected values. A friendly title alone doesn't establish which record you opened.
+
+## When you encounter identityAttribute and displayAttribute
+
+Technical schema representations use the property names `identityAttribute` and `displayAttribute`. The first selects the attribute used for the represented object's unique identifier; the second selects its display value.
+
+For our selected fields, a small name-and-value fragment looks like this:
 
 ```json
 {
@@ -86,280 +132,206 @@ You can encounter the schema property names `identityAttribute` and `displayAttr
 }
 ```
 
-These are selected schema properties, not a complete configuration request.
+Each line names a schema property on the left and its selected attribute on the right. This is an explanatory fragment, rather than a complete configuration request.
 
-Read their values carefully. `accountKey` is the name of an attribute, not Devi's account key value. The standard account supplies `inv-acct-44004` in that attribute.
+Notice that `accountKey` is a field name. The standard account's value in that field is `acct-standard`. Confusing a field selection with a particular account's value would change the meaning of the configuration.
 
-Likewise, `loginName` selects a field. The two account records supply different values for it.
+The word “identity” inside identityAttribute concerns identification of the represented object. It doesn't mean “select this person's identity profile” or “this property configures who owns every account.”
 
-The word “identity” in `identityAttribute` doesn't mean “select the employee's identity profile” or “correlate every account with this value.” In this schema context, it concerns identifying the represented object.
+An **identity profile** configures ISC identities, including the mappings that supply their attributes. An account schema describes source-account records. Those are separate configuration objects.
 
-An **identity profile** configures ISC identities, including the mappings that supply their attributes. That is a different configuration object from the account schema, which describes separate source-account records.
+An **object ID** identifies a particular stored ISC object. A schema's own ID identifies that schema definition; it isn't the external account key. An ISC source, account and identity also have their own object contexts.
 
-Also don't confuse a field called id in external data with every ISC object ID. An **object ID** identifies a particular stored ISC object, such as a source, schema or account. A schema's own object ID identifies the schema definition; it isn't the external account key.
+An external field called id doesn't automatically equal all those identifiers. Before comparing two IDs, establish which objects they identify.
 
-Always ask which object's identifier you are looking at.
+## Two distinct account records can point to one person
 
-## The displayed account name isn't any convenient friendly label
+**Account correlation** matches and associates a source account with the appropriate ISC identity using configured comparisons.
 
-It is tempting to read displayAttribute and think, “This only affects what the page looks like.”
+Assume the person's existing identity has employeeNumber = E-24, the approved matching configuration compares that identity value with the account's employeeNumber, and the intended identity is unambiguous.
 
-That assumption is unsafe.
-
-SailPoint documents significant risks when changing the designated Account Name or Account ID after accounts have been aggregated. Its account-schema guidance identifies Account Name as immutable, meaning it is intended to remain fixed. Editing its designation after aggregation can produce duplicate accounts and identities. Account ID changes can break references across systems.
-
-Therefore, don't treat the Account Name selection as an unrestricted cosmetic preference.
-
-A normal descriptive field, such as fullName, can have a different purpose from the designated Account Name. A screen showing Devi Rao somewhere doesn't prove that fullName is the selected account-naming attribute.
-
-Inspect the actual designation and the record behind the screen.
-
-The selected account ID and naming fields need to satisfy the chosen connector's requirements. A human-readable full name isn't a safe substitute just because it is pleasant to read. People can share names, and a person can have multiple accounts.
-
-In this fictional setup, loginName meets the agreed account-naming requirements. That doesn't establish that every application's username is stable, unique or suitable in the same way.
-
-For a real source, establish the documented fields and supported behavior before the first collection. Don't replace a connector's required identifier simply because another application uses a different one.
-
-## Follow the record into the represented account
-
-InvoiceTrack holds the external records. Its **API**, or application programming interface, is the supported software interface used to read them in this example.
-
-Assume the configured read operation returns the intended accounts. The connector's field mapping associates returned values with the account attributes represented in ISC.
-
-A **mapping** specifies which input supplies a particular output value. Here, it connects external account fields to represented source-account fields. It isn't automatically an identity-attribute mapping or an external write instruction.
-
-The relationship looks like this:
+The standard account supplies E-24, so the configured comparison can establish its association with that person. The administrative account supplies the same person reference and can be associated with the same identity.
 
 ```text
-[InvoiceTrack account record]
-              |
-   supported read and field mapping
-              |
-              v
-[Values in source account attributes]
-              |
-   interpreted under account schema
-              |
-              v
-[ISC representation of that account]
-```
-
-The arrows follow the data relationship, not a private sequence of internal processing stages.
-
-In this example, the standard account is represented using accountKey `inv-acct-44004`, Account Name `inv-44004`, and its other collected attributes. The administrative record has its own identifying and naming values.
-
-The schema doesn't create a new InvoiceTrack account when this happens. It helps define how the already-existing account is represented.
-
-**Provisioning** carries out supported account or access changes in an external system. Reading and representing these records isn't that operation.
-
-The **user interface**, or UI, can show a named account and its collected details. Those values came from an external read and the configured representation, not from the UI inventing the employee's current application state.
-
-To interpret the screen, check the source context, actual account key, naming designation, attribute values and collection evidence. A friendly title alone doesn't establish which record you have opened.
-
-The source's Account Schema view shows the definitions and selected uses. Its account records show values collected for particular accounts. Those views answer different questions: what should this source represent, and what information does this account currently contain?
-
-Schema changes are captured in audit events, which record configuration changes. Such an event can establish that a definition changed; it isn't proof that all accounts were recollected or any external account was modified.
-
-## Adding a field doesn't supply its value
-
-Suppose the project wants an account attribute called office in ISC.
-
-The source schema includes office. The external read returns officeCode with value BLR. But the supplied connector mapping still expects an old input called siteCode, which isn't present in this response.
-
-The schema is present; the input mapping is wrong.
-
-Adding office again won't repair that relationship. Nor will changing the displayed account name.
-
-In this fictional investigation, the approved correction maps the returned officeCode to the represented office attribute. After an appropriate supported read, the inspected account contains office = BLR.
-
-The application record itself didn't need changing. The information was already present in the response.
-
-Now consider a different variation: the external API doesn't return officeCode at all under the integration's current permission or read configuration.
-
-The same schema definition cannot manufacture BLR. Establish whether the field exists externally, whether this read exposes it, whether the integration can read it and whether the connector maps it correctly.
-
-An **integration credential** is the proof used by the connector to authenticate to the external system. Its read scope can affect which data is available. A schema definition doesn't expand that scope.
-
-A usable account attribute therefore depends on more than a field name in the schema. The external value, supported read, correct mapping and appropriate representation all matter.
-
-A missing value can also be legitimate for a particular account. Don't invent a value merely to make every row look complete; establish the business requirement and the supported treatment of absence.
-
-## Discovery helps with definitions, not with business decisions
-
-**Schema discovery** is a supported way to inspect and import an external source's field definitions. It is available only on sources that support it.
-
-Other sources need manual schema definition or connector-specific setup. Most connected sources provide a starting schema, but the selected connector determines what is available.
-
-Discovery can save you from guessing which attributes are exposed. It doesn't decide whether employeeNumber uniquely identifies accounts in your organization's data.
-
-That decision still requires actual records and their meaning.
-
-Saving a discovered or edited schema also isn't evidence that every account now has its latest attribute values. The account-schema documentation describes subsequent aggregations following the saved schema.
-
-Check the supported collection or processing needed for the change, and inspect the resulting records. Don't assume saving a definition rewrites every existing account or reruns every dependent process.
-
-Discovery and replacement also need impact review. For example, the Delimited File connector documents preservation of settings for retained attributes and conditional removal of attributes absent from a newly uploaded or discovered schema. It isn't a promise that repeatedly replacing a schema has no effect on dependencies.
-
-Before accepting a changed definition, compare what is being added, removed or redesignated and where those fields are used.
-
-## Two account keys can lead to one person
-
-Once the two InvoiceTrack accounts are represented correctly, we can consider their owner.
-
-**Account correlation** matches and associates a source account with the appropriate ISC identity under configured matching rules.
-
-Assume Devi's existing identity, represented by fictional ID `I-44`, has employee number `44004`. The approved matching arrangement uses the account's employeeNumber against the corresponding identity value.
-
-Also assume the values are available and the intended identity is unambiguous. Equal-looking numbers alone aren't proof that every tenant already has this configuration.
-
-The resulting relationships are:
-
-```text
-[Account inv-acct-44004]
-     employeeNumber: 44004
+[Account: acct-standard]
+     employeeNumber: E-24
                 \
-                 > [ISC identity I-44]
-                /
-[Account inv-admin-acct-44004]
-     employeeNumber: 44004
+                 > [One ISC identity]
+                /    employeeNumber: E-24
+[Account: acct-admin]
+     employeeNumber: E-24
 ```
 
-Both accounts can belong to Devi while remaining different account records.
+The arrows represent the supplied account-to-person associations. Each account retains its own key. They aren't being merged, and the diagram doesn't introduce a matching score or claim that equal-looking values configure the comparison automatically.
 
-The arrows represent the supplied ownership associations. They aren't two account records being merged into one, and they don't imply an undocumented matching score.
+Here you can see why both kinds of identifier matter. AccountKey distinguishes the accounts. EmployeeNumber supports their ownership relationship.
 
-This is why the original employee-number proposal fails for account identification. It confuses “which account is this?” with “who owns it?”
+If employeeNumber is wrong or absent, ownership matching can fail even while accountKey correctly identifies the account. If accountKey is unusable, a correct employeeNumber doesn't repair that identification problem.
 
-A missing or wrong employeeNumber can affect ownership matching even when the account key is valid. Conversely, correct employeeNumber doesn't repair a missing or unsuitable account key.
+An **uncorrelated account** is an account whose intended identity association hasn't been established. That differs from a record that wasn't collected or couldn't be represented correctly in the first place.
 
-If an account is **uncorrelated**, its intended person association hasn't been established. That is different from an account that was never collected or couldn't be represented correctly.
+Locate which problem the evidence supports. A correlation-rule change won't make an unread account arrive, and manual association shouldn't hide an account-identification defect.
 
-Locate the problem before changing a matching rule. You cannot solve an unread record by changing correlation, and you shouldn't hide an identifier defect behind manual account association.
+Account Name also has responsibilities beyond how a page looks. ISC documents default correlation that can compare Account Name with an identity's name when the source's configured correlation doesn't find a match. That doesn't replace the explicit employee-number arrangement supplied here, but it is another reason to inspect the actual designation before treating it as cosmetic.
 
-## Missing and duplicate identifiers need investigation, not guesses
+## Why changing Account Name needs more care than editing descriptive text
 
-Suppose an external row has no usable accountKey. The selected Account ID cannot obtain its intended value from that row.
+Suppose someone wants accounts to “look nicer” by replacing loginName with fullName as Account Name.
 
-That is a data or representation problem to resolve under the connector's documented requirements. Don't assume correlation will supply the key later.
+That changes which field has the designated naming responsibility. It isn't simply correcting a descriptive fullName value on one record.
 
-Likewise, suppose two different external accounts return the same accountKey inside the same intended source context.
+SailPoint's account-schema guidance describes Account Name as immutable, meaning it is intended to remain fixed, and warns that editing it after aggregation can lead to duplicate accounts and identities. It also warns that changing Account ID can break account references across systems.
 
-You have conflicting identification inputs. Don't plan around an invented rule such as “ISC always keeps the first” or “the last account automatically overwrites the earlier one.” Diagnose the actual returned records and documented connector outcome.
+These are dependencies to assess before a designation change, rather than errors to discover after saving the form.
 
-The practical checks are concrete: compare the original records, any export or API response, connector mapping, selected schema attributes and actual aggregation messages. Determine whether the records are duplicates, legitimate separate accounts or an incorrectly combined population.
+The repeated fullName in our table is ordinary descriptive information. It can legitimately be the same on both accounts because the owner is the same. That doesn't make fullName a suitable designated Account Name.
 
-**Source context** includes the configured external system and environment. The same local identifier can exist in two different applications or environments. That doesn't establish that the accounts are the same record.
+A page showing the person's name somewhere doesn't prove that fullName is selected as Account Name. Inspect the schema designation and the record supplying the displayed value.
 
-If one source combines populations whose keys overlap, its account-identification design must still distinguish the represented accounts in a supported way. Do not silently switch to an unstable or unapproved composite value.
+For a new source, establish supported identification and naming fields before the first collection. For an already-loaded source, investigate the documented impact and supported change handling before redesignating either field.
 
-A **composite identifier** combines agreed components into one account key. Its uniqueness, stability and connector compatibility need design and validation; concatenating fields isn't automatically a safe repair for an existing source.
+Also separate a designation change from an external rename. Changing the selection from loginName to fullName changes which field supplies the name. An application changing the value inside the selected field is another situation.
 
-## Account attributes don't automatically become identity values
+Keeping the same schema selection doesn't by itself guarantee a harmless external rename. Check the actual connector's rename behaviour and verify the existing relationships and references.
 
-An **identity attribute** is a named value on the ISC identity. An account attribute belongs to the source account representation.
+## Now suppose office is defined, but its value is missing
 
-They can have the same English name without being the same field.
+Keep the same intended office field and returned officeCode = BLR. In this variation, however, the mapping expects an older input called siteCode, which isn't in the response.
 
-InvoiceTrack department describes the application account's collected department. The identity's department follows its applicable identity-profile mapping and processing.
+The schema still defines office. The application still supplied the needed location information. The broken connection is the input-to-account-field mapping.
 
-Adding department to an account schema doesn't, by itself, replace the identity's department. It also doesn't establish that either value should be authoritative for the business.
+Adding office again won't connect officeCode to it. Changing Account Name won't repair that mapping either.
 
-An **authoritative source** provides accounts used to establish identities through an identity profile. Declaring source authority is separate from choosing this account's ID and Name fields.
+The approved correction in this example maps the returned officeCode to represented office. After an appropriate supported read, the inspected account contains office = BLR.
 
-An **identity mapping** specifies how an identity attribute obtains its value. **Identity processing** evaluates the identity under relevant configuration. Those mechanisms need their own inputs and conditions.
+Notice why the application record didn't need editing: its response already contained the correct information. The correction addressed how the integration supplied the represented field.
 
-A **transform** calculates or formats a value under supported logic. It can participate in mapped-value designs, but merely defining a schema field isn't a transform.
+Now change the evidence. Suppose the current API response doesn't include officeCode at all. Before changing a mapping, establish whether the value exists externally and whether this operation is configured and permitted to read it.
 
-Keep those responsibilities separate when someone asks, “Why hasn't the department changed everywhere?” Start by identifying which department value they mean.
+An **integration credential** is the proof the connector presents when authenticating to the external system. Its read authority and the operation's scope can affect which information is available. A schema field doesn't expand that authority.
 
-## Review identifier changes before touching the definition
+There is also a legitimate-data possibility: this account may have no office value. Establish the business requirement and supported treatment of absence before deciding that an empty field is an error. Don't invent BLR merely to make the account look complete.
 
-Imagine a request to replace loginName with fullName as Account Name so accounts “look nicer.”
+The investigation follows the value: external record, actual read result, applicable mapping, schema definition and inspected collected account. It doesn't start by repeatedly adding the same field.
 
-That changes a designated naming field, not just the text on one account. After aggregation, the documented duplicate and reference risks apply.
+## Discovery can find definitions; it can't decide their business meaning
 
-Compare that with correcting a non-designated descriptive fullName value. In our example, accountKey and loginName remain unchanged. The change concerns the descriptive field, subject to its actual read or write configuration.
+**Schema discovery** inspects and imports an external source's field definitions where the selected source supports it. Other sources need manual definition or connector-specific setup. Many connected sources provide an initial schema.
 
-A third situation is an external application renaming the value used by an identifying or designated naming field.
+Discovery helps establish which definitions are exposed. It doesn't tell you that employeeNumber distinguishes every account in your population. You needed the two actual records to see why that choice fails here.
 
-That isn't automatically the same as changing which schema field is selected. But it still requires the connector's documented rename behavior and careful verification of existing account relationships and references. Don't promise it is harmless just because the schema selection stayed the same.
+Saving a discovered or edited schema changes the definition. The documented behaviour is that subsequent account aggregations follow the saved schema. A save doesn't itself establish that all existing accounts now contain newly collected values.
 
-For a proposed schema change, identify dependent account associations, identity mappings, correlation inputs, entitlement representations, reports and provisioning configuration. Changing a field's purpose can affect more than its own column.
+For an intended change, identify the supported collection or processing required and inspect the resulting accounts. Don't assume every dependent process reruns merely because a definition was saved.
 
-Use approved impact assessment and controlled validation. Do not reset or delete a source, remove its accounts or redesignate identifiers as an exploratory repair.
+An **audit event** records an activity or configuration change. Schema changes are captured in audit events. That can establish that someone changed the definition; it doesn't prove that account collection ran or an external account was updated.
 
-The useful result is not “the form saved.” It is correct representation of the intended accounts, retained or deliberately managed relationships, valid values and evidence that the approved change behaved as intended.
+Discovery or replacement also needs a comparison with the existing definition. The Delimited File connector, for example, documents retaining settings for attributes that remain and conditional removal of absent attributes when they aren't used in other configurations.
+
+That connector-specific behaviour isn't a guarantee that replacing every source's schema is harmless. Check which attributes are added, removed or redesignated and what depends on them.
+
+## What if the chosen account key is missing or repeated?
+
+If a returned record has no usable accountKey, the selected Account ID cannot obtain its intended value from that record. Investigate the returned data and mapping under the connector's requirements. Correlation doesn't manufacture the missing external key later.
+
+If two genuinely different accounts return the same accountKey within the same intended source context, the identification inputs conflict.
+
+Don't invent a universal rule that ISC always keeps the first row, overwrites it with the last or silently repairs the conflict. Inspect the actual connector outcome and collection messages.
+
+Compare the external records, export or API response, selected fields, mapping and intended population. Determine whether you have repeated copies of one record, legitimate separate accounts, or populations incorrectly combined under an overlapping key.
+
+**Source context** includes the configured external system and environment. A local key can appear in two applications or two environments without identifying the same external account.
+
+If a single source combines those populations, its supported identification design still needs to distinguish the accounts.
+
+A **composite identifier** combines agreed components into one key. It can be a design option where supported, but its uniqueness, stability and connector compatibility need validation. Concatenating a region and local key isn't automatically a safe repair for an already-loaded source.
+
+Ownership matching remains a separate question. Assigning the conflicting rows to different people doesn't make the repeated account key distinguish them.
+
+## An account's department and an identity's department are separate values
+
+An **identity attribute** belongs to the ISC identity. An account attribute belongs to the represented source account.
+
+The two can have the same English name without being the same field. Our billing account's department describes its collected account data. The identity's department follows its applicable identity-profile mapping and processing.
+
+An **identity mapping** specifies how an identity attribute obtains its value. **Identity processing** evaluates the identity under the relevant configuration. A **transform** calculates or formats a value using supported logic and can participate in a mapped-value design.
+
+Adding department to the account schema doesn't configure any of those mechanisms by itself. It doesn't automatically replace the identity's department or establish which source should supply that business value.
+
+An **authoritative source** supplies accounts used to establish identities through an identity profile. That identity-origin responsibility is separate from choosing this source's Account ID and Account Name.
+
+So when someone says, “The department is correct, but it hasn't changed everywhere,” identify which record and field they mean. Collected account data, an identity value and an external provisioning result have different inputs and evidence.
+
+## Assess the change by its dependencies and result
+
+A descriptive-field correction, a schema redesignation and an external rename need different assessments.
+
+In our example, correcting non-designated fullName doesn't change the selected accountKey and loginName fields. Its value still depends on the actual read or write configuration. Redesignating Account Name changes the schema's selected naming field. An external rename changes data in the application and needs supported rename handling.
+
+Before an approved schema change, identify dependent account associations, correlation inputs, identity mappings, entitlement representations, reports and provisioning configuration.
+
+Then define what evidence will establish the intended result. Did the correct accounts remain distinguishable? Are relationships retained or deliberately managed under the approved design? Did the relevant read supply usable values? Do the dependent configurations still refer to the intended fields?
+
+Resetting a source, deleting its accounts or switching identifiers as an experiment can destroy the context you need to assess those questions. Use impact assessment and controlled validation for the actual change.
+
+A saved form establishes a configuration action. Correct account representation and verified relationships establish whether the intended design worked.
 
 ## Work through the field choices
 
 ### 1. One employee number, two accounts
 
-InvoiceTrack returns `inv-acct-44004` and `inv-admin-acct-44004`. Both carry employeeNumber `44004`.
+The billing source returns acct-standard and acct-admin. Both contain employeeNumber = E-24. Can employeeNumber replace accountKey because it identifies their owner?
 
-Can employeeNumber replace accountKey as the account identifier because it identifies Devi?
+**Worked reasoning:** It doesn't distinguish the two supplied accounts. Retain the supported distinct account keys and establish ownership through the separately configured employee-number comparison. One identity can own both.
 
-**Worked reasoning:** Not for this supplied two-account design. It doesn't distinguish the account records. Preserve the supported distinct account identifiers and use the approved employee-number relationship for ownership matching. One person can own both accounts.
+### 2. Two accounts show the same full name
 
-### 2. Two accounts display the same full name
+Both records contain the owner's same fullName. Their keys and login names are distinct, and Account Name is still loginName. Does the repeated fullName prove duplicate account identification?
 
-Both inspected records show fullName = Devi Rao, but have the correct distinct keys and login names. The designated Account Name remains loginName.
+**Worked reasoning:** No. It is descriptive data in this design. Inspect the actual Account ID and Account Name designations and their values. A repeated human name isn't a repeated account key, and every label visible on a page isn't necessarily the designated Account Name.
 
-Does the repeated fullName prove duplicate account identification?
+### 3. Office exists in the schema but is empty on the account
 
-**Worked reasoning:** No. It is an ordinary descriptive field in this example. Inspect the actual Account ID and Account Name designations and values. Don't confuse a repeated human name with a duplicated account key, or assume every label on the screen is the designated Account Name.
+The response includes officeCode = BLR. The schema defines office, but the mapping reads missing siteCode. Should the team add another office attribute?
 
-### 3. The schema has office, but the account doesn't
+**Worked reasoning:** The field definition already exists. Correct the supported mapping, perform the appropriate read and inspect the resulting account value. The supplied defect is between an available input and its intended represented field.
 
-The API response includes officeCode = BLR. The schema defines office. The supplied mapping reads missing siteCode instead.
+### 4. There is a person reference but no account key
 
-Should the team add another office attribute?
+A record has employeeNumber = E-24 but lacks the required Account ID input. Will correlation supply that identifier?
 
-**Worked reasoning:** No. The definition already exists. Correct the supported input-to-account-field mapping, perform appropriate collection and inspect the resulting account value. The external data was available; the stated mapping defect prevented it from reaching the intended field.
+**Worked reasoning:** Correlation establishes an ownership relationship through configured comparisons. It doesn't invent the external account key. Investigate the data, read result and schema mapping under the connector's requirements; no universal skip, rejection or overwrite outcome follows from the question alone.
 
-### 4. A record has a person reference but no account key
+### 5. Account Name is redesignated after collection
 
-A row contains employeeNumber `44004` but lacks the value required by the selected Account ID.
+An existing source would replace loginName with fullName as Account Name. Someone describes this as a cosmetic label change. Is that description sufficient for approval?
 
-Will account correlation supply the missing identifier?
+**Worked reasoning:** No. It changes a designated schema responsibility after accounts were collected. The documented guidance warns of duplicates and serious reference effects for Account Name/ID changes. Assess dependencies and supported change handling rather than treating redesignation as a display-format shortcut.
 
-**Worked reasoning:** No such repair follows. Correlation establishes ownership using configured comparisons; it doesn't invent a valid external account key. Investigate the data, read output and schema mapping under the connector's requirements before treating the record as correctly represented.
+### 6. A new schema field is saved
 
-### 5. Account Name is changed after aggregation
+The team adds costCentre to the schema. No target operation or subsequent account collection is supplied. Has this created an external field or populated every existing account?
 
-The proposal replaces loginName with fullName as the designated Account Name on an existing source. Someone calls it a cosmetic label change.
+**Worked reasoning:** Neither is established. The definition describes represented data. Establish the external information, read exposure, mapping and necessary collection. An external field creation or update would require a separate supported operation.
 
-Can it be approved on that description alone?
+### 7. Account department is correct
 
-**Worked reasoning:** No. It changes the schema's designated naming attribute. The documented guidance strongly discourages such changes after aggregation and warns of duplicates and other serious effects. Assess dependencies and supported change handling; don't use a schema redesignation as a display-format shortcut.
+The collected account has department = Billing Operations. The identity's department still follows a personnel-source mapping. Should the new account field automatically overwrite the identity?
 
-### 6. A new schema field appears
+**Worked reasoning:** No. Inspect the applicable identity mapping and processing. Account-schema definition, identity-value sourcing and external provisioning have different responsibilities. A correct account value isn't an instruction to replace the identity value.
 
-The team adds costCentre to the source schema. No target operation or new collection result is supplied.
+## Review a different feed
 
-Has that created a field in InvoiceTrack or populated every existing ISC account?
+A proposed payroll source combines two regional exports. Each region uses local account key u17 for a different person. The proposal selects surname as Account Name and says employee number will “fix any duplicates during correlation.”
 
-**Worked reasoning:** Neither outcome is established. The schema defines representation. Check whether the external information exists, the supported read exposes it, the mapping supplies it and the necessary collection has occurred. An external field-creation or update capability would be a separate operation.
+What would you establish before accepting that design?
 
-### 7. Account department is collected successfully
+**Worked reasoning:** Determine the intended source boundary and whether the selected identifiers distinguish the represented accounts and remain stable. Correlating the two rows to different people doesn't resolve their conflicting account keys inside the combined source.
 
-InvoiceTrack's account has department = Billing Operations in ISC. The identity's department still follows a separate personnel-source mapping.
+With the application owners, establish supported account-identification and naming fields using representative records. Separate source contexts or a deliberately validated key design can be options. Neither is an automatic migration procedure for a source that already contains accounts.
 
-Should adding the account field automatically overwrite the identity?
+Check the external export fields, schema definitions, mappings and conditions for subsequent collection. Establish employee-number matching separately, including whether a person can legitimately own multiple accounts.
 
-**Worked reasoning:** No. Identify the applicable identity mapping and processing. Account-schema definition, identity-value sourcing and external provisioning are separate responsibilities. The correct account value doesn't establish an instruction to replace the identity's value.
+Surname isn't a safe designated account name merely because it is readable. Check the connector's actual naming requirements, the population and post-aggregation change risks.
 
-## Review a new payroll feed
-
-A proposed payroll source combines two regional exports. Each region uses local account key `u17` for a different person. The proposal selects surname as Account Name and says employee number will “fix any duplicates during correlation.”
-
-What would you establish before approving it?
-
-**Worked reasoning:** Determine the intended source boundary and the identifiers' actual uniqueness and stability. Two different accounts returning the same selected key within one combined source are not resolved by assigning them to different people.
-
-Establish supported account-identification and naming fields with the application owners. Separate source contexts or a deliberately designed supported key can be options, but neither is an automatic migration recipe for an already-loaded source.
-
-Check representative records, schema definitions, exposed export fields, mapping behavior and the conditions for subsequent collection. Establish the employee-number matching arrangement separately, including whether each person can have multiple accounts.
-
-Do not accept surname as a safe account name merely because it is readable. Confirm the connector's naming requirements and the actual data, and assess any post-aggregation change against the documented risks.
-
-You can explain the design to the owner this way: “The schema defines what an account record represents and which fields identify and name it. The values must come from the supported read and mapping. Correlation then establishes who owns the account; it doesn't repair an account key that cannot distinguish the records.”
+Explain the design through the records: “These fields distinguish and name each account. These inputs supply its collected values. This separate matching arrangement associates it with its owner. A successful person match doesn't repair an account key that cannot distinguish the records.”

@@ -1,0 +1,7 @@
+[Account read]     [Entitlement read]
+      |                    |
+[Membership IDs]     [Object details]
+      |                    |
+      +---------+----------+
+                |
+ [Link by source, type and identifier]

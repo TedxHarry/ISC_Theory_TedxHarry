@@ -1,0 +1,17 @@
+One collected, correctly linked HR account
+                  |
+          selected source fields
+                  |
+      +-----------+-----------+
+      |                       |
+costCentreCode          departmentLabel
+    "0042"                  "Finance"
+      |                       |
+ direct mapping          lower operation
+      |                       |
+ costCenter               department
+    "0042"                  "finance"
+
+These are the expected mapping results.
+Both still need relevant application.
+No source or target write is shown.

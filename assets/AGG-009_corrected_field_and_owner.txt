@@ -1,0 +1,12 @@
+[Same source and account key]
+[Purchasing-Production / purchase-user]
+
+Before: employeeRef = purchase.login
+Compare: employeeNumber = W-99
+Result: uncorrelated
+
+Approved extraction: person.number
+
+After: employeeRef = W-99
+Compare: employeeNumber = W-99
+Verified: linked to existing identity

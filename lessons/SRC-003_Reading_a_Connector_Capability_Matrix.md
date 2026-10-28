@@ -1,357 +1,311 @@
 # The connector supports it. What can this source actually do?
 
-Devi, employee number `43003`, is joining a purchasing team. Her identity already exists in SailPoint Identity Security Cloud (ISC), but she needs a FulfillHub account and its Buyer access.
+A project needs ISC to create purchasing accounts, give people Buyer access, remove that access when their work changes, and disable accounts when they leave.
 
-The project team finds a connector that lists provisioning support. They propose automatic onboarding, access removal when her job changes, and account disabling when she leaves.
+The selected connector lists provisioning support. That sounds promising, but what does it establish about those four requirements?
 
-Can you approve all of that from the word “provisioning”?
+**Provisioning** means carrying out supported account or access changes. Creating an account, adding access, removing access and disabling an account are different changes. A connector may offer the operation types for all four while a particular source can perform only some of them.
 
-Not yet. Creating an account, adding Buyer, removing Buyer and disabling the account are different operations. A connector can offer those operation types while a particular application integration supports only part of the proposed outcome.
+To understand why, start with one successful change. Then we can examine what has to be true before the project promises the rest.
 
-Let's turn that broad promise into questions you can actually answer.
+## What must actually change?
 
-## Start with the change the business expects
+An **identity** is ISC's representation of a person or another entity. An **account** is that person's record in an external system. A person can already have an ISC identity while still needing an account in the purchasing application.
 
-An **identity** is ISC's representation of a person or another entity. An **account** is a record in a particular external system. Devi can have an ISC identity before she has a FulfillHub account.
+A **source** is ISC's configured representation of a system or collection of account data. Its **connector** supplies the supported integration behaviour. The external application that is read or changed is the **target system**.
 
-An **entitlement** is an assignable access right. In this example, Buyer is represented by membership in FulfillHub's existing `buyers` group.
+An **entitlement** is an assignable access right. Suppose Buyer access means membership in an existing target group identified as `buyers`. A **group** is an access object in the application; **membership** is the relationship saying that a particular account belongs to it.
 
-A **source** is ISC's configured representation of a system or collection of account data. Its **connector** provides the supported integration behavior. The **target system** is the external system being read or changed.
+Giving someone Buyer access may therefore require two effects: create the correct account if it is missing, then assign that account to the existing group. Creating the group itself is a different requirement.
 
-An **operation** is a specific action on a particular kind of object: read accounts, create an account, remove group membership, and so on.
+An **operation** is a specific action on a particular kind of object. Create Account acts on an account. Add Entitlement can change an account's membership. Reading the group describes something that already exists.
 
-**Aggregation** collects account or entitlement information into ISC. **Provisioning** carries out supported account or access changes.
+That distinction matters before you open any feature table. You need to know whether the requirement concerns an account, an access object, a field on a record or a relationship between records.
 
-Now translate “give Devi Buyer access” into target effects:
+## Follow a successful account and access change
 
-- Establish the correct FulfillHub account if she doesn't already have one.
-- Associate the existing Buyer entitlement with that account.
-- Confirm that the intended account has the expected membership.
+Consider a source named `Purchasing-Production`. The person already has an ISC identity, but initially has no purchasing account. There is one intended account to create, with no ambiguous existing-account selection.
 
-Those aren't three names for the same action. The first creates a record; the second changes an access relationship; the last establishes what actually happened.
+For this example, the selected integration is the **Web Services SaaS connector**. An **API**, or application programming interface, is a supported way for software to exchange requests and results. This connector provides operation types that you configure to call the target application's API.
 
-A supported ISC access-assignment flow can coordinate account creation when an account is missing, using the source's configured creation values. That doesn't make creation and membership change one indivisible target capability.
+**SaaS** means software operated as a hosted service. Here the connector executes through a cloud **runtime**, the environment where its integration work runs. That explains where the connector work takes place; it doesn't establish what the target application allows.
 
-If creation succeeds but adding Buyer fails, Devi can have an account without the required access. The project must recognize and handle that result.
+Assume the source has its required provisioning configuration, the application offers supported create and membership-add operations, and all required creation values are valid. The following results and application conditions are supplied examples, rather than real tenant observations.
 
-## Read the row and the column together
+An approved Buyer assignment starts the supported access-assignment flow. Where that flow needs a missing account, ISC uses the source's configured Create Account values. For example, an application might require a username, location and account type. Those requirements come from that application's design; they aren't universal ISC fields for every connector.
 
-A **capability matrix** compares supported operations across object types or integration choices. Documentation can present the same information as a Supported Features list rather than a table.
+The configured operation sends the target a request to create the intended account. In this example the target creates `buyer-user`. The membership operation then assigns the existing `buyers` group to that account. Target checks confirm both the account and its membership.
 
-Before interpreting a check mark, identify what its row and column mean.
+Who is making those requests? The connector uses an **integration credential**, the proof it presents to the target as its technical caller. Here that caller is `svc-purchasing`. It is separate from `buyer-user`, the recipient account being created.
 
-“Create” under user accounts means something different from “Create” under groups. “Aggregation” means collecting information, not necessarily changing it.
+**Authentication** establishes the caller's accepted credential context. **Authorization** determines which actions that caller may perform. For this successful example, the caller is accepted and has the required create and membership-add authority for the intended account.
 
-The Active Directory connector's documented table illustrates this. Its User Features section separates accounts, contacts and service accounts. Enable/Disable is supported in the user-account column while the contacts column is marked N/A. You cannot move a check mark from one column into another.
-
-That is the reading habit to keep: operation plus object type, with its conditions.
-
-Then read the legend and notes. A mark can mean supported, unavailable, conditional or not applicable according to that document. A blank cell without an explanation is a question to resolve, not permission to assume a capability.
-
-A footnote can require activation, a particular component or a supported environment. It belongs to the capability claim.
-
-Also confirm the actual connector family. An ISC guide, an IdentityIQ guide and a similarly named SaaS connector aren't interchangeable implementation contracts. **SaaS** means software operated as a hosted service. A **runtime** is where integration work executes. A SaaS connector uses a cloud runtime; that doesn't mean every connector sharing the application's name works identically.
-
-Record the selected ISC connector and deployment path before comparing its features. Check supported target versions or editions and any activation or subscription conditions relevant to the intended operation. A feature on an unrelated guide doesn't fill a gap in yours.
-
-## Read operations tell you what ISC can observe
-
-**Account aggregation** reads account information. It can include represented attributes and membership references, depending on the connector and configured scope.
-
-An **attribute** is a named value, such as an account's department or enabled status. A **schema** defines the fields and object information the source represents.
-
-**Entitlement aggregation** collects details about access objects, such as the identifier and description of a group.
-
-These readings answer connected but different questions:
-
-“What account does Devi have, and which group identifiers are on it?”
-
-“What does the group identified as `buyers` represent?”
-
-Reading the group doesn't add Devi to it. Reading a membership doesn't remove it.
-
-The Delimited File connector makes this distinction concrete. Its documented features include a custom account schema and loading accounts and entitlements. Importing those records provides representation in ISC; it isn't an automatic write connection back to the application that produced the file.
-
-A file can also report that an account is disabled. That records a condition. It doesn't establish that importing the file performed the external disable action.
-
-Other reading features need their own interpretation. **Delta aggregation** reads supported changes since an earlier collection under connector-specific conditions. **Single-account retrieval** reads a particular account where supported. A connector listing account aggregation doesn't automatically promise either feature.
-
-A more targeted read can help refresh evidence. It doesn't become a provisioning operation merely because it happens after a change.
-
-## Write operations change different things
-
-Let's separate the operations that appear in everyday project conversations.
-
-**Create Account** establishes a new target account using required input values. If the application requires a location, username and account type, those values must be available in the supported creation configuration.
-
-**Update Account** changes supported account attributes. It isn't a promise that every target field is writable. An identifier, calculated field or application-managed value can have different rules from an editable department.
-
-**Add Entitlement** assigns an existing right to an account. For the example, it adds `buyers` membership.
-
-**Remove Entitlement** removes an assignment. It doesn't delete the group object itself.
-
-Creating a group is a different operation again. A project that can assign an existing group has not thereby established group-creation support. Group aggregation only established a reading capability.
-
-**Disable Account** changes an account into the target's supported disabled condition. **Enable Account** changes it into a supported enabled condition. Don't assume that support or successful testing of one establishes the other.
-
-**Delete Account** removes the target account through a supported delete operation. That is different from disabling it or removing one membership.
-
-**Unlock Account** addresses a supported lock condition; **Change Password** changes the credential under a supported password operation. Neither follows automatically from account creation or profile-attribute updates.
-
-The target's meaning matters. Disabling an account can leave its memberships stored. Removing Buyer can leave the account enabled and able to use other access. Deleting an account doesn't, without separate evidence, establish that every external session or related record has ended.
-
-**Deprovisioning** is the removal or reduction of access. It is an outcome implemented through the appropriate supported actions, not a universal synonym for Delete Account.
-
-When someone asks, “Does the connector support leavers?”, ask which accounts and access must change. A business event is not a single capability row.
-
-## Keep product support separate from project readiness
-
-For FulfillHub, assume the project selected the Web Services SaaS connector. An **API**, or application programming interface, is a supported way for software to exchange requests and results.
-
-The connector offers operation types that can be configured against a target API. Its supported-features list includes account and entitlement reads and account/access-changing operations. It doesn't invent a missing API in the target application.
-
-An **endpoint** is the target API address for a particular operation. **HTTP** is the request/response protocol used here. An HTTP operation's configuration identifies such details as its destination, method, input and interpretation of the response.
-
-You don't need to write that configuration to see the dependency. A Create Account operation needs a real target behavior that creates accounts. Selecting an operation name isn't the implementation.
-
-The following is a fictional project review, not a published FulfillHub product matrix or a real tenant test. Its API limitations, configuration and results are supplied facts.
-
-The intended source is `FulfillHub Production`. The **integration credential** is the proof the connector uses to authenticate to the target. Here it belongs to `svc-fulfill-isc`, which is separate from Devi's employee account.
-
-| Required operation | Connector operation type available | Evidence for this FulfillHub design |
-|---|---|---|
-| Read accounts | Yes | Configured; expected in-scope records collected |
-| Read group details | Yes | Configured; existing buyers group represented |
-| Create Account | Yes | Required inputs configured; controlled example creates the correct account |
-| Update Account | Yes | Department update configured and verified; other fields not established |
-| Add Entitlement | Yes | Buyers membership operation configured and verified |
-| Remove Entitlement | Yes | Application has no supported membership-removal API; no automatic removal path configured |
-| Disable Account | Yes | Endpoint configured, but target rejects the integration credential's disable permission |
-| Delete Account | Yes | No approved target delete path configured or tested |
-
-Read across the Remove Entitlement row. “Yes” in the middle column describes connector operation support. The last column identifies a target/application-design gap.
-
-Read across Disable Account. The operation type and endpoint exist, but the effective target authority is insufficient.
-
-Neither gap is explained by a broken account aggregation. Neither is fixed by collecting the same records again.
-
-“Ready” needs an object, operation, population and verified conditions. “This integration is ready for everything” conceals the very information an engineer needs.
-
-## What else has to be in place?
-
-For each required operation, you need an agreed target effect, compatible support, applicable configuration, usable input, the necessary runtime path and appropriate authority.
-
-The runtime path includes the components and connections needed to reach the intended system.
-
-The review looks like this:
-
-```text
-[Required effect on the intended object]
-                  |
-[Correct connector and operation support]
-                  |
-[Target API and required runtime path]
-                  |
-[Source configuration and usable inputs]
-                  |
-[Appropriate target authority and scope]
-                  |
-[Controlled result and outcome evidence]
-```
-
-The arrows mean “also establish this dependency.” They aren't a private ISC processing pipeline, and a failure doesn't imply ISC internally runs these checks in this exact order.
-
-Some connector designs use customer-hosted connection components; others use a cloud runtime. Additional components apply only where the chosen connector and operation require them.
-
-For example, Active Directory's documentation identifies IQService requirements for provisioning and password operations. **IQService** is the Windows service used for supported Windows-specific integration work. The feature check mark doesn't install it or establish its secure connectivity.
-
-FulfillHub's selected SaaS path isn't a reason to add IQService to its example. Requirements come from the chosen integration, not from the fact that both projects use ISC.
-
-**Authentication** establishes the caller's accepted credential context. **Authorization** determines what that caller may do.
-
-A target can accept `svc-fulfill-isc` for reads and account creation while denying account disabling. That explains how the connection and selected writes can work while another operation fails.
-
-Use the narrow permissions needed for the approved operations and population. A blanket administrator grant isn't the default answer to a missing permission, and more privilege cannot create an API the target doesn't provide.
-
-Even a supported, authorized operation can fail on its input. If a target requires a location for account creation and the request has no location, investigate the missing value and its configured origin. A rejected request doesn't, by itself, mean the connector lacks Create Account support.
-
-## A provisioning setting doesn't supply missing capabilities
-
-The source also needs its applicable provisioning configuration. A connector's product support and a source's enabled behavior are different facts.
-
-Current source setup distinguishes read-only connections from supported deep-governance configurations, which can change access. Quick Compliance sources are documented as read-only and not provisioning-capable.
-
-For supported sources, enabling deep-governance provisioning is a consequential configuration change. The documented conversion cannot be undone. Don't treat it as a harmless diagnostic toggle or an upgrade that implements unavailable target operations.
-
-Likewise, an API response listing a provisioning feature describes source configuration. It isn't proof that a particular Remove Entitlement endpoint exists, that required input is correct or that the target accepted a change.
-
-An **authoritative source** supplies accounts used to establish identities through an **identity profile**, which configures those identities and their mapped attributes. That responsibility doesn't upgrade connector writes.
-
-An **access profile** is different: it bundles entitlements from one source. A **role** groups access for a business purpose. They can participate in access-assignment designs, but neither object grants the connector external privileges.
-
-An **access request** asks for specified access for a person. Approval authorizes that requested access under its configured business process. The target still evaluates the technical caller performing the change.
-
-These are connected responsibilities, not substitutes for one another.
-
-## Follow Devi's account and membership separately
-
-Assume an approved controlled example uses valid creation inputs and one intended account. There is no ambiguous existing-account selection.
-
-The supplied result establishes:
-
-- FulfillHub creates Devi's account with external identifier `fulfill-43003`.
-- The configured Add Entitlement operation adds the existing `buyers` group to that account.
-- Target observations confirm the correct account and membership.
-- A later in-scope account read represents those facts in ISC.
-
-Now separate change from observation:
+Now consider how ISC learns the resulting account details. **Aggregation** collects account or entitlement information into ISC. A later account read that includes this account and its membership can bring those facts into ISC's representation.
 
 ```text
 [ISC: approved Buyer assignment]
                 |
-[Configured create and add operations]
+                v
+[Target: create buyer-user account]
                 |
                 v
-[FulfillHub: fulfill-43003 + buyers]
+[Target: add buyer-user to buyers]
                 |
-      later supported account read
+       later supported account read
                 |
                 v
-[ISC: collected account and membership]
+[ISC: account and membership collected]
 ```
 
-The top arrows represent the supported change path in this example. Create and add remain distinct target effects; the box doesn't imply an all-or-nothing transaction that automatically reverses account creation if adding access fails.
+The upper arrows follow the supplied successful changes; the lower arrows follow later collection. They don't specify a universal schedule or a private ISC execution sequence.
 
-The lower arrows represent later collection. Aggregation reports the result under its actual read scope and time. It isn't what granted Buyer.
+Creating the account and assigning membership remain distinct effects. This diagram doesn't promise an all-or-nothing transaction. If creation succeeds but membership addition fails, the account may exist without Buyer access. Investigate and recover that partial result rather than assuming creation was automatically reversed.
 
-**Account correlation** associates a collected account with the appropriate ISC identity using the configured matching arrangement. Correct correlation helps place the account under Devi, but it doesn't provide the missing removal API or a disable privilege.
+**Account correlation** associates a collected account with the appropriate ISC identity using the configured matching arrangement. It helps place the account under the correct person. It doesn't create an application API or grant the caller permission.
 
-The **user interface**, or UI, can show the collected account and access, while Account Activity or provisioning details describe attempted changes and reported results. Check the action, recipient, source, stage and any errors, then compare with the intended target state.
+You can now distinguish three questions: what change was intended, what the target actually changed, and what ISC has subsequently collected. Aggregation reports available information; it wasn't the operation that granted Buyer.
 
-A success label without that context isn't enough to establish every onboarding step. Nor does an old collected account view disprove a later target change.
+## Read a capability matrix as an operation and an object
 
-## Now change one business requirement
+A **capability matrix** compares supported operations across object types or integration choices. Some connector guides use a Supported Features list instead of a table.
 
-Later, Devi moves to a purchasing-support role. She still needs FulfillHub but must lose Buyer.
+Read the row and column together. “Create” under accounts doesn't establish “Create” under groups. A check mark for reading data doesn't establish permission to change it.
 
-Creating the account again would target the wrong effect. Disabling the whole account would remove more usability than the requirement calls for. Updating department wouldn't, in this supplied application design, remove `buyers` membership.
+The Active Directory connector provides a useful real example. Its User Features table separates accounts, contacts and service accounts. Enable/Disable is supported in the accounts column, while contacts are marked N/A. Moving the check mark across those columns would change the documented claim.
 
-The required effect is removal of one existing assignment from `fulfill-43003`.
+Read the legend too. Supported, conditional, unavailable and not applicable have different meanings. An unexplained blank is something to resolve; it doesn't give you a capability you can safely promise.
 
-The connector framework offers Remove Entitlement, but FulfillHub has no supported API for that action in our example. The application's administrator can remove it through the application's administrative interface.
+Notes are part of the claim. A feature may require activation, a particular component or a supported environment. Check any relevant target version, edition and subscription conditions.
 
-The project therefore needs an explicitly designed and approved fulfillment route, or must leave this requirement unresolved. It cannot honestly promise automatic removal through the configured connector.
+First make sure you're reading the guide for the connector actually selected in ISC. IdentityIQ is a different SailPoint product. Its guide, an ISC connector guide and a similarly named SaaS connector guide aren't interchangeable. Similar names can conceal different runtime arrangements and feature coverage.
 
-**Manual fulfillment** means a responsible person performs the target change. A supported ticket integration can coordinate a change through a service-management system, but creating or closing a ticket isn't itself the external membership change.
+The useful question is specific: “Does this selected connector support this operation on this object, under our conditions?”
 
-Do not assume a failed direct operation automatically becomes the right manual task. The route, responsibility, timing and verification need configuration and agreement.
+## What reading support gives you
 
-After the administrator's authorized removal, the evidence should identify `fulfill-43003`, `buyers`, the actual target result and relevant time. A subsequent supported read can update ISC's representation. A task marked complete is an assertion to check, not independent measurement of membership.
+**Account aggregation** reads account information. That can include account fields and membership references, depending on the connector and configured scope.
 
-A **certification** is an access review in which a reviewer decides whether access should remain. A revoke decision also needs an effective fulfillment path. Governance can record that Buyer should be removed without a missing target API suddenly appearing.
+An **attribute** is a named value, such as department or enabled status. A **schema** defines the fields and object information the source represents. The schema helps ISC interpret a returned value; it doesn't itself make an external field writable.
 
-## A permission failure is a different repair
+**Entitlement aggregation** collects information about access objects, such as a group's identifier and description. The account read might tell ISC that `buyer-user` belongs to `buyers`; the entitlement read might explain what `buyers` represents.
 
-Consider the Disable Account row separately. The target provides a supported disable endpoint, and the source operation is configured.
+Both readings are useful. Neither reading creates the group, adds the membership or removes it.
 
-The supplied response is an HTTP `403`, with a target error explaining that `svc-fulfill-isc` lacks the disable privilege for this account. Target inspection shows the account remains enabled.
+The Delimited File connector illustrates the boundary. Its documented features include a custom account schema and loading accounts and entitlements. Importing those records supplies information to ISC. It doesn't establish an automatic write connection back to the application that produced the file.
 
-Here, there is an implemented operation path but inadequate authority for the attempted action. That differs from the absent membership-removal API.
+A file can also contain an enabled or disabled status that ISC represents under the applicable configuration. That is a reported condition. To establish that an integration disabled the external account, you need evidence of that change separately.
 
-The responsible owners can assess a narrowly scoped privilege correction and controlled testing. A new credential or permission change isn't proof that the earlier disable request has been replayed or completed.
+Some connectors offer additional read features. **Delta aggregation** collects supported changes since an earlier collection, subject to the connector's conditions. **Single-account retrieval** reads a particular account where supported. Account aggregation support alone doesn't establish either capability.
 
-Before recovery, confirm that disabling the account is still authorized, establish its current state and use the supported recovery path. Don't blindly duplicate account creation or replay unrelated successful changes.
+A targeted read can help obtain fresher evidence after a change. It is still a read operation.
 
-A bare `403` in another system wouldn't establish this exact cause. The conclusion here depends on the supplied target message, caller, destination and account evidence.
+## What each write operation is meant to change
 
-Capability review helps you choose the right question. Is the operation unsupported, not implemented, unauthorized, using invalid input, failing at runtime, or simply untested? Those findings call for different next actions.
+Operation names become clearer when you connect each one to its intended effect.
 
-## Convert “integrated” into an honest project statement
+**Create Account** establishes a new target account using required inputs. **Update Account** changes supported fields on an existing account. A successful department update doesn't establish that an account identifier, calculated field or application-managed value can also be changed.
 
-For this design, you can say that account and group reads, account creation, the tested department update and Buyer assignment have supporting evidence.
+**Add Entitlement** assigns an existing right to an account. **Remove Entitlement** removes an assignment. Removing `buyers` membership from `buyer-user` leaves the group itself available for other accounts. Deleting that group would affect a different object and requires separate support.
 
-You cannot yet say automatic Buyer removal works. Its target path is absent. You cannot say automatic disabling is ready; the attempted operation was denied. Delete Account is unconfigured and untested, not established by another operation's success.
+**Disable Account** places an account into the target's supported disabled condition. **Enable Account** places it into a supported enabled condition. Check both; evidence for one doesn't prove the other.
 
-The gap doesn't necessarily invalidate every read use case. A deliberately scoped read-only project can provide visibility without promising automated changes.
+Disabling may leave stored memberships intact. Conversely, removing Buyer can leave an enabled account with other access. The correct action depends on the required outcome.
 
-For a disconnected file-fed source, ISC supports manual provisioning tasks rather than a direct connector write. That is a different operating design with accountable fulfillment, not evidence that file import can edit the original application.
+**Delete Account** removes the target account through the supported deletion operation. It isn't another name for disabling the account or removing one permission. Its success alone doesn't prove that every session or related record elsewhere has ended.
 
-If automatic removal is a launch requirement, the project hasn't met it merely because onboarding succeeds. Agree the requirement, supported route, owner and validation evidence before calling that scope complete.
+**Unlock Account** addresses a supported lock condition. **Change Password** changes a credential through the applicable password operation. Account creation and ordinary attribute updates don't establish either of these capabilities.
 
-Keep an operation-level record: intended object and effect, selected connector, documented support and conditions, target behavior, configuration, required inputs, technical authority, test evidence and any remaining gap.
+**Deprovisioning** means removing or reducing access. Its implementation might involve membership removal, account disabling or another appropriate supported action. It doesn't universally mean Delete Account.
 
-That record is useful when someone changes a credential, adds a population or updates an application. “It worked last year” doesn't identify which operation and conditions still apply.
+“Handle a leaver” therefore needs a more precise design: which accounts and access should change, into which conditions, and how will you establish those results?
 
-## Try the review with changed evidence
+## A connector operation still needs a target implementation
+
+The Web Services SaaS connector offers account and entitlement reads and several write operation types. The target API must provide the behaviour that the configured operation will call.
+
+An **endpoint** is an API address used for an operation. **HTTP** is the request-and-response protocol used here. The configuration needs such details as the destination, request method, inputs and interpretation of the response.
+
+Selecting Remove Entitlement doesn't supply a membership-removal API that the target lacks. Likewise, selecting Create Account doesn't fill in the application's required fields.
+
+Consider the wider review of `Purchasing-Production`. The following is an example project matrix with supplied conditions and results, rather than a published feature claim about a particular purchasing product.
+
+| Required operation | Connector operation type available | Evidence for this source and target |
+|---|---|---|
+| Read accounts | Yes | Configured; expected in-scope accounts collected |
+| Read group details | Yes | Configured; existing buyers group represented |
+| Create Account | Yes | Required inputs configured; controlled example creates the correct account |
+| Update Account | Yes | Department update configured and verified; other fields unverified |
+| Add Entitlement | Yes | Existing buyers membership configured and verified |
+| Remove Entitlement | Yes | Target has no supported membership-removal API; no automatic removal path configured |
+| Disable Account | Yes | Endpoint configured; target denies the caller's disable authority |
+| Delete Account | Yes | No approved target delete path configured or tested |
+
+The middle column describes connector support. The last column describes how far this project has established a usable operation.
+
+For removal, the missing part is target behaviour available to the integration. For disabling, a path exists but the target refuses the caller's attempted action. For deletion, configuration and outcome evidence haven't been established.
+
+Those are different findings. Repeating a successful account read won't supply the missing API, grant disable authority or verify deletion.
+
+## Check the conditions behind “ready”
+
+For an operation to meet the project requirement, several conditions must hold together.
+
+```text
+[Required effect on the right object]
+                  |
+[Selected connector supports operation]
+                  |
+[Target behaviour and runtime available]
+                  |
+[Source configured with usable inputs]
+                  |
+[Caller has required authority and scope]
+                  |
+[Result checked against intended effect]
+```
+
+The connecting lines mean “also establish this condition.” This is a human review of dependencies, not a claim that ISC internally performs these checks in this order.
+
+The runtime path includes the components and connections needed to reach the intended system. Some integrations require customer-hosted components; others use a cloud runtime.
+
+For example, Active Directory documentation identifies IQService requirements for provisioning and password work. **IQService** is a Windows service used for supported Windows-specific integration work. A feature check mark doesn't install the service or establish its secure connectivity.
+
+That AD requirement doesn't add IQService to the purchasing example's selected SaaS path. Follow the requirements of the actual connector and operation.
+
+Authority also needs an operation and scope. A target can accept `svc-purchasing` for reads and creation while refusing account disabling. One accepted credential doesn't mean every operation is authorized on every account.
+
+The appropriate correction is the permission needed for the approved action and population. More privilege cannot create a missing target API, and a blanket administrator grant shouldn't replace investigation of the required authority.
+
+Inputs remain important even when support, connectivity and authority are correct. If creation requires a location and the request has none, trace where that value should come from and why it is missing. A rejection caused by absent input doesn't establish that Create Account is unsupported.
+
+Finally, inspect the result. A configuration that appears complete is still a configuration. Controlled evidence must show what happened to the intended object under the conditions you plan to support.
+
+## Source configuration has its own responsibility
+
+A connector's product capability and a source's enabled behaviour are separate facts.
+
+Current source setup distinguishes read-only connections from supported **deep-governance** configurations that can change access. **Quick Compliance** sources are read-only and do not provide provisioning.
+
+For supported sources, the documented conversion to deep-governance provisioning cannot be undone. It is a consequential configuration decision, rather than a temporary troubleshooting switch. Enabling it doesn't implement operations missing from the target.
+
+An API response listing a source's provisioning feature tells you about configuration. You still need to establish the actual operation, its inputs, the caller's authority and its outcome.
+
+Other ISC configuration objects have different responsibilities. An **authoritative source** supplies accounts used to establish identities through an **identity profile**, which configures those identities and their mapped values. That identity-origin responsibility doesn't upgrade the connector's write support.
+
+An **access profile** bundles entitlements from one source. A **role** groups access for a business purpose. These can participate in access-assignment designs, but they don't grant the technical caller privileges in the external application.
+
+An **access request** asks for specified access for a person. Its approval authorizes the access under the configured business process. The target still evaluates the caller attempting the actual change.
+
+That is why a valid business decision can exist alongside an unsuccessful target operation.
+
+## Remove one membership without removing the account
+
+Suppose the person now needs the purchasing account for other work, but must lose Buyer.
+
+The required effect is to remove `buyers` membership from `buyer-user`. Recreating the account wouldn't do that. Disabling the entire account would affect more usability than required. In this supplied application design, updating department doesn't remove membership either.
+
+Our project matrix says there is no supported target API for membership removal. The application's administrator can remove it through the application's administrative interface, but the configured connector cannot perform that same action automatically.
+
+The project needs an explicitly designed and approved alternative fulfillment route, or the requirement remains unresolved.
+
+**Manual fulfillment** means a responsible person carries out the target change. A supported ticket integration can coordinate work through a service-management system. Creating a ticket doesn't change the group membership, and closing one isn't independent measurement of the result.
+
+Don't assume a failed direct operation automatically creates the appropriate manual task. The route, responsible owner, timing and verification need an agreed design and applicable configuration.
+
+After an authorized administrator removes the membership, useful evidence identifies the account, group, actual target result and relevant time. A later supported read that includes this account and membership information can update ISC's representation.
+
+The same dependency applies to a **certification**, an access review in which a reviewer decides whether access should remain. A decision to revoke Buyer establishes what should change. It still needs an effective fulfillment path and evidence that the intended change occurred.
+
+## Diagnose a denied disable operation separately
+
+Now examine the Disable Account row as a separate requirement.
+
+Here the target offers a supported endpoint and the source operation is configured. The supplied response is HTTP `403`, with a target message explicitly stating that `svc-purchasing` lacks the disable privilege for `buyer-user`. Target inspection shows that the account remains enabled.
+
+Together, those facts support an authority diagnosis for this attempt. They don't establish that the connector lacks Disable Account support.
+
+A bare `403` elsewhere wouldn't identify this exact cause. It means the server understood the request but refused it; the response and surrounding evidence are needed to explain why. Here we have the caller, account, destination, explicit target message and unchanged target condition.
+
+The responsible owners can assess a narrowly scoped privilege correction and controlled retesting. Changing the credential or its permissions doesn't itself replay the earlier operation or complete the disable requirement.
+
+Before recovery, confirm that disabling is still authorized, inspect the current account state and use the supported recovery path. Successful earlier changes don't need blind replay. In particular, don't create a duplicate account to retry a later membership or disable operation.
+
+The distinction guides the next action: missing target capability needs a supported design alternative; missing authority needs an appropriate permission assessment; invalid input needs a value correction; an untested operation needs evidence.
+
+## Compare the screen with the effect you intended
+
+ISC's **user interface**, or UI, can display collected accounts and access. Account Activity and provisioning details provide information about attempted changes and their reported results.
+
+When investigating an activity, establish the action, recipient, source, stage, time and any error details. Then compare that activity with the intended target condition.
+
+An account-creation success doesn't establish membership-add success. An old collected account view doesn't disprove a more recent target change. A task marked complete records an assertion; consider what evidence supports it.
+
+These records answer related questions at different stages. Keep the target account and required effect consistent as you move between them.
+
+For this project, account and group reads, creation, the tested department update and Buyer assignment have supporting evidence. Automatic membership removal has a target-path gap. Disabling was denied. Deletion is unconfigured and untested.
+
+That doesn't invalidate every read use case. A deliberately scoped read-only integration can provide valuable visibility. A disconnected file-fed design can use applicable ISC manual provisioning tasks rather than direct connector writes; that remains an accountable fulfillment design.
+
+But if automatic removal is a launch requirement, successful onboarding hasn't completed that scope.
+
+Keep an operation-level record of the intended object and effect, selected connector, documented conditions, target behaviour, runtime, configuration, inputs, authority and outcome evidence. Record unresolved gaps and their owners too. That record gives you something concrete to reassess when a credential, population or application changes.
+
+## Test your reasoning against changed evidence
 
 ### 1. Existing groups appear in ISC
 
-An integration reads account memberships and group descriptions. The project now needs to create a new target group.
+An integration reads account memberships and group descriptions. The project now needs to create a new target group. Does the successful read establish group-creation support?
 
-Does the successful read establish group-creation support?
+**Worked reasoning:** It establishes reading those objects under the tested scope. Group creation is a write on a different object. Check explicit group-creation support, target behaviour and configuration. Even the ability to assign an existing group wouldn't prove the ability to create one.
 
-**Worked reasoning:** No. It establishes reading the supplied objects under that scope. Creating a group changes a different object through a different operation. Check explicit group-creation support and its target/configuration requirements; membership assignment isn't group creation either.
+### 2. Creation works, but disabling is denied
 
-### 2. Accounts can be created, but disable is denied
+An account was created successfully. A disable attempt using the same caller receives an explicit target permission error and leaves the account enabled. Should the team mark disabling unsupported?
 
-The correct account was created. A later disable attempt uses the same integration credential, receives a target permission error and leaves the account enabled.
+**Worked reasoning:** First distinguish documented support, configured implementation and effective authority. In the supplied case, the implemented disable path lacks the necessary authority. Creation success doesn't establish disable permission. Reading the account again can help inspect its condition, but won't grant the missing privilege.
 
-Should the team declare that the connector has no disable capability?
+### 3. The connector offers removal, but the target has no API
 
-**Worked reasoning:** Not from those facts. Verify the documented operation, its configuration and target error. In the supplied situation, the action is supported and implemented but lacks effective authority. Creation success doesn't imply disable permission, and collecting the account again doesn't grant it.
+Remove Entitlement is available as a connector operation type. The target has no supported membership-removal API, and no alternative automatic route has been implemented. Can selecting the operation complete revocation?
 
-### 3. A connector supports removal, but the application has no API
-
-The connector offers Remove Entitlement. The target exposes no supported membership-removal API, and no other approved automatic route has been implemented.
-
-Can selecting that operation type complete automatic revocation?
-
-**Worked reasoning:** No. The connector needs a real supported target behavior. Establish an approved alternative fulfillment route or record the requirement as unresolved. Don't promise automatic manual-task fallback or treat a business approval as a technical endpoint.
+**Worked reasoning:** No. Configuration needs a real supported target behaviour to invoke. Agree an approved alternative fulfillment route or leave the requirement open. Business approval doesn't supply an endpoint, and a failed write doesn't guarantee automatic conversion into the correct manual task.
 
 ### 4. A file reports a disabled account
 
-A new file contains a disabled-status value. ISC represents that value after import. No external change evidence is supplied.
+An imported file contains a disabled-status value, which ISC represents. No external change evidence is supplied. Did importing the file disable the original account?
 
-Does that prove importing the file disabled the original account?
+**Worked reasoning:** That evidence shows a reported value being represented in ISC. It doesn't establish that file ingestion performed a target write. Check actual target state and account-changing activity separately.
 
-**Worked reasoning:** No. The file provided an observation or assertion that ISC represented. Check the actual target state and account-changing activity separately. A represented disabled value isn't evidence that the import performed a target write.
+### 5. One account field updates successfully
 
-### 5. One field updates successfully
+Department updates work. A new requirement asks for changes to an application-managed account identifier. Does Update Account support settle this?
 
-A source updates department. A new requirement asks it to change an application-managed account identifier.
+**Worked reasoning:** Establish whether that particular field is writable through the selected connector and target API, under the required conditions and authority. Department evidence covers department. Identifier changes also need their own relationship and impact review because other records and integrations may refer to that identifier.
 
-Does Update Account support settle the new requirement?
+### 6. A feature is documented but untested
 
-**Worked reasoning:** No. Determine whether that particular field is writable through the selected connector and target API, with the required conditions and authority. A verified department change isn't a test of every attribute. Identifier changes also need their own relationship and impact review.
+The correct guide lists Enable Account. Nobody has inspected or exercised this source's enable configuration and recovery behaviour. Is it unsupported or ready?
 
-### 6. A supported feature hasn't been tested
+**Worked reasoning:** Neither follows. Product support is documented; project readiness is unverified. Inspect target behaviour and source configuration, then obtain appropriate controlled evidence. Keep supported, configured and verified as separate findings.
 
-The correct guide lists Enable Account. The source's enable configuration and recovery behavior haven't been inspected or exercised.
+### 7. The reviewer revoked Buyer, but membership remains
 
-Should the project mark it unsupported or ready?
+A certification reviewer decides to revoke Buyer. Target observation still shows `buyers` on `buyer-user`, and no successful removal evidence exists. Has the requirement been met?
 
-**Worked reasoning:** Neither conclusion follows. Product support is documented; project readiness is unverified. Inspect the necessary target behavior and source configuration, then obtain appropriate controlled evidence. Keep “supported,” “configured” and “verified” as separate findings.
+**Worked reasoning:** The decision establishes what should happen. Follow the configured fulfillment route, identify its accountable owner, resolve the delivery gap and verify the membership result. The decision doesn't prove completed removal, account deletion, session termination or revocation of unrelated access.
 
-### 7. Approval succeeded, but Buyer remains
+## Apply the same review to a payroll proposal
 
-A reviewer decides to revoke Buyer. The supplied target observation still shows `buyers` on `fulfill-43003`, and no successful removal evidence exists.
+A payroll project says: “The connector loads accounts, so we can use it for account creation, salary-field updates, disabling, password reset and deletion. The successful connection test proves all of it.”
 
-Has the capability requirement been satisfied by the decision?
+Before approving that scope, what would you need to establish?
 
-**Worked reasoning:** No. The decision establishes what should happen, not a completed target change. Follow the configured fulfillment route and its accountable owner, resolve the delivery gap and verify the intended membership result. Don't infer account deletion, session termination or removal of unrelated access.
+**Worked reasoning:** Split the promise into specific operations, objects and fields. Check the selected ISC connector's guide, notes, supported target environment and required activation or components.
 
-## Review a different application's proposal
+For each proposed write, establish a supported target behaviour, applicable source configuration, usable inputs and appropriate authority. A connection test proves the behaviour that test exercises. It doesn't replace evidence for every write.
 
-A payroll project says: “The connector loads accounts, so we'll use it for new-account creation, salary-field updates, disabling, password reset and deletion. The successful connection test proves all of it.”
+Salary changes and deletion require explicit scope and authorization. Check where passwords are actually managed before assuming a payroll account is the correct place for a reset.
 
-What would you ask before approving the proposal?
+Record each capability as documented, configured, verified, conditional or unresolved, with the relevant evidence and conditions. If a required effect lacks a supported implementation, agree an accountable alternative or keep the requirement open.
 
-**Worked reasoning:** Split the promised effects into operations on specific objects and fields. Check the selected ISC connector's actual feature documentation, notes, supported target environment and any required activation or components.
-
-For every proposed write, establish the target's supported behavior, source configuration, required input and appropriate authority. A successful connection test establishes only what that test actually exercises; it isn't a substitute for operation-specific evidence.
-
-Treat sensitive salary fields and destructive deletion as explicit scope and authorization questions, not ordinary consequences of account-read support. Check where passwords are actually managed before assuming a reset belongs on the payroll account.
-
-Record each capability as documented, configured, verified, conditional or unresolved, with evidence. If a required effect lacks a supported implementation, agree an accountable alternative or keep that requirement open.
-
-Then explain the distinction to the project owner: “The matrix tells us which operations the selected connector offers on which objects. Our design and tests establish which of those operations this source can perform against this target, under these conditions. We still need evidence that the requested effect actually occurred.”
+You can then give the project owner a precise explanation: “The connector offers these operations. This source has these operations configured. We have verified these effects against this target under these conditions. These remaining requirements still need a supported route or outcome evidence.”

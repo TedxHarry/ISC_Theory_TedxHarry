@@ -1,0 +1,20 @@
+Human checks for the display value
+               |
+Correct identity and associated account?
+               |
+Exact component inputs and trim results?
+               |
+Correct array order and separator?
+               |
+Preview returns "Ana Rao"?
+               |
+Approved processing and current value?
+               |
+External change required?
+         /             \
+        no             yes
+        |               |
+No write inferred  Verify configured path,
+                    operation and target
+
+Human checks are not execution stages.

@@ -1,0 +1,13 @@
+[Before: same identity]
+[contract-record only]
+[Contractors 20 governs / OPS]
+                  |
+[hr-record arrives and is associated]
+                  |
+[Employees 10 has precedence]
+                  |
+[Successful processing supplied]
+[Department ENG / workerType EMPLOYEE]
+
+[Engineer verifies profile and values]
+[Access outcomes need separate proof]

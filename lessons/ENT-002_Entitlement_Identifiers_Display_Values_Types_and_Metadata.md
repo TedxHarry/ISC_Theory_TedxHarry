@@ -1,329 +1,328 @@
 # The entitlement name changed. Is it still the same access?
 
-Devi, employee number `100202`, reads assigned case files in RecordsVault. Her account is `rv-100202`. She already belongs to the application's group `G-6202`.
+An application group is renamed from Case Review to Case Review Readers. An employee already belongs to that group and can read assigned case files, but cannot edit them.
 
-The application owner renames that group's label from Case Review to Case Review Readers. Its identifying key stays G-6202, its members stay the same, and its permission still allows reading assigned cases, not editing them.
+You see the old wording in SailPoint Identity Security Cloud (ISC). Should you arrange another grant of access under the new name?
 
-In SailPoint Identity Security Cloud (ISC), someone sees the old name and proposes creating a second access item with the new name.
+The new name alone cannot answer that. The application might have relabeled the existing group, or it might have replaced it with a different group. Those changes can look similar on a screen while requiring different work.
 
-Would that represent new access, or give us two names for a situation we haven't properly checked?
+## What are we trying to identify?
 
-Let's first separate what identifies the group from what describes it.
+A **group** collects members, such as application accounts. An **account** is the external system record through which a person or another entity uses that system. The application can use group membership to decide what an account may do.
 
-The RecordsVault records, configuration, changes and results below are fictional. The example supplies supported account and group collection and verified object continuity. Short labels such as S-102 and E-102 stand in for ISC technical IDs; they are not actual tenant IDs or values to paste into an interface.
+Our question concerns the group itself and the account's membership in it. The employee's account is a separate object from the group.
 
-## When someone says “the ID,” ask which one
+ISC represents access rights as **entitlements**. An entitlement can represent a group membership or another supported kind of access on a **source**, ISC's configured representation of a system or collection of account data.
 
-An **entitlement** is an access right represented in ISC from a source, such as membership in an application group. A **source** is ISC's configured representation of a system or collection of account data. Here it is RecordsVault Production.
+For this example, Case Files Production is the source representing the case-file application. Its **connector** provides the supported integration for reading account and group information and, where supported and configured, making changes.
 
-An **account** is a record in an external system. A **group** collects members, such as accounts, and an application can use that membership to grant permissions. Devi's account and G-6202 are different objects.
+The application has a group record. ISC has an entitlement record representing that access. Each system needs a way to identify its record.
 
-The external application has its own objects. ISC has records representing them. Each system needs to identify the records it manages.
+A **native identifier** is the identifying value used in the external integration's context. Here, the group's native key is `case-readers`.
 
-A **native identifier** identifies the access object in the external integration's context. RecordsVault's group key is G-6202.
+An **ISC entitlement object ID** identifies the entitlement record in ISC. It is not the same kind of identifier as the external group's key, even though both concern the access we are investigating.
 
-An **ISC entitlement object ID** identifies the entitlement record in ISC. In this example, we call it E-102.
+If an operation expects the ISC entitlement object ID, it needs the actual ID retrieved for that ISC record. Supplying `case-readers` because it is “the group's ID” supplies a different kind of value. Conversely, an external membership reference does not become correct by substituting ISC's record ID.
 
-Those identifiers point to related things, but they are not interchangeable.
+An **object** is a particular record. A **reference** points to another object, such as an entitlement's reference to its source. Before copying an ID, establish which object the receiving operation expects.
 
-G-6202 isn't Devi's employee number. E-102 isn't the source's identifier. And neither value is the group's friendly name.
+The fields, configuration and results below are hypothetical, with supported account and group collection. Any notation such as `<ISC entitlement ID>` marks where an actual retrieved identifier belongs; it is not a usable ID.
 
-Here is the selected context:
+## A schema chooses a field. The group supplies the value.
 
-| Value in this example | What it identifies or describes |
+Let's look at the information the application exposes about this group after the label change.
+
+An **attribute** is a named piece of information on a record. Here are four selected group attributes:
+
+| Attribute name | Value on this group |
 |---|---|
-| S-102 | ISC's RecordsVault Production source configuration |
-| SC-102 | The group schema record in ISC |
-| E-102 | ISC's represented entitlement record |
-| G-6202 | The external group's identifying value in this integration |
-| groups | The supported group entitlement type and linked account membership attribute here |
-| Case Review Readers | The group's new human-readable label |
-| rv-100202 | Devi's external account, not the group |
+| `groupKey` | `case-readers` |
+| `technicalName` | `case.review` |
+| `label` | Case Review Readers |
+| `description` | Read assigned case files; no editing |
 
-An **object** is a particular record. A **reference** points to another object, for example an entitlement's reference to its source.
+Which one should ISC use to identify the group? Which one should it display to a person?
 
-If an operation expects an ISC entitlement ID, supplying G-6202 because it is “the group's ID” supplies the wrong kind of value. If an external membership value is expected, substituting E-102 confuses ISC's representation with the application's own key.
+A **schema** describes the attributes represented for a kind of record and their designated uses. In our supplied configuration, the group schema selects `groupKey` as the **Entitlement ID** attribute and `label` as the **Entitlement Name** attribute.
 
-The receiving interface determines what identifier it expects. Don't choose by which value looks most technical.
+That means: use the value found in `groupKey` to identify the represented source object, and use the value found in `label` for its readable name.
 
-## The schema selects a field; the record supplies its value
+This is the difference between an instruction and the data it selects. `groupKey` is the field name in the instruction. `case-readers` is this particular group's value in that field. Another group can use the same schema while supplying a different `groupKey` value.
 
-An **attribute** is a named piece of information on a record. A **schema** describes the attributes represented for a kind of object and their designated uses.
+The `technicalName` field may help the application team recognize the group. But the word technical does not make it the selected identifier. Its job depends on the supported schema configuration.
 
-RecordsVault exposes these group attributes:
+An **API**, or application programming interface, lets software read information or request operations. If you inspect a schema through such an interface, you can encounter `identityAttribute` and `displayAttribute`.
 
-- groupKey contains G-6202.
-- technicalName contains case.review.
-- label contains Case Review Readers.
-- description contains “Read assigned case files; no editing.”
+In this example, `identityAttribute` contains `groupKey`, and `displayAttribute` contains `label`. These properties name the fields ISC uses for identification and display.
 
-The group's schema selects groupKey as its **Entitlement ID** attribute. That designation means “use this attribute's value to identify the represented source object.”
+The word identity in `identityAttribute` concerns identifying objects represented by this schema. It does not mean finding the person who owns the account.
 
-It selects label as its **Entitlement Name** attribute. That means “use this attribute's value for human-readable display.”
+The schema record also has its own ISC `id`. That ID identifies the schema, not an individual group using it. Similarly, the source configuration has its own ID. A source ID, schema ID and entitlement object ID select different ISC records.
 
-The distinction between a field and its contents matters. groupKey is a field name. G-6202 is one record's value in that field.
+## Follow the value from the group to the account
 
-Similarly, label is a field name; Case Review Readers is the supplied display value.
+Now we can connect the group's identity to the employee's recorded access.
 
-Why retain technicalName if we already have an identifier and a label? It is additional source information that may help the application team recognize the object. Calling it technical doesn't make it the selected identifying key.
+**Aggregation** collects external data into ISC. **Entitlement aggregation** reads access objects and their supported details. For this group, the schema selections interpret `case-readers` as the represented source value and Case Review Readers as the readable name.
 
-An **API**, or application programming interface, lets software read information or request operations. A schema representation can use properties named identityAttribute and displayAttribute. In our example, their values are groupKey and label.
+**Account aggregation** reads accounts and their relevant attributes, including represented memberships. A **membership** is the relationship connecting an account to a group.
 
-The word identity in identityAttribute concerns identification of objects described by that schema. It does not mean “find Devi's person record.”
+In this supplied integration, the account's membership attribute is `groups`. Its account schema marks it as **Entitlement** information and **Multi-Valued**, so it can carry a list of access references.
 
-Nor does the schema record's own id, SC-102, identify this individual group. One schema describes how a whole kind of object is represented. Many group records can use it.
+An **entitlement type** identifies a supported kind of access object. The supported native type here is also `groups`. The account attribute's **Type** setting points to that entitlement type.
 
-You now have three different things that might be called an entitlement ID in conversation: ISC's entitlement object ID, the schema's selected identifying field, and the external identifying value. Ask for the context before copying anything.
+The collected account contains `groups: [case-readers]`. The brackets indicate a list containing one value. The selected identifying value on the group is also `case-readers`.
 
-## Follow the value through the relationship
+That agreement matters: the account says it holds that native group reference, and the represented group supplies details for the same reference. Source context and the configured type relationship tell us which access objects we are connecting.
 
-A **membership** connects an account to a group.
+To connect the account to its owner, ISC uses **account correlation**. Correlation matches and associates a collected account with an **identity**, ISC's representation of a person or another entity. For this example, that association has been checked and is correct.
 
-An **identity** is ISC's representation of a person or another entity. **Account correlation** associates a collected account with the appropriate identity. Here, rv-100202 is correctly associated with Devi.
-
-**Aggregation** collects external data into ISC. Account aggregation collects account information, including represented membership values. Entitlement aggregation collects the access objects and their supported details.
-
-For this source, the account schema has an attribute named groups. It is marked as entitlement information, is multi-valued so it can hold a collection, and its Type connects it to the groups entitlement type.
-
-The account's collected groups value includes G-6202. The group record's selected identifying value is also G-6202.
-
-That agreement connects the membership to the represented group details. The comparison isn't with the text Case Review Readers.
+The account-to-identity relationship lets ISC connect this account's recorded access to the employee. It does not replace the account-to-group membership relationship.
 
 ```text
-Source S-102 / RecordsVault Production
+Case Files Production source
 
-Schema SC-102 selects group fields
+Group schema selects field names
   identityAttribute: groupKey
   displayAttribute: label
               |
-              | interprets source data
+              | interprets group data
               v
-ISC entitlement E-102
-  value: G-6202
+ISC entitlement record
+  id: <ISC entitlement ID>
+  value: case-readers
   name: Case Review Readers
               ^
-              | same source, type groups
-              | membership value G-6202
-Account rv-100202
-  groups: [G-6202]
+              | source and type groups
+              | matching native value
+Collected employee account
+  groups: [case-readers]
 ```
 
-The top arrow means the schema tells ISC which source fields supply the group's identifying and displayed values. The lower arrow connects the account's membership value to the entitlement it references. These are relationships, not an order in which private backend jobs must run.
+The top arrow shows how schema instructions interpret the group data. The lower arrow connects the collected membership to the represented access object. These arrows describe relationships, rather than an order for internal jobs or services.
 
-In the supplied design, account attribute and entitlement type are both named groups, and the account attribute's Type points to that supported type. These are explicit configuration facts, not a rule that every connector must call its group data groups.
+Both the account attribute and native type are named `groups` here, and Type explicitly selects that supported type. These are example configuration facts. Another connector may use different supported fields and identifiers.
 
-The integration's membership values have to agree with its selected group identifier. Replacing G-6202 with a readable label would break that agreement even if a person understands which group was intended.
+The account's membership value must agree with the integration's selected group identifier. Replacing `case-readers` with the friendly text Case Review Readers would lose that agreement, even if a person could guess the intended group.
 
-## Read an entitlement record in its own context
+Collecting the new label supplies information about the object. It does not add a membership to the account.
 
-ISC's entitlement representation can include fields such as id, name, attribute, value, sourceSchemaObjectType and source.
+## What would you see on the ISC entitlement record?
 
-For the selected teaching record:
+A selected entitlement representation can contain these fields:
 
-- id is E-102, the ISC entitlement record's ID.
-- name is Case Review Readers, the readable entitlement name.
-- attribute is groups, the entitlement attribute name.
-- value is G-6202, the represented source value.
-- sourceSchemaObjectType is groups, the object type represented by the source schema.
-- source refers to S-102, RecordsVault Production.
+| Field | Meaning in this example |
+|---|---|
+| `id` | Actual ISC ID of this entitlement record |
+| `name` | Case Review Readers, the readable entitlement name |
+| `attribute` | `groups`, the account entitlement attribute |
+| `value` | `case-readers`, the represented source value |
+| `sourceSchemaObjectType` | `groups`, the object type from the source schema |
+| `source` | A reference to the Case Files Production source |
 
-These are selected field meanings, not a complete API response or a request to create an entitlement. Actual interfaces can expose different representations, so inspect their field definitions rather than expecting every screen to show the same labels.
+This is a selection of model fields, not a complete response or a payload for creating access. Inspect the field definitions of the interface you are using; every screen need not display these labels.
 
-Notice the two kinds of selection again. On the schema, identityAttribute names groupKey. On the represented entitlement, value contains G-6202.
+Compare the schema and entitlement again. The schema's `identityAttribute` contains the field name `groupKey`. The entitlement's `value` contains the selected data, `case-readers`. Its `id` identifies the ISC entitlement record.
 
-Changing the literal text groupKey into G-6202 in a schema setting would confuse a field designation with one object's data. Supplying the schema ID SC-102 where an entitlement record ID is needed would select a different kind of record altogether.
+Those are three different answers to a loosely worded request for “the entitlement ID.” Resolve the meaning before using the value.
 
-This is also why copying an ID from a test environment isn't a migration design. Identify the corresponding source, schema and access object in the receiving environment. A familiar name does not establish matching ISC records across environments.
+## What evidence makes this a rename?
 
-## “Type” can answer different questions
+Return to the change from Case Review to Case Review Readers.
 
-An **entitlement type** identifies a supported kind of access object, such as the groups objects in our example. A **native object type** is the corresponding category exposed by the external integration.
+For this example, the application owner confirms that the same native group still exists. Its `groupKey`, members and permission rules are unchanged. It still permits reading assigned case files and no editing.
 
-The type name must fit the supported source model. It isn't a category you invent because a new label would look better.
+The label is maintained from the source in this case; it has not been manually overridden in ISC. A later entitlement aggregation reads the new label. A current check of the ISC entitlement verifies the same ISC record ID, the same source value `case-readers`, and the new name.
 
-A schema attribute also has a **data type**. For example, a string is text; a Boolean represents true or false. G-6202 is a text value. That doesn't make string the name of the entitlement type.
+Fresh account evidence also confirms that the employee's `groups` list still includes `case-readers`.
 
-The account attribute's Type can instead identify a linked entitlement type. That is the job it performs when groups points to the groups schema.
-
-A broader access listing may also identify an item's access-model category as an entitlement rather than an access profile or an ISC role. An **access profile** bundles related entitlements from one source. An **ISC role** groups access for a business purpose.
-
-So “type is entitlement,” “native type is groups,” and “groupKey is text” can all describe different aspects of the same situation.
-
-Do not collapse them into one field.
-
-Some integrations support only accounts or a restricted set of entitlement objects. Giving an unsupported object a plausible type name doesn't add connector capability. A **connector** is the integration providing the supported reads and changes.
-
-## The same name doesn't make two items the same object
-
-Suppose RecordsVault Test also has a group labeled Case Review Readers. It is not the production group merely because the words match.
-
-Now suppose one supported source exposes both groups and native application roles. A group value 42 and a role value 42 can refer to different source objects. The native role is an external access object, not automatically an ISC role.
-
-For investigation, retain the source, relevant type or membership attribute, and identifying value together. Retain the ISC entitlement ID when referring to its specific ISC record.
-
-This is an identification discipline, not a claim about ISC's private database key or a universal deduplication algorithm.
-
-A screenshot containing only a name strips away this context. A better investigation record says which source and entitlement record it shows, which source value is represented, and when the observation was made.
-
-## A rename, a replacement and a schema change are different
-
-Return to the supplied rename.
-
-The application owner confirms that the same G-6202 group was relabeled. Its permissions and members did not change. Entitlement collection later reads the new label, and the current ISC record is verified as E-102 with source value G-6202 and the new name.
-
-Devi's current account evidence still includes G-6202. No new membership is required merely because the label became clearer.
+These supplied observations support continuity at each relevant relationship. We have not inferred unchanged access merely from a familiar name.
 
 ```text
-Before: supplied verified records
-  E-102 -> G-6202
-  label: Case Review
-  rv-100202 groups: [G-6202]
+Verified before
+  Native key: case-readers
+  Label: Case Review
+  Account groups: [case-readers]
+  ISC record: <same entitlement ID>
+              |
+              | label changed
+              v
+Verified after collection
+  Native key: case-readers
+  Label: Case Review Readers
+  Account groups: [case-readers]
+  ISC record: <same entitlement ID>
 
-Rename label; retain group key
-  |
-  v
-After: supplied verified records
-  E-102 -> G-6202
-  label: Case Review Readers
-  rv-100202 groups: [G-6202]
+Same members and permissions verified.
 
-Same group and membership here.
-Permissions independently unchanged.
-
-New key G-9202 is a different question.
-Do not infer continuity from the label.
+Replacement key: case-readers-v2
+Different object; continuity unproven.
 ```
 
-The after-state is supplied verified evidence. It is not a promise that every rename on every connector preserves every reference or updates every view immediately.
+No new membership is needed because of the wording change in this case. Creating a second item just to match the new label would address an assumed access change that the evidence does not establish.
 
-If the application instead deletes the old group and creates G-9202 with the same label, matching words don't prove continuity. Verify the new group's permissions, members and intended replacement relationships.
+The verified after-state belongs to this example. It is not a guarantee that every rename preserves native identifiers, ISC references or the timing of every view.
 
-An **access requirement** states what someone should receive. A stored reference in an access profile or role must be checked against the intended access object during a replacement. A new group doesn't automatically inherit approval, correct membership or every old access-model reference because its name is familiar.
+For a real investigation, retain the source, the actual ISC entitlement record ID, native type or relevant attribute, source value, and observation time. A screenshot containing only the name leaves too much unanswered.
 
-**Provisioning** performs supported account or access changes. Reading a renamed label is different from provisioning new membership. A replacement can need reviewed changes and outcome checks that a descriptive rename doesn't.
+## What if the application replaced the group?
 
-Changing which field the schema selects as Entitlement ID is a third situation. Switching from groupKey to technicalName changes the identification contract. It is not simply changing the label on one group.
+Suppose the old group was deleted and a new group with native key `case-readers-v2` was created using the same friendly label.
 
-Changing selected ID or name attributes after collection can cause duplicate entitlement records. Review the supported change procedure, membership linkage and dependent references before making such changes. Don't switch identifying fields to make the screen prettier.
+We can no longer rely on the rename reasoning. The native object is different. The familiar label does not establish its permissions, members or relationship to the old access.
 
-There is no universally safe identifier just because it contains letters and numbers. A connector may identify a group using a name or directory path that can change. Verify the actual integration contract and rename behavior before predicting continuity.
+An **access requirement** states what someone should receive. An **access profile** bundles related entitlements from one source. An **ISC role** groups access for a business purpose and can contain access profiles or direct entitlements.
 
-## Metadata needs a purpose and an owner
+If an access profile still references the old represented entitlement, a new group with the same name does not prove that the profile now points to the replacement. Review the stored reference against the approved requirement.
 
-**Metadata** is information about an access item that helps people or configured processes understand and govern it.
+**Provisioning** performs supported account or access changes. If the replacement requires a new membership, an approved process must deliver that change through the supported path and verify the selected account's result. A read of the replacement's label does not accomplish that work.
 
-Consider the different jobs:
+Check the intended holders, permissions, references and delivery before calling the change complete. This is a replacement review, not a promise of automatic migration or an instruction to remove old access without checking its dependencies.
 
-| Information | What it is for, and what it doesn't establish |
-|---|---|
-| Description | Explain permission meaning and boundaries; it does not change the application's permission rules |
-| Owner | Identify responsibility and, where configured, a reviewer; ownership is not group membership |
-| Requestable setting | Help control availability for direct requests under the applicable configuration; it is not an existing grant or completed approval |
-| Collected source attributes | Preserve supported details from the source; their meaning and freshness still need checking |
-| Custom access-model metadata | Add organization-defined context; a classification alone doesn't change native permissions |
+A similar limit applies across environments. A test source can contain a group named Case Review Readers without identifying the production group. Copying a test record's ID is not a migration design. Establish the corresponding records in the receiving environment.
 
-An **access request** asks for an access item for a recipient. An **approval** is a decision within the configured request process. If that process uses an entitlement owner as reviewer, changing the owner can affect later routing. It isn't necessarily a purely cosmetic edit.
+## Changing the schema is a different kind of change
 
-Likewise, marking access requestable concerns request behavior, not the label's appearance. It does not itself add the group to Devi's account.
+A label rename changes data on a group. Changing the schema's selected identifying field changes the instructions used to interpret groups.
 
-For descriptive metadata, a useful statement is concrete: “Read assigned case files; no editing.” “Standard access” doesn't tell a reviewer what action is being retained or granted.
+For example, switching `identityAttribute` from `groupKey` to `technicalName` changes which source field supplies the identifier. That affects the identification of records using that schema, not just the wording for one group.
 
-ISC also supports custom metadata for access-model objects. An organization could define a classification to support its review practices. Such a classification needs an agreed meaning; typing a value doesn't make it an application-enforced restriction.
+Changing selected Entitlement ID or Entitlement Name attributes after aggregation can cause duplicate entitlement records. Review the supported procedure, membership linkage and dependent references before making those changes.
 
-Keep collected source attributes separate from these managed access-model details. In entitlement representations, attributes can contain source-supplied key-value details, while accessModelMetadata concerns access-model metadata. They are not interchangeable places to put a native membership key.
+If the problem is an unfriendly display name, first establish whether display selection is wrong. That does not establish a defect in the identifying field. Even a display-schema correction needs controlled verification; it is not automatically harmless.
 
-## Why does ISC still show the old description?
+Also, a schema's identifying selection must name a field. Setting `identityAttribute` to `case-readers` would be incorrect here because there is no source field named `case-readers`. That is one group's value, not the instruction selecting it.
 
-Different fields can have different maintenance paths.
+There is no universally permanent native identifier. An integration can use a name or directory path as an identifying value, and that value can change. Verify the actual connector's identification and rename behavior before predicting what survives a change.
 
-**Provenance** means where a value came from and how it was maintained. Was the description collected from the application, manually edited in ISC, or selected through the wrong schema field?
+## When you read “type,” what is being classified?
 
-Entitlement aggregation can collect descriptions and display names, but manually updated fields are protected from being overwritten by later aggregation. Do not assume repeating collection must replace a manually maintained value.
+Type can describe different parts of these records.
 
-For a stale description, compare the current source detail, schema selection, relevant collection and the field's manual-update state. The exact representation of that state depends on the interface being inspected.
+The **native object type** identifies a category exposed by the external integration, such as `groups`. A schema representation can express this category in `nativeObjectType`. The entitlement type's name must match the supported native model. Inventing a plausible name does not give the connector a new capability; some sources support only accounts or restricted entitlement types.
 
-A protected manual description may be deliberately better than the application's text. Or it may now be outdated. Decide which value should govern before using a supported update process. Don't remove a maintenance protection merely to make two screens agree.
+A **data type** describes a field's values. A string is text; a Boolean represents true or false. Our `groupKey` is text, but `string` is not the name of this entitlement type.
 
-Also separate a name changed in the application from a display name edited only in ISC. Editing a local label isn't proof that the native group was renamed. Neither edit, by itself, proves a permission change.
+In the account attribute's Type setting, choosing `groups` instead establishes a relationship to that entitlement type. Ask whether Type is describing a primitive value or linking an access object.
 
-## Work through the differences
+A broader access listing can also classify an item as an entitlement, access profile or ISC role. That access-model category answers a different question again.
 
-Each case supplies its own change. Keep the identifiers attached to the records they describe.
+Keeping this context avoids another trap. A supported source might expose a group and a native application role that both use the raw value `shared-code`. They can be different objects with different permissions. The native role is an external access object, not automatically an ISC role.
 
-### Case 1: The engineer sends the native key
+A value alone cannot distinguish them. Keep source, type or relevant attribute, and identifying value together; keep the actual ISC entitlement ID when referring to its ISC record. This is investigation discipline, not a claim about ISC's internal database key or deduplication algorithm.
 
-**Facts:** A read operation expects the ISC entitlement object ID. The investigation record contains E-102 and source value G-6202. A colleague proposes sending G-6202.
+## Which information describes access, and which changes a process?
 
-Which value fits the operation?
+**Metadata** is information about an access item that helps people or configured processes understand and govern it. Different metadata has different consequences.
 
-**Reasoning:** E-102 is the teaching label for the required ISC record ID. G-6202 is the source value. In a real operation use the actual retrieved ID, not either teaching label. Establish the expected identifier kind before interpreting any resulting error as missing access.
+A description such as “Read assigned case files; no editing” explains the permission boundary. Editing that text in ISC does not rewrite the application's permissions or send a description change to the source.
 
-### Case 2: The label changed, and continuity was verified
+An **owner** is an assigned responsible party for the access item. Ownership does not make that identity a group member. It can, however, affect a process configured to use the owner.
 
-**Facts:** The owner confirms the same native group G-6202, unchanged permissions and members. Current ISC evidence shows E-102 with the new label and source value G-6202. Devi's account still references G-6202.
+An **access request** asks for an access item for a recipient. An **approval** is a decision in the configured request process. If that process selects the entitlement owner as reviewer, changing the owner can affect routing for later requests.
 
-Does the new wording require another group grant?
+That does not establish that an already-created request changed reviewers. Inspect its recorded work separately.
 
-**Reasoning:** No. The supplied evidence establishes an existing unchanged membership and the same represented object in this case. A new grant would not be justified by a descriptive rename alone.
+The **requestable** setting concerns whether an item is available for direct requests under the applicable configuration. It is not an existing grant or a completed approval. Setting it does not add the employee to the group.
 
-### Case 3: A familiar name hides a new object
+ISC also supports managed access-model metadata, including default and custom attributes. An organization might define a classification to support reviews. Its meaning must be agreed, and the classification alone does not enforce an application restriction.
 
-**Facts:** The old G-6202 was deleted. A new G-9202 uses the same friendly name. Devi's fresh account data has no G-9202 membership. A configured access profile still references the old represented entitlement.
+Keep this managed context separate from collected source details. In entitlement representations, `attributes` can hold source-supplied key-value information, while `accessModelMetadata` concerns managed access-model metadata. Neither should be confused with the selected native membership value.
 
-Can the access profile be declared correct because its visible name looks right?
+## Why might a description stay old after collection?
 
-**Reasoning:** No. Native object continuity is absent and the stored reference needs review. Establish the approved new requirement, correct configuration and supported delivery path, then verify the selected account's outcome. Matching words don't migrate memberships or references.
+First establish where that field comes from and who maintains it. **Provenance** means a value's origin and maintenance history.
 
-### Case 4: A field name is replaced with a field value
+A description might come from the application, a manual ISC edit, or an incorrect schema selection. The correction depends on which explanation the evidence supports.
 
-**Facts:** groupKey is the selected Entitlement ID attribute. A proposed schema edit sets identityAttribute to G-6202. There is no source attribute named G-6202.
+Entitlement aggregation can collect supported display names and descriptions, but manually updated fields are protected from later aggregation overwriting them. Repeating the read does not necessarily replace a manually maintained description.
 
-Would this make the reference more precise?
+Compare the current source value, schema mapping, relevant collection evidence and the field's manual-update state. Inspect that state using the definitions of the interface you are reading, rather than assuming every representation spells the property the same way.
 
-**Reasoning:** No. The schema setting needs an attribute name. The edit confuses a record's identifying value with the instruction selecting that value. Keep the supported groupKey designation unless a reviewed identification change is genuinely required.
+A manually maintained description might be deliberately clearer than the source's wording. It might also be outdated. Establish which value should govern, then use the supported correction process. Removing maintenance protection just to make two screens match skips that decision.
 
-### Case 5: Someone fixes the label by changing identification
+Finally, distinguish a name edited in ISC from a group renamed in the application. A local display edit is not proof of a native rename. Neither edit alone proves that permissions changed.
 
-**Facts:** The schema correctly identifies groups through groupKey but displays technicalName. The requirement is a friendly label. A proposed change selects label as both the identifying and display attribute.
+## Which difference would change your decision?
 
-What is the safer question to resolve first?
+Each question supplies an independent variation on the records above.
 
-**Reasoning:** Which selection actually needs changing? The readability issue concerns display selection; it doesn't establish a defect in groupKey. Review a supported display correction and its impacts rather than changing the identifying contract unnecessarily. Even display-schema changes need controlled verification; they aren't automatically risk-free.
+### 1. The operation asks for the ISC entitlement ID
 
-### Case 6: Two types share the same value
+A read operation expects the ISC entitlement object ID. You have the actual retrieved ID for the entitlement and its source value `case-readers`. Someone proposes using the source value.
 
-**Facts:** A source supports groups and native roles. Its groups object 42 and roles object 42 have different permissions. An export keeps only value 42 and drops the source/type information.
+Which value fits?
 
-Can you reconstruct the intended entitlement from 42 alone?
+**Reasoning:** Use the actual retrieved ISC entitlement ID for that operation. The source value identifies the native access in its integration context. A wrong kind of identifier can produce an operation problem without proving missing access. Placeholder notation in a diagram is not a real input.
 
-**Reasoning:** Not from these facts. The export discarded necessary context. Recover the original record's source, type or attribute and ISC entitlement reference before acting. Guessing the more familiar label doesn't repair the evidence.
+### 2. Continuity is confirmed after a rename
 
-### Case 7: Collection doesn't replace a manual description
+The owner confirms the same native group, unchanged members and permissions. Current ISC evidence shows the same entitlement record ID, source value `case-readers` and new label. Fresh account evidence still includes that membership.
 
-**Facts:** The source has the approved new description. Correct mapping and completed entitlement collection are verified. ISC still shows an older description, and the field is recorded as manually updated.
+Is another grant required because of the new wording?
 
-Does the unchanged text prove the connector never read the source?
+**Reasoning:** No. The evidence establishes the same represented object and existing membership in this case. A descriptive rename alone does not create a new access requirement.
 
-**Reasoning:** No. The supplied manual-update protection explains why aggregation doesn't overwrite that field. Review the intended maintenance authority and supported correction for this item. A stale description alone does not establish a missing membership or failed provisioning.
+### 3. A new group has the familiar name
 
-### Case 8: The owner changed
+The old group was deleted. A replacement with key `case-readers-v2` uses the same label. Fresh account data has no replacement membership, and the access profile still references the old entitlement.
 
-**Facts:** A future direct entitlement request is configured to use the entitlement owner as reviewer. The owner is changed from one responsible identity to another. No native membership or permission change is requested.
+Can you declare the access profile correct from its visible name?
 
-Is the edit harmless display text?
+**Reasoning:** No. Review the new requirement, replacement's permissions and stored reference, then the supported fulfillment path and selected account's outcome. The membership and reference have not migrated merely because the wording matches.
 
-**Reasoning:** It changes a relationship used by that configured approval process, so review routing implications. It does not mean the new owner receives the group or that existing requests have been rerouted. Inspect any already-created work separately; current ownership alone doesn't prove its recipient changed.
+### 4. A field value is placed in a schema setting
 
-## Try a license instead of a group
+The schema correctly selects `groupKey`. A proposed edit sets `identityAttribute` to `case-readers`, but no source attribute has that name.
 
-A **license** gives an account the right to use a product or feature set under the application's licensing model. A supported application integration represents these licenses as entitlements. A license has native code LIC-17, ISC entitlement record E-L17 and readable name Report Editor. Its selected identifying field is licenseCode and its display field is title.
+Does the edit make identification more precise?
 
-The vendor changes the title to Report Author but retains LIC-17 and the same licensed capabilities. Current represented evidence confirms E-L17, source value LIC-17 and the new name. An account still holds LIC-17. No new request or grant is supplied.
+**Reasoning:** No. The setting needs the attribute name used to obtain each group's identifier. The proposed value names this group's data instead. Retain the supported field selection unless an identification change has a reviewed purpose.
 
-Explain what changed and what did not. Then consider a separate proposal to replace LIC-17 with LIC-29, which has a different feature set.
+### 5. Readability is “fixed” by changing identification
 
-For the rename, the supplied evidence changes the display value, not the source key, represented entitlement or existing account holding. The schema still selects licenseCode for identification and title for display. A new grant is not established or required by that wording alone.
+The schema identifies groups through `groupKey` but displays `technicalName`. The requirement is to display the friendly label. Someone proposes using `label` for both identification and display.
 
-LIC-29 is a different proposed access item with different capabilities. Review its intended holders, configuration references and supported fulfillment before describing it as an equivalent rename.
+What should you resolve first?
 
-When you explain an entitlement to a colleague, give each value its job: the ISC record, the source context, the supported type, the native value and the readable description. Then explain what a proposed change affects. That is what lets you distinguish a clearer name from a different access object.
+**Reasoning:** Identify which selection is wrong. The readability requirement concerns display, not necessarily identification. Review the supported display correction and its impacts without unnecessarily changing the identifier contract. Verify the result because changing selected ID or Name attributes after aggregation can cause duplicates.
+
+### 6. An export keeps only a raw value
+
+A supported source has a group and native role with value `shared-code`, granting different permissions. The export omits source and type information.
+
+Can that value alone identify the intended entitlement?
+
+**Reasoning:** No. Recover the original record's source, type or attribute and ISC record reference before acting. The export discarded the context needed to distinguish the access objects.
+
+### 7. A manual description survives collection
+
+The source has the approved new description. Correct mapping and completed entitlement collection are verified. ISC retains older wording, and that field is marked as manually updated.
+
+Does the old wording prove the connector never read the source?
+
+**Reasoning:** No. Manual-update protection explains why the read does not overwrite that field. Review the intended maintenance authority and supported correction. This does not establish a missing membership or failed provisioning.
+
+### 8. A future request uses the entitlement owner
+
+A future direct request is configured to use the entitlement owner as reviewer. The owner changes to another responsible identity. No native membership or permission change is requested.
+
+Is this only a display edit?
+
+**Reasoning:** No. The configured process uses that ownership relationship, so review future routing implications. The edit does not grant access to the new owner or establish rerouting of existing work. Check any already-created request separately.
+
+## Apply the reasoning to a license
+
+A **license** gives an account the right to use a product or feature set under the application's licensing model. A supported integration represents these licenses as entitlements.
+
+Its schema selects `licenseCode` for identification and `title` for display. A license with native code `report-edit` is displayed as Report Editor.
+
+The vendor renames it Report Author. Supplied current evidence confirms the same native code, licensed capabilities, ISC entitlement record ID and account holding. Only the title changed.
+
+Explain which value changed, which schema instructions stayed the same, and whether that wording requires a new grant. Then consider a different proposed license, `report-advanced`, with a different feature set.
+
+**Reasoning:** The title changed; the schema still selects `licenseCode` and `title` for their respective jobs. Verified object continuity and the existing holding mean a new grant is not required by the wording alone.
+
+The different code and features describe a replacement proposal, not an equivalent rename. Review intended holders, configuration references and supported fulfillment before treating it as the same access.
+
+When someone asks whether an entitlement changed, establish which record, field or relationship changed. That gives you a reason for your decision, whether the right next step is a display correction, a schema investigation or a reviewed access replacement.

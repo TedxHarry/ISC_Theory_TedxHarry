@@ -1,0 +1,20 @@
+Grant route, as configured here
+  Profile request
+       |
+       v
+  Manager approval
+       |
+       v
+  Supported account-access delivery
+       |
+       v
+  Verify groups and intended action
+
+Separate detection route
+  Current collected full set
+       |
+       v
+  Identity processing recognizes set
+       |
+       v
+  Access profile recorded as held

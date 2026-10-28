@@ -1,0 +1,18 @@
+Human investigation and verification
+
+Preserve observed evidence
+              |
+Identify actual context and input
+              |
+Explain the failing or wrong step
+              |
+Approve a cause-based correction
+              |
+Test intended and exception cases
+              |
+Check relevant application
+and current identity value
+              |
+Verify each required consumer
+
+A good Preview is not target proof.

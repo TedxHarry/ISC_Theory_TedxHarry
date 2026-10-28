@@ -1,0 +1,16 @@
+Before
+  app-41: personRef = null
+  no identity association
+             |
+             v
+Human verifies owner independently
+  approved person reference: P-407
+             |
+             v
+Approved manual relationship change
+  same app-41 -> intended identity
+  same login: review.user
+  personRef remains null
+
+Verified: intended association
+Still open: missing feed reference

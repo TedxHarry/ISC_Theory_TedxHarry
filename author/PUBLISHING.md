@@ -32,6 +32,10 @@ The user authorized publishing the completed FND-001 through FND-007 and ARC-001
 
 The later “Push and continue” instruction authorizes batch 2: nine completed revisions, ARC-002 through ARC-008 and SRC-001 through SRC-002, with diagrams and author records. See [batch 2 scope and verification](PUBLICATION_2026-10-26_BATCH_2.md). Continue SRC-003 locally afterward; the original repository/site remains unchanged.
 
+## October 27 publication
+
+The user requested publishing the 63 completed revisions since SRC-002, through ROL-001, plus current diagrams, records and tracing/processing guide revisions 2.0. The revised snapshot becomes 86 of 91 available lessons; all routes remain. See [current publication scope and verification](PUBLICATION_2026-10-27.md). Continue ROL-002 locally afterward. The original repository/site remains outside the write scope.
+
 ## Historical publishing notes inherited from ISC_Theory_Learning
 
 The entries below describe earlier development and deployments of the original edition. Their counts and next-lesson reservations are historical, not the current revision target.
