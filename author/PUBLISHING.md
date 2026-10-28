@@ -36,6 +36,10 @@ The later “Push and continue” instruction authorizes batch 2: nine completed
 
 The user requested publishing the 63 completed revisions since SRC-002, through ROL-001, plus current diagrams, records and tracing/processing guide revisions 2.0. The revised snapshot becomes 86 of 91 available lessons; all routes remain. See [current publication scope and verification](PUBLICATION_2026-10-27.md). Continue ROL-002 locally afterward. The original repository/site remains outside the write scope.
 
+## October 28 publication
+
+The user requested pushing the final five completed local rewrites, ROL-002–006, then reevaluating teaching/explanation after beginner feedback. All 91 existing rewrites are in this snapshot. See [scope and verification](PUBLICATION_2026-10-28.md). ROL-005 navigation title matches its neutral revised article title; routes and shared UI behavior remain. The next task is review and recommendations, not ROL-007 authoring yet.
+
 ## Historical publishing notes inherited from ISC_Theory_Learning
 
 The entries below describe earlier development and deployments of the original edition. Their counts and next-lesson reservations are historical, not the current revision target.

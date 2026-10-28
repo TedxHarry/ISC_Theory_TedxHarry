@@ -1,306 +1,349 @@
 # One role was removed. Why does some access remain?
 
-Devi no longer prepares cases, so her **Case preparer** role is withdrawn in SailPoint Identity Security Cloud, or ISC. She can no longer edit drafts. But she can still read cases and add follow-up notes.
+The Case preparer assignment ends. Draft editing stops, but reading and follow-up notes still work.
 
-Did ISC miss part of the removal?
+That result can be correct. The person also holds Case follow-up, which still requires reading.
 
-Not necessarily. Devi also holds a **Case follow-up** role. It still requires case reading.
+Before treating every remaining right as a failed removal, identify which responsibility ended and which current responsibility still needs it. Removing all rights mentioned by the first role could break the work the second role supports.
 
-To judge the result, we need to separate the responsibility that ended from the rights that remain justified. Removing everything mentioned by the first role could break work the second role is still supposed to support.
+## Put both requirements on the same account
 
-## Put both responsibilities on the same account
+In SailPoint Identity Security Cloud (ISC), an **identity** represents a person or another entity. An **account** is the external record through which that person uses a system.
 
-Devi, employee **120606**, works with North cases in **CaseBridge Production**, a fictional application. Her ISC identity represents her as a person and is correctly linked to her existing account, **cb-120606**. This account-to-person relationship is account correlation.
+**Account correlation** matches and associates source accounts with their ISC identity. Here, one existing account on Cases Production is correctly associated with the intended identity.
 
-A **source** is ISC's configured representation of a managed system and its account data. The connector is the integration used to read that system and, where supported, change it.
+A **source** is ISC's configured representation of a system or collection of account data. Its **connector** supplies the supported integration for reading information and, where supported and configured, making changes.
 
-In CaseBridge, the native group keys are:
+**Native** means belonging to the external application. A **group** collects members, such as accounts; native application rules can use membership to grant **permissions**, meaning allowed actions on resources.
 
-- **CB-8601, Readers**: read North cases.
-- **CB-8602, DraftEditors**: edit North case drafts, but only with Readers on the same account.
-- **CB-8603, FollowUp**: add North follow-up notes, but only with Readers on the same account.
+The application contacts confirm:
 
-None permits final approval, export, or administration. These are supplied application rules, not meanings ISC infers from the names.
+- Readers allows case reading within the account's assigned resource scope.
+- Draft Editors allows draft editing when that same account also holds Readers.
+- Follow-up allows follow-up notes when that same account also holds Readers.
 
-An **entitlement** is an access right represented in ISC. We will call the ISC records representing those three groups **E-8601**, **E-8602**, and **E-8603**. The E labels are teaching identifiers for ISC objects; CB keys identify the native groups. They are not interchangeable.
+None grants final approval, export or administration.
 
-An **access profile** bundles related entitlements from one source. A **role** groups access for a responsibility and can contain profiles or direct entitlement references.
+An **entitlement** represents source access in ISC, such as one of these memberships. The ISC record's identifier locates that represented object; the native group key identifies the external group. They are different kinds of identifiers, even when a screen displays them together.
+
+An **access profile** bundles related entitlements from one source. A **role** groups access for a business responsibility and can reference profiles or entitlements directly.
 
 The enabled standard roles are:
 
-- **R-1206, Case preparer**, which we will call Role A. It includes profile **AP-8601, Case preparation**, containing E-8601 Readers and E-8602 DraftEditors.
-- **R-1266, Case follow-up**, which we will call Role B. It includes profile **AP-8602, Case follow-up**, containing E-8601 Readers and E-8603 FollowUp.
+- **Role A, Case preparer:** includes the Case preparation profile, containing Readers and Draft Editors.
+- **Role B, Case follow-up:** includes the Case follow-up profile, containing the same Readers entitlement and Follow-up.
 
-Both roles currently apply to cb-120606. The account is enabled, sign-in works, its resource scope is North, and all three native memberships are present. Reading, draft editing, and follow-up work.
+A **role assignment** associates a role with an identity through an applicable route. Both assignments are current and target this same account.
 
-All records, identifiers, permission rules, assignment histories, times, and outcomes here are fictional. Assume supported provisioning, enabled components, and standing access without separate activation before each use. There are no other grants, lifecycle requirements, concurrent changes, or additional accounts in the main example.
+The account is enabled, sign-in works and its scope is North. All three memberships are present; North reading, draft editing and follow-up work.
 
-## Two paths to Readers are not two Readers memberships
+This is **standing access**, so the delivered rights do not wait for separate just-in-time activation. **Provisioning** carries out account or access changes; a withdrawal is **deprovisioning**.
 
-Follow the references carefully.
+The records, native rules, configurations, dates and outcomes below are hypothetical. Supported ISC Provisioning and membership changes are supplied. All components are enabled, and the main example has no other grants, requirements, concurrent changes or additional accounts.
 
-Role A points to AP-8601, which points to E-8601. Role B points to AP-8602, which points to **that same E-8601**.
+## Expand the paths without counting the shared right twice
 
-The profiles are different objects, but the Readers entitlement they reference is the same object on the same source. That is the overlap.
+A **reference** points to another record.
+
+A points to Case preparation, which references Readers. B points to Case follow-up, which references that exact same Readers object.
+
+The profiles are separate records. Their common entitlement is the overlap.
 
 ```text
-Devi: two current role assignments
-                 |
-      +----------+----------+
-      |                     |
-A: Case preparer    B: Case follow-up
-      |                     |
-Profile AP-8601      Profile AP-8602
-Readers + Drafts    Readers + FollowUp
-      |                     |
-      +-- same E-8601 ------+
-                 |
-       Group CB-8601 Readers
-       on account cb-120606
+Two current roles, same account
+              |
++-- A: Case preparer
+|   Case preparation profile
+|   Readers + Draft Editors
+|
++-- B: Case follow-up
+    Case follow-up profile
+    same Readers + Follow-up
 
-Four role-to-entitlement paths.
-Three distinct entitlement objects.
-One Readers membership on this account.
+Both Readers paths reference
+one entitlement on Cases Production.
+The native account has one membership.
+
+Four paths / three distinct rights.
 ```
 
-The lines show references and their shared target, not separate connector calls. Drafts is the diagram's short label for DraftEditors.
+There are four paths from roles to entitlements: A-to-Readers, A-to-Draft Editors, B-to-Readers and B-to-Follow-up.
 
-Across the two roles, there are four role-to-entitlement paths: A-to-Readers, A-to-Drafts, B-to-Readers, and B-to-FollowUp. There are only three distinct entitlements. On this stated account, there is one Readers group membership.
+Those paths reach three distinct entitlement objects. Under the supplied native group model, the account has one Readers membership, not two stronger copies of reading permission.
 
-Do not turn the path count into a claim that ISC sends four source operations or grants Readers twice. Object relationships, assignment records, provisioning events, and native memberships are different things to count.
+The diagram shows references and a common target. It does not count connector calls, prescribe their order or claim duplicate native grants. Configuration paths, assignment records, operations and memberships are different things to count.
 
-Also, a role directly referencing E-8601 would still be a role requirement. “Direct entitlement in a role” describes how its definition points to the right; it does not mean Devi independently requested that entitlement outside the role.
+A direct Readers entitlement inside a role would still be a role requirement. “Direct” would describe the role-to-entitlement reference, not an independent request or native grant outside the role.
 
-## Find out why each role is assigned
+## Establish why both assignments are current
 
-**Assignment origin** means the basis by which a particular access assignment arose. It answers a different question from the role's contents.
+**Assignment origin** means the route through which an access association arose. It explains authorization and maintenance; the contents explain which rights are required.
 
-It also differs from standing versus Just-In-Time access. That distinction concerns whether separate activation is required, not whether a rule or a request authorized the assignment.
+A was assigned automatically through current **membership criteria**, the configured tests selecting identities. An **identity attribute** is a named field on the ISC identity.
 
-Role A was automatically assigned because Devi's current identity values matched its approved membership policy: department `ServiceOps`, job code `CASE-PREP`, and lifecycle state `working`, joined with AND.
+Its approved criteria require department ServiceOps, job code CASE-PREP and lifecycle state working, joined with **AND**, meaning every comparison must match.
 
-A lifecycle state represents a stage such as working or departed. Here `working` is the configured technical value, and its associated identity state is Active.
+A **lifecycle state** describes an identity's organizational stage and can carry configured access requirements. Working is the technical value in this example, and its configured identity state is Active. **Identity state** concerns ISC participation; it is different from native account enablement. No lifecycle requirement separately grants these rights here.
 
-Role B came through an approved request for a temporary follow-up project. An **access request** asks for specified access for a recipient. The required reviews completed, the start time passed, and the supplied records show the assignment and its access were delivered to cb-120606. Its end is **October 30, 2026, at 17:00 UTC**.
+B came through a permitted **access request**, which asks for specified access for a recipient. **Approval** is the decision allowing the request to proceed.
 
-Both are current role assignments. One is automatic and the other requested; that distinction does not make B a directly requested **profile**. Its profile is included through the requested role.
+The required reviews completed, the start passed, and the supplied assignment and native records establish that B's access was delivered to this account. Its end is **October 30, 2026, at 17:00 UTC**. UTC means Coordinated Universal Time.
 
-This is why you need the complete path:
+B is a requested **role**. Its profile is included through that role; it is not a separately requested profile.
 
-**Approved role request → assigned Role B → profile AP-8602 → required Readers and FollowUp.**
+Follow the relationship: accepted role request, current B assignment, included profile, required Readers and Follow-up, then actual account evidence.
 
-The request explains why B was authorized. The role contents explain what it requires. Current account evidence explains what actually reached the application.
+Automatic versus requested describes the assignment route. Standing versus just-in-time describes whether separate activation is needed. Those distinctions answer different questions.
 
-Do not infer a completed request from a role being marked requestable. Do not infer an automatic assignment merely because someone happens to match its criteria today. Inspect the actual assignment and supporting history.
+A role being requestable does not establish a completed request. A person matching criteria today does not, by itself, establish the origin of an existing assignment. Inspect the actual history and current requirement.
 
-## Withdraw A, then examine each right
+## End A's requirement and inspect each right
 
-Devi moves to a different ordinary job. Her correct current identity values no longer match A's complete criteria. Role B's separate, approved temporary project continues.
+The person stops preparing cases. Department remains ServiceOps and lifecycle state remains working, but the current job code is no longer CASE-PREP. That comparison is false, so A's AND expression no longer matches. B's separate temporary follow-up project continues.
 
-**Identity processing** applies current identity and access-model configuration to calculate requirements such as automatic role membership. In the supplied case, relevant processing withdraws A's automatic assignment while B remains assigned.
+**Identity processing** evaluates identity information and applicable configuration, including automatic role requirements. Relevant evaluation withdraws A's automatic assignment in this supplied case. B remains assigned to the same account.
 
-The role definitions themselves are unchanged. We are ending one person's assignment, not deleting DraftEditors from a shared role for every member.
+The definitions stay unchanged. This is one person's assignment ending, not Draft Editors being deleted from a shared role for every member.
 
-Now reason about the entitlements individually.
-
-| Right on cb-120606 | What A's withdrawal means in this case |
+| Right on the main account | Requirement after A ends |
 |---|---|
-| Readers, E-8601 / CB-8601 | Both A and B required it. B still requires it, so it is retained for that role. |
-| DraftEditors, E-8602 / CB-8602 | Only A required it. With A withdrawn and no other stated grant, it needs removal. |
-| FollowUp, E-8603 / CB-8603 | B still requires it. It was not part of A, so withdrawing A does not withdraw this requirement. |
+| Readers | Still required by current assigned B, so retained for that role |
+| Draft Editors | Required only by A; with no other stated need, it must be withdrawn |
+| Follow-up | Still required by B; A did not supply this requirement |
 
-The documented role-overlap behavior retains access required by another assigned role. It is the **remaining current requirement**, not the date of the earliest grant or the number of profiles in the catalog, that explains Readers here.
+The documented role-overlap behavior retains entitlements required by another assigned role. B's **remaining current requirement** explains Readers here.
 
-If another unassigned role also mentions DraftEditors, that definition does not protect Devi's DraftEditors membership. It expresses possible access for that role's members, not a requirement currently assigned to her.
+The date of the earliest grant does not establish that explanation. Nor does the number of catalog profiles mentioning Readers. Check the current assigned requirement and account.
+
+If another unassigned role mentions Draft Editors, it does not justify Draft Editors for this person. Its definition describes possible contents for its members; it is not a currently assigned need on this account.
+
+B also does not inherit A's unique rights merely because they share Readers. Sharing an entitlement does not nest the roles or copy all of one role's contents into the other.
 
 ```text
-Withdraw A's automatic assignment
-                 |
-B remains assigned to the same account
-                 |
-       +---------+----------+
-       |                    |
-Readers still required   Drafts not
-by B                     required
-       |                    |
-Retain Readers           Remove Drafts
-       +---------+----------+
-                 |
-       Readers + FollowUp remain
-                 |
-Read and follow up: allowed
-Edit drafts: denied
+A ends; B stays on this account
+              |
++-- Readers: still required by B
++-- Draft Editors: no remaining need
++-- Follow-up: still required by B
+              |
+After successful Draft Editors removal:
+Readers + Follow-up remain
+Read and follow up work; drafts denied
 
-Later: B also ends
-                 |
+Later, B ends too
+              |
 No remaining stated requirements
-                 |
-Readers + FollowUp need removal
-                 |
+              |
+Readers + Follow-up need removal
+              |
 Verify each native outcome
 ```
 
-The diagram states required and observed outcomes under the example's conditions. It does not describe private engine steps, guarantee atomic delivery, or apply one removal algorithm to every assignment origin.
+The first section separates retained rights from the unique right needing removal. The lower section changes the condition again: B eventually ends too.
 
-## What successful withdrawal looks like
+These are requirement and outcome relationships under the supplied conditions. They are not a private backend algorithm or a guarantee that every source operation succeeds.
 
-Use the supplied observations on **October 28, 2026**:
+## Verify the successful withdrawal before changing the explanation
 
-- At **10:00 UTC**, the current identity values used by A's criteria no longer match. B's project authorization remains valid.
-- At **10:05 UTC**, assignment evidence shows A withdrawn and B still assigned to cb-120606.
-- At **10:10 UTC**, the DraftEditors removal reports success.
-- At **10:15 UTC**, native account inspection shows Readers and FollowUp, with DraftEditors absent. Reading and follow-up work in North; draft editing is denied.
+The supplied observations on **October 28, 2026** are:
 
-These are example observations, not promised processing intervals.
+- **10:00 UTC:** A's current identity inputs no longer match; B's project authorization is still valid.
+- **10:05 UTC:** Assignment evidence shows A withdrawn and B current on the main account.
+- **10:10 UTC:** Draft Editors removal reports success.
+- **10:15 UTC:** Native inspection shows Readers and Follow-up, with Draft Editors absent. North reading and follow-up work; draft editing is denied.
 
-**Provisioning** is the work of changing a target system; a removal is also called deprovisioning. A correct membership decision and a successful native removal are separate facts. Identity processing initiating a change is not proof that the target accepted it.
+These times are observations, not promised processing intervals.
 
-Here, the reported removal and native task checks support the intended result. Readers remaining is not evidence of a failed Readers removal. We have a positive explanation for retaining it: B still requires it on this account.
+Identity processing calculated the changed requirement. The operation result and native checks establish what happened on the account.
 
-Now change one observation. Suppose DraftEditors removal reports a permission error, and native inspection still shows all three groups. A may have been withdrawn correctly, but its unique draft capability remains because fulfillment failed. Do not justify DraftEditors by pointing vaguely at B; B does not contain it.
+Readers remaining is not evidence that a Readers removal failed. There is a positive reason to retain it: B still requires it here.
 
-Keeping a required shared right and failing to remove an unrequired unique right must not be grouped under one label such as “some access remained.”
+Now use an independent failure variation. Draft Editors removal reports a permission error, and native inspection still shows all three memberships.
 
-## What happens when B ends too?
+Readers and Follow-up have valid B requirements. Draft Editors does not. A disappearing from an ISC view cannot justify the remaining draft capability.
 
-At B's access end date and time, withdrawal processing starts. An end timestamp is not proof of instantaneous native completion.
+The **integration actor** is the account or authorization the connector uses for source operations. Inspect the failed operation and that actor's permission on the intended account.
 
-In our main example, A is already gone and no other stated requirement exists. Ending B leaves neither Readers nor FollowUp required by these roles. Both need removal through the applicable fulfillment path.
+An approved permission correction and supported recovery then remove Draft Editors. Fresh checks confirm North reading and follow-up still work, drafts are denied, and South follow-up, final approval, export and administration remain denied. No other relevant account, access or native-policy change occurred.
 
-After successful removal, none of the three example memberships remains. That still does not mean the account was deleted or disabled. Account actions are separate; role entitlement withdrawal is not account deletion.
+Recover the unrequired right without withdrawing the shared right B needs. Correct retention and failed withdrawal should not be combined into one conclusion such as “some access remained.”
 
-If FollowUp removal succeeds but Readers removal fails, the account can still read North cases under the supplied native rules. Follow-up fails. That is a partial removal to investigate, even though the project assignment ended.
+## Reassess the requirements when B ends
 
-If the organization later grants another role requiring Readers before B ends, reassess the current requirements. The original plan was based on a stated absence of other grants, not a permanent fact about Devi.
+At B's configured end date and time, deprovisioning starts. The timestamp does not establish instantaneous native completion or an application-session cutoff.
 
-Treat each transition as a new evidence question. A plan made on Monday does not prove Friday's assignment population is unchanged.
+In the original main conditions, A is already gone and no other requirement exists. Ending B leaves Readers and Follow-up needing removal.
 
-## Why the same-looking profiles can produce a different result
+In a supplied successful continuation after that end, both removals complete. Native checks show none of the three example memberships and deny North reading, draft editing and follow-up. The account remains enabled and can still sign in.
 
-Compare an **independent alternative**, not an extra grant added to the main example.
+This establishes withdrawal of these rights, not account deletion or proof that every possible application permission has disappeared.
 
-There are no roles. Devi holds AP-8601 and AP-8602 directly through profile requests, with the same three native groups initially present. No lifecycle requirement or other grant applies.
+In a separate expiry-failure variation, Follow-up removal succeeds but Readers removal fails. The account still reads North cases, but cannot follow up. That is partial source fulfillment even though the project period ended.
 
-An authorized explicit revocation of AP-8601 removes its Readers and DraftEditors memberships, assuming successful fulfillment. AP-8602 then lacks its required Readers entitlement, so its profile association is lost. FollowUp remains as an individual entitlement.
+If fulfillment uses a **manual provisioning task**, a person must carry out the required source change. Inspect task completion and the native result. A valid end date does not eliminate that delivery dependency.
 
-Under CaseBridge's supplied rule, FollowUp alone cannot add notes because it needs Readers on the same account.
+Also revisit the starting assumptions. If a new assigned role requires Readers before B ends, the current retained needs have changed. An earlier plan stating “no other grants” is not permanent evidence about a later assignment population.
 
-A second directly held profile did not protect the shared Readers right. This differs from the main case, where a current assigned role required it.
+## Compare the same profiles outside roles
 
-Access-profile **detection** is ISC recognizing a complete recorded entitlement set and associating a profile with the identity. Detection does not itself add groups or reconstruct their original approval. The explicit non-role profile-revocation behavior is not converted into label-only cleanup because the profile was detected rather than requested.
+Now consider an independent alternative with no roles, lifecycle requirements or other grants.
 
-This comparison is why “keep it until the last object mentioning it is gone” is not a safe universal rule. The kind of assignment and the action being performed matter.
+The person holds Case preparation and Case follow-up directly through profile requests. The same three native memberships are initially present.
 
-## Use the origin to choose the investigation
+An authorized explicit **revocation**, withdrawal through the supported route, of Case preparation completes successfully. It removes Readers and Draft Editors.
 
-The origin and the current requirement both matter. A past approved request records a past authorization decision; you still need to establish whether the resulting assignment is current and applicable to the account being changed.
+Case follow-up now lacks Readers, so its complete entitlement set is no longer satisfied. Its profile association is lost. Follow-up remains as an individual entitlement.
 
-An Identity List is the alternative automatic-role configuration in which an administrator selects ISC identities explicitly. A department change does not silently remove someone from that list.
+Under the supplied native dependency, Follow-up alone cannot add notes. Readers is required on that same account.
 
-| Basis or observation | What to establish before predicting withdrawal |
+The second non-role profile did not protect the shared Readers membership. That differs from the main case's current assigned B requirement.
+
+**Detection** recognizes a profile's complete recorded entitlement set and associates the profile with the identity. It does not itself add native groups or reconstruct their original approval.
+
+The documented explicit non-role profile-revocation result is not converted into label-only cleanup because a profile was detected rather than requested. Its actual action and current requirements still matter.
+
+This is why “retain every right until the last catalog object mentioning it disappears” is not a safe universal rule. The assignment mechanism and the operation differ between these cases.
+
+A profile governed by a role also cannot simply be treated as an independent direct-profile revocation. Investigate its governing role assignment and permitted withdrawal route.
+
+## Use the origin to select the correct evidence
+
+An **Identity List** is an alternative automatic-role selector in which an administrator maintains named ISC identities. A department change does not silently remove a list entry.
+
+A **lifecycle requirement** is access required by the configured organizational state. Profiles assigned through a current lifecycle state are enforced while that state continues.
+
+Those meanings help separate the histories:
+
+| Basis or observation | Evidence needed before predicting withdrawal |
 |---|---|
-| Automatic role from criteria or Identity List | Inspect the actual selector, current inputs or selected identity, and applied membership decision. A definition alone is not a grant. |
-| Requested role | Inspect the specific assignment, request history, effective dates, retained roles, and target accounts. Use its supported revocation or expiry route. |
-| Profile included through a role | Investigate the governing role assignment. Do not treat the profile as an independent direct-profile revocation. |
-| Directly held or detected non-role profile | Establish its actual revocability and other current requirements. Another non-role profile is not the same protection as a current role. |
-| Current lifecycle requirement | Inspect the configured state and required profiles. Continued enforcement can explain later reprovisioning. |
-| Native membership with unknown history | Establish current holdings and any managed requirements. Do not invent an approved request or a role merely because the membership exists. |
+| Automatic role from criteria or Identity List | Actual selector, current inputs or listed identity, applied decision and account target |
+| Requested role | Specific current assignment, request history, effective dates, target accounts and retained roles; supported revocation or expiry |
+| Profile included through a role | Governing current role requirement and permitted withdrawal, rather than an independent profile revoke |
+| Directly held or detected non-role profile | Actual revocability, complete contents, other current requirements and fulfilled operation |
+| Current lifecycle requirement | Configured state, required profile and separate removal/addition evidence |
+| Native membership with unknown history | Current holdings and managed requirements; no invented request approval or role association |
 
-A **lifecycle requirement** comes from the configured stage governing an identity, such as a working state that requires baseline access. Profiles required by the current lifecycle state are enforced while the person remains in that state. If activity establishes a successful removal followed by a later addition, a continuing lifecycle requirement can explain the return.
+A past approved request records a past decision. Establish whether its assignment is still current and applicable to the account before treating it as a retained requirement.
 
-That is different from a right never having been removed. Compare separate operations and native observations before deciding between retention, failed removal, and later regrant.
+For lifecycle access, suppose activity and native observations establish a successful removal followed later by a new addition while the state still requires the profile. Continuing lifecycle enforcement can explain that regrant.
 
-Do not extrapolate these documented mechanisms into an undocumented priority list for every possible mixed-role, lifecycle, direct-request, native, and Just-In-Time combination. When a real case exceeds the verified conditions, gather its exact assignments and supported behavior before promising a cleanup result.
+That differs from the right never being removed. Use separate operations and observations to distinguish justified retention, failed removal and later reprovisioning.
 
-## Keep the source and the account attached to every path
+Do not invent an origin-priority table covering every mixed role, lifecycle, direct request, native grant and just-in-time case. Gather the exact current configuration and supported behavior when the facts exceed these verified examples.
 
-Overlap means more than two labels saying Readers.
+## Keep source identity and account scope attached to every path
 
-Compare the exact source, entitlement type, entitlement object, and actual account target. Production Readers and Test Readers are not the same right merely because their display names match. A copied profile with a different ID can still reference the same entitlement, while two similarly named profiles can contain entirely different rights.
+Overlap requires more than two display labels saying Readers.
 
-Now consider a separate two-account variation. Role A targets Devi's normal account, while B targets a privileged account. A right required on the privileged account is not evidence that the normal account must keep the same membership.
+Compare the exact source, entitlement type, entitlement record and actual account target. The **entitlement type** identifies the category represented on that source, such as its group memberships.
 
-Do not combine both accounts' holdings into one imaginary account. Inspect assignment details, the account-selection configuration where relevant, and per-account provisioning evidence. Where the same role has multiple requested assignments, identify which assignment and account targets the removal actually selects.
+Production Readers and Test Readers are different rights. Separate profile objects can both reference the same entitlement; similarly named profiles can also contain completely different rights.
 
-Likewise, B requiring Readers does not make it inherit A's DraftEditors entitlement. Sharing one right does not nest one role inside another or copy all of its contents.
+The ISC entitlement identifier and native group key remain different object contexts. Verify the references instead of treating a familiar label as an identifier.
 
-## Use the screens to connect evidence
+In a separate two-account variation, A concerns a daily-use account and B targets a privileged account.
 
-A role's **Manage Access** view describes its contents. It does not establish that Devi is currently assigned to it. The role's identities and assignment details address that different question; they can include both automatic and requested grants.
+B's requirement on the privileged account does not establish retention on the daily-use account. Do not combine their holdings into one imaginary account.
 
-For requested access, connect the request and dates to the current assignment and account targets. For automatic access, connect current identity inputs or list membership to the selector and relevant processing. The same role name on two screens is not enough.
+Inspect assignment details, relevant account-selection configuration and per-account operations. If one role has several requested assignments, identify which assignment and source accounts the chosen removal actually affects.
 
-Provisioning activity helps establish which account operation was attempted and what error or result was reported. **Aggregation** reads account information into ISC; a record collected before a removal is not proof of the later native state.
+The one-account result from the main example cannot supply a missing native outcome for this variation.
 
-Finally, compare actual memberships and application tasks. Native membership tells you whether a group is present. Task checks show its effect under account status, sign-in, resource scope, and application permission dependencies.
+## Connect the views to the current account result
 
-Do not use an approval, a vanished role label, or one successful operation as proof that all intended withdrawals and retained work are correct.
+Manage Access describes a role's contents. It does not establish that this person is assigned to it. The role's assigned-identities view and assignment details address that separate relationship and can include both automatic and requested holders.
+
+For requested access, connect its reviews and dates to the current assignment and target accounts. For automatic access, connect current inputs or the list entry to the selector and relevant processing.
+
+Provisioning activity shows which account change was attempted and what result or error was reported. **Account aggregation** reads configured account information into ISC; data collected before a removal is not proof of its later native outcome.
+
+Current membership shows whether a group is present. Task checks establish its effect under account status, sign-in, resource scope and application dependencies.
+
+An approval, a vanished role label or one successful operation cannot establish every intended withdrawal and every retained capability.
 
 ## Work through the changed conditions
 
-### Case 1: A ends while B remains
+### 1. A ends while B remains
 
-**Facts:** Both main roles target cb-120606. A ends, B remains, and the required DraftEditors removal succeeds.
+Both main roles target the same account. A ends, B remains and Draft Editors removal succeeds.
 
-**Reasoning:** Readers and FollowUp remain required through B. DraftEditors is withdrawn. Verify that North reading and follow-up still work while draft editing is denied. Readers retention supports the intended design rather than contradicting it.
+Which capabilities should remain?
 
-### Case 2: A catalog role mentions DraftEditors
+**Reasoning:** Readers and Follow-up remain required by B. Draft Editors is withdrawn. Verify North reading and follow-up, with draft editing denied. Retaining Readers supports the intended design.
 
-**Facts:** A is withdrawn. Another enabled role definition includes DraftEditors, but Devi is not assigned to that role. No other requirement applies.
+### 2. A catalog role mentions Draft Editors
 
-**Reasoning:** An unassigned definition is not a continuing requirement for her account. It does not justify retaining DraftEditors. Inspect the removal outcome rather than treating every catalog reference as protection.
+A ends. Another enabled role contains Draft Editors, but it is not assigned to this person and no other requirement applies.
 
-### Case 3: Both roles end, but an extra membership appears
+Does the catalog reference justify retention?
 
-**Facts:** After both main roles end, all three of their memberships are successfully removed. Native inspection also finds a separate administrators group that neither role contained.
+**Reasoning:** No. Possible role contents are not an assigned requirement on this account. Investigate the actual removal result.
 
-**Reasoning:** Ending these roles does not establish removal or approval of unrelated access. Investigate that group's origin, current justification, and supported removal separately. Never report the account as having no application access from this role-set evidence alone.
+### 3. An unrelated administrator membership is found
 
-### Case 4: B contains a different Readers object
+After both main roles end, all three example memberships are successfully removed. Native inspection finds another administrator group that neither role contained.
 
-**Facts:** In a variation, B references Test Readers on a different source, not Production E-8601. A targets CaseBridge Production.
+Can the account be reported as having no application access?
 
-**Reasoning:** There is no stated overlap protecting Production Readers. Compare exact object and account scope before predicting retention. A matching display name is not the shared right shown in the main diagram.
+**Reasoning:** No. Investigate that membership's origin, current justification and supported removal separately. Withdrawal of these roles neither removes nor authorizes every unrelated right.
 
-### Case 5: The profiles are held outside roles
+### 4. B contains Test Readers
 
-**Facts:** There are no roles or lifecycle requirements. AP-8601 and AP-8602 are directly held. Explicit AP-8601 revocation successfully removes Readers and DraftEditors.
+B references a different Readers entitlement on a Test source. A concerns Cases Production.
 
-**Reasoning:** AP-8602 becomes incomplete and is lost; FollowUp remains individually. Under the stated same-account dependency, follow-up fails. The main role-retention result does not apply merely because both cases contain two profiles.
+Does B supply the stated overlap for Production Readers?
 
-### Case 6: Only DraftEditors fails to be removed
+**Reasoning:** No. Compare exact source, record and account scope. A shared name is not the common entitlement from the main example.
 
-**Facts:** A ends, B remains, and DraftEditors removal reports a target permission error. Native inspection finds all three groups.
+### 5. Only the profiles are directly held
 
-**Reasoning:** Readers and FollowUp have valid retained requirements. DraftEditors does not. Recover the verified failed removal without withdrawing the rights B needs. A role label disappearing does not prove fulfillment.
+There are no roles or lifecycle requirements. Explicit Case preparation revocation successfully removes Readers and Draft Editors.
 
-### Case 7: B's end time has arrived
+What happens to Case follow-up?
 
-**Facts:** A is already gone. B reaches its end time. No removal results or current native observations have been supplied.
+**Reasoning:** Its required set is incomplete, so the profile association is lost. Follow-up remains individually, but cannot support notes without same-account Readers. The role-retention result cannot be copied into this non-role case.
 
-**Reasoning:** Withdrawal is due, but completion is unproved. Inspect the assignment state, applicable fulfillment activity, and exact native memberships. Do not turn a timestamp into a claim that either Readers or FollowUp is absent.
+### 6. Draft Editors removal fails
 
-### Case 8: The remaining role targets another account
+A ends, B remains and a permission rejection leaves all three native memberships.
 
-**Facts:** B remains assigned for a privileged account. A's withdrawal concerns the normal account. The supplied information does not establish any remaining requirement on the normal account.
+Is every remaining right justified by B?
 
-**Reasoning:** Do not claim normal-account retention from a privileged-account grant. Establish the exact account-target requirements and removals. More evidence is needed before describing a native outcome; the single-account main result cannot simply be copied.
+**Reasoning:** No. B justifies Readers and Follow-up, not Draft Editors. Obtain an approved correction, recover the failed removal and verify draft denial while preserving B's work.
 
-## Transfer the reasoning to a paid application
+### 7. B reaches its end
 
-A reporting application has two enabled roles on the same account:
+A is already gone. B's end time arrives, but no removal results or current native observations have been supplied.
 
-- Report author requires an Editor license and DraftAuthors.
+What can be concluded?
+
+**Reasoning:** Withdrawal is due; completion is unproved. Inspect assignment state, fulfillment and exact native memberships. The timestamp does not establish that either Readers or Follow-up is absent.
+
+### 8. The remaining role targets another account
+
+B remains for a privileged account. A's withdrawal concerns the daily-use account. No continuing daily-account requirement is established.
+
+Can normal-account retention be predicted from B?
+
+**Reasoning:** No. Establish the exact account-target requirements and removals. More evidence is needed for a native outcome; the main single-account result does not answer this history.
+
+## Try the reasoning with a paid application
+
+Two enabled roles target the same reporting account:
+
+- Report author requires an Editor license and Draft Authors.
 - Report publisher requires the same Editor license and Publishers.
 
-The current requirement to author ends, but the assigned publisher role remains. The application requires Editor plus Publishers to publish. There are no other grants, and all access is standing.
+A **license** gives an account the right to use a product or feature set under the native licensing model. Here, authoring requires Editor plus Draft Authors; publishing requires Editor plus Publishers.
 
-Predict the intended result before deciding whether a removal looks correct.
+The authoring responsibility ends while the publisher role remains current. Access is standing and no other grants apply.
 
-Editor remains required through the publisher role. DraftAuthors needs removal. Publishers remains. After successful fulfillment, publishing should work and draft authoring should not, under the supplied permission rules.
+What is the intended result, and has the paid license been reclaimed?
 
-The paid Editor license has **not** been reclaimed merely because the author role ended. If reclaiming the seat is the business objective, reconcile that objective with the continuing publisher requirement and the application's licensing model. Also verify the application's actual license assignment and capacity, not only ISC's role labels.
+**Reasoning:** Editor remains required by the publisher role. Draft Authors needs removal; Publishers remains. After successful fulfillment, publishing works and draft authoring is denied under the supplied rules.
 
-If these were two directly held profiles instead of roles, revisit the explicit non-role overlap behavior. If they targeted different accounts, revisit account scope. If one write failed, revisit actual delivery.
+The Editor license has not been reclaimed merely because the author role ended. Reconcile any license-reclamation objective with the continuing publisher need and native licensing model. Inspect the actual license assignment and capacity as well as ISC's role labels.
 
-A useful explanation names **which assignment ended, which current requirement remains, which exact rights belong on which account, and what the application now permits**. That is how you distinguish correct retention from incomplete removal.
+If these were non-role profiles, revisit the applicable profile-revocation behavior. If they targeted different accounts, inspect account scope. If a write failed, inspect its operation and native result.
+
+Identify the assignment that ended, the current requirement that remains, the exact rights on each account and the application's resulting capability. Those facts distinguish correct retention from incomplete removal.

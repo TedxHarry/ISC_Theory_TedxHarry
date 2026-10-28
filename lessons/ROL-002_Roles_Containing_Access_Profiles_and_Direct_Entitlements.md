@@ -1,344 +1,343 @@
 # What is actually inside this role?
 
-Devi, employee `120202`, prepares and submits customer cases in CaseFlow Production. She also needs to read supporting evidence in DocumentVault Production. These are fictional applications.
+A case-intake responsibility needs case reading, draft preparation, case submission and access to supporting evidence. The role's access screen shows only three entries.
 
-The proposed ISC role has three visible access entries: two access profiles and one entitlement.
+That can be correct. An entry can point to a bundle, and different bundles can include the same right. To understand the access, you need to follow the references behind the entries.
 
-Does that mean three permissions? Three application accounts? Three account changes?
+In SailPoint Identity Security Cloud (ISC), a **role** groups access for a business responsibility. An **entitlement** represents access on a source, such as a group membership. An **access profile** groups related entitlements from one source.
 
-None of those conclusions follows from the entry count.
+A role can contain access profiles and entitlements directly. That gives us two paths to inspect: role to profile to entitlement, and role to entitlement.
 
-One entry can reference a profile containing multiple entitlements. Two profiles can reference the same entitlement. A direct entitlement can belong to another source. The actual account changes also depend on what is already present and whether delivery succeeds.
+The configuration, native rules and observations below are hypothetical. The role is a **standard role**, with the profile and entitlement contents described here. Its access is **standing**, so delivery does not wait for a separate just-in-time activation. Authorized administration and the required ISC Provisioning capability are supplied.
 
-Let's open the references behind those three entries and follow what they mean.
+**Provisioning** carries out account or access changes. Having that capability does not prove that a particular application accepted a change.
 
-All people, identifiers, permissions, configuration and observations below are fictional. The example uses a standard role, supported Provisioning capabilities, standing access without separate Just-In-Time activation, and existing accounts. It does not describe a tenant operation that was actually performed.
+## Establish what the rights actually allow
 
-## Identify the objects before counting them
+There are two applications: Cases Production and Evidence Production.
 
-In SailPoint Identity Security Cloud, or ISC, a **role** groups access for a business responsibility. Its access contents can include access profiles and direct entitlement references.
+A **source** is ISC's configured representation of a system or collection of account data. A **connector** supplies the supported integration for reading information and, where supported and configured, making changes. Each application has its own source here, and both integrations support the membership reads and changes used below.
 
-An **entitlement** represents an access right in a source, such as group membership. An **access profile** names a related collection of entitlements from one source.
+**Native** means belonging to the external application itself. A **permission** allows an action on a resource. A native **group** collects members, such as accounts; the application can use that membership to grant permissions.
 
-A **source** represents a connected system or account-data collection. A **connector** reads that system and, where supported and configured, carries out changes.
+An **account** is the external record through which someone uses a system. An **identity** is ISC's representation of a person or another entity. **Account correlation** matches and associates source accounts with that identity.
 
-Here CaseFlow and DocumentVault have separate sources. Their supplied integrations support the membership reads and changes used in the example.
+The intended recipient has one existing account on each source. Both are correctly associated with the identity, enabled and able to sign in. Their assigned workspace is North.
 
-Devi's ISC **identity** represents her as a person. Her application **accounts** are `cf-120202` and `dv-120202`. **Account correlation** associates those accounts with her identity; both associations are correct.
+The application contacts confirm these rules:
 
-She has only one account on each source. Both accounts are enabled, sign-in works and their assigned case workspace is North.
+- Cases Readers permits reading cases in the account's assigned workspace.
+- Cases Drafts permits creating and editing case drafts when that same account also has Readers.
+- Cases Submitters permits submitting cases when that same account also has Readers.
+- Evidence Readers permits reading evidence in the Evidence account's assigned workspace. It does not permit editing or publishing.
 
-“Native” means the membership or permission in the application itself, rather than only its representation in ISC.
+The approved responsibility requires all four rights. Refund approval, bulk evidence export and administration are excluded.
 
-The application teams confirm these rules:
+Membership in a Cases group does not grant access to Evidence Production. Neither application's groups remove the account's workspace restriction.
 
-- CaseFlow `CF-8201`, Case Readers, permits reading cases in the account's assigned workspace.
-- CaseFlow `CF-8202`, Case Drafts, permits drafting when the same account also has Case Readers.
-- CaseFlow `CF-8203`, Case Submitters, permits submission when the same account also has Case Readers.
-- DocumentVault `DV-8201`, Evidence Readers, permits reading evidence in the account's assigned workspace, without editing or publishing it.
+Readers already exists on the Cases account. Drafts, Submitters and Evidence Readers are absent. Keep that starting state in mind: the role's full definition and the changes this account needs are different things.
 
-CaseFlow groups do not grant DocumentVault access. Neither application's memberships grant every workspace.
+## Open each entry instead of treating it as one permission
 
-The approved responsibility needs all four rights, not refund approval, bulk evidence export or application administration.
+The role is named **Case intake coordinator**.
 
-## Read the role's immediate references
+A **reference** points to another record. When a role references a profile, you follow that profile's contents to find its entitlement references. The profile does not become a new application account or a private copy of each permission.
 
-The role is **Case intake coordinator**, which we will call `R-1202`.
+Here are the role's immediate entries:
 
-Its immediate access entries are:
-
-| Entry on the role | What that entry references |
+| Entry on the role | Referenced contents |
 |---|---|
-| Case preparation, `AP-8202-P` | An access profile on CaseFlow Production containing Case Readers and Case Drafts. |
-| Case submission, `AP-8202-S` | An access profile on CaseFlow Production containing Case Readers and Case Submitters. |
-| Evidence Readers, `E-DV-8201` | The DocumentVault entitlement directly, without an intervening access profile. |
+| Case preparation profile | Cases Production: Readers and Drafts |
+| Case submission profile | Cases Production: the same Readers entitlement and Submitters |
+| Evidence Readers entitlement | Evidence Production: the entitlement directly, without a profile wrapper |
 
-The two CaseFlow entitlement pairs use references `E-CF-8201`, `E-CF-8202` and `E-CF-8203`. These and the role/profile identifiers are teaching labels, not real ISC ID formats or an API payload.
+“Immediate” means one step away from the role. There are three immediate entries: two profiles and one entitlement.
 
-A **reference** identifies another object. The Case preparation entry tells us which profile to inspect; that profile's contents tell us which entitlements it represents.
+Now expand them:
 
-The role does not become the profile, and the profile is not a separate native account.
+1. Preparation points to Readers.
+2. Preparation points to Drafts.
+3. Submission points to Readers.
+4. Submission points to Submitters.
+5. The role points directly to Evidence Readers.
 
-In the UI, the role's access view represents its configured access entries. A profile's entitlement view represents that profile's contents. An identity's access and account views represent different records again.
+Those are five paths through the configuration, but only four distinct entitlement objects. Both Readers paths point to the same Cases entitlement.
 
-Those screens can all be correct while showing different counts, because they are showing different relationships.
+Under the supplied native group model, the account has one Readers membership. Including that reference through two profiles does not create two memberships or stronger reading permission.
 
-```text
-Role R-1202: Case intake coordinator
-  |
-  +-- profile AP-8202-P: Preparation
-  |     +-- E-CF-8201 Readers
-  |     +-- E-CF-8202 Drafts
-  |
-  +-- profile AP-8202-S: Submission
-  |     +-- E-CF-8201 Readers
-  |     +-- E-CF-8203 Submitters
-  |
-  +-- direct E-DV-8201 Evidence Readers
-
-CaseFlow account: cf-120202
-  Readers + Drafts + Submitters
-
-DocumentVault account: dv-120202
-  Evidence Readers
-```
-
-The branches mean “references” and “contains.” The account lines show the intended native holdings, not guaranteed results or a processing order.
-
-No other ISC role is nested inside this structure. For the standard-role model here, trace the documented access-profile and entitlement entries; do not infer role inheritance from similar names or draw another role as a child merely because its access looks similar.
-
-## Expand the references, then identify the distinct rights
-
-There are three immediate entries on R-1202.
-
-Following the profiles gives five entitlement paths:
-
-- Preparation to Readers.
-- Preparation to Drafts.
-- Submission to Readers.
-- Submission to Submitters.
-- The role directly to Evidence Readers.
-
-Readers appears twice, but both paths point to the same CaseFlow entitlement object.
-
-There are therefore four distinct entitlement objects in this definition, across two sources.
-
-This is an explanation of the configuration, not a statement about how a particular report labels its entitlement total. Identify what a screen or API field actually counts before comparing numbers.
-
-Nor does five paths mean five native memberships. The supplied CaseFlow group model records Readers membership once on the account. A second profile reference does not create a second, stronger Readers permission.
-
-Keep the two paths in your dependency notes anyway. They explain why the same right is included and where later changes need review.
-
-The names alone cannot establish duplication. If one profile references a different entitlement type, source or object key, it is not the same reference even if the display labels both say Readers.
-
-Also do not turn this set comparison into a claim about exact connector calls. The definition does not tell you how operations are grouped, retried or represented in activity. Inspect the actual account operations for that question.
-
-## What does direct mean here?
-
-Evidence Readers is **directly included in the role**.
-
-That describes the path from the role to the entitlement. It does not mean somebody directly granted it to Devi outside the role.
-
-It also does not mean ISC bypasses account selection, source support or the connector.
-
-When this role requires Evidence Readers for Devi, the right still has to reach `dv-120202` through the supported fulfillment path.
-
-The distinction matters during investigation. “Direct entitlement” can be used casually to describe different things: an entitlement referenced directly by a role, a separately requested entitlement, or an old native grant outside the current role.
-
-Ask which relationship is being described.
-
-If you inspect only the profiles inside R-1202, you will miss its direct DocumentVault right. If you inspect only the role's direct entitlement entry, you will miss the CaseFlow rights behind its profiles.
-
-A complete contents review needs both.
-
-## Choose packaging for a reason
-
-A role can combine rights across sources. Each access profile still belongs to one source.
-
-You could create a DocumentVault profile containing Evidence Readers and put that profile in R-1202. You could also keep the supported direct entitlement reference used here.
-
-Choose based on useful meaning, reuse, ownership and maintenance. A wrapper is not compulsory just because the entitlement belongs to a role.
-
-Conversely, do not remove every profile merely to make the role's list look flatter. A profile can give a coherent source-specific capability a maintained name and make its reuse explicit.
-
-The Case preparation pair explains why Readers and Drafts belong together. If another responsibility needs that same package, it can reference the same profile.
-
-If you instead make a separate profile with identical contents, it is another object. Its later edits will not automatically be the same edits as those of AP-8202-P.
-
-Reference reuse and similar copies are different maintenance choices.
-
-In either design, confirm the exact native rights. Replacing one direct reference with a one-entitlement profile does not by itself grant extra native capability, remove existing access or prove a safe migration. The assignment and removal effects of the transition need their own assessment.
-
-## A shared profile is not a private copy inside the role
-
-Suppose an enabled **Case readiness reviewer** role, `R-8299`, also references AP-8202-P.
-
-The two roles now use the same profile object. R-8299 is not inside R-1202, and neither role automatically receives the other's remaining access.
-
-The readiness role's use of Preparation does not give its holders Submitters or DocumentVault Evidence Readers merely because the coordinator role also uses Preparation.
-
-Now an administrator proposes adding Case Tags, `E-CF-8204`, to AP-8202-P. In this fictional application, that right permits editing tags and requires Readers.
-
-The coordinator business owner wants it. Has the impact review finished?
-
-Not yet. The profile is shared with readiness reviewers. Their business need and population must be assessed too.
+Keep both paths in your dependency notes. The repeated reference matters when reviewing which packages use Readers, even though it does not represent a second native right.
 
 ```text
-R-1202 Coordinator      R-8299 Readiness
-          \               /
-           same AP-8202-P
-          Readers + Drafts
-                  |
-       proposed addition: Case Tags
-                  |
-      review both role populations
-                  |
-      if approved and applied:
-   current role requirements include Tags
-                  |
-    verify each account's delivery
+Role: Case intake coordinator
+|
++-- Case preparation profile
+|   +-- Cases: Readers
+|   +-- Cases: Drafts
+|
++-- Case submission profile
+|   +-- Cases: Readers (same object)
+|   +-- Cases: Submitters
+|
++-- Evidence: Evidence Readers
+    directly included entitlement
+
+Intended existing account holdings:
+Cases: Readers + Drafts + Submitters
+Evidence: Evidence Readers
 ```
 
-The converging lines identify one shared object, not copies or nested roles. The lower arrows show the conditional change impact, not authorization to carry out that change.
+The branches show references and profile contents. The account lines show intended holdings, including the Readers membership that already exists. They do not describe execution order or guarantee delivery.
 
-For current role holders, adding a standing entitlement to the referenced profile causes it to be provisioned to enforce that role requirement after relevant evaluation. Source delivery still needs verification.
+No other ISC role is nested in this structure. Sharing some contents with another role does not make one role inherit the other. For this standard-role design, follow the actual profile and entitlement references.
 
-That is why a role can change in practical meaning even when nobody edited its own immediate reference list. Its referenced profile changed.
+The UI presents different parts of these relationships. The role's access view represents its configured entries; a profile's entitlement view represents that profile's contents. An identity's access and account views concern that identity's associations and account records.
 
-Do not extend that current-role rule to everybody who once held the profile. Previous direct requests for the profile itself and detection have different addition behavior.
+Different counts can therefore be valid. Before comparing a screen or an application programming interface (API) response, establish what its number counts. Our three/five/four comparison explains this supplied definition; it does not prescribe every product field's counting rules.
 
-**Detection** means recognizing a complete existing entitlement set and associating the profile. It is not automatically an instruction to supply later additions.
+It also does not establish the number of connector calls. Operation grouping, retries and reported activity need their own evidence.
 
-## Check enablement on the referenced object too
+## Check whether repeated names really mean the same object
 
-The main role and both profiles are enabled. Direct requests for these profiles are off; their role use does not depend on a separate request for each profile.
+Here, both profiles use the exact same Readers entitlement record on Cases Production.
 
-An enabled role does not turn a disabled included profile into an enabled one.
+If another entry points to a Test source, a different entitlement type or another object key, it is a different reference even if its display label says Readers.
 
-Consider an independent new recipient with no CaseFlow memberships. Preparation is disabled, but Submission and the role remain enabled.
+An **identifier** distinguishes a record within its object context. A display name helps people recognize it; a familiar name alone cannot establish that two references are identical.
 
-Preparation's retained reference is not proof that its Drafts entitlement will be provisioned. Evaluate the enabled Submission path and direct DocumentVault path separately.
+Trace the profile identifier, its source and its actual entitlement references. Then verify the native right represented by each entitlement.
 
-Suppose the supplied fulfillment result is Readers and Submitters on CaseFlow, and Evidence Readers on DocumentVault, with no Drafts.
+Renaming Preparation while keeping the same profile identifier does not create a different object. Replacing its reference with another profile does change the object being used.
 
-Under the stated application rules, this recipient can read and submit but cannot create drafts. The role name still sounds complete; the delivered capability is not.
+This distinction becomes useful when someone says, “I edited Preparation, but the role still has the old access.” The role may reference a separate, similarly named copy.
 
-Now consider an existing holder who already has Drafts when Preparation is disabled.
+## Direct inclusion still needs delivery
 
-Disabling the profile is not itself a removal of existing native entitlements. Do not predict that the old Drafts membership disappeared merely because the profile is disabled or its association is later absent.
+Evidence Readers is directly included **inside the role**. That describes the reference path.
 
-New-recipient delivery and existing-holder retention answer different questions.
+It does not say that someone granted it outside ISC or separately from this role. It does not bypass the connector, account selection or the source's permission checks.
 
-When inspecting a stored reference, therefore ask both “is this the intended object?” and “what is its current participation state?” Names and links alone do not answer the second question.
+An **access request** asks for an access item for a recipient. A separately requested entitlement and an entitlement directly referenced by a role are different relationships. An old grant made in the native application is another possibility. When someone says “direct access,” establish which meaning they intend.
 
-## Follow the contents into separate account operations
+A complete contents review checks both entry types. Looking only inside profiles would miss Evidence Readers. Looking only at the direct entitlement would miss the Cases rights behind the profiles.
 
-**Role assignment** associates a role with an identity through an applicable selection route.
+## Follow the definition into the recipient's accounts
 
-For the main example, an authorized identity-list assignment selects Devi for enabled R-1202. An identity list is an explicitly maintained set of identities that should receive the role automatically. No other grant or lifecycle access requirement supplies the missing rights here.
+**Role assignment** associates the role with an identity through an applicable selection route.
 
-Devi already has Readers in CaseFlow before this assignment. Drafts, Submitters and DocumentVault Evidence Readers are absent.
+For the main configuration, an authorized **identity list** selects this recipient: a maintained list of identities that should receive the role automatically. The role and both profiles are enabled.
 
-**Identity processing** evaluates available identity information and applicable configuration. **Provisioning** carries out required account or access changes through a supported fulfillment route.
+Direct requests for the profiles are off under the supplied supported configuration. Role use does not require a separate request for each included profile.
 
-The role definition explains the desired access. Existing holdings help explain what is missing. Neither establishes the number of successful account changes.
+A **lifecycle state** describes an identity's organizational stage and can carry configured access requirements. No other role, lifecycle requirement or grant supplies the missing rights here.
 
-Consider these supplied observations, all on one date in UTC:
+**Identity processing** evaluates identity information and applicable configuration, including access requirements. The recipient is in the ISC **Active processing state**, meaning it participates in the relevant processing described here. This is different from an application's account being enabled.
 
-- At 09:00, the role and profile definitions are saved with the three entries shown above.
-- At 09:10, the agreed configuration is applied through relevant identity processing.
-- At 09:14, activity reports successful Drafts and Submitters additions to `cf-120202`.
-- At 09:16, DocumentVault's Evidence Readers addition is rejected because the integration actor cannot modify that membership on `dv-120202`.
-- At 09:20, native checks confirm Readers, Drafts and Submitters in CaseFlow. Devi can perform the corresponding North actions. DocumentVault evidence reading is denied.
+The approved list selects the identity; the role defines the requirement. The existing account holdings then help establish what is missing.
 
-The existing Readers membership is still one native membership. No new Readers grant is established by the profile-entry count.
+Readers is already present. The missing result is Drafts and Submitters on Cases, plus Evidence Readers on Evidence. Complete delivery would let the recipient read, draft and submit North cases and read North evidence, with the excluded actions still unavailable.
 
-The DocumentVault failure does not make the successful CaseFlow additions vanish. Nor does CaseFlow success prove the whole business task works. Evidence reading remains unavailable.
+The **integration actor** is the account or authorization the connector uses to perform source operations. It is distinct from the account receiving access.
 
-Do not treat the role as one cross-source transaction with an automatic all-source rollback.
+That is the intended result. Now compare it with these supplied observations from one date, in Coordinated Universal Time (UTC):
 
-Preserve the exact source, account, entitlement, operation and result. Inspect manual tasks when the supported integration uses manual fulfillment. A role entry does not guarantee an automated write.
+- **09:00:** The role and profile definitions are saved with the three entries shown above.
+- **09:10:** Relevant identity processing applies the agreed configuration and the role is assigned.
+- **09:14:** Activity reports successful Drafts and Submitters additions on the Cases account.
+- **09:16:** The Evidence Readers addition is rejected because the integration actor cannot modify that membership on the Evidence account.
+- **09:20:** Native checks confirm Readers, Drafts and Submitters, and the North case actions work. North evidence reading is denied.
 
-If the actual identity has multiple accounts on a source, account-selection rules need separate attention. A profile's multiple-account configuration is not a universal rule for every direct entitlement in the role. This example deliberately uses one account per source so no such routing result is assumed.
+The Cases result is successful, but the business responsibility is incomplete because evidence remains unavailable. The Evidence rejection does not undo the successful Cases additions.
 
-## Saving a change is not proving its impact
+The entry count did not predict this result. Nor did it establish a new Readers addition: that native membership existed before assignment.
 
-A saved definition and its application to identities are separate.
+An approved correction to the integration's Evidence update permission and a supported recovery later produce Evidence Readers on the intended account. A fresh native check confirms North evidence reading. Evidence editing, publishing and bulk export remain denied; North case work still succeeds. No other relevant access or application-policy change occurred.
 
-The role/access-profile/application list-page Apply Changes actions recalculate those access-model configurations together for eligible identities. They are not isolated to the one object you most recently opened.
+That establishes recovery for these accounts under the supplied conditions. It does not promise automatic rollback across sources, a fixed retry time or successful results for every identity.
 
-That population covers Active and Inactive (short-term) identity states, not Inactive (long-term). These ISC processing states are different from native account enablement. Devi is Active in the main example.
+Keep the exact source, account, entitlement, operation, result and observation time together. The role assignment shows the requirement's association; account activity shows attempted and reported changes; native checks establish current holdings and usable actions.
 
-Before broad application, review the other saved changes and all consumers of an edited profile. Opening Devi's identity in a second tab does not make a shared definition edit a one-person change.
+A **manual provisioning task** asks a person to make a required source change. If that is the supported fulfillment path, inspect the task and the native outcome. A role entry alone does not promise an automatic write.
 
-Removing an access reference deserves separate care. It can stop being part of the definition without proving that every old native entitlement was withdrawn.
+Multiple accounts would add another decision: which account should receive the right? Profile account-selection configuration is not a universal routing rule for every directly included entitlement. One relevant account per source is supplied here, so that additional routing outcome is not assumed.
 
-For specified role-content changes, **Enable Role Access Removal Propagation** determines whether removal propagates, and the role must be enabled. That setting concerns those definition-change removals, not whether additions are required.
+## Choose a bundle because it has a purpose
 
-Disabling a profile, removing a profile from a role and revoking an identity's role assignment are also different actions. Do not use the phrase “remove the access” without naming which one occurred.
+A role can combine rights across sources, but each profile remains single-source.
 
-For an actual withdrawal, inspect the applicable settings, remaining requirements, attempted removal and native result. Do not derive a general last-reference-wins rule from the duplicate Readers paths in this example.
+You could put Evidence Readers in a one-entitlement Evidence profile and reference that profile. You can also use the supported direct reference in this design.
 
-## Investigate by following references in both directions
+A wrapper can help when it names a maintained capability, has useful ownership or supports reuse. It is not compulsory merely because the right belongs in a role.
 
-When a permission is unexpectedly missing, start with the intended action and identify the right source and account.
+Preparation groups Readers and Drafts because that combination supports preparing a case. Another responsibility can reuse the same profile without receiving Submission or Evidence Readers.
 
-Then trace upward: which entitlement enables it, which profile includes that entitlement, and which current role requirement uses that profile? If the role references the entitlement directly, follow that path instead.
+Creating another profile with identical contents is different. It is a separate object whose later edits are independent. Similar names and starting contents do not make two profiles a shared record.
 
-Check the exact stored references and enabled states, then the assignment, relevant processing and delivery.
+Changing between a direct reference and a one-entitlement profile does not itself prove that native capability changed. Before replacing an existing design, assess assignment, delivery, withdrawal and retained requirements. A tidier list is not evidence of a safe migration.
 
-When the question is change impact, trace the other direction as well: which roles and populations use this shared profile?
+## A shared profile carries an edit to every relevant consumer
 
-That gives you two useful views of the same configuration. One explains how a person's requirement reaches a native right. The other identifies who else may be affected by an edit.
+Suppose another enabled role, **Case readiness reviewer**, references the same Preparation profile.
 
-Neither direction should stop at a friendly name. Renaming Case preparation does not create a new object if the same identifier remains. Replacing it with a different similarly named profile is a different reference.
+Readiness reviewers use Readers and Drafts. That shared reference does not give them the coordinator role's Submitters or Evidence Readers. Neither role sits inside the other.
 
-Keep those distinctions in a change record. They explain why a small-looking edit can be broad, and why a large-looking list can contain fewer distinct rights than its path count suggests.
+Now someone proposes adding **Case Tags** to Preparation. In the supplied native application, Tags permits editing case tags and requires Readers on that same account.
+
+The coordinator owner approves the need for coordinators. Is that enough to apply the shared edit?
+
+The readiness population also needs an impact review. The edit is to the common profile, so its contents would change for both consuming roles.
+
+```text
+Coordinator role       Readiness role
+       |                     |
+       +----------+----------+
+                  |
+        same Preparation profile
+           Readers + Drafts
+                  |
+         proposed Tags addition
+                  |
+       review both populations
+                  |
+       if approved and applied:
+       current role requirements
+                  |
+       verify each account result
+```
+
+The converging lines identify one shared profile object. The lower arrows describe a proposed change and its conditional effects; they do not authorize an operation or specify backend service order.
+
+For current role holders, an approved standing addition to the referenced profile becomes part of that role's access requirement and is provisioned after relevant evaluation. Verify each account's delivery.
+
+The coordinator's immediate reference can stay exactly the same while its required access changes: Preparation now points to another entitlement as well.
+
+Do not extend that addition behavior to every identity that once held Preparation. **Detection** recognizes a profile's complete existing entitlement set and associates the profile. For a profile held only through detection or a previous request for that profile itself, later additions are not automatically supplied; the association is retained only if the identity has the new complete set.
+
+Those origins answer different questions. A current role requirement is more than evidence that a package happened to match earlier holdings.
+
+The Tags change remains proposed here. Review both populations before authorizing application; no Tags provisioning result has been supplied.
+
+## An enabled role can still reference a disabled profile
+
+In an independent variation, another recipient has existing accounts but no Cases memberships. Preparation is disabled, while Submission and the role remain enabled.
+
+A disabled profile can remain referenced in a role, but its entitlements are not provisioned through that disabled profile. An enabled parent role does not override the profile's state.
+
+Suppose the supplied final account results are Readers and Submitters on Cases, plus Evidence Readers on Evidence, but no Drafts.
+
+Readers comes through enabled Submission. Under the stated native rules, reading and submission work, but draft creation does not. The role's friendly name cannot supply the missing Drafts right.
+
+Now change the starting condition. An existing holder already had Drafts before Preparation was disabled. No removal or other withdrawal took place.
+
+Disabling the profile does not deprovision those existing entitlements. Its profile association is removed when the identity is next examined in processing, while the native rights remain. A retained reference on the role, an identity's profile association and native membership are separate observations.
+
+The new recipient's missing Drafts and the old holder's retained Drafts are therefore compatible outcomes.
+
+## Apply a shared change with its real scope in view
+
+Saving a definition records configuration. Applying it through relevant processing recalculates the affected identity requirements; source fulfillment still needs separate verification.
+
+The role, profile and application list-page **Apply Changes** actions process those access-model configurations together. They do not isolate the job to whichever single object was open most recently.
+
+That list-page processing covers ISC Active and **Inactive (short-term)** identities. It does not include **Inactive (long-term)** identities. These are processing-participation categories, not statements that the corresponding native accounts are enabled or disabled.
+
+Review the other saved changes and the edited profile's consumers before broad application. Opening one identity in another tab does not limit a shared edit to that person.
+
+Removal needs its own decision. **Role access removal propagation** carries specified role-definition removals through to affected identities. The setting **Enable Role Access Removal Propagation** governs those removals, and the role must be enabled. This setting does not decide whether standing additions become required.
+
+Removing Preparation from the role, removing an entitlement from Preparation, disabling Preparation and **revoking** a recipient's role assignment are different actions. Revoking means withdrawing that association and its applicable access requirements.
+
+If Preparation disappears from the definition, inspect the propagation setting, role state, remaining requirements, actual removal operation and native result before concluding that Drafts disappeared. Submission still has its Readers reference in our definition.
+
+Do not invent a universal last-reference rule from that overlap. Also, access edits made while a role is disabled are not simply replayed as propagation when it is later enabled.
+
+## Trace a missing permission and a proposed edit differently
+
+For missing access, start with the intended native action and the correct account. Find the entitlement that permits it, then trace its profile or direct role reference.
+
+Check the referenced object's enabled state, the actual role assignment, relevant processing and the source operation. Finish with the account's present membership and action result.
+
+For change impact, follow the references outward too: which other roles and populations use this exact profile?
+
+One direction explains why this recipient should have the right. The other explains who else a shared edit can affect. Both need actual identifiers and contents rather than familiar names.
 
 ## Work through the reference changes
 
-### Case 1: Three role entries are counted as three permissions
+### 1. Three entries are reported as three permissions
 
-**Facts:** The role has two two-entitlement profiles and one direct entitlement. Readers is the same entitlement in both profiles.
+The role contains two two-entitlement profiles and a direct entitlement. Both profiles reference the exact same Readers record.
 
-**Reasoning:** Trace five paths but four distinct entitlement objects. The count does not establish accounts, connector calls or successful writes. Identify the particular screen's count semantics before treating its number as contradictory.
+What does the definition establish?
 
-### Case 2: The direct entitlement is overlooked
+**Reasoning:** Three immediate entries, five entitlement paths and four distinct entitlement objects. It does not establish account counts, connector calls or successful writes. Check what a particular screen's total actually measures before comparing it.
 
-**Facts:** A reviewer inspects only the two included profiles and reports that R-1202 affects only CaseFlow.
+### 2. The reviewer checks only the profiles
 
-**Reasoning:** The direct DocumentVault reference was omitted from the review. Inspect both immediate access-entry types and expand the profiles. Evidence Readers is role-required even though it has no profile wrapper.
+The review reports that the coordinator role affects only Cases Production.
 
-### Case 3: Two roles share Preparation
+Which requirement was missed?
 
-**Facts:** R-1202 and R-8299 reference AP-8202-P. An edit adds Case Tags. Only the coordinator population's need has been reviewed.
+**Reasoning:** The direct Evidence Readers reference. Inspect both immediate entry types and expand profile contents. A right does not need a profile wrapper to be required by this role.
 
-**Reasoning:** The shared profile's change scope includes both consumers, not just the role currently open. Review readiness users' need before application. Their role does not inherit the coordinator's other contents; the shared profile is the connecting object.
+### 3. Only coordinators were consulted
 
-### Case 4: The copy has a similar name
+Preparation is shared with the readiness role. Tags is proposed, but only the coordinator population's need has been approved.
 
-**Facts:** An independent variation uses a newly created, similarly named Preparation profile with another identifier. AP-8202-P is edited, but the role references the copy.
+Is the impact review complete?
 
-**Reasoning:** A matching display name does not establish a shared object. Follow the actual identifier and contents. Editing the original does not establish that the separate copy's contents changed.
+**Reasoning:** No. Assess readiness recipients too because the exact same profile would change. They do not inherit the coordinator's whole package; the shared profile is the connection.
 
-### Case 5: Preparation is disabled for a new recipient
+### 4. A similarly named copy is referenced
 
-**Facts:** The new account has no memberships. Preparation is disabled; the supplied final account state has Readers and Submitters but no Drafts.
+The role points to a separate Preparation copy with a different identifier. An administrator edits the original.
 
-**Reasoning:** A retained disabled reference did not deliver Drafts. Under CaseFlow's stated rules, submission can work while draft creation fails. Inspect object state and account evidence rather than assuming the enabled role name guarantees every intended task.
+Does that establish a change in the role's referenced contents?
 
-### Case 6: The old holder still has Drafts
+**Reasoning:** No. Follow the stored identifier and the referenced object's actual contents. Similar labels do not establish shared edits.
 
-**Facts:** Drafts was already present before Preparation was disabled. No removal operation or other withdrawal occurred.
+### 5. A new recipient receives no Drafts
 
-**Reasoning:** Disabling alone is not proof of native cleanup. Check current membership and the actual intended withdrawal path. Do not import the new-recipient missing-Drafts result into this existing-holder situation.
+Preparation is disabled. The recipient's existing account initially has no Cases memberships; later Readers and Submitters are present, but Drafts is absent.
 
-### Case 7: A direct path fails while profile paths succeed
+Can reading and submission work while drafting fails?
 
-**Facts:** Both CaseFlow additions succeed; the direct DocumentVault addition is rejected for insufficient permission.
+**Reasoning:** Yes, under the supplied native rules. Enabled Submission provides the required Readers/Submitters combination. Preparation's retained disabled reference does not supply Drafts.
 
-**Reasoning:** Direct inclusion in the role does not bypass fulfillment. Investigate the exact rejected source/account operation, correct the authorized integration problem and verify evidence reading afterward. No automatic reversal of successful CaseFlow changes is established.
+### 6. An existing holder retains Drafts
 
-### Case 8: A profile reference is removed from the role
+Drafts existed before Preparation was disabled. No withdrawal operation occurred.
 
-**Facts:** Preparation is removed from the definition. Existing native memberships have not yet been checked. Submission still references Readers, and role-removal propagation settings are unknown.
+Did disabling prove native cleanup?
 
-**Reasoning:** The immediate entry disappeared, but the native removal outcome is unestablished. Inspect propagation settings, enabled role state, remaining access paths and operation evidence. A definition comparison alone cannot prove that Drafts disappeared or supply a universal overlap-removal algorithm.
+**Reasoning:** No. Disabling does not deprovision the previously held entitlements. Inspect actual membership and any separately authorized withdrawal, rather than importing the new recipient's result into this history.
 
-## Transfer this to a license and a shared directory group
+### 7. The direct Evidence path is rejected
 
-A design role references a directory profile containing Portal Access and Project Files. It also directly references an Editor license on a separate source.
+Both Cases additions succeed; Evidence membership addition fails for insufficient integration permission.
 
-Another role uses the same directory profile. The proposed change adds Full Archive Export to that profile for the design team.
+Does “direct” mean the entitlement should bypass that rejection?
 
-The license assignment is reported successful, but the directory update is still unverified.
+**Reasoning:** No. Direct describes the role reference. Investigate the selected source account and rejected operation, obtain an approved correction, recover through a supported path and verify evidence reading. No reversal of Cases success is established.
 
-Which parts of the intended result are established, who else needs an impact review, and what does the role's reference count fail to tell you?
+### 8. Preparation disappears from the definition
 
-The role combines source-specific profile contents with a direct entitlement on another source. The license report concerns that one operation; it does not prove the directory rights arrived or that the intended design task works.
+Its reference is removed. Submission still references Readers; propagation settings and native results are unknown.
 
-The other role is also a consumer of the shared profile. Assess its population's need for Full Archive Export before approving the change, rather than assuming it receives the design role's whole package.
+Can you conclude that Drafts was withdrawn?
 
-Inspect the exact references, current assignment, directory-account memberships and application scope. Verify the current license and required native action as well.
+**Reasoning:** No. Establish the applicable propagation setting and enabled role state, other continuing requirements, operation evidence and native outcome. A changed list alone cannot prove withdrawal or establish a universal overlap algorithm.
 
-A role's short list is an entry point for that investigation. Understanding its actual access means following each reference to the right source, current requirement and account result.
+## Try the same tracing with a directory and a license
+
+A design role references a directory profile containing Portal Access and Project Files. It also directly includes an Editor license from a separate source.
+
+A **license** gives an account the right to use a product or feature set under the native licensing model.
+
+Another role uses the same directory profile. The proposed edit adds Full Archive Export for the design team. The license assignment reports success, but the directory change remains unverified.
+
+What result is established, who else needs a review, and what is missing?
+
+**Reasoning:** The successful report concerns the license operation. It does not establish current directory membership or the complete design task's usability. Verify the license's present state and its intended action too.
+
+Trace the directory profile's other consumer and assess that population's justification for archive export. Sharing the profile does not mean sharing the design role's whole contents.
+
+Inspect exact references, actual assignment, selected accounts, native scope and current memberships. Verify each required action separately. The role's entry count cannot replace any of that evidence.

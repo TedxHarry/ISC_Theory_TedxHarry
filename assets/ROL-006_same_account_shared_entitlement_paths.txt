@@ -1,0 +1,15 @@
+Two current roles, same account
+              |
++-- A: Case preparer
+|   Case preparation profile
+|   Readers + Draft Editors
+|
++-- B: Case follow-up
+    Case follow-up profile
+    same Readers + Follow-up
+
+Both Readers paths reference
+one entitlement on Cases Production.
+The native account has one membership.
+
+Four paths / three distinct rights.

@@ -1,0 +1,19 @@
+HR work information changes
+              |
+Aggregation reads the HR account
+              |
+Collected HR values in ISC
+              |
+Identity mapping and evaluation
+              |
+Current identity values
+              |
+Complete enabled role selector
+              |
+Match gained / retained / lost
+              |
+Changed access requirements
+              |
+Supported source operations
+
+Dependencies, not a private engine map.

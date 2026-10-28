@@ -1,282 +1,360 @@
-# Her department changed. Why does she still have the role?
+# The department changed. Why does the old role remain?
 
-HR has moved Devi to a new team. An administrator opens SailPoint Identity Security Cloud, or ISC, and still sees her old role.
+HR has moved an employee to Quality. ISC still shows the old Archive reviewer role.
 
-Should you remove it manually, run another aggregation, process the identity, or investigate the application?
+It is tempting to choose an action immediately: collect the data again, process the identity or remove the role. First establish where the new information has reached.
 
-Before choosing an action, we need to establish **which change has actually reached which record**. “Her department changed” could mean HR approved a move, ISC collected the new value, or ISC has already evaluated access using it. Those are different facts.
+An approved HR move, a newly collected HR value and a completed access decision are different observations.
 
-There is also a second question hiding inside the first: even if the role disappears in ISC, has the old access actually disappeared from the application?
+There is another question too: if the role has disappeared in ISC, can the account still read archived records?
 
-## Start with the assignment that exists
+## Identify the requirement and the access it currently supplies
 
-Devi, employee **120505**, reviews archived records for RecordsOps. Her ISC identity represents her as a person. It is linked to her HR employee record and her existing **ArchiveGate Production** account, **ag-120505**.
+In SailPoint Identity Security Cloud (ISC), an **identity** represents a person or another entity. An **account** is the external record through which that person uses a system.
 
-Those links are account correlation: ISC associates source accounts with the identity they belong to. A **source** is ISC's configured representation of a managed system and its account data. The connector supplies the integration used to read or change that system.
+**Account correlation** matches and associates source accounts with their ISC identity. Here, the HR employee account and the existing Archive Production account are correctly associated with the same identity.
 
-Devi holds the enabled standard role **R-1205, Archive reviewer** through automatic membership criteria. A role groups the access needed for a responsibility. Here it contains one enabled access profile, a bundle of rights from ArchiveGate Production:
+A **source** is ISC's configured representation of a system or collection of account data. Its **connector** supplies the supported integration for reading information and, where supported and configured, making changes.
 
-- **AG-8501, ArchiveReaders**, permits reading North archive records.
-- **AG-8502, ArchiveAnnotations**, permits adding annotations to North records, but only when ArchiveReaders is also held.
+The person holds the enabled standard **Archive reviewer role** through automatic membership criteria. A **role** groups access for a business responsibility. **Membership criteria** are the configured comparisons selecting identities for that role.
 
-These group memberships are entitlements: access rights represented in ISC for the source. Neither group permits export, deletion, or administration.
+The role contains one enabled **access profile**, a related bundle of entitlements from one source. An **entitlement** represents source access, such as group membership.
 
-Her account is enabled, she can sign in, and its resource scope is North. Both groups are already present and the review task works. No other role, lifecycle assignment, request, or native grant requires either group in this main example.
+**Native** means belonging to the external application. A **group** collects members, such as accounts; native application rules determine which actions that membership permits. A **permission** allows an action on a resource.
 
-The automatic criteria require all three current identity values:
+Its Archive Production groups are:
+
+- Archive Readers, allowing reading within the account's assigned resource scope.
+- Archive Annotations, allowing annotations when that same account also holds Readers.
+
+The account is enabled, sign-in works and its scope is North. Both memberships are already present, so North reading and annotation work. Export, deletion and administration are denied.
+
+These two rights have no other supplying grant or access requirement in the main case.
+
+This is **standing access**: the delivered rights do not wait for a separate just-in-time activation. **Provisioning** carries out account or access changes, and **deprovisioning** withdraws access.
+
+All records, policies, configurations, native rules and observations below are hypothetical. The required ISC Provisioning capability and supported membership additions and removals are supplied.
+
+## Establish exactly what the role compares
+
+An **identity attribute** is a named field on the ISC identity. This role's Standard Criteria use identity attributes and require all three comparisons:
 
 - Department equals `RecordsOps`.
 - Job code equals `ARCHIVE-REVIEW`.
 - Lifecycle state equals `working`.
 
-A lifecycle state represents a stage such as working or departed. Here `working` is the configured technical name; its associated identity state is Active, so the ordinary processing routes discussed below include Devi.
+**AND** means every comparison must match.
 
-All systems, records, permission rules, configurations, times, and outcomes in this example are fictional. Assume the integration supports the required group additions and removals. We are following ordinary standing access, not session-by-session activation.
+A **lifecycle state** describes the identity's organizational stage and can carry configured access requirements. Working is the configured technical name in this example, not a universal ISC state name.
 
-## Which department does the role actually read?
+That lifecycle state is configured with the **Active identity state**. Identity state controls participation in ISC features and processing; it is different from the external account's enablement. Active is not a fourth membership condition here.
 
-The role's department condition is an **Identity Attribute** condition. It reads the department on Devi's ISC identity, not every field called department across her accounts.
+Before the move, the three identity values are RecordsOps, ARCHIVE-REVIEW and working. All comparisons are true, so the current automatic requirement is justified under this supplied policy.
 
-An **identity profile** defines how identity attributes are populated. In this example, its mapping takes department and job code directly from the collected HR employee record. A mapping connects an input field to the identity value ISC uses. A transform, when configured, calculates or changes that input before producing the identity value; there is no department transform in our main setup.
+The department comparison reads the identity's department. It does not read every account field called department or infer a value from an HR approval email.
 
-Now HR changes Devi's department to `Quality` and her job code to `QUALITY-PLAN`.
+## Follow the value from HR to the evaluated identity
 
-That correct HR record does not, by itself, prove ISC is already using those values. **Aggregation** reads account data from a source into ISC. Until the HR record has been collected and the identity data updated, the role may still be evaluated against older information.
+An **identity profile** configures a population's identity values and lifecycle behavior. A **mapping** specifies how source information supplies a particular identity attribute.
 
-Be precise about the records:
+Here, department and job code map directly from the collected HR employee account. There is no department transform. A **transform** calculates or changes an input to produce a value; when one is configured, its actual output must be inspected too.
 
-- The HR system has the producer's current work information.
-- The HR source account in ISC contains what ISC collected.
-- The ISC identity contains the values produced by its applied mappings.
-- The role assignment reflects the membership decision that was applied.
-- The ArchiveGate account contains the rights actually present in the application.
+The approved move changes HR department to Quality and job code to QUALITY-PLAN.
 
-They describe the same person, but they are not one shared, instantly updated record.
+**Account aggregation** reads configured account data from a source into ISC. **Identity processing** evaluates identity information and applicable configuration, including mappings and role requirements.
+
+The new HR information must become available to the selected mapping and relevant evaluation. Until then, the identity can still contain the old qualifying values.
+
+Keep five observations separate:
+
+1. HR's current employee record.
+2. The HR account data ISC collected.
+3. The identity values produced by its applied mappings.
+4. The role assignment, the association between this identity and the role.
+5. The rights on the actual Archive Production account.
+
+These concern the same person, but they are not one shared record that changes everywhere at once.
 
 ```text
-HR: approved current work changes
-                |
-Aggregation reads employee record
-                |
-ISC stores collected account data
-                |
-Identity processing uses mapping
-                |
+HR work information changes
+              |
+Aggregation reads the HR account
+              |
+Collected HR values in ISC
+              |
+Identity mapping and evaluation
+              |
 Current identity values
-                |
-Evaluate enabled role's selector
-                |
+              |
+Complete enabled role selector
+              |
 Match gained / retained / lost
-                |
-Compare access requirements
-                |
-Source operations if required
+              |
+Changed access requirements
+              |
+Supported source operations
 
-These are dependencies, not a promise
-that every stage succeeds immediately.
+Dependencies, not a private engine map.
 ```
 
-The arrows describe information and processing dependencies. They do not promise an exact private engine sequence, a fixed delay, or that all source writes succeed.
+The arrows show dependencies between information, decisions and operations. They do not prescribe private service order, fixed delays or successful writes.
 
-## A different value matters only if the selector uses it
+A gained match can establish an automatic assignment requirement; a retained match can preserve it. When the complete match is lost, relevant evaluation changes the assignment and its associated access requirements.
 
-Before the move, the three required comparisons are true. After the new HR values become Devi's current identity values, the department and job comparisons are false while the working comparison remains true.
+That decision still needs fulfillment on the source. Identity processing can initiate provisioning without proving that every operation completed successfully.
 
-With AND between these conditions, the complete selector no longer matches.
+## A changed field matters only through the complete selector
 
-| Current identity values or change | Result for this role's stated criteria |
+Once Quality and QUALITY-PLAN are the current identity values, department and job no longer match. Working still matches, but AND requires all three conditions.
+
+The person no longer qualifies for this role under the stated expression.
+
+| Current identity values or change | Result for this role |
 |---|---|
-| RecordsOps, ARCHIVE-REVIEW, working | Match: all three conditions pass. |
-| Quality, QUALITY-PLAN, working | No match: department and job differ. Being employed is not enough. |
-| RecordsOps, ARCHIVE-REVIEW, working; telephone number changed | Still a match. Telephone is not an input to this selector. |
-| Quality, ARCHIVE-REVIEW, working | No match: the department condition fails even though the old job value remains. |
-| RecordsOps, ARCHIVE-REVIEW, prehire | No match: the lifecycle condition fails. |
-| Department or job value is missing or its calculation failed | Investigate the actual current value, mapping result, and evaluation. Do not invent a universal missing-value outcome. |
+| RecordsOps / ARCHIVE-REVIEW / working | All three comparisons match |
+| Quality / QUALITY-PLAN / working | Department and job fail; remaining employed is insufficient |
+| RecordsOps / ARCHIVE-REVIEW / working; phone changed | Still matches because phone is not a selector input |
+| Quality / ARCHIVE-REVIEW / working | Department alone makes this AND expression false |
+| RecordsOps / ARCHIVE-REVIEW / prehire | Lifecycle comparison fails |
+| Department or job missing, or its calculation failed | Inspect the actual current field and mapping/evaluation result; do not assume one missing-value outcome for every operation |
 
-The important test is not “did anything on the identity change?” It is “what does the complete role selector decide with these current inputs?”
+A new manager could affect a future request's reviewers without changing this role's membership. A location change has the same limitation unless the selector or another relevant control uses location.
 
-A new manager might change who reviews future requests without affecting this role at all, because manager is not among its criteria. A location change has the same limitation unless location participates in the selector or another relevant control.
+Also inspect every alternative. In a separate role, suppose the complete expression permits RecordsOps archive reviewers **OR** Quality investigation reviewers. A person can stop matching the first group and match the second.
 
-Equally, losing one matching branch does not guarantee loss of membership. Suppose a different role has two complete groups joined by OR: RecordsOps archive reviewers **or** Quality investigation reviewers. A move into the second approved group can preserve a match. Inspect the entire expression rather than stopping at the first failed row.
+**OR** means either complete alternative is sufficient. One failed row or branch is not enough evidence that the whole selector failed.
 
-## When does ISC apply that decision?
+## Trace the move through the actual evidence supplied
 
-**Identity processing** recalculates identity information and access requirements using the applicable configuration. It connects current data to decisions such as automatic role membership.
+The hypothetical move is effective **October 27, 2026, at 09:00 UTC**. UTC means Coordinated Universal Time. These are observation times, not service guarantees.
 
-When aggregation or provisioning modifies an identity, event-based processing can follow. Scheduled processing covers eligible identities under its configured conditions. Administrators also have manual processing routes, including processing selected identities.
+The role definition and its contents stay unchanged. This case changes the input data used to decide membership.
 
-These routes do not replace one another indiscriminately:
+The **integration actor** is the account or authorization the connector uses for source operations. It is distinct from the Archive account receiving or losing access.
 
-- Reprocessing an identity cannot fetch an HR change that has not been collected.
-- Collecting a new HR record does not prove every downstream source operation completed.
-- Saving a changed mapping is not the same as applying it.
-- A scheduled run's expected start is not evidence that Devi was included and evaluated.
-
-Our main case changes input data, not the role definition. You do not need to edit a correct role every time a worker moves. What you need is the correct data, the correct mapping, and a relevant evaluation.
-
-If you do change a shared mapping or role definition, review and apply that configuration through the appropriate processing route. Do not assume an unchanged source record will independently prove your configuration change was applied.
-
-Also keep **identity processing** separate from **attribute synchronization**. Attribute synchronization writes configured identity values into corresponding source-account fields. Updating a target's department text is not itself proof that ISC withdrew the role's group entitlements.
-
-## Follow the move through supplied observations
-
-The move is effective on **October 27, 2026, at 09:00 UTC**. These are example observation times, not service guarantees.
-
-| Supplied observation | What it establishes, and the next question |
+| Supplied observation, October 27 | What it establishes |
 |---|---|
-| 09:00: HR now records Quality and QUALITY-PLAN | The producer has changed. Has ISC collected that employee record? |
-| 09:20: ISC's collected HR account still contains RecordsOps and ARCHIVE-REVIEW | ISC still has old input for the stated mapping. Processing that input is not a way to discover the unseen HR update. |
-| 09:30: aggregation has collected Quality and QUALITY-PLAN for employee 120505 | The new input has reached ISC. Check the current identity values and relevant processing, not only the aggregation's overall result. |
-| 09:35: supplied identity and assignment evidence shows Quality, QUALITY-PLAN, working, and withdrawal of the automatic Archive reviewer assignment | The applied membership decision reflects the new inputs. This does not establish native group removal. |
-| 09:40: the Annotations removal reports success; the Readers removal reports a target permission error | The removal attempt is partial. Investigate the failed operation against ag-120505. |
-| 09:50: native account inspection shows Readers only; reading North works, annotation fails | Some old capability remains despite the withdrawn role. The observed task matches the residual rights. |
+| 09:00 UTC: HR holds Quality and QUALITY-PLAN | The producer changed; ISC collection remains to be checked |
+| 09:20 UTC: ISC's HR account still holds RecordsOps and ARCHIVE-REVIEW | The selected mapping still has old collected input; reprocessing cannot discover an unseen HR update |
+| 09:30 UTC: aggregation collects Quality and QUALITY-PLAN for the intended employee | New input reached ISC; inspect the current identity and relevant evaluation |
+| 09:35 UTC: current identity is Quality / QUALITY-PLAN / working, and the automatic Archive reviewer assignment is withdrawn | Applied membership reflects the new inputs; native removals are not yet established |
+| 09:40 UTC: Annotations removal succeeds; Readers removal reports a target permission error | Fulfillment is partial; inspect the exact failed account operation |
+| 09:50 UTC: native account has Readers only; North reading works, annotation is denied | The withdrawn role has not resulted in complete native cleanup |
 
-At 09:20, an old role is consistent with old ISC input. At 09:50, remaining access has a different explanation: membership withdrawal happened, but a source operation failed.
+At 09:20, an old role is consistent with old input. At 09:50, the assignment has ended, but a removal failed. The same complaint, “the old access remains,” now has a different cause.
 
-Those situations need different corrections. Repeating the same action for both wastes time and can obscure the real problem.
+Repeating collection for the second problem does not repair the known source permission rejection. Reprocessing the old input in the first problem does not retrieve the HR change.
 
-At 09:40, inspect why the integration lacks permission for the Readers removal. A connector supporting a removal operation does not prove its current credential is authorized to perform that operation on this target. Correct the verified cause under the organization's change controls, use a supported recovery path, and check the actual result.
+At 09:40, examine the specific source, account, entitlement, attempted removal and error. The connector supports removal, but its current integration authorization lacks the permission needed for this operation on this account.
 
-Do not assume every failed removal is retryable or that another routine identity-processing run will repair it. The operation's status and error determine what recovery is available.
+Under an approved correction and supported recovery, a later operation removes Readers. Native checks then confirm both memberships absent: North reading and annotation are denied, as are export, deletion and administration. The account remains enabled and sign-in still works. No other relevant account, access or native-policy change occurred.
+
+The recovery closes the identified removal gap. It does not mean every failure is retryable, another ordinary processing run always repairs delivery, or past operations have been erased.
 
 ```text
-BEFORE: automatic match
-RecordsOps + ARCHIVE-REVIEW + working
-                |
-        Archive reviewer role
-                |
-       Readers + Annotations
+BEFORE: match
+RecordsOps / ARCHIVE-REVIEW / working
+              |
+Archive reviewer: Readers + Annotations
 
-AFTER: no automatic match
-Quality + QUALITY-PLAN + working
-                |
-     Role assignment withdrawn
-                |
-      Source removals attempted
-           /            \
-Annotations removed   Readers rejected
-           \            /
-     Native account: Readers remains
-                |
-     Can read; cannot annotate
+AFTER: no match
+Quality / QUALITY-PLAN / working
+              |
+Automatic assignment withdrawn
+              |
+Source removals attempted
++-- Annotations removed
++-- Readers removal rejected
+              |
+Native: Readers remains
+Read works; annotation denied
 
-Role gone does not prove rights gone.
+After approved recovery:
+Readers and Annotations both absent
+Archive reading and annotation denied
 ```
 
-Here, no retained requirement protects Readers. Its presence is a supplied delivery failure, not a justified entitlement retained by another role.
+The upper comparison connects the changed inputs to lost membership. The lower result distinguishes withdrawn assignment, partial removal and verified recovery. It does not claim an atomic two-entitlement transaction or a required source-operation order.
 
-The account itself remains. Removing a role's entitlements is not an instruction to delete the account or disable its sign-in.
+In this main history, no other requirement protects Readers. Its residual presence at 09:50 is the supplied delivery failure. Retention for another role is a separate variation.
 
-## Losing the role is different from editing its contents
+Removing these rights also does not mean deleting the account or disabling sign-in. Those would be different operations with their own authorization and evidence.
 
-In the move, the role still contains Readers and Annotations for people who remain eligible. Devi stops qualifying for the role.
+## Choose processing that can address the missing step
 
-That is an **assignment change**: the relationship between a person and a role changes.
+When aggregation or provisioning modifies an identity, event-based identity processing follows. Scheduled processing covers identities under its documented inclusion conditions. Administrators also have manual routes, including processing selected identities.
 
-Removing Annotations from the role's shared definition is a different operation. That is an **access-content change** affecting what the role represents for its members. ISC's role access-removal propagation setting matters for specified definition changes.
+Choose the route based on what is missing:
 
-Do not use that setting as a blanket explanation for every mover problem. First establish whether the event was loss of membership, a shared definition edit, a requested-assignment revocation, or a failed source removal. The same visible group can be involved in each, but the governing mechanism differs.
+- If ISC has not collected the new HR record, identity processing does not fetch it.
+- If the collected input is correct but a mapping selects another source, more HR collection does not change that mapping.
+- If a shared mapping was edited, saving or previewing it does not establish that it was applied.
+- If the identity was evaluated and source removal failed, a successful calculation is not removal-recovery evidence.
 
-There is another legitimate reason for residual access. In a separate variation, Devi still holds another assigned role requiring ArchiveReaders. Ending Archive reviewer would not eliminate the remaining role's requirement for Readers. You would investigate the retained role's justification, rather than repeatedly trying to remove a right ISC is still supposed to maintain.
+A normal mover does not require editing a correct role definition. Correct inputs, the approved mapping and relevant evaluation are what change its recipient decision.
 
-This does not establish a universal reference-counting rule for every possible grant origin. Trace the specific assignment mechanisms involved.
+If the mapping or shared role configuration genuinely needs correction, review its consumers and apply the approved configuration through the appropriate route. An unchanged source record is not proof that a changed configuration was applied.
 
-## What if the role came from a list or a request?
+A scheduled job's expected start is not evidence that this identity was included. Check the job's scope and the identity's processing state.
 
-The main example uses data-driven Standard Criteria. Do not transfer its conclusion unchanged to every assignment.
+**Inactive (long-term)** is a different ISC identity state. Such identities are excluded from ordinary scheduled processing and from the role, profile and application list-page Apply Changes actions.
 
-With **Identity List** membership, the role's automatic selector is a maintained list of ISC identities. A department change does not remove Devi from that list merely because a former department rule would fail. Check the selected identities and the approved maintenance process.
+Selected-identity processing and Apply Changes on identity profiles have different inclusion rules and can include long-term inactive identities. Do not turn a specific exclusion into “ISC never processes this identity.”
 
-With a **requested role**, the basis is a particular access request, potentially with approvals and dates. An access request asks for specified access for a recipient; it is not evidence that the recipient matched automatic membership criteria.
+The main identity is Active; the long-term variation does not explain away its supplied failed source removal.
 
-A job change alone does not establish that every requested assignment has expired or been revoked. Inspect that assignment's conditions, dates, history, and applicable lifecycle controls. Choose the correct assignment and account targets before using a supported revocation route.
+## Keep account-field synchronization separate from entitlement withdrawal
 
-Conversely, an ordinary removal request is not an override for a continuing automatic membership requirement. If a currently valid criterion keeps selecting Devi, the design or its input needs an authorized correction. Falsifying her source record to force a mismatch is not a sound access-removal procedure.
+**Attribute synchronization** writes configured identity values into corresponding source-account fields.
 
-## Effective dates and incomplete inputs need deliberate reasoning
+For example, a separately configured synchronization can write the identity's Quality department into an application's department field. That is an account-field update.
 
-A project move can be approved today but become effective next month. If HR publishes the future department early and the mapping simply copies it, the department criterion has no hidden knowledge that it should wait.
+Withdrawing Archive Readers is a membership change. A correct department label in Archive Production is not evidence that Readers was removed.
 
-The design must provide the appropriate current value, or deliberately calculate it from approved effective-date information. Where time-dependent calculation is used, reevaluation also needs an appropriate configured trigger. Adding a date field that no mapping or selector reads does not create a time gate.
+Check the operation that corresponds to the business requirement. The main lesson does not assume department synchronization is enabled or needed for the role to evaluate its identity-attribute criteria.
 
-The same care applies to partial updates. Suppose department arrives as Quality while job code remains ARCHIVE-REVIEW. Our AND selector is already false. If the business needs an atomic effective record, the data contract must address that. ISC cannot infer an unpublished business intention from two inconsistent fields.
+## Membership withdrawal and shared-content editing are different
 
-Do not repair incomplete data with an unconditional fallback to the old privileged job. A fallback can hide a broken feed and preserve access that should be reconsidered. Establish the approved policy for incomplete records, the calculation's actual output, and the access consequences before applying a correction.
+The Archive reviewer role still contains Readers and Annotations for eligible reviewers. This person stops qualifying for it.
 
-These are reasons to test realistic transitions, not only neat final records.
+That is an **assignment change**, affecting the relationship between an identity and the role.
 
-## Use the screens as evidence, not as substitutes for the flow
+Removing Annotations from the shared role definition would be an **access-content change**, affecting what that role requires for its members. **Role access removal propagation** concerns specified definition-change removals.
 
-The source's aggregation history helps establish whether a collection ran and what its scope and outcome were. It is not a per-person certificate that the correct role decision and all native removals finished.
+Its setting is not a blanket explanation for every mover outcome. First identify which action occurred: lost membership, edited contents, a requested-assignment revocation or a rejected source operation.
 
-The collected HR account lets you inspect the input record. The identity's current details and profile mapping connect that input to the values the role uses. Preview can help check a proposed mapping against selected data, but a preview result is not the applied identity or delivered access.
+In a separate variation, another currently assigned role requires Archive Readers. Withdrawal of Archive reviewer can leave that other role's Readers requirement intact.
 
-The role's assignment configuration explains the selection logic. Assignment information establishes which role relationships currently exist. Provisioning activity supplies evidence about particular source changes. Finally, native account and task checks show what ArchiveGate permits.
+Investigate whether the retained role is justified. Repeatedly trying to remove a right still required by a valid assigned role does not resolve the requirement.
 
-Search and other views can also have different observation or synchronization times. If one view still shows an older state, compare the underlying records and timestamps before rerunning a write. A delayed display and an unsuccessful removal are different defects.
+That does not establish a universal reference-counting algorithm for every possible grant origin. Trace the particular assignments and current requirements.
 
-If processing seems absent, also verify the identity's processing scope. Inactive (long-term) identities are excluded from ordinary scheduled processing and list-page Apply Changes for roles, profiles, and applications; selected-identity and identity-profile processing have different inclusion rules. A processing action existing in the UI does not prove it covered the identity you are investigating.
+## A list or requested assignment can outlive the department comparison
+
+The main role uses data-driven Standard Criteria.
+
+An **Identity List** selector instead explicitly names ISC identities for automatic assignment. Department changes do not remove an entry merely because a former department expression would fail.
+
+Inspect the actual selector and its approved maintenance process. Correct department data alone is not evidence of list cleanup.
+
+A **requested role** comes through an applicable **access request**, which asks for specified access for a recipient. **Approval** is the decision allowing the request to proceed; it does not establish an automatic criterion match.
+
+A job change alone does not prove that a requested assignment expired or was revoked. Inspect its dates, conditions, history and applicable lifecycle controls. Those controls can separately affect access.
+
+**Revocation** withdraws an assignment through its supported route. Identify the exact requested assignment and its account targets before using that route.
+
+Conversely, an ordinary removal request cannot override a continuing automatic membership basis. If correct current data still qualifies under an approved rule, investigate the intended policy before changing anything.
+
+An authorized correction belongs to the policy, list or real source information that needs correction. Falsifying identity data to force a mismatch is not a sound withdrawal procedure.
+
+## Dates and partial records do not interpret themselves
+
+A move can be approved today but become effective next month.
+
+If HR publishes Quality early and the mapping simply copies it, the department criterion has no hidden knowledge that it should wait. A date field elsewhere in the record does not create a time gate.
+
+The design must supply the approved current value or deliberately calculate it from effective-date information. If a transform uses time, it must also be reevaluated through an appropriate configured trigger. The clock passing a date does not by itself execute every calculation.
+
+Partial updates matter too. Quality with the old ARCHIVE-REVIEW job already fails our AND rule because the department comparison fails.
+
+If the business requires department and job to become effective as one consistent record, its data contract must address that. ISC cannot infer an unpublished intention from two fields that arrived separately.
+
+A missing-value **fallback** supplies an alternative when the expected input is unavailable. An unconditional fallback to old qualifying values can hide a broken feed and preserve a match the business should reconsider.
+
+Inspect the actual output and the whole selector. An old job alone does not overcome a Quality department mismatch. Do not assume every fallback preserves access, or repair missing inputs by automatically returning a privileged qualifying record.
+
+Test realistic transitions, including future values and partial records, rather than only neat before-and-after snapshots.
+
+## Read each screen for the evidence it actually supplies
+
+Aggregation history helps establish collection scope, timing and overall outcome. It is not a per-person certificate that the mapping, role decision and every native removal finished.
+
+The collected HR account shows the input record. Current identity details and its profile mapping connect that input to the values the selector reads.
+
+**Preview** checks a mapping's output against selected data. It can help test a proposed configuration, but its result is not the applied identity or delivered source access.
+
+Role assignment configuration shows the membership logic. Assignment information shows the identity's current role relationships. Provisioning activity shows particular source operations, results and errors.
+
+Finish with the native account and task: can this account still read or annotate North records?
+
+Search and other views can have different observation or synchronization times. Compare the underlying records and timestamps before rerunning a write. An old display and a failed removal are different defects, even when both make a screen look out of date.
 
 ## Work through the evidence
 
-### Case 1: HR is correct, but ISC still has the old record
+### 1. HR is correct but ISC has the old input
 
-**Facts:** HR says Quality. The HR source account in ISC still says RecordsOps, and the identity maps department from that account.
+HR says Quality. The collected HR account still says RecordsOps, and the identity maps department from that account.
 
-**Reasoning:** The known gap is collection of the new input. Verify the correct employee, source scope, collected record, and aggregation outcome. Reprocessing the old record cannot supply the unseen HR value.
+Where is the known gap?
 
-### Case 2: The new record arrived, but department stayed unchanged
+**Reasoning:** Collection of the new input. Confirm the correct employee and source, collection scope, record and outcome. Reprocessing the old collected record cannot supply an unseen HR value.
 
-**Facts:** ISC collected Quality from HR. Inspection shows the identity's department mapping actually selects a directory field that still says RecordsOps.
+### 2. New HR input arrived but the identity did not change
 
-**Reasoning:** The changed HR field is not the selected input. Compare the mapping with the approved data contract. If HR should govern this field, correct and apply the mapping under change control, then inspect the resulting identity and role decision. Do not rewrite correct HR data to imitate the directory.
+ISC collected Quality. The actual identity mapping selects a directory field that still says RecordsOps.
 
-### Case 3: The identity changed, but membership did not
+Will another HR aggregation repair that choice?
 
-**Facts:** Only Devi's phone number changed. Her department, job code, and lifecycle values still satisfy all three main criteria.
+**Reasoning:** No. Establish the approved data source. If HR should govern department, correct and apply the mapping, then inspect the actual identity and role decision. Do not rewrite correct HR information to imitate the directory.
 
-**Reasoning:** A relevant evaluation still has a valid match. A changed identity is not automatically an ineligible identity. No role removal follows from the stated policy merely because some field changed.
+### 3. Only the phone number changed
 
-### Case 4: One criteria group failed
+Department, job code and lifecycle value still satisfy the three main criteria.
 
-**Facts:** A different role has RecordsOps archive-review criteria OR Quality investigation-review criteria. The move makes the first complete group false and the second complete group true.
+Should the role disappear just because the identity changed?
 
-**Reasoning:** The role still matches through the second alternative. Check the entire approved expression. Deleting a valid assignment because one branch failed would misread OR.
+**Reasoning:** No. Relevant evaluation still has a complete match. Phone is not a selector input in this policy.
 
-### Case 5: A future move took access away early
+### 4. One OR alternative stopped matching
 
-**Facts:** HR publishes Quality today with an effective date next month. The mapping copies department without considering that date, and the role tests department directly.
+A different role permits RecordsOps archive reviewers OR Quality investigation reviewers. The first complete branch becomes false and the second true.
 
-**Reasoning:** The calculation has no time gate. Establish the approved current/effective data contract and any required time-based calculation and processing. The mere presence of an effective-date field does not tell this selector to wait.
+Is membership necessarily lost?
 
-### Case 6: Her name remains in an explicit list
+**Reasoning:** No. OR still has a complete matching alternative. Inspect the whole expression rather than deleting a valid assignment after seeing one failed branch.
 
-**Facts:** A separate role uses Identity List. Devi is still selected after her department changes.
+### 5. Future work information removed access early
 
-**Reasoning:** Department is not the stated membership test. Investigate whether list maintenance is overdue and obtain the authorized change. Do not assume a data-driven department rule is running behind that explicit list.
+HR publishes Quality now with an effective date next month. The mapping copies department directly, and the role reads that attribute.
 
-### Case 7: The role is gone, but reading still works
+What was missing from the design?
 
-**Facts:** In the main timeline, the automatic assignment ended. Readers removal reported a permission error, and native inspection confirms Readers remains. There is no other requirement for it.
+**Reasoning:** An approved current/effective data contract and any required time-based calculation and reevaluation. The unused date field cannot tell this selector to wait.
 
-**Reasoning:** This is a known fulfillment failure after membership withdrawal. Recover the exact removal and verify the account and native read outcome. Another successful identity calculation is not evidence that the failed source write recovered.
+### 6. The identity remains in an explicit list
 
-### Case 8: The old department was restored after a mistake
+Another role uses Identity List and the person remains selected after the move.
 
-**Facts:** HR confirms the move was entered in error and restores RecordsOps/ARCHIVE-REVIEW. The corrected record is collected, the identity values become current, and relevant processing finds a match again.
+Does the changed department prove the list should already be different?
 
-**Reasoning:** The enabled automatic policy supplies a basis for assigning the role again. Check subsequent delivery of required rights; do not assume the correction erased the earlier removals, repaired all failed operations, or restored every former native condition. Preserve the history of both transitions.
+**Reasoning:** No. The list is the stated selection basis. Inspect its approved membership and maintenance; no hidden department rule removes the entry.
 
-## Follow a location change in a different project
+### 7. The role ended but reading still works
 
-A laboratory instrument role is automatically assigned to working analysts at the North site. It includes an instrument-login entitlement on one source and a results-folder entitlement on another. An analyst transfers to South.
+In the main timeline, assignment withdrawal occurred, Readers removal failed with a permission error and native Readers remains. No other requirement needs it.
 
-What would you establish before declaring North access removed?
+Which process needs recovery?
 
-First inspect which fields the actual selector reads, where those values come from, and whether the approved effective move reached the current identity. Then evaluate the complete criteria and confirm the relevant membership decision.
+**Reasoning:** The specific source removal. Obtain an approved correction, use a supported recovery and verify the native read outcome. Another successful identity calculation does not establish that the rejected operation recovered.
 
-After that, inspect each target account and operation separately. A successful results-folder removal does not prove instrument-login removal. Do not promise that withdrawal of North access and delivery of any South access form one atomic transaction or occur in a guaranteed source order.
+### 8. HR restores the old department after a mistake
 
-If the business requires no period of overlapping site access, or cannot tolerate a gap, that requirement needs an explicit supported transition design and testing. It is not satisfied simply by drawing two role arrows beside each other.
+In an independent correction history, HR restores RecordsOps/ARCHIVE-REVIEW. The record is collected, identity values are current and relevant processing finds the role's match again.
 
-When you explain a mover outcome, connect the evidence: **the work changed here, ISC received these values, this selector made this decision, and these target rights did or did not change.** That explanation tells you where an engineer should investigate next.
+Does this undo the previous access history?
+
+**Reasoning:** No. The enabled policy supplies a basis for assignment again, but subsequent delivery still needs verification. Earlier removals or failures are not erased, and every former native condition is not automatically restored. Preserve both transitions and their evidence.
+
+## Try a site transfer across two systems
+
+A laboratory instrument role is automatically assigned to working analysts at North. It includes instrument-login access on one source and results-folder access on another. An analyst moves to South.
+
+What would establish that North access ended?
+
+**Reasoning:** Start with the real selector, the fields it reads, their mappings and the approved effective move. Confirm the new current identity inputs and the complete membership decision.
+
+Then inspect each target account and removal separately. Successful folder removal does not prove instrument-login removal.
+
+Withdrawal of North access and any delivery of South access do not form a guaranteed atomic transaction or follow a guaranteed source order. If the business requires no overlap or cannot tolerate a gap, it needs an explicit supported transition design and testing.
+
+Connect the work change, collected input, applied identity values, membership decision and actual account results. That evidence identifies the next investigation more precisely than “the department changed.”

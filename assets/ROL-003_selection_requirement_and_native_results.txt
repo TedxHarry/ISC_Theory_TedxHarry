@@ -1,0 +1,15 @@
+Standard Criteria       Identity List
+compare configured      check whether
+current inputs          identity is listed
+        |                       |
+        +-----------+-----------+
+                    |
+        alternative selector methods
+                    |
+        relevant identity evaluation
+                    |
+          role assignment requirement
+                    |
+          supported account changes
+                    |
+          verify native task results

@@ -1,0 +1,16 @@
+Role: Case intake coordinator
+|
++-- Case preparation profile
+|   +-- Cases: Readers
+|   +-- Cases: Drafts
+|
++-- Case submission profile
+|   +-- Cases: Readers (same object)
+|   +-- Cases: Submitters
+|
++-- Evidence: Evidence Readers
+    directly included entitlement
+
+Intended existing account holdings:
+Cases: Readers + Drafts + Submitters
+Evidence: Evidence Readers

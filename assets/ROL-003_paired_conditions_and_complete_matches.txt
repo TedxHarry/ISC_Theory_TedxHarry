@@ -1,0 +1,12 @@
+Group A: AND          Group B: AND
+Operations            CustomerCare
+DISPATCH-DESK         RETURNS-DESK
+working               working
+      |                     |
+      +--------- OR --------+
+                  |
+       either group fully matches
+                  |
+       selected by these criteria
+
+Neither complete: not selected here.

@@ -1,0 +1,19 @@
+AUTOMATIC                 REQUESTED
+Current criteria          Recipient + role
+or identity list          + approved need
+        |                        |
+Relevant evaluation       Required reviews
+of enabled configuration  + allowed dates
+        |                        |
+        +-----------+------------+
+                    |
+          role assignment basis
+                    |
+          required source access
+                    |
+          account provisioning
+                    |
+          verify native task
+
+Basis explains why access is required.
+Delivery establishes what reached where.

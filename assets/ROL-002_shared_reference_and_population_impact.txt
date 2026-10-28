@@ -1,0 +1,15 @@
+Coordinator role       Readiness role
+       |                     |
+       +----------+----------+
+                  |
+        same Preparation profile
+           Readers + Drafts
+                  |
+         proposed Tags addition
+                  |
+       review both populations
+                  |
+       if approved and applied:
+       current role requirements
+                  |
+       verify each account result

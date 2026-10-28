@@ -1,0 +1,20 @@
+BEFORE: match
+RecordsOps / ARCHIVE-REVIEW / working
+              |
+Archive reviewer: Readers + Annotations
+
+AFTER: no match
+Quality / QUALITY-PLAN / working
+              |
+Automatic assignment withdrawn
+              |
+Source removals attempted
++-- Annotations removed
++-- Readers removal rejected
+              |
+Native: Readers remains
+Read works; annotation denied
+
+After approved recovery:
+Readers and Annotations both absent
+Archive reading and annotation denied

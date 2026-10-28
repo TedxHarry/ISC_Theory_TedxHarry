@@ -1,333 +1,351 @@
 # Who should receive this role, and how does ISC decide?
 
-Devi, employee `120303`, coordinates dispatch work in DispatchLane Production, a fictional application.
+The access needed for desk coordination is agreed: read the desk's work and update its coordination records.
 
-The access package is already agreed: she needs to read desk work and update its coordination records. The remaining question is who should receive that package.
+The remaining question is who should receive it.
 
-The business approves two populations: working dispatch-desk staff in Operations, or working returns-desk staff in CustomerCare.
+The business approves working dispatch-desk staff in Operations, or working returns-desk staff in CustomerCare. Notice the pairs. Operations belongs with dispatch; CustomerCare belongs with returns. Both groups must be working.
 
-That sentence contains a policy. ISC still needs a configuration that represents it correctly.
+“Either department and either job” would select more people than that policy permits.
 
-“Operations or CustomerCare” is not enough. “Dispatch or returns” is not enough either. The department and job must form the approved pair, and the working-state requirement applies to both alternatives.
+In SailPoint Identity Security Cloud (ISC), a **role** groups access for a business responsibility. Its contents describe the required access. Its **membership selector** defines the configured basis for choosing the identities that should receive it automatically.
 
-Let's turn that decision into comparisons we can trace, then contrast it with selecting people explicitly.
+An **identity** is ISC's representation of a person or another entity. Here the selector chooses people for the Desk coordinator role.
 
-All people, identifiers, policies, records, application permissions and observations here are fictional. We use a standard role, supported Provisioning capabilities, standing access without separate activation and one correctly associated application account per identity.
+ISC offers two standard selector configurations: **Standard Criteria**, which compare configured inputs, and **Identity List**, which names the identities to select. These are alternative methods, not an assumed “criteria plus an exceptions list” arrangement.
 
-## Separate the package from its recipients
+The policy, records, native rights and observations below are hypothetical. We use a standard role, standing access that does not wait for separate activation, supported integrations and authorized administration. The required ISC Provisioning capability is supplied. **Provisioning** carries out changes to access in connected systems; selection alone does not establish their success.
 
-In SailPoint Identity Security Cloud, or ISC, a **role** groups access for a business responsibility.
+## Turn the approved sentence into complete alternatives
 
-An **entitlement** represents a source access right, such as membership in a group. An **access profile** groups related entitlements from one source.
+A **criterion** is one configured test: which input to read, which comparison to make and what value is required.
 
-Here, the role **Desk coordinator**, teaching ID `R-1203`, contains the enabled **DispatchLane coordination** profile. That profile contains:
+An **identity attribute** is a named field on the ISC identity. The main policy reads three current identity attributes: department, jobCode and lifecycle state.
 
-- `DL-8301`, Desk Readers.
-- `DL-8302`, Desk Coordinators, which requires Readers on the same account to update coordination records.
+A **lifecycle state** describes an identity's organizational stage and can carry configured access requirements. Here it is an eligibility input. The enabled state has the display label Currently Employed and the technical name `working`.
 
-A **source** represents a connected system or account-data collection. Its **connector** reads data and, where supported and configured, makes changes. The supplied DispatchLane integration supports these membership reads and writes.
+Lifecycle-state criteria use that technical name. Typing a friendly label does not establish a match to the configured value.
 
-Devi's ISC **identity** represents her as a person. Her application **account** is `dl-120303`. **Account correlation** associates that account with her identity. It is correctly correlated, enabled, usable for sign-in and assigned to desk North.
+Write the first approved alternative as Group A:
 
-The native application limits the two permissions to that assigned desk. Role membership does not itself change North to another desk or grant application administration.
+- Department Equals `Operations`.
+- Job code Equals `DISPATCH-DESK`.
+- Lifecycle state Equals `working`.
 
-The identifiers are teaching labels, not actual ISC ID formats or an API payload.
+All three must match. **AND** means every condition is required.
 
-The role's contents answer what access is required. Its **membership selector** identifies the configured basis for selecting recipients.
+For a current identity with Operations, DISPATCH-DESK and working, each comparison is true, so Group A matches. If the job code is RETURNS-DESK instead, that group fails even though the department and state are correct.
 
-For automatic assignment, the standard choices are **Standard Criteria**, which compare available data, or **Identity List**, which explicitly names identities. Treat these as alternative selector configurations, not as an assumed combined “criteria plus exceptions” list.
+Group B represents the other complete alternative:
 
-The main example uses Standard Criteria. Its role is enabled, its profile is enabled and direct role requests are off. No other assignment route or lifecycle access requirement supplies this access.
+- Department Equals `CustomerCare`.
+- Job code Equals `RETURNS-DESK`.
+- Lifecycle state Equals `working`.
 
-## Know which record each comparison reads
+The alternatives join with **OR**. A complete Group A match or a complete Group B match is sufficient. The identity does not need to belong to both departments.
 
-A criterion is one configured test: which input to inspect, how to compare it and which value or entitlement is required.
-
-For example, `department Equals Operations` is a test, not the entire membership policy.
-
-ISC's standard builder supports different input categories:
-
-| Input category | What you are testing |
-|---|---|
-| Identity Attribute | A mapped field on the person's ISC identity, such as department or job code. |
-| Account Attribute | A supported field on an account from the selected source, not automatically the person's identity field of the same name. |
-| Entitlement | Whether the selected source access item is held, using its actual source and entitlement identity. |
-
-An **identity attribute** is a field on the identity. An **identity profile** defines how a population's identities are created and managed, including mappings that supply those fields from source information.
-
-A source's **account schema** describes its account fields. The current standard builder supports string and boolean account/identity attribute types. It excludes the account description and fields marked as Account ID or Account Name from account-attribute criteria.
-
-A **string** is text; a **boolean** is a true/false value. Do not assume every date, number, list or complex object in a source can be selected and compared in the same way. Check the supported input type and available operation.
-
-The selected source matters. An account field named `department` in a directory can differ from the identity's mapped department. Changing which category you select changes the evidence being tested.
-
-Entitlement-based eligibility also needs a reason. A maintained eligibility group can be a valid input if it represents the approved responsibility. Requiring the very permission this role is supposed to newly grant does not explain how somebody lacking it will qualify.
-
-The main policy uses identity attributes only, avoiding those source-account ambiguities.
-
-## Write each approved alternative completely
-
-The relevant current identity fields are department, jobCode and lifecycle state.
-
-A **lifecycle state** represents a stage such as working or departed. In this fictional configuration, its display label is Currently Employed and its technical name is `working`. Lifecycle-state criteria use the technical name.
-
-The approved alternatives become two groups.
-
-Group A requires all of:
-
-- `department Equals Operations`.
-- `jobCode Equals DISPATCH-DESK`.
-- Lifecycle state equals `working`.
-
-Group B requires all of:
-
-- `department Equals CustomerCare`.
-- `jobCode Equals RETURNS-DESK`.
-- Lifecycle state equals `working`.
-
-**AND** means every comparison in the group must be satisfied.
-
-**OR** means a complete match to either alternative is sufficient.
-
-For this policy, set AND within the groups. In the standard builder, that choice gives OR between groups. The reverse choice, OR within groups, gives AND between groups.
-
-The two levels of combination matter. Do not read a page of conditions as one ungrouped sentence.
+In the standard builder, choosing AND within groups gives OR between groups. Choosing OR within groups instead gives AND between groups. These are two levels of combination; do not read all rows as one ungrouped list.
 
 ```text
-Group A
-  Operations
-  AND DISPATCH-DESK
-  AND working
-         \
-          OR --> selected by criteria
-         /
-Group B
-  CustomerCare
-  AND RETURNS-DESK
-  AND working
+Group A: AND          Group B: AND
+Operations            CustomerCare
+DISPATCH-DESK         RETURNS-DESK
+working               working
+      |                     |
+      +--------- OR --------+
+                  |
+       either group fully matches
+                  |
+       selected by these criteria
 
-Each branch must be a complete match.
+Neither complete: not selected here.
 ```
 
-The branches represent the two permitted combinations, not separate grants or a private execution sequence. One complete branch is enough; matching only part of each branch is not.
+Each upper branch represents a complete approved combination. The connection means either full match selects the identity through these criteria. It does not combine partial matches from different branches or describe backend execution order.
 
-For Devi, the current values are Operations, DISPATCH-DESK and working.
+The working dispatch identity passes Group A and fails Group B. OR still selects it because one whole alternative is true. A working returns identity in CustomerCare is selected through Group B.
 
-Group A matches completely. Group B does not match, because she is not in CustomerCare with the returns job. The OR between complete groups still selects her.
+An Operations identity with RETURNS-DESK fails Group A's job comparison and Group B's department comparison. Neither group is complete, so it is not selected here.
 
-A working returns-desk colleague in CustomerCare qualifies through Group B instead.
+## Keep the pairs intact when simplifying
 
-Neither needs to satisfy both departments.
+Consider this proposed rewrite:
 
-## Preserve the pairs when you simplify a rule
+Department is Operations or CustomerCare, AND job is DISPATCH-DESK or RETURNS-DESK, AND state is working.
 
-Suppose somebody rewrites the policy as:
+Each field now has an independent list of allowed values. Operations with RETURNS-DESK passes both lists, as does CustomerCare with DISPATCH-DESK. Those cross-pairs were not approved.
 
-“Department is Operations or CustomerCare, AND job is DISPATCH-DESK or RETURNS-DESK, AND state is working.”
+The individual values look correct; their relationships changed.
 
-That sounds similar, but it permits combinations the business did not approve.
+Compare representative current identities with the original two-group policy:
 
-An Operations employee with RETURNS-DESK would now pass the independent department and job lists. So would a CustomerCare employee with DISPATCH-DESK.
-
-The original policy permits two specific pairs. The rewrite permits the cross-pairs as well.
-
-Let's compare representative current identity records against the original two-group policy:
-
-| Department / jobCode / lifecycle state | Result and reason |
+| Department / jobCode / state | Result under the approved groups |
 |---|---|
-| Devi: Operations / DISPATCH-DESK / working | Selected through complete Group A. |
-| CustomerCare / RETURNS-DESK / working | Selected through complete Group B. |
-| Operations / RETURNS-DESK / working | Neither approved pair matches. |
-| CustomerCare / DISPATCH-DESK / working | Neither approved pair matches. |
-| CustomerCare / RETURNS-DESK / prehire | Group B fails its working-state condition. |
-| Finance / DISPATCH-DESK / working | Group A fails its department condition. |
-| Operations / missing jobCode / working | No positive match to the required job code is established; investigate the missing input. |
+| Operations / DISPATCH-DESK / working | Selected through complete Group A |
+| CustomerCare / RETURNS-DESK / working | Selected through complete Group B |
+| Operations / RETURNS-DESK / working | Neither approved pair matches |
+| CustomerCare / DISPATCH-DESK / working | Neither approved pair matches |
+| CustomerCare / RETURNS-DESK / prehire | Group B fails the working-state requirement |
+| Finance / DISPATCH-DESK / working | Group A fails the department requirement |
+| Operations / missing jobCode / working | No positive match to the required job code is established; investigate the missing input |
 
-Testing only Devi would not expose the cross-pair defect. Include people who nearly qualify, not just people who clearly qualify.
+Testing only the intended dispatch identity would not reveal the cross-pair defect. Test people who nearly qualify, including wrong pairs and nonworking identities.
 
-There is another grouping trap: putting working only in Group A. Because the groups are alternatives, Group B would then select its department/job pair without that state restriction.
+There is a second trap: including working only in Group A. Group B is an alternative, so a CustomerCare returns identity could qualify without that state restriction.
 
-A condition written beside one alternative does not automatically guard the other.
+A condition in one branch does not automatically protect the other branch.
 
-## The comparison operation is part of the policy
+## Choose the comparison that expresses the policy
 
-**Equals** tests for the configured matching value. **Contains** tests whether the specified text occurs within the field.
+A comparison operation determines what counts as a match.
 
-If the approved job code is DISPATCH-DESK, using Contains DISPATCH-DESK would also accept DISPATCH-DESK-TRAINEE. That changes the recipient policy; it is not a convenient spelling of equality.
+**Equals** requires the configured matching value. **Contains** checks whether specified text occurs within the field's value.
 
-The builder's text Value comparison is case-insensitive. Do not design separate populations based only on upper- versus lowercase text in this field. Do not assume that also means whitespace is trimmed or every punctuation difference is normalized.
+Contains DISPATCH-DESK accepts DISPATCH-DESK-TRAINEE because the trainee code includes that text. If trainees are excluded, the comparison has broadened eligibility incorrectly. The person's accurate job code is not the defect.
 
-Multiple values inside one Equals criterion are alternatives: they are compared with OR. This is separate from AND between criterion rows.
+The builder's text Value comparison is case-insensitive. Uppercase and lowercase alone cannot separate these populations. That does not establish automatic trimming of spaces or normalization of every punctuation difference.
 
-In an independent approved variation, a job-code row could accept DISPATCH-DESK or DISPATCH-COVER. With AND within its group, the person must still satisfy that row and the department and working-state rows.
+Multiple values in one Equals row are compared as OR alternatives. This differs from AND between rows.
 
-A person is not expected to have both scalar job codes at once.
+In a separately approved variation, the job-code row accepts DISPATCH-DESK or DISPATCH-COVER. An identity with Operations, DISPATCH-COVER and working satisfies that job row and the other two rows. It does not need to have both job codes simultaneously.
 
-For missing data, use explicit business decisions. A blank job code is not evidence of dispatch responsibility. Nor should an engineer replace a missing value with a qualifying one merely to make access appear.
+The same mechanism caused the earlier cross-pair problem when department and job alternatives were combined independently. Multiple values are useful when those combinations really are approved; they do not preserve a relationship you removed from the configuration.
 
-Negative conditions need special caution. “Not Finance” is not equivalent to “belongs to either approved desk population.” It includes other known departments and leaves the treatment of missing or unusual values needing verification.
+Missing data needs a decision based on evidence. A blank job code does not establish dispatch responsibility. Do not invent a qualifying fallback merely to make access appear.
 
-Do not invent one universal null result for every operation. Test the selected operator and input conditions, and keep the approved policy clear about unknown eligibility.
+Likewise, “Not Finance” is broader than “one of these two approved desk populations.” It permits other known departments. The treatment of missing or unusual values also needs verification for the selected operation.
 
-## An identity list asks a different question
+Do not assume one universal null result for every positive or negative comparison. Establish what input is present, which operation is used and how unknown eligibility should be handled.
 
-Consider a separate configuration of the same role using Identity List instead of Standard Criteria.
+## Check which record supplies the value
 
-The owner has explicitly approved Devi and one other identity for a controlled temporary desk-support assignment. The authorized administrator selects those exact identities.
+An **account** is a record through which a person or another entity uses an external system. The account's fields and the identity's fields are different records, even when their labels look alike.
 
-The selector now asks whether the identity is listed. It does not run the former department/job/state expression as an extra hidden filter.
+A **source** is ISC's configured representation of a system or collection of account data. **Native** means belonging to the external application. A **group** collects members, such as accounts; the application can use membership to allow actions. An **entitlement** represents source access, such as that group membership.
 
-That does not mean an identity list overrides every lifecycle action or platform eligibility restriction. It means the list itself does not contain those former criteria.
+Standard Criteria can use these categories:
 
-The list names ISC identities, not DispatchLane accounts or native group members. Selecting Devi should identify the intended identity, not merely the first matching display name.
+| Criterion category | Evidence it compares |
+|---|---|
+| Identity Attribute | A mapped field on the ISC identity |
+| Account Attribute | A supported account field from the selected source |
+| Entitlement | The selected source access item, using its actual entitlement identity |
 
-The list is also not a submitted access request. It is maintained configuration that drives automatic role assignment when applied.
+An **identity profile** configures a population's identity data and lifecycle behavior. Its **mappings** specify how source information supplies identity attributes.
 
-**Automatic** describes how ISC acts on the configured selection. It does not mean every input was discovered without human decisions. An administrator can manually maintain a list that the platform uses automatically.
+An **account schema** describes the source's account fields. The standard builder supports string and boolean account/identity attribute types. A **string** is text; a **boolean** is a true/false value.
+
+Account-attribute criteria exclude the description field and fields marked as Account ID or Account Name. Do not assume every number, date, collection or complex source value can be used like a supported scalar field. Check the input type and operation actually available.
+
+For account-attribute and entitlement criteria, the selected source is part of the test. Directory department Operations is not automatically the identity's department.
+
+Suppose a directory account says Operations while the selected identity department is Finance. An Identity Attribute criterion reads Finance. Choosing Account Attribute instead changes the evidence behind eligibility; it needs an approved reason, not a preference for whichever value makes the comparison pass.
+
+Entitlement-based eligibility needs a maintained meaning too. A separate eligibility group can represent an approved responsibility. Requiring the very right the role is intended to newly grant would leave a person lacking it without a route to qualify under that test.
+
+The main two-group policy uses identity attributes only.
+
+## Follow an upstream update to the evaluated identity
+
+**Account aggregation** reads configured source account data into ISC. **Identity processing** evaluates identity information and applicable configuration, including role requirements.
+
+An approved HR update, a collected HR account value and an applied identity attribute are separate observations.
+
+In an independent variation, HR now shows DISPATCH-DESK, but the current identity still holds DISPATCH-DESK-TRAINEE. Equals DISPATCH-DESK does not become true merely because the HR change was approved.
+
+Trace the approved source record, its collection, the configured identity mapping and relevant processing. Find where the expected value stopped reaching the input this criterion reads.
+
+After the correct value is collected and applied, inspect the actual identity again. If it now holds Operations, DISPATCH-DESK and working, Group A can match at the relevant evaluation.
+
+Changing Equals to Contains would admit trainees rather than repair the stale input. Changing correct HR information to satisfy a bad policy would be another wrong-layer correction.
+
+A saved selector is also different from an applied selector. The role must be enabled, and new or changed configuration must be applied through relevant identity processing.
+
+The role, profile and application list-page **Apply Changes** actions cover those configurations together, not just the criterion most recently edited. Review the pending changes and affected population before broad application. A process starting does not establish that every source change has finished.
+
+## An identity list selects named identities instead
+
+Consider a separate configuration using Identity List rather than Standard Criteria.
+
+The owner has approved two identities for temporary desk support. An authorized administrator maintains those exact identities in the list.
+
+The selector now asks whether an identity is listed. The previous department/job/state expression is not an extra hidden filter on that list.
+
+The entries name ISC identities, not application accounts or native group members. Confirm the intended identity rather than selecting the first familiar display name.
+
+The list is maintained configuration, not a submitted access request. ISC can use that manually maintained configuration to assign a role automatically. “Automatic” describes the platform's action; it does not mean people made no selection decision.
+
+That does not make the list an override for every lifecycle action or platform restriction. It means this selector does not contain the former data-driven tests.
 
 ```text
 Standard Criteria       Identity List
- compare current data    check identity
-          \                /
+compare configured      check whether
+current inputs          identity is listed
+        |                       |
+        +-----------+-----------+
+                    |
         alternative selector methods
                     |
-       relevant identity processing
+        relevant identity evaluation
                     |
-            role assignment
+          role assignment requirement
                     |
-       required account changes
+          supported account changes
                     |
-      verify operation and native task
+          verify native task results
 ```
 
-The upper branches are alternatives, not a requirement to pass both. The lower arrows separate selection, application and delivery; they are not a guaranteed engine order or fixed completion time.
+The upper branches represent alternative selector methods. The connection does not mean both must pass, or that their results combine into one hybrid rule.
 
-A manually maintained list needs an owner, a reason for each entry and a review or expiry procedure appropriate to the assignment. Do not assume a temporary approval removes an identity from the list automatically on the intended date.
+The lower relationships connect evaluated selection to a role requirement and supported account changes. They do not promise a private service order or a completion time. Current native results still need checking.
 
-When Devi's responsibility ends, the approved list must be maintained accordingly and its effect verified. Correct HR values alone do not rewrite a stale explicit list.
+A temporary assignment needs an owner, a justification for each entry and an appropriate review or expiry procedure. A note saying “temporary” does not schedule removal from an identity list.
 
-Switching selector type is therefore a population change, not a cosmetic edit. Compare who the old configuration selects with who the new configuration selects before applying it.
+When the responsibility ends, maintain the approved list and verify its effect. Correctly updated HR data does not rewrite a stale list entry.
 
-## Use current inputs, not an upstream promise
+Switching selector type therefore changes how the population is selected. Compare the identities selected before and after the proposed switch, including intended exclusions. The access package can stay unchanged while the recipient population changes substantially.
 
-**Account aggregation** reads configured account data into ISC. **Identity processing** evaluates identity information and applicable configuration, including role membership.
+## A correct match can still lead to incomplete delivery
 
-An approved HR update, the collected HR account and Devi's applied identity fields are different records.
+The Desk coordinator role contains an enabled **Desk coordination access profile**, a related bundle of entitlements from one source. Here it includes Desk Readers and Desk Coordinators on Desk Production.
 
-If HR has changed her job to DISPATCH-DESK but her current identity still shows DISPATCH-DESK-TRAINEE, an Equals comparison against the current identity does not become true merely because the HR change was approved.
+A **permission** allows an action on a resource. The application uses account group membership to grant these permissions:
 
-Trace the producer value, collection, identity mapping and relevant application. Correct the faulty stage instead of broadening Equals to Contains.
+- Desk Readers permits reading work in the account's assigned desk.
+- Desk Coordinators permits updating coordination records when that same account also has Readers.
 
-A saved new selector also does not prove every identity has already been evaluated with it. The role must be enabled, and new or updated configuration must be applied through relevant identity processing.
+A **connector** supplies the integration used to read a source and, where supported and configured, change it. This source supports the membership reads and changes used here.
 
-List-page Apply Changes for roles, access profiles and applications covers those configurations together, not just the one criterion you last edited. Review other pending changes and the affected population before broad application.
+The main recipient has one existing account on this source. **Account correlation** matches and associates that account with the ISC identity; the association is correct.
 
-A process starting is not the same as all account changes finishing.
+The account is enabled, sign-in works and its assigned desk is North. Neither required membership initially exists. The role and profile are enabled, direct role requests are off, and no other role, lifecycle requirement or grant supplies this access.
 
-## Distinguish a match, an assignment and working access
+The identity currently holds Operations, DISPATCH-DESK and working. It is in ISC's **Active processing state**, which describes participation in relevant processing, rather than native account enablement.
 
-**Role assignment** associates the role with an identity through the applicable route.
+A **role assignment** associates the role with an identity through an applicable route. In this main configuration, the complete Group A match supplies the selection.
 
-**Provisioning** carries out required account or access changes through a supported automatic or manual path.
+The role requirement calls for both memberships. Complete supported delivery would allow North desk reading and coordination updates. It would not change the assigned desk or grant administration.
 
-For a clean comparison, Devi initially has neither DispatchLane membership and has no other grant route. Her role/profile are enabled, her current identity has the three Group A values, and her ISC processing status is Active.
+The **integration actor** is the account or authorization the connector uses for source operations. It is distinct from the account receiving access.
 
-Suppose the supplied observations, all on one date in UTC, are:
+Compare that intended result with these supplied observations from one date, in Coordinated Universal Time (UTC):
 
-- At 12:00, the applied configuration and current identity values establish a complete Group A match.
-- At 12:05, the role assignment is recorded.
-- At 12:10, Readers is reported added, but the Coordinators addition is rejected because the integration actor lacks the required permission on this account.
-- At 12:15, native checks confirm Devi can read North desk work but cannot update coordination records.
+- **12:00:** The applied configuration and current identity values establish a complete Group A match.
+- **12:05:** The role assignment is recorded.
+- **12:10:** Readers is reported added, but the Coordinators addition is rejected because the integration actor lacks the required permission on this account.
+- **12:15:** Native checks confirm North desk reading, while coordination updates are denied.
 
-The matching logic did its job. The required access was only partly delivered.
+The matching logic selected the correct requirement. Delivery supplied only part of it.
 
-Do not edit the membership rule to repair the rejected account operation. Inspect the exact source, account, entitlement, operation and error, then follow authorized correction and supported recovery.
+Inspect the exact source, account, entitlement, operation and error. An approved correction to the integration permission and supported recovery later give the account both memberships. A fresh native check confirms North coordination updates; North reading still works, while South updates and administration remain denied. No other relevant account or application-policy change occurred.
 
-The opposite investigation is possible too: if neither group matches and no other route selects Devi, missing access is not yet evidence of a failed write. First establish whether the requirement was selected.
+That supplies evidence of recovery under these conditions. Do not change valid membership logic to conceal the rejected source operation, and do not infer a universal retry delay or atomic delivery.
 
-If the role is requestable in a different design, a completed **access request**, which asks for specified access for an identity, can explain a role assignment outside this criteria match. Request approval does not make a false criterion true.
+If fulfillment uses a **manual provisioning task**, a person is asked to make the required source change. Check the completed task and actual native result. Automatic role selection does not guarantee an automatic source write.
 
-Keep the assignment origin visible rather than diagnosing every role holder as an automatic match.
+The reverse investigation starts earlier: if neither group matches and no other route selects the person, absent access is not yet evidence that a write failed. First establish whether this role requirement arose.
 
-## Know what an ending membership change means
+In another authorized design, an **access request** asks for specified access for an identity, and **approval** is the decision allowing that request to proceed. An approved request for an appropriately configured role can explain assignment outside the automatic criteria.
 
-When an identity no longer qualifies under criteria or is removed from the role's identity list, the automatic assignment requirement changes. Relevant evaluation can remove the role and its access, subject to other retained requirements.
+Approval does not make a false comparison true. Keep the **assignment origin**, meaning the route that produced the association, visible during investigation.
 
-Removing an identity from a membership list is different from deleting access entries from the role definition. Role-content removal propagation settings govern specified content-change behavior; do not treat them as a universal off switch for assignment removal.
+## When someone stops qualifying
 
-The reverse distinction matters too. If the identity is still listed, a department change does not remove that list entry by itself.
+A current match is not a permanent entitlement to this responsibility.
 
-A native entitlement can remain because another assigned role requires it. Source removal can also fail. Neither should be inferred merely from whether this role's label remains visible.
+If current data no longer meets the criteria, or an identity is removed from an explicit membership list, relevant evaluation changes the automatic assignment requirement. Role removal and associated withdrawal must account for access still required by another assigned role.
 
-Verify the exact membership configuration, current assignment and source outcome. Role revocation does not itself mean deleting the native account.
+**Deprovisioning** withdraws account access. Source removal can fail, just as an addition can fail. A remaining membership could reflect a continuing role requirement or an unsuccessful removal; inspect the evidence rather than guessing from the role label.
 
-Do not falsify identity data to make a comparison fail. If the business policy, list or source value is wrong, correct the appropriate approved object.
+Removing a person from the selector is different from removing an entitlement or profile from the role's shared contents.
+
+**Role access removal propagation** concerns specified content-change removals. Its setting is not a universal off switch for withdrawing an automatic assignment when membership ends.
+
+Verify the selector, current assignment, retained requirements, actual source operation and native result. Ending role access does not itself delete the source account.
+
+If the person is still explicitly listed, a department change alone does not remove that entry. Maintain the appropriate approved configuration. Do not falsify identity data to force a comparison to fail.
 
 ## Work through the selection decisions
 
-### Case 1: A match is split across two groups
+### 1. A match is split across groups
 
-**Facts:** An identity has Operations, RETURNS-DESK and working. Groups A and B are unchanged.
+The identity has Operations, RETURNS-DESK and working. Groups A and B are unchanged.
 
-**Reasoning:** Group A has the wrong job; Group B has the wrong department. Two partial matches do not form a complete approved alternative. The identity is not selected by this criterion expression.
+Does combining the matching rows from both groups qualify it?
 
-### Case 2: Working appears only in Group A
+**Reasoning:** No. Group A fails the job comparison; Group B fails the department comparison. Neither approved alternative matches completely.
 
-**Facts:** Group B requires only CustomerCare and RETURNS-DESK. A prehire identity has that pair.
+### 2. Working appears only in Group A
 
-**Reasoning:** The OR between groups allows the complete, now shorter Group B to pass. If prehire access is not approved, the working-state condition must be represented in that branch too. A check in Group A does not protect Group B.
+Group B now requires CustomerCare and RETURNS-DESK only. A prehire identity has that pair.
 
-### Case 3: Both jobs are in one Equals row
+Does Group A's state condition protect Group B?
 
-**Facts:** In a separately approved variation, Group A's job-code Equals row accepts DISPATCH-DESK and DISPATCH-COVER. Department and state remain AND conditions. The identity has Operations, DISPATCH-COVER and working.
+**Reasoning:** No. The now-shorter Group B matches completely, and OR makes that sufficient. If prehire access is excluded, represent working in that branch too.
 
-**Reasoning:** Either listed job value can satisfy that row. The other rows still apply, so this identity passes the revised Group A. Within-row alternatives are not two simultaneous scalar job values.
+### 3. Two jobs appear in one Equals row
 
-### Case 4: Contains includes a trainee
+A separately approved Group A accepts DISPATCH-DESK or DISPATCH-COVER in its job row. Department and state remain AND conditions. The identity has Operations, DISPATCH-COVER and working.
 
-**Facts:** The rule uses Contains DISPATCH-DESK. The current job code is DISPATCH-DESK-TRAINEE; trainees are excluded by policy.
+Does that job row require both codes?
 
-**Reasoning:** The text contains the configured substring. The operation broadened eligibility beyond the approved exact code. Correct the operation and reassess the population rather than claiming the trainee's source record is wrong.
+**Reasoning:** No. Either configured value satisfies the row. The other rows still apply, and all are satisfied here. That does not authorize the independent department/job cross-pairs from the earlier flawed rewrite.
 
-### Case 5: The job code is missing
+### 4. Contains selects a trainee
 
-**Facts:** Department and working state are present. No current identity job code establishes either approved pair.
+The current job is DISPATCH-DESK-TRAINEE. Trainees are excluded, but the operation is Contains DISPATCH-DESK.
 
-**Reasoning:** Do not assume eligibility or insert a qualifying fallback. Trace the approved source value and mapping/application. If policy needs an exception, define and approve its mechanism separately; do not infer a universal negative/null comparison result.
+Which part is wrong?
 
-### Case 6: The explicit list is stale
+**Reasoning:** The operation admits the substring match. Correct the configured comparison and reassess its population; do not call the accurate trainee record faulty.
 
-**Facts:** In the Identity List variation, Devi remains listed after she moves to another responsibility. Her new department is correctly applied.
+### 5. The job code is missing
 
-**Reasoning:** The list itself still selects her; it is not the old criteria expression. Maintain the approved list and verify the resulting assignment/access changes, considering other applicable controls and requirements. Correct department data alone is not proof of list cleanup.
+Department and working state exist, but no current job code establishes either approved pair.
 
-### Case 7: The current source and identity disagree
+Should a qualifying fallback be inserted?
 
-**Facts:** The directory account says Operations, but the selected Identity Attribute department currently says Finance.
+**Reasoning:** No. Trace the approved source information, collection, mapping and application of the value to the identity. A legitimate exception needs its own approved mechanism; missing evidence does not establish eligibility or a universal negative-comparison result.
 
-**Reasoning:** The criterion reads the identity field, not whichever account value looks preferable. Investigate the approved mapping and input provenance. Switching categories changes the policy's evidence and needs justification.
+### 6. A list entry outlives the responsibility
 
-### Case 8: Criteria pass but the target rejects a change
+In the Identity List variation, the person remains listed after moving to another responsibility. The new department is correctly applied.
 
-**Facts:** Devi matches Group A, has the role assignment and holds Readers. The Coordinators addition failed.
+Did the HR change maintain the list?
 
-**Reasoning:** Eligibility and assignment are established; full coordination access is not. Investigate and recover the exact provisioning failure, then verify the North update action. Do not change valid membership logic to conceal incomplete delivery.
+**Reasoning:** No. The explicit entry remains the selector's basis; the former criteria are not hidden filters. Maintain the approved list, then verify assignment and access effects with other applicable controls and requirements.
 
-## Transfer the grouping to another population
+### 7. Directory and identity department disagree
 
-A training-support role is approved for working employees in either of these combinations:
+The directory account says Operations; the selected Identity Attribute department says Finance.
 
-- Research with job code LAB-TRAINER.
-- Manufacturing with job code FLOOR-TRAINER.
+Which does the criterion read?
 
-An administrator proposes separate alternative lists of departments and jobs, joined with AND, plus working. Another administrator proposes a list of named identities instead.
+**Reasoning:** Finance on the identity. Trace the approved mapping and input history. Switching to Account Attribute changes the evidence tested and needs justification.
 
-What would you need to check before choosing or applying either design?
+### 8. Criteria pass but coordination is denied
 
-The independent department/job lists would allow Research with FLOOR-TRAINER and Manufacturing with LAB-TRAINER. If those cross-pairs are not approved, preserve the complete pairs in separate AND groups joined by OR, including the state restriction in each alternative.
+Group A matches, the role is assigned and Readers exists. The Coordinators addition failed.
 
-For an identity list, verify the exact approved identities, ownership and maintenance process. Do not assume the previous data-driven conditions still run invisibly.
+Should the membership rule be loosened?
 
-Test eligible members, cross-pairs, nonworking identities and missing values against current input records. After application, inspect actual assignments and per-account fulfillment.
+**Reasoning:** No. Eligibility and assignment are established; the Coordinators addition is not. Correct the authorized integration problem through a supported recovery, then verify the North update action.
 
-The access package can remain identical while a grouping change selects the wrong people. That is why membership logic deserves its own evidence and review, rather than being treated as the last field to fill in after choosing entitlements.
+## Try the grouping with training responsibilities
+
+A training-support role is approved for working employees in either combination:
+
+- Research with LAB-TRAINER.
+- Manufacturing with FLOOR-TRAINER.
+
+One proposal uses independent lists of departments and jobs, joined with AND, plus working. Another selects named identities.
+
+What must be checked before applying either design?
+
+**Reasoning:** Independent lists also permit Research with FLOOR-TRAINER and Manufacturing with LAB-TRAINER. If those cross-pairs are excluded, preserve the complete pairs in separate AND groups joined by OR, with the working condition in each branch.
+
+For an identity list, verify the exact approved identities, owner and maintenance process. Do not assume the old attribute conditions still run invisibly.
+
+Test intended members, cross-pairs, nonworking identities and missing values against current inputs. After applying the approved configuration, verify actual assignments and each account's fulfillment.
+
+The access package can be correct while the recipient selection is wrong. Preserve the relationship the policy expresses, then use separate evidence for selection, assignment and usable access.

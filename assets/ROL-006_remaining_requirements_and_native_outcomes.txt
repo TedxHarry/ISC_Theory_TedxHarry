@@ -1,0 +1,17 @@
+A ends; B stays on this account
+              |
++-- Readers: still required by B
++-- Draft Editors: no remaining need
++-- Follow-up: still required by B
+              |
+After successful Draft Editors removal:
+Readers + Follow-up remain
+Read and follow up work; drafts denied
+
+Later, B ends too
+              |
+No remaining stated requirements
+              |
+Readers + Follow-up need removal
+              |
+Verify each native outcome

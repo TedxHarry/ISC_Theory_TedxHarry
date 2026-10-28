@@ -9,7 +9,9 @@ const baseline = process.argv.find(x => x.startsWith("--baseline="))?.split("=")
 assert.match(baseline || "", /^[0-9a-f]{40}$/);
 const live = process.argv.includes("--live");
 const changed = execFileSync("git", ["diff", "--name-only", baseline], {cwd:root,encoding:"utf8"}).trim().split(/\r?\n/).filter(p=>p.startsWith("lessons/"));
-assert.equal(changed.length,63);
+const expectedChanged = Number(process.argv.find(x => x.startsWith("--expected-lessons="))?.split("=")[1] ?? 63);
+assert.ok(Number.isInteger(expectedChanged) && expectedChanged > 0);
+assert.equal(changed.length,expectedChanged);
 const course = parse(await read("_data/course.yml"));
 const config = parse(await read("_config.yml"));
 assert.equal(course.lessons.length,91);
@@ -54,7 +56,8 @@ for(const path of changed) {
  tables+=tableCount(md);
  localUnits+=units(md).length;
 }
-const report={changedLessons:changed.length,availableLessons:course.lessons.length,revisedRecords:86,diagrams,tables,localContentUnits:localUnits,assets:assets.length,live};
+const revisedRecords=(await readdir(new URL("author/revisions/",root))).filter(p=>p.endsWith("_Concept_Led_Revision_Record.md")).length;
+const report={changedLessons:changed.length,availableLessons:course.lessons.length,revisedRecords,diagrams,tables,localContentUnits:localUnits,assets:assets.length,live};
 if(live) {
  const origin=config.url+config.baseurl;
  let pages=0,compared=0;

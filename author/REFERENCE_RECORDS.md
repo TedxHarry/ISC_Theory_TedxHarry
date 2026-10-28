@@ -2,7 +2,7 @@
 
 These records support author review and source maintenance. They are not learner lesson content and must stay outside learner-facing exports.
 
-Publication update, October 27: the current authorized snapshot includes all 86 completed revisions through ROL-001 plus tracing/processing guides revision 2.0. See [current scope and deployment verification](PUBLICATION_2026-10-27.md). Earlier local-only and published-version statements within individual records describe their authoring stages and are superseded by this publication record. Later ROL-002 revisions continue locally. Learner validation, full graphical review and formal approval remain pending.
+Publication update, October 28: the current authorized snapshot includes all 91 existing rewrites, adding ROL-002–006. See [current scope and deployment verification](PUBLICATION_2026-10-28.md). Earlier local-only statements are authoring history. New beginner feedback prompts a separate teaching/explanation evaluation; coverage and deployment checks do not establish comprehension. Subsequent recommendations are not automatically applied to learners.
 
 ## Record maintenance
 
@@ -6552,11 +6552,37 @@ Scope: standard role, standing access, Provisioning supported and authorized adm
 
 ## ROL-002
 
+- Current [learner](../lessons/ROL-002_Roles_Containing_Access_Profiles_and_Direct_Entitlements.md): revision 2.0, Module 12.2.
+- [Revision record](revisions/ROL-002_Concept_Led_Revision_Record.md): coverage, sources, diagrams and checks.
+- Fresh official documentation bodies checked October 27, 2026; author review only.
+- Revision 2.0 local only; published version remains 1.0. The [published snapshot](PUBLICATION_2026-10-27.md) ends at ROL-001.
+- No tenant execution; beginner validation, full graphical review and formal approval pending.
+
+### Current official claim map
+
+| Official source | Verified claim and boundary |
+|---|---|
+| [Managing roles](https://documentation.sailpoint.com/saas/help/access/roles.html) | Standard role contents, supported cross-source profile/direct references and Provisioning prerequisite; configured role enabled/application. Specified definition removals depend on removal-propagation setting and enabled role; disabled-role edits not replayed later. Not a private nested-role/reference-count algorithm. |
+| [Role reference model](https://developer.sailpoint.com/docs/tools/sdk/go/roles/models/role/) | Separate AccessProfiles and Entitlements reference properties. Used for conceptual relationship verification, no SDK execution or request payload/report-count semantics. |
+| [AccessProfile reference model](https://developer.sailpoint.com/docs/tools/sdk/angular/access_profiles/models/access-profile/) | Profile identifier, source, enabled state and entitlement references are distinct. Requestability caveats respected through supplied supported main configuration; no endpoint/default payload taught. |
+| [Managing access profiles](https://documentation.sailpoint.com/saas/help/access/access-profiles.html) | Single-source contents and enabled/requestable distinctions; current role standing additions, detection/prior profile requests, disabled retained references/no native deprovisioning, account-selection scope. No universal direct-entitlement routing inference. |
+| [Automating role assignment](https://documentation.sailpoint.com/saas/help/provisioning/role_assignment.html) | Explicit identity list selects recipients; enabled configuration requires relevant processing, source outcome separate. |
+| [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Saved versus applied; role/profile/application list-page Apply Changes recalculates all three; Active and Inactive(short-term) scope differs from long-term and native account enablement. |
+| [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html) | Account/access delivery through supported automatic/manual paths; no universal atomic rollback or operation-count guarantee. |
+| [Monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html) | Source/account/action/error and manual task evidence; report is not full native task proof. |
+| [Managing entitlements](https://documentation.sailpoint.com/saas/help/access/entitlements.html) | Source access represented as entitlements; direct role inclusion allowed. Supplied native dependencies/workspace rules hypothetical. |
+
+### Current supplied conditions
+
+Neutral Cases/Evidence Production, one correctly correlated existing enabled/sign-in North account each. Cases Readers existing; Drafts/Submitters/Evidence Readers absent. Preparation(Readers+Drafts), Submission(same Readers+Submitters), direct Evidence reader: three entries/five paths/four objects, no report/call-count promise. Enabled standard standing role/profiles/supported Provisioning, supported direct-profile requests off, authorized identity list/Active, no other relevant grant. UTC09:00saved/09:10applied+assigned/09:14Cases success/09:16Evidence permission rejection/09:20native split. Approved correction/recovery verifies North evidence read, preserves Cases actions, denies Evidence edit/publish/export, no other relevant change. Shared readiness-profile Tags proposal remains conditional; copies, disabled new/existing histories, broad application and propagation distinguished. Directory/license transfer changes native type/evidence scope. No actual operations.
+
+### Historical revision 1.0 reference, preserved
+
 - Current lesson: [ROL-002](../lessons/ROL-002_Roles_Containing_Access_Profiles_and_Direct_Entitlements.md), revision 1.0.
 - Documentation verification: October 24, 2026; documentation-based author review only.
 - No tenant execution, beginner validation or formal publication approval performed.
 
-### Official claim map
+#### Official claim map
 
 | Primary source | Supported explanation and boundaries |
 |---|---|
@@ -6574,7 +6600,7 @@ The three-entry/five-path/four-distinct-object comparison is a transparent enume
 
 Scope: standard role, standing access, supported Provisioning, one correctly correlated existing enabled account per source, Active identity, authorized identity-list selection and no other grant/lifecycle requirement for missing rights. Profiles enabled/main direct requests off. Proposed Tags edit is conditional and not applied. Similar-name copy uses another ID, without assuming duplicate names are accepted.
 
-### Assessment and presentation review
+#### Assessment and presentation review
 
 - Case 1 tests expansion/count semantics: supplied references yield five paths/four objects; number of source writes and UI total definition remain separate unknowns.
 - Case 2 tests both access-entry types: inspecting only profiles misses the direct DocumentVault requirement. Evidence is role references plus profile contents/source identity.
@@ -6592,11 +6618,38 @@ Scope: standard role, standing access, supported Provisioning, one correctly cor
 
 ## ROL-003
 
+- Current [learner](../lessons/ROL-003_Membership_Criteria_and_Explicit_Membership.md): revision 2.0, Module 12.3.
+- [Revision record](revisions/ROL-003_Concept_Led_Revision_Record.md): coverage, sources, diagrams, assessments and checks.
+- Fresh official claim-bearing bodies checked October 28, 2026; author review only.
+- Revision 2.0 local; published ROL-003 remains 1.0. The [published snapshot](PUBLICATION_2026-10-27.md) ends at ROL-001.
+- No tenant execution; beginner validation, full graphical review and formal approval pending.
+
+### Current official claim map
+
+| Official source | Verified explanation and boundary |
+|---|---|
+| [Automating role assignment](https://documentation.sailpoint.com/saas/help/provisioning/role_assignment.html) | Standard Criteria/Identity List, supported inputs/types/excluded account fields, multiple-value Equals OR, case-insensitive Value, technical lifecycle name, AND-within/OR-between and reverse; enabled/applied configuration and assignment withdrawal. No hybrid/unknown-value/private-order inference. |
+| [RoleMembershipSelector model](https://developer.sailpoint.com/docs/tools/sdk/go/roles/models/role-membership-selector/) | Type, criteria and identities distinct; IDENTITY_LIST membership based on specified identities, not hidden former expression. No SDK/API execution. |
+| [Selector type model](https://developer.sailpoint.com/docs/tools/sdk/go/roles/models/role-membership-selector-type/) | STANDARD and IDENTITY_LIST alternatives verify conceptual selector types; no IdentityIQ selector scripting introduced. |
+| [Creating identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Source-backed identity mappings and population/lifecycle configuration; applied identity input distinct from source field. |
+| [Loading account data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html) | Configured account collection/aggregation differs from identity mapping/evaluation and native write; no universal schedule claimed. |
+| [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Relevant identity/configuration evaluation; role/profile/application Apply Changes handles shared configuration scope; start not downstream completion. |
+| [Managing roles](https://documentation.sailpoint.com/saas/help/access/roles.html) | Role prerequisite/content versus assignment, membership/list withdrawal versus content-removal propagation, another assigned role retention and no source-account deletion. No universal removal-success algorithm. |
+| [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html) | Supported access changes and manual delivery path; recipient selected does not prove fulfillment. |
+| [Monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html) | Specific account/source/action/error evidence and manual tasks; native action check still separate. |
+| [Managing requests](https://documentation.sailpoint.com/saas/help/requests/config_ap_roles.html) | Configured requested role may be obtained outside automatic criteria; approval does not rewrite current identity values or establish auto match. |
+
+### Current supplied conditions
+
+Neutral Desk Production with existing correctly correlated enabled/sign-in North account, neither Reader/Coordinator membership initially, native Coordinator requires same-account Reader. Enabled standard standing role/profile, supported Provisioning/integration, direct requests off/no other role/lifecycle/grant, current identity A/ISC Active. Main criteria preserve (Operations AND DISPATCH-DESK AND working) OR (CustomerCare AND RETURNS-DESK AND working), technical working/display Currently Employed; no platform-default policy inferred. Independent cover row/missing/trainee/input-source/two-identity-list variations. UTC12:00current applied match/12:05assignment/12:10Reader success Coordinator permission rejection/12:15North read-only; approved correction/supported recovery verifies North update/retained read/South update+admin denied/no other relevant change. Membership withdrawal versus role contents separate. Training Research/LAB-TRAINER versus Manufacturing/FLOOR-TRAINER transfer. No actual operations.
+
+### Historical revision 1.0 reference, preserved
+
 - Current lesson: [ROL-003](../lessons/ROL-003_Membership_Criteria_and_Explicit_Membership.md), revision 1.0.
 - Documentation verification: October 24, 2026; documentation-based author review only.
 - No actual tenant action, beginner read-through or formal publication approval performed.
 
-### Official source map
+#### Official source map
 
 | Primary source | Claims supported and limits |
 |---|---|
@@ -6615,7 +6668,7 @@ All group expressions and test rows are fictional business policy, not platform 
 
 Supported type/input rules are scoped to the documented standard builder. No assumption of trimming, generic normalization, case-sensitive values, arbitrary arrays/dates/numbers or universal missing/negative/null operator semantics. Positive missing-code case lacks established eligibility; exact operator behavior must be tested for real unknown values. No multi-account matching/cross-account union algorithm asserted.
 
-### Assessment map
+#### Assessment map
 
 - Case 1 tests complete alternatives versus pooled partial comparisons. Known Operations/RETURNS/working fails each approved pair; cannot combine partial matches. Expected nonmembership only by this expression, not a global assignment claim.
 - Case 2 tests branch guarding. CustomerCare/RETURNS/prehire passes the deliberately shortened Group B when working is omitted there. Correct condition placement before application; existing Group A does not guard B.
@@ -6628,7 +6681,7 @@ Supported type/input rules are scoped to the documented standard builder. No ass
 - Transfer preserves Research/LAB-TRAINER and Manufacturing/FLOOR-TRAINER pairs plus working. Cross-pairs/nonworking/missing inputs and explicit-list identity/owner/maintenance review are required. Different designs acceptable only if they implement the approved population and establish actual delivery.
 - Author's logical trace checks use supplied known-value combinations only, not a tenant emulation or a claim about runtime null evaluation. Learner validation remains pending.
 
-### Consistency and presentation
+#### Consistency and presentation
 
 Devi120303/dl-120303 North account, correctly correlated/enabled/sign-in. R-1203/DispatchLane coordination/ReadersDL8301+CoordinatorsDL8302 requiring reader, standard/standing/supportedProvisioning, enabled/nonrequestable/no other grant/LCS access. Lifecycle displayCurrentlyEmployed/technicalworking. MainDeviOperation/DISPATCH-DESK/working matches A; independent Identity List includesDevi+oneother. UTC12:00applied/currentA,12:05assignment,12:10Readerssuccess/Coordinatorreject,12:15native Northreadyes/update no. All identifiers/rights/observations are teaching fiction.
 
@@ -6637,6 +6690,33 @@ Two diagrams match [complete alternatives](../assets/ROL-003_complete_group_matc
 No actual tenant/API/source/mapping/aggregation/processing/provisioning/role/list/request/approval/credential/native permission or target operation performed. Preserve prior87lessons, all old assets/templates/tests/specifications/three guides. ROL-004 planned only; documentation review and deployment do not replace learner validation or formal publication approval.
 
 ## ROL-004
+
+- Current [learner](../lessons/ROL-004_Automatic_Assignment_and_Requested_Roles.md): revision 2.0, Module 12.4.
+- [Revision record](revisions/ROL-004_Concept_Led_Revision_Record.md): coverage, sources, diagrams, assessment and checks.
+- Fresh official claim-bearing page bodies checked October 28, 2026; author review only.
+- Revision 2.0 local; published ROL-004 remains 1.0. The [published revised snapshot](PUBLICATION_2026-10-27.md) ends at ROL-001.
+- No tenant execution; beginner validation, full graphical review and formal approval pending.
+
+### Current official claim map
+
+| Official source | Verified explanation and boundary |
+|---|---|
+| [Automating role assignment](https://documentation.sailpoint.com/saas/help/provisioning/role_assignment.html) | Standard Criteria or maintained Identity List can supply automatic role membership; enabled/applied configuration and current input matter. No criteria/list hybrid or request approval inferred. |
+| [Managing role/profile requests](https://documentation.sailpoint.com/saas/help/requests/config_ap_roles.html) | Permitted requests for nonmatching needs, role review controls versus included profile direct-request chain, global approval fallback, future start/end/max duration and requested-removal configuration. Manager then distinct primary owner is supplied, not default. |
+| [Managing roles](https://documentation.sailpoint.com/saas/help/access/roles.html) | Standard contents/Provisioning scope; assigned-identities view includes auto/requested holders; requested assignment targets/revocation versus automatic basis, retained assigned-role requirements and no source-account deletion. |
+| [Requesting access](https://documentation.sailpoint.com/saas/user-help/requests/request_center.html) | Requester/recipient permissions, start/end/time zone and duration reference, submission/review versus source delivery, end-time deprovisioning and manual path; end not an account attribute. Main histories separate, no duplicate existing-item guarantee. |
+| [Requesting access removal](https://documentation.sailpoint.com/saas/user-help/requests/requesting_access_removal.html) | Supported requested assignment revocation/account details, removal approvals and date changes; ordinary revocation not override for continuing criteria membership. |
+| [Tracking requests](https://documentation.sailpoint.com/saas/user-help/requests/tracking_access.html) | Request tracker review steps/status/errors; not a complete current native task certificate. |
+| [Monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html) | Source/account/change/result/error/manual-task evidence separate from request approval. |
+| [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Role/identity configuration evaluation and application separate from successful provisioning; no private execution sequence or exact delay claimed. |
+| [Global approval settings](https://documentation.sailpoint.com/saas/help/requests/config_approval_settings.html) | Applicable item/global timeout controls, pending requests retain submission-time configuration. No unchecked item-level no-review inference. |
+| [Managing access profiles](https://documentation.sailpoint.com/saas/help/access/access-profiles.html) | Single-source entitlement bundle, enabled standing role use and direct-profile requests/approvals different from role request; no separate profile-review cascade. |
+
+### Current supplied conditions
+
+Neutral Evidence Production existing correctly correlated enabled/sign-in North account, enabled standard standing Evidence reviewer/one enabled single-source profile, Readers+dependent Comments. Supported Provisioning; no final approve/export/admin. Automatic approved Assurance/EVIDENCE-REVIEW/technical working AND; independent PROJECT-COORD nonmatching cover, neither history assumes duplicate same-account grants. Requested role permitted, manager then distinct primary owner, required end October28,2026 17UTC/startOctober26 09UTC, limits satisfied. October24 14/15/16UTC submission/reviews; October26 08:45absent/09:05Readers success Comments permission error/09:15native read-only. Approved correction/recovery verifies North read/comment and exclusions, no other relevant change. Supplied end continuation with no retained need reports both removals/native both absent/read+comment denied while enabled sign-in account remains. Date clocks, pending-request settings, holder-view versus selector, exact daily/admin assignment variation, retained-role needs and two-source license transfer explicit. No actual operations.
+
+### Historical revision 1.0 reference, preserved
 
 Lesson: [The same role was granted in two ways. What changes?](../lessons/ROL-004_Automatic_Assignment_and_Requested_Roles.md). Revision 1.0. Documentation checked October 24, 2026.
 
@@ -6665,6 +6745,34 @@ No actual tenant/API/source/account/role/list/request/review/provisioning/revoca
 
 ## ROL-005
 
+- Current [learner](../lessons/ROL-005_How_Identity_Data_Changes_Affect_Role_Membership.md): "The department changed. Why does the old role remain?", revision 2.0, Module 12.5.
+- [Revision record](revisions/ROL-005_Concept_Led_Revision_Record.md): coverage, sources, diagrams, assessments and checks.
+- Fresh official claim-bearing page bodies checked October 28, 2026; author review only.
+- Revision 2.0 local; published ROL-005 remains 1.0. The [published revised snapshot](PUBLICATION_2026-10-27.md) ends at ROL-001.
+- No tenant execution; beginner validation, full graphical review and formal approval pending.
+
+### Current official claim map
+
+| Official source | Verified explanation and boundary |
+|---|---|
+| [Automating role assignment](https://documentation.sailpoint.com/saas/help/provisioning/role_assignment.html) | Current complete criteria or maintained explicit list drives automatic role decisions; changed identity data can end membership, technical lifecycle value and account-not-deleted boundary. |
+| [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Event modification trigger, mapped identity/role recalculation, eligible scheduled/manual/selected routes and application; processing does not validate provisioning success. Time-dependent values need configured reevaluation. |
+| [Creating identity profiles](https://documentation.sailpoint.com/saas/help/setup/identity_profiles.html) | Selected source/field and transforms determine mapped output; Preview tests selected data, save versus Apply Changes differs; no main department transform. |
+| [Loading account data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html) | Configured account collection and history/scope/outcome; source update not instant identity/access proof, no universal push/delta/schedule taught. |
+| [Managing roles](https://documentation.sailpoint.com/saas/help/access/roles.html) | Assignment loss versus shared content-removal propagation; other assigned role can retain shared entitlement; no account deletion/universal reference-count algorithm. |
+| [Monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html) | Specific account/source/action/result/error/manual-task evidence; report separate from current native task. |
+| [Provisioning overview](https://documentation.sailpoint.com/saas/help/provisioning/index.html) | Supported account/access changes, recognized retryable errors only; no guarantee ordinary processing repairs source permission rejection. |
+| [Attribute synchronization](https://documentation.sailpoint.com/saas/help/provisioning/attr_sync.html) | Configured identity-to-account-field enforcement differs from role entitlement withdrawal; no main department-sync prerequisite. |
+| [Identity states overview](https://documentation.sailpoint.com/saas/help/provisioning/identity_states.html) | Long-term inactive excluded ordinary scheduled and role/profile/app list-page application; identity-profile/selected processing can include them. Native enablement distinct. |
+| [Lifecycle configuration](https://documentation.sailpoint.com/saas/help/provisioning/lifecycle.html) | Technical lifecycle value and separately configured identity participation/account actions; main working maps Active, role nonmatch not native disable/delete instruction. |
+| [Requesting access removal](https://documentation.sailpoint.com/saas/user-help/requests/requesting_access_removal.html) | Requested assignment/account-target revocation route versus continuing criteria requirement; job change not universal requested-role expiry. |
+
+### Current supplied conditions
+
+Neutral Archive Production North existing correctly correlated enabled/sign-in account, Readers+same-account dependent Annotations present, enabled standard standing Archive reviewer/profile, supported Provisioning/integration, no other supplying requirement, export/deletion/admin denied. Direct collected HR mappings/no department transform, technical working/Active, AND RecordsOps/ARCHIVE-REVIEW/working to Quality/QUALITY-PLAN/working. October27,2026 UTC09:00HR effective,09:20stale collected,09:30new collected,09:35current identity/assignment withdrawn,09:40Annotations success Readers permission rejection,09:50native read-only. Approved correction/recovery verifies both absent/read+annotation denied/exclusions denied, enabled sign-in account retains, no other relevant change. Independent directory/phone/OR/future date/list/request/retained role/HR restoration conditions; source/runtime evidence distinguished from Preview and old UI, processing inclusion bounded. Laboratory North/South instrument and folder sources transfer. No actual operations.
+
+### Historical revision 1.0 reference, preserved
+
 Lesson: [Her department changed. Why does she still have the role?](../lessons/ROL-005_How_Identity_Data_Changes_Affect_Role_Membership.md). Revision 1.0. Documentation checked October 24, 2026.
 
 Primary sources and claim boundaries:
@@ -6692,6 +6800,35 @@ Editable diagrams: [identity change to role evaluation](../assets/ROL-005_identi
 No actual tenant/API/source/account/mapping/aggregation/processing/provisioning/role/list/request/review/revocation/credential/native task operation performed. Official documentation reviewed; no beginner read-through, independent transfer validation or formal publication approval. Sources remain author-only.
 
 ## ROL-006
+
+- Current [learner](../lessons/ROL-006_Multiple_Roles_Overlapping_Access_and_Assignment_Origins.md): revision 2.0, Module 12.6.
+- [Revision record](revisions/ROL-006_Concept_Led_Revision_Record.md): coverage, sources, diagrams, assessments and checks.
+- Fresh official claim-bearing page bodies checked October 28, 2026; author review only.
+- Revision 2.0 local; ROL-006 published version remains 1.0. The [published snapshot](PUBLICATION_2026-10-27.md) ends at ROL-001.
+- This completes individual revision of all 91 existing learners; new authoring next ROL-007, no file or stub yet.
+- No tenant execution; beginner validation, full graphical review and formal approval pending.
+
+### Current official claim map
+
+| Official source | Verified explanation and boundary |
+|---|---|
+| [Managing roles](https://documentation.sailpoint.com/saas/help/access/roles.html) | Current other assigned role retains overlapping entitlements; contents versus person assignment, current targets and request revocation, account-not-deleted. Unassigned catalog reference not equivalent; no universal reference-count algorithm. |
+| [Managing access profiles](https://documentation.sailpoint.com/saas/help/access/access-profiles.html) | Single-source bundles/detection, role-held restriction, explicit non-role profile revocation removes overlap/incomplete second profile lost/unique remnants individual, detected versus provisioned not label-only. Standing/JIT distinct from origin. |
+| [Automating role assignment](https://documentation.sailpoint.com/saas/help/provisioning/role_assignment.html) | Current criteria/list automatic basis, relevant enabled/application/evaluation, accurate-data mismatch changes membership; no main role-definition edit. |
+| [Requesting access removal](https://documentation.sailpoint.com/saas/user-help/requests/requesting_access_removal.html) | Requested assignments/target-account inspection, applicable removal approvals and criteria/role-profile restrictions; no auto-revoke override. |
+| [Managing role/profile requests](https://documentation.sailpoint.com/saas/help/requests/config_ap_roles.html) | Role review/request controls distinct from profile direct requests, configured period and requested removal; no invented real review chain. |
+| [Requesting access](https://documentation.sailpoint.com/saas/user-help/requests/request_center.html) | Dated requested role, end initiates deprovisioning/automatic or manual source path; no instant native cutoff. |
+| [Processing identity data](https://documentation.sailpoint.com/saas/help/setup/identity_processing.html) | Relevant requirement calculation initiates provisioning, not validation of native success; no private order or latency promised. |
+| [Monitoring provisioning](https://documentation.sailpoint.com/saas/help/provisioning/tracking.html) | Exact source/account/action/result/error/manual-task evidence; separate fulfillment versus native task. |
+| [Loading account data](https://documentation.sailpoint.com/saas/help/accounts/loading_data.html) | Configured account collection/observation history, stale pre-removal record not later native proof. |
+| [Lifecycle states](https://documentation.sailpoint.com/saas/help/provisioning/lifecycle.html) | Current required profiles enforced; successful removal followed by later addition can reflect continuing state, not never-removed retention. Main state supplies no access. |
+| [Managing entitlements](https://documentation.sailpoint.com/saas/help/access/entitlements.html) | Source/type/represented object/context and direct role inclusion; labels do not identify exact access. Native dependencies and reporting license rules supplied hypotheticals. |
+
+### Current supplied conditions
+
+Neutral Cases Production single existing correctly correlated enabled/sign-in North account, three native rights, Draft Editors/Follow-up require Readers; no final approve/export/admin. Enabled standard standing A Preparation profile Reader+Draft and B Follow-up profile same Reader+Follow-up, both assigned/current/same account, four paths/three rights/one Reader, supported Provisioning/no other grants/lifecycle requirements/concurrent changes. A automatic ServiceOps/CASE-PREP/technical working(Active), B approved requested delivered current through October30,2026 17UTC. Oct28 10UTC nonmatch,10:05A ended B current,10:10Draft removal success,10:15native retainedReader+Follow-up/Draft denied. Independent unique-Draft permission failure approved recovery preserves B work, no other relevant change; B expiry source outcomes not instant cutoff/account deletion. Non-role profile/detection, catalog-only/Test/unknown admin/privileged-target/lifecycle later regrant variations explicit. Reporting publisher retains Editor license, not reclaimed because author ends. No actual operations.
+
+### Historical revision 1.0 reference, preserved
 
 Lesson: [One role was removed. Why does some access remain?](../lessons/ROL-006_Multiple_Roles_Overlapping_Access_and_Assignment_Origins.md). Revision 1.0. Documentation checked October 24, 2026.
 

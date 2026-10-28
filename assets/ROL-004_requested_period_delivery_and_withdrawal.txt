@@ -1,0 +1,20 @@
+Request submitted
+        |
+Required approvals complete
+        |
+Future authorized start
+        |
+Source changes attempted
+        |
+Verify account and actual task
+        |
+Access end date and time
+        |
+Deprovisioning starts
+        |
+Check retained requirements
+        |
+Verify source removals and task
+
+Approval is not delivery.
+End time is not instant completion.
