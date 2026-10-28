@@ -17,7 +17,16 @@ The publication utility now selects the current beginner-explanation record when
 
 ## Checks and deployment
 
-Prepublication tests, exact pushed commit, Pages build and live full-content verification are to be recorded after execution. No measured comprehension or tenant execution is implied by deployment.
+Content commit [63ca4364628ade00fafc1450534aaf60e0b0a9ea](https://github.com/TedxHarry/ISC_Theory_TedxHarry/commit/63ca4364628ade00fafc1450534aaf60e0b0a9ea) was pushed to main. Pages reports built for that exact SHA with no error; workflow 40683451971 completed successfully.
+
+- All four existing navigation/disclosure tests passed. Tracked and new-file whitespace checks passed; all 1,219 local file links across the 22 changed/added publication files resolve.
+- Live verification returned HTTP 200 for all 91 lesson routes. Each retained all 91 ordered navigation links, 12 modules, the correct current lesson and its opened module.
+- All 669 normalized content units from the three revised lessons were found in the rendered articles. Every code/diagram block matched exactly. Three diagrams and seven tables retained keyboard/scroll wrappers.
+- All 357 current/historical text assets returned HTTP 200 and matched local source after line-ending normalization. No live verification errors were reported.
+- A browser spot check inspected all three current diagrams in their published lesson context. Labels and branches were readable with whitespace preserved. This is limited graphical evidence at the current browser viewport, not a full device/accessibility audit.
+- Shared UI, site configuration, routes and manifest were unchanged. Only the new repository's origin/main was targeted.
+
+An author-only follow-up records these results and updates current publication pointers. Earlier individual authoring-stage checks stay historical. Deployment and rendering checks do not establish learner comprehension or ISC tenant execution.
 
 ## Continuation
 

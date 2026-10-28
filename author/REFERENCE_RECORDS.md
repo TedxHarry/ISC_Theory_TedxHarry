@@ -6,7 +6,7 @@ Publication update, October 28: the current authorized snapshot includes all 91 
 
 ## Record maintenance
 
-October 28 beginner-explanation pass: the user authorized application from SYS-001 after TRN-004 pilot refinement. SYS-001, SYS-002 and SYS-003 revisions 3.0 are local under teaching specification 3.2; the published snapshot remains unchanged. The other 88 learners retain their earlier revision status. See the current SYS-001/SYS-002/SYS-003 records for checked claims, preserved coverage and review limits.
+October 28 beginner-explanation pass: the user authorized application from SYS-001 after TRN-004 pilot refinement. SYS-001, SYS-002 and SYS-003 revisions 3.0 and teaching specification 3.2 are published in [beginner batch 1](PUBLICATION_2026-10-28_BEGINNER_BATCH_1.md). Earlier local-only entries describe authoring history. The other 88 learners retain their earlier revision status. See the current SYS-001/SYS-002/SYS-003 records for checked claims, preserved coverage and review limits.
 
 Keep official sources mapped to lesson sections or claims, together with the revision reviewed, documentation-check date, limitations, and review status. A saved citation is not evidence of fresh verification. Update these records when technical content is checked or changed.
 
