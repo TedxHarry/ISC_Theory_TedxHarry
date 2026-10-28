@@ -15,12 +15,12 @@ const config = parse(await read("_config.yml"));
 assert.equal(course.lessons.length,91);
 const norm = s => s.replace(/\r\n/g,"\n").trimEnd();
 const prose = s => s.normalize("NFKC").replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[–—]/g,"-").replace(/…/g,"...").replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/&nbsp;/g," ").replace(/\s+/g," ").trim();
-const inline = s => prose(s.replace(/\[([^\]]+)\]\([^)]+\)/g,"$1").replace(/\*\*|__|\x60|(?<!\w)\*(?!\s)|(?<!\s)\*(?!\w)/g,"").replace(/\\([|*_])/g,"$1"));
+const inline = s => prose(s.replace(/<a\b[^>]*>([\s\S]*?)<\/a>/gi,"$1").replace(/\[([^\]]+)\]\([^)]+\)/g,"$1").replace(/\*\*|__|\x60|(?<!\w)\*(?!\s)|(?<!\s)\*(?!\w)/g,"").replace(/\\([|*_])/g,"$1"));
 function units(md) {
  const body=md.replace(/^`{3}[^\n]*\n[\s\S]*?^`{3}\s*$/gm,"");
  const out=[];
  for (const block of body.split(/\n\s*\n/)) {
-  const lines=block.trim().split("\n");
+  const lines=block.trim().split("\n").map(x=>x.replace(/^\s*>\s?/,""));
   if(!block.trim())continue;
   if(lines.every(x=>/^\s*\|/.test(x))) {
    for(const line of lines) {
@@ -33,6 +33,7 @@ function units(md) {
  }
  return out.filter(Boolean);
 }
+const tableCount = md => (md.replace(/^`{3}[^\n]*\n[\s\S]*?^`{3}\s*$/gm,"").match(/^\|[-|: ]+\|[ \t]*$/gm)||[]).length;
 const assets=(await readdir(new URL("assets/",root))).filter(p=>p.endsWith(".txt"));
 const assetText=new Map(await Promise.all(assets.map(async p=>[p,norm(await read("assets/"+p))])));
 let diagrams=0,tables=0,localUnits=0;
@@ -50,7 +51,7 @@ for(const path of changed) {
    assert.ok(Math.max(...block.split("\n").map(x=>x.length))<=42,id+" diagram width");
   }
  }
- tables+=(md.match(/^\|[-|: ]+\|\s*$/gm)||[]).length;
+ tables+=tableCount(md);
  localUnits+=units(md).length;
 }
 const report={changedLessons:changed.length,availableLessons:course.lessons.length,revisedRecords:86,diagrams,tables,localContentUnits:localUnits,assets:assets.length,live};
@@ -88,7 +89,7 @@ if(live) {
      const rendered=[...article.querySelectorAll("pre")].map(x=>norm(x.textContent));
      assert.deepEqual(rendered,blocks,lesson.source+" code blocks");
      assert.ok([...article.querySelectorAll("pre")].every(x=>x.getAttribute("tabindex")==="0"));
-     assert.equal(article.querySelectorAll("table").length,(md.match(/^\|[-|: ]+\|\s*$/gm)||[]).length);
+     assert.equal(article.querySelectorAll("table").length,tableCount(md));
      assert.ok([...article.querySelectorAll("table")].every(x=>x.parentElement.classList.contains("table-scroll")));
     }
     pages++;

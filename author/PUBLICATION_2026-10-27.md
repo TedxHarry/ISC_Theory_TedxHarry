@@ -21,6 +21,18 @@ Continue existing ROL-002 locally after successful publication verification; it 
 
 ## Verification
 
-Pending exact-commit Pages verification.
+Content commit [533593b38aa62f738532daf29d73961e35dc837c](https://github.com/TedxHarry/ISC_Theory_TedxHarry/commit/533593b38aa62f738532daf29d73961e35dc837c) pushed to main. GitHub Pages reported built for that exact commit, no error; [workflow run](https://github.com/TedxHarry/ISC_Theory_TedxHarry/actions/runs/40632806686) completed successfully.
+
+- Four existing navigation/disclosure tests passed, exit 0; staged whitespace clear.
+- All 91 live lesson routes returned HTTP 200 and retained all 91 navigation links in manifest order, 12 modules, the correct current lesson and its open module.
+- All 63 changed learner articles retained every one of 10,296 checked normalized prose/heading/list/table-cell units. All rendered code blocks matched source exactly; 125 diagram blocks match editable assets, and all 122 lesson tables retained scroll wrappers. All preformatted blocks remain keyboard-focusable.
+- All 344 text assets, including current/historical diagrams and guides, returned HTTP 200 and matched local text after line-ending normalization.
+- Local link check across nine scoped documents: 1,270 targets, zero missing.
+- Scope: 259 published changed/added files, including 63 learner revisions, their assets/records and publication metadata; no manifest/layout/style/navigation/hosting implementation changes.
+- The verification utility was corrected to normalize Markdown block quotes and raw HTML anchor labels, and to exclude fenced examples from table counts. These were checker parsing issues; no learner source was changed to satisfy them.
+- Original ISC_Theory_Learning remote checked again after deployment and remained at 90b9f298860b0bc26d26259f084e129ac59331e0; no write targeted it.
+- A follow-up author-only commit records these results and the checker corrections. It changes no learner content. ROL-002 revision 2.0 begins locally afterward.
+
+These checks establish source/render/deployment consistency, not actual tenant behavior, full graphical review, participant learning or formal review approval.
 
 [Verification utility](verify-publication.mjs) checks complete normalized prose units and exact code/diagram blocks for all 63 changed lessons, source-matched diagram assets, available/current/ordered navigation and every text asset. Automated checks do not constitute full graphical review.
