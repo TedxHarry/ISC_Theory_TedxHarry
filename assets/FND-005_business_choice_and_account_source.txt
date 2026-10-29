@@ -1,0 +1,15 @@
+Business software: expense system
+  Holds expense accounts and claim rules
+
+ISC access application: Expenses
+Account source: Corporate-Directory
+ |
+ +-- Access profile: Submit expenses
+ |   Entitlement: EXP_SUBMIT
+ |
+ +-- Access profile: Approve expenses
+     Entitlement: EXP_APPROVE
+
+Branches mean "groups these choices".
+Both profiles use directory access.
+This is not a connection or grant flow.

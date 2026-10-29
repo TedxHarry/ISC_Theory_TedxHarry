@@ -1,0 +1,18 @@
+Profile: Export stock reports
+Source: Warehouse-Production
+Recipient: one existing identity
+
+Automatic profile assignment
+  through role or lifecycle state
+  |
+  +-- Evaluate account criteria
+        +-- One match: select account
+        +-- Zero/many: provisioning fails
+              Manual choice if enabled
+
+Request Center request
+  |
+  +-- Requester selects account
+
+These branches compare selection contexts.
+Account choice is not delivery evidence.

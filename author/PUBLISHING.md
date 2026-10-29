@@ -16,6 +16,8 @@ The complete working course files, diagram sources, reference records, and teach
 
 ## Updating the site
 
+The October 28 “Push and continue” instruction authorizes beginner batch 2: SYS-004 through SYS-006, all Module 2 and Module 3 lessons, and SRC-001 through SRC-007 revision 3.0. See [batch 2 publication and checks](PUBLICATION_2026-10-28_BEGINNER_BATCH_2.md). Continue SRC-008 locally after verifying deployment.
+
 Save and review the affected lesson. Update the course manifest when adding a lesson. Review the local changes, commit them, and push main. GitHub Pages rebuilds the reading site from that branch.
 
 Check the Pages build result and the live affected lesson after a push. Verify the complete content, links, images, tables, and diagrams. Saving or deploying a lesson does not change its learner-validation or publication-review status.

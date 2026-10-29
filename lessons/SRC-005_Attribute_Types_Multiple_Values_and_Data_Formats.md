@@ -1,22 +1,22 @@
 # The value looks right. Is it the right kind of value?
 
-An application sends a cost-centre code of `007` and two group memberships. After collection, ISC shows the code as `7` and the memberships as one combined item.
+A cost-centre code is `007` in an application, but ISC shows `7`. The same account belongs to two groups, but ISC shows one item containing both group names.
 
-The application owner confirms that neither the code nor the actual memberships changed.
+Before changing the account's access, check what changed in the information.
 
-Before changing access, ask what happened to the data. Did the integration preserve the code as text? Did it keep two separate values? And is the screen showing the same structure that the application sent?
+The application may still have the correct code and both memberships. A step that reads or converts the data may have changed how they reach ISC. If we treat that as missing access and grant the groups again, we have acted on the wrong problem.
 
-A value's visible characters are only part of its meaning. How those characters are represented affects what the next process can do with them.
+Let's follow the values closely enough to see the difference.
 
-## Look at what the application actually sent
+## Start with what the application returns
 
-An **account** is a record in an external system. In SailPoint Identity Security Cloud (ISC), an **identity** represents a person or another entity and connects relevant information, accounts and access.
+An **account** is a record through which someone uses a particular system. An **identity** is ISC's record of the person; it can bring together that person's accounts from several systems.
 
-A **source** is ISC's configured representation of a system or collection of account data. Its **connector** provides supported integration behaviour. **Aggregation** collects account or entitlement information into ISC.
+In ISC, a **source** represents a connected system or collection of account data. Its **connector** supplies the integration that reads data and, where supported and configured, makes changes. **Account aggregation** is the process that reads accounts into ISC or refreshes their collected information.
 
-For this example, a delivery application exposes an **API**, or application programming interface, through which software reads account information. Assume the intended source is `Delivery-Production` and the account is `delivery-user`.
+Suppose a source named Delivery-Production reads an existing account, `delivery-user`. The application supplies the following selected fields through an **API**, an interface through which software exchanges information or requests work.
 
-Here is a selected response in **JSON**, JavaScript Object Notation. JSON is a format for exchanging structured data. Curly braces enclose an **object**, which contains named properties and values.
+This is an example of returned data, rather than instructions for creating or changing an account.
 
 ```json
 {
@@ -31,336 +31,355 @@ Here is a selected response in **JSON**, JavaScript Object Notation. JSON is a f
 }
 ```
 
-Each property has its name on the left of a colon and its value on the right. The quotation marks around `"007"` make it text in this response. The unquoted `4` is a number. The unquoted `true` is a Boolean value.
+This format is called **JSON**. The outer braces enclose one object: a set of named pieces of information. On each line, the name is on the left of the colon and its value is on the right.
 
-Square brackets enclose an **array**, an ordered collection of values. The groups array contains two separate text items. The comma between them separates the items; it isn't part of either identifier.
+For example, `"costCentre": "007"` says that the field named costCentre contains the text `007`. The quotation marks identify a **string**, which means text. In contrast, `4` is a number, and the unquoted `true` is a Boolean value: a true-or-false value.
 
-The contractEnd value is also text at this boundary. Looking like a date doesn't establish which part is the day. **Null** is JSON's explicit no-value marker. BackupPhone is present as a property, but supplies no phone number. That differs from omitting the property or supplying empty text.
+The square brackets around groups hold an **array**, or list. There are two separate text items inside it: `delivery.read` and `delivery.dispatch`. The comma separates the items; it isn't part of either identifier.
 
-These application fields, integration conditions and results are hypothetical. The fragment is input evidence, rather than a complete source configuration or a request to change the account.
+The accountKey identifies this account. The employeeNumber is a person reference, not a quantity to calculate with. The costCentre is also a code. The contractEnd is text whose date meaning we still need to establish.
 
-## Preserve the meaning as the data moves
+Finally, `null` is JSON's explicit no-value marker. The backupPhone field is present, but no phone value is supplied. That differs from leaving the field out altogether.
 
-An **attribute** is a named piece of information. The source account's **schema** defines the attributes ISC represents and their designated uses.
+Already, we know more than “the response contains some values.” We know which values are text, which are numbers or Boolean values, and which belong in a collection.
 
-A **mapping** specifies which input supplies an output value. For the normal read in this example, the supported mapping selects the intended response fields. The schema supports a text costCentre and a multi-valued text groups attribute.
+## What should a correct read preserve?
 
-A **data type** describes the kind of value, such as text, a whole number or true/false. **Cardinality** describes whether an attribute holds one value or a collection. Text can be one value or each item in a collection; those are different decisions.
+An **attribute** is a named piece of information about a record, such as costCentre. The account **schema** describes the fields ISC expects on accounts for this source. It defines the fields; the individual accounts supply their values.
 
-The **integration contract** is the agreement about what the fields mean, how their values are encoded and what the interface returns. It gives you something definite to preserve and check.
+A **mapping** connects an incoming field to the field that should receive it. If the response contains costCentre and the intended account attribute is costCentre, the mapping must select that value.
 
-An **entitlement** is an assignable access right. Here, `delivery.read` and `delivery.dispatch` identify two existing groups representing different rights. The collected membership identifiers need to remain separate.
+Two questions help us describe what should arrive:
 
-With correct extraction and representation, the account in ISC retains costCentre = `"007"` and two group items. ISC can then use those collected values through the applicable configuration.
+- **Type:** What kind of value is it? Text, a whole number, a Boolean, or a date?
+- **Cardinality:** Does the field hold one value or a collection of values?
 
-Nothing in that read adds a target membership or creates an account. **Provisioning** performs supported account or access changes in an external system. Representing what exists is a different responsibility.
+Cardinality sounds technical, but here it simply distinguishes one code from several memberships.
 
-Now we can examine why a conversion might produce the wrong representation.
+We also need agreement about meaning. The application producing the data and the integration must agree that costCentre is a code with significant leading zeros, groups contains separate group identifiers, and contractEnd follows a particular date convention. This agreement about meaning, format and handling is the **integration contract**.
 
-## A business code isn't a quantity
+For this example, the application owner confirms that `007` is the full code. The account holds two distinct **entitlements**, meaning items of access: the group identified by `delivery.read` and the group identified by `delivery.dispatch`.
 
-A **string** is a text value. It can contain digits without describing an amount.
+Assume the supported response mapping selects the right fields, the schema describes costCentre as text and groups as multiple text values, and the read completes correctly for those fields. The result should preserve `007` and both separate group identifiers.
 
-Our cost centre is a code. The agreed business meaning includes the leading zeros: `007` isn't defined as interchangeable with `7`.
+Nothing in that read needs to create the account or grant its existing memberships. **Provisioning** is the separate process that carries out account or access changes. Reading what already exists and changing what exists have different purposes.
 
-If a conversion interprets that code as a number, it can lose the original spelling. Turning the resulting number back into text gives `"7"`, not necessarily `"007"`.
+## Why 007 is text, even though it contains digits
 
-Changing a later schema field to text cannot reconstruct information already lost earlier. You need the original value or an expressly agreed formatting rule. One observed code isn't enough to invent a rule that all codes must have three digits.
+Ask what you do with the value.
 
-The same question arises with employee references, postal codes and account identifiers: do you need arithmetic, or do you need to preserve a reference exactly?
+A count of four open tasks is a quantity. Adding another task changes the count to five. A cost-centre code identifies something. Adding one to it doesn't identify the “next amount” of cost centre.
 
-OpenTaskCount has a different job. Its value `4` describes a quantity. An **integer** is a whole number.
+That is why digits alone don't make a field numeric. Employee references, postal codes and account codes can all contain digits while still needing text treatment.
 
-ISC's source attribute-type model includes `STRING`, `BOOLEAN`, `DATE`, `INT` and `LONG`. INT and LONG are integer representations; LONG supports a larger integer range. Select the supported type and range needed for the field, rather than choosing INT for every digit-containing value.
+Now suppose a conversion interprets the text `007` as a number. Its numeric value is seven, so the leading zeros disappear. Converting that number back into text gives `"7"`.
 
-A fractional measurement isn't a whole number. Don't silently discard its fractional part to fit an integer field. Establish the representation that the actual connector and the configuration using it support.
+The final value is text again, but the original spelling has been lost.
 
-The exchanged spelling is the **wire format**: how a value is written in a response or file. The business meaning, wire format and schema type need to agree. A list of available schema types doesn't mean every connector accepts every possible input spelling.
+Changing a later schema definition to text (STRING) cannot discover whether that earlier number came from `7`, `07` or `007`. Recover the original value, or use an expressly agreed formatting rule. Seeing one three-character code does not establish that every code should be padded to three characters.
 
-## False is information too
+For openTaskCount, an **integer**, or whole number, is suitable for the supplied value `4`. A fractional value such as `4.5` would raise a different question: is the producer sending invalid task-count data, or have we misunderstood the field? Silently dropping the fraction would hide that question.
 
-A **Boolean** has two values: true and false. In JSON, `false` is Boolean false; `"false"` is text containing those letters. The lowercase spelling matters for JSON's Boolean literals.
+ISC's attribute type model includes STRING, BOOLEAN, DATE, INT and LONG. INT and LONG represent whole-number types; LONG conventionally supports a larger integer range. Choose the type and range the particular integration supports. “It contains digits” is not enough to choose INT.
 
-An export using Y and N follows another convention. It needs a supported interpretation, such as Y meaning true and N meaning false, with agreed handling for unexpected input.
+Also distinguish the type from the **wire format**, meaning how data is written for transmission. One interface might send a quantity as JSON number `4`; another may send text `"4"` that its supported parser converts. A **parser** reads a format and interprets its structure or values. The producer's format, parser and schema must agree.
 
-A **conversion** changes a value into another agreed representation. **Coercion** is conversion performed implicitly by software. Don't assume every connector coerces the producer's text conventions in the way you intended.
+## False is information, not an empty value
 
-Consider a faulty conversion that treats every non-empty string as true. It would misinterpret both `"false"` and N. The input being present doesn't make its meaning true.
+A **Boolean** answers a true-or-false question. For isActive, `true` means the account is active under the producer's definition; `false` means it isn't.
 
-That describes bad example logic, rather than ISC's default Boolean parser.
+In JSON, `false` is a Boolean literal. `"false"` is a string containing five letters. JSON uses lowercase `true` and `false` for its Boolean literals.
 
-The field's wording matters as well. IsActive = false says “not active.” IsDisabled = false says “not disabled.” Applying the same interpretation to both would reverse one of their meanings.
+The distinction matters when an integration receives text. Suppose project code says, “If the string is non-empty, return true.” Both `"true"` and `"false"` are non-empty, so that code returns true for both. It has tested whether text exists, rather than what the text means.
 
-Also separate a collected status from an instruction. Reading false in a status field doesn't by itself execute an external disable operation.
+That is an example of faulty project logic, not ISC's default conversion rule.
 
-Numeric zero is information too. A count of zero and a count that is unknown are different states. A later default must not erase that distinction.
+Another producer might use `Y` and `N`. The integration needs an explicit, supported interpretation: Y means true, N means false, and unexpected input needs defined handling. An unknown value should not quietly become whichever answer is convenient.
 
-## Two identifiers need two entries
+A **conversion** changes a value's representation or type. **Coercion** is when software converts it automatically as part of another operation. Neither word tells us that the meaning was preserved; we still need to inspect the rule.
 
-Compare these group representations:
+The field's question matters too. `isActive: false` and `isDisabled: false` answer opposite questions. Renaming or mapping one to the other without considering that direction can reverse the meaning.
 
-- `"delivery.read;delivery.dispatch"` is one string containing a semicolon.
-- `["delivery.read", "delivery.dispatch"]` is an array with two strings.
-- `["delivery.read;delivery.dispatch"]` is an array with one combined string.
+Collecting isActive as false also does not itself send a disable operation to the application. A value can inform later configured decisions, but the external change requires its own process.
 
-The last example is a collection, but it still contains only one item. Adding brackets hasn't split the text.
+Keep zero in the same line of reasoning. A task count of `0` means a known count of zero. A Boolean false means a known negative answer. Neither should be replaced merely because a replacement rule incorrectly treats it as “nothing.”
 
-A **multi-valued attribute** permits a collection. It doesn't define how every incoming string should be separated.
+## Two memberships must remain two items
 
-The source attribute-definition model records the type and a separate multi-value flag. A group attribute can therefore contain text items and permit multiple items. The type answers what each item is; the multi-value setting answers whether the field can hold a collection.
+Look carefully at these three forms:
 
-Multi-valued and Entitlement are also separate settings. A collection of phone numbers doesn't automatically represent access. The account-schema guidance specifically excludes Boolean attributes from being marked as entitlements.
+- `"delivery.read;delivery.dispatch"`: one string containing a semicolon.
+- `["delivery.read", "delivery.dispatch"]`: a list containing two strings.
+- `["delivery.read;delivery.dispatch"]`: a list containing one string.
 
-For our supplied fields, these choices have different purposes:
+The third form has brackets, but the separator is still inside one item. Brackets do not split text.
 
-| Attribute | Meaning and type | Cardinality |
+An attribute's **Multi-Valued** setting says it can hold multiple values. In the attribute model, the corresponding flag, or true-or-false setting, is `isMulti`. It does not decide that every semicolon in incoming text separates memberships.
+
+The text type and the multi-value setting answer different questions: what kind of value is each item, and can there be several items?
+
+Marking the attribute as an **entitlement** answers another question: does the field represent access? A list of phone numbers can contain several text values without representing access. The separate `isEntitlement` flag is not a substitute for `isMulti`, and Boolean attributes cannot be marked as entitlements.
+
+Here is how those distinctions apply to the selected fields:
+
+| Field | Meaning and appropriate type | One value or a collection? |
 |---|---|---|
-| costCentre | Business code, text | One value |
-| isActive | True/false status, Boolean | One value |
-| openTaskCount | Whole-number quantity | One value |
-| groups | Existing group identifiers, text | Collection |
-| contractEnd | Date meaning under an agreed representation | One value |
+| costCentre | Significant code; text | One code |
+| isActive | True-or-false account status; Boolean | One answer |
+| openTaskCount | Number of open tasks; whole number | One count |
+| groups | Separate access identifiers; text items | A collection |
+| contractEnd | Agreed calendar-date meaning and supported date interpretation | One date |
 
-An empty collection has zero items. A collection containing one item is still a collection. Neither requires changing the schema to single-valued.
+A collection can contain no items, one item or several. `[]` is an empty array. `["delivery.read"]` is still a collection, despite having only one item.
 
-A repeated item adds another distinction. `["delivery.read", "delivery.read"]` contains two elements, but repeats the same identifier. Don't count it as two different kinds of access. Inspect the duplicated input and its consumer's supported handling, without assuming a universal ISC deduplication rule.
+Duplicates need care as well. `["delivery.read", "delivery.read"]` contains two elements, but they repeat one identifier; that is not evidence of two distinct rights. Check whether the code using the list removes duplicates rather than assuming a universal ISC rule.
 
-Although a JSON array has an order, membership identification shouldn't depend on incidental item order unless the integration contract requires it. Identify the intended right, rather than relying on “the first group.”
+JSON arrays have an order. That does not mean the first group gives primary access or matters more than the second. Membership meaning comes from the integration and the application, not an incidental position in a returned list.
 
-Now compare preserving the collection with joining it into text:
+The difference between preserving and joining the items is easier to see side by side:
 
 ```text
-[Two membership values from the API]
-                |
-        +-------+--------+
-        |                |
-   [Keep list]     [Join with ;]
-        |                |
- [Two entries]     [One text value]
+Two incoming items
+  delivery.read
+  delivery.dispatch
+          |
+     +----+----+
+     |         |
+  Preserve    Join with ;
+     |         |
+  Two items   One text value
+     |         |
+  Two group   Put text in a list
+  identifiers |
+              One joined item
 ```
 
-The branches show conversion choices. Keeping the list retains two entries. Joining with a semicolon produces one text value. Neither branch in this illustration changes the target application's actual memberships.
+Joining combines the two strings into one string. Putting that string into a list still leaves one item. Neither action changes the application's actual memberships; it changes the information passed on.
 
-If a later step wraps the joined text in an array, it still has one combined item. Inspect the elements, rather than accepting a screen merely because both familiar names appear somewhere in it.
+## Sometimes the list contains objects instead
 
-## Extract the identifiers the next step actually needs
+An API may return each group as an object with an identifier and a readable label, rather than returning a list of identifier strings.
 
-An API can return a collection of objects instead of a simple array of identifier strings. Each object might contain an identifier and a descriptive label.
+In that situation, the mapping must select the identifier from each object if identifiers are what the account attribute expects. Taking a label may select the wrong kind of reference. Turning the whole object into text may produce a string that matches no group identifier.
 
-The mapping needs to select the intended identifier from each relevant object in the supported structure. The label isn't automatically the identifier. Turning each entire object into text also produces a different value.
+**Extraction** means selecting the required information from the response. A **response path** describes where to find it inside the returned structure. For the Web Services SaaS connector, response mappings connect schema attributes to paths in the response, taking the configured root path into account. The root establishes where selection starts.
 
-A response path is the configured location from which a mapping extracts information. A path selecting only the first array element won't collect the entire list.
+Selecting the first element of a list is different from selecting the required field from every element. A path that returns one group cannot establish that all memberships were collected.
 
-Web Services integrations, for example, map schema attributes to response paths under a configured root. When investigating, compare that actual path with the returned object and collection structure.
+These are possible extraction problems. In our supplied Delivery-Production example, extraction is correct. We will trace a later conversion problem separately, rather than assume every malformed list comes from the response path.
 
-A wrong path can explain a wrong or missing value, but that isn't the supplied cause of our opening problem. Here the extraction is correct; a later project-added conversion loses the structure.
+## A CSV row needs two different kinds of parsing
 
-That distinction prevents you from changing a correct extraction path to compensate for a different defect.
+The same information might arrive in a **CSV** file, a format that separates fields using commas under an agreed quoting convention.
 
-## A separator works only inside the format that defines it
-
-Suppose the same application supplies this limited export in **CSV**, comma-separated values:
+Consider this limited alternative to the API example:
 
 ```csv
 accountKey,costCentre,displayName,groups
 delivery-user,007,"Operations, Delivery",delivery.read;delivery.dispatch
 ```
 
-A **delimiter** separates pieces of data. A **parser** interprets the encoded structure under the agreed rules.
+The header names four fields. The data row also contains four fields.
 
-In this example's CSV format, the comma separates columns. Quoting keeps `Operations, Delivery` inside one displayName field. The data row has four fields.
+Why doesn't the comma in Operations, Delivery create another column? Because the displayName field is enclosed in quotes. A CSV parser that follows this convention keeps that comma inside the value.
 
-There is another agreement inside the groups field: a semicolon separates membership identifiers. The supported import path must interpret that convention if it is to obtain two group values.
+After reading the columns, the groups field is still one text field containing `delivery.read;delivery.dispatch`. For this example, the producer and importer separately agree that semicolons inside that field separate memberships. A supported field-specific parser then produces two identifiers.
 
-Reading CSV columns and splitting the contents of one column are different jobs. The inner semicolon isn't a universal ISC delimiter, and a global split on every comma would break the quoted display name.
+The outer comma rule and the inner semicolon rule have different jobs. The inner rule is not a universal CSV rule or ISC default, and this small row is not a complete source upload specification.
 
-**Serialization** writes a value or structure into a transport format. The reader must interpret it using compatible rules. **Escaping** represents a character that would otherwise be interpreted as structure.
+Writing structured data into a transferable format is called **serialization**. **Escaping** preserves special characters that could otherwise be mistaken for format instructions. For example, the usual CSV convention doubles an embedded quote inside a quoted field. JSON uses its own escaping rules; the formats are not interchangeable.
 
-CSV quoting and JSON string escaping follow different rules. Copying separator handling between them can change the data.
+If an actual group identifier contains the chosen inner separator, splitting blindly would damage it. The integration needs a supported representation or escaping agreement that preserves the identifier. “Split every comma or semicolon” is not a safe general rule.
 
-What if an actual identifier contains the chosen separator? Blindly splitting on each occurrence could break one legitimate identifier into several invalid values. Agree a representation that preserves the identifiers and is supported by the actual connector.
+Check the saved file itself. A spreadsheet may display a code with leading zeros while storing a number, or remove the zeros when opening and saving it. Changing the later importer to text cannot recover zeros that have already disappeared from the file.
 
-Also check the saved file rather than relying on a spreadsheet display. A cell formatted to show 007 doesn't prove that the file still contains the original text. An intermediate tool may already have stored 7.
+## A blank-looking field can hide several different states
 
-## A blank-looking value can mean different things
+A screen may show nothing for several kinds of input. That doesn't make the inputs equivalent.
 
-Look at the groups property in these inputs:
+Here are seven possibilities for groups:
 
-| Input state | What arrived | What it doesn't establish alone |
-|---|---|---|
-| groups omitted | No groups property | That the account has no memberships |
-| `"groups": null` | A property with an explicit null value | An empty collection or a removal instruction |
-| `"groups": []` | A collection containing zero items | Successful external removal of all groups |
-| `"groups": [""]` | A collection containing one empty string | A collection containing zero items |
-| `"groups": ""` | Zero-character text | A valid group collection |
-| `"groups": " "` | Text containing a space | Empty text before any agreed trimming |
-| `"groups": "null"` | Literal text | JSON null |
+| Returned form | What is actually present |
+|---|---|
+| groups omitted | No groups property in this response |
+| `"groups": null` | The property is present with JSON null |
+| `"groups": []` | A collection with zero items |
+| `"groups": [""]` | A collection with one empty text item |
+| `"groups": ""` | Empty text |
+| `"groups": " "` | Text containing a space |
+| `"groups": "null"` | Text containing the letters null |
 
-First establish what arrived. Then establish what that state means for this operation.
+A space becomes empty only if an agreed cleanup step removes it. The word null in quotation marks is text, not JSON null. A list containing empty text is not an empty list.
 
-**Read scope** is the set of accounts and information that the operation is intended and permitted to return. A missing property may result from that scope, an extraction path that didn't find it, or the producer's documented omission rules. The blank alone doesn't choose the explanation.
+First establish which state was received. Then ask what that state means for this operation.
 
-A **snapshot** describes state for an agreed scope and time. If a complete, correctly scoped membership snapshot reports an empty list, it can be a valid assertion of no memberships within that scope.
+The **read scope** is what the operation was allowed and configured to read: which accounts and which fields. A missing groups property could reflect restricted permissions, a selected-field response, a wrong extraction path or the producer's omission convention.
 
-But if the read only returns selected memberships or has failed to extract them, the same-looking list doesn't establish a complete account-access inventory.
+A **snapshot** describes state for a stated scope and time. If a successful, complete membership snapshot for this account contains an empty collection, it can establish that there were no memberships within that scope at that time.
 
-A partial update has another purpose: it can describe selected changes rather than complete state. **Update semantics** are the operation's rules for interpreting supplied and omitted values.
+An incomplete response or a failed extraction cannot support that conclusion. It may tell us that we don't know.
 
-An API can require explicit removal rather than interpreting omission or null as “clear everything.” Account aggregation, identity-value mapping and external provisioning have their own mechanisms. Don't transfer a null-handling assumption from one to another.
+A **partial update** has another purpose: it supplies selected changes rather than a full description of current state. Omitting a field may mean “leave it alone.” Clearing it may require an explicit supported operation. The actual API or connector contract decides.
 
-A **fallback** supplies an agreed alternative under specified conditions. It can be useful when those conditions are understood. Replacing every false-looking value with a default can instead erase valid false or zero values, or hide a broken read.
+Do not carry an assumed null meaning from an aggregation response into an identity mapping or provisioning request. JSON tells us that a null value exists; it doesn't decide whether an operation should clear a field, retain its earlier value or report an error.
 
-An unknown value needs investigation or its agreed treatment, rather than a made-up assertion that the account has no access.
+A **fallback** supplies an alternative when a defined condition occurs. It can be useful when an optional value is absent. But the condition must be explicit. Replacing an unread groups field with an empty list can hide a broken read. Replacing a valid false or zero can erase real information.
 
-## A date needs its meaning before its format can be changed
+Unknown, known empty and successfully removed are different conclusions.
 
-The contractEnd input is `04/11/2026`. Our supplied producer agreement is day/month/year, so it means **4 November 2026**.
+## A date needs a meaning before it needs a new format
 
-A **date format** defines how to interpret those parts. Choosing a DATE schema type doesn't choose the correct day/month order for an arbitrary string.
+Return to `"contractEnd": "04/11/2026"`.
 
-JSON itself has no separate native date type. Date information is carried through representations such as text or a number, whose meaning must be agreed.
+Both day-first and month-first interpretations look plausible. The characters alone don't tell us which one the producer intended.
 
-A **transform** calculates or formats a value using supported logic. ISC's `dateFormat` transform can parse a datetime string with a documented input format and produce a different output format.
+For this example, the agreed format is day/month/year. The date means **4 November 2026**.
 
-For our day-first input, the patterns `dd/MM/yyyy` and `yyyy-MM-dd` describe a conversion to `2026-11-04`. These are dateFormat transform conventions, rather than universal settings for every connector's date field.
+Declaring a DATE type does not, by itself, select that order. JSON has no native date type; this response sends text, which must be interpreted using a supported date convention.
 
-If the first interpretation used month/day/year, consistent output formatting would simply produce a consistently formatted wrong date.
+A **transform** calculates a value from input. ISC's `dateFormat` transform parses a date using an input format and writes it using an output format.
 
-A date-only result also doesn't specify when access should end. Does “ends on 4 November” mean the start of that day, the end of it, or a business cutoff in a particular zone? That boundary needs an agreed meaning before access-changing logic uses it.
+For this date, `dd/MM/yyyy` means two-digit day, two-digit month and four-digit year. The output pattern `yyyy-MM-dd` writes year, month and day. Correctly interpreted, the result is `2026-11-04`.
 
-## When a date includes a time, keep its time reference
+These are dateFormat pattern conventions, not settings we can assume every connector uses.
 
-A **timestamp** identifies a date and time. An **offset** states the difference between local time and Coordinated Universal Time, or UTC.
+Suppose the input was mistakenly read as month/day/year. It would mean 11 April. Formatting that mistaken date neatly as `2026-04-11` would preserve the mistake. A consistent appearance is not proof of a correct interpretation.
 
-These identify the same instant:
+A calendar date also doesn't choose an access cutoff. Does access end at the start or end of 4 November? At which hour, and in which business timezone? Those requirements need their own agreement.
+
+## A timestamp identifies a moment more precisely
+
+A **timestamp** combines date and time. A numeric **offset** tells us how that local time relates to UTC, the common reference time used to compare moments.
+
+These two timestamps describe the same instant:
 
 ```text
 2026-11-04T18:00:00+05:30
 2026-11-04T12:30:00Z
 ```
 
-The first is five hours and thirty minutes ahead of UTC. Subtracting that offset from 18:00 gives 12:30 UTC. Z indicates UTC in the second representation.
+The first says 18:00 at five hours thirty minutes ahead of UTC. Subtracting that offset gives 12:30 UTC. The `Z` in the second form denotes UTC.
 
-Removing the offset discards information needed to interpret the local clock time. A **time zone** can include regional clock rules; one numeric offset doesn't describe all future regional changes.
+Removing the offset while keeping 18:00 does not preserve all the information needed to identify that instant.
 
-An **epoch timestamp** expresses a count from a defined starting instant. The unit matters too: seconds and milliseconds describe different counts for the same interval. A numeric schema type doesn't identify the starting instant or unit for you.
+An offset for one instant is also different from a regional timezone. A region can have rules that change its offset through the year. One numeric offset doesn't describe those future rules.
 
-Formatting a date or timestamp doesn't schedule a business event or prove access removal. Interpretation, the configured process that uses it and the delivered external result remain separate responsibilities.
+Some interfaces use **epoch time**: a number of time units counted from an agreed starting point. You need both the starting point and the unit. Seconds and milliseconds produce very different interpretations of the same number. Choosing a numeric schema type does not settle either question.
 
-## Locate the conversion that changed the account data
+Finally, formatting a date or timestamp does not schedule a process, cause an event to run or prove that access was removed. Interpretation, the configured decision, execution and the external result each need their own explanation and evidence.
 
-Return to the selected delivery response. CostCentre arrives as `"007"`, and groups arrives as two identifier strings.
+## Trace where the value first changes
 
-In this supplied investigation, response extraction is correct. The source schema supports text costCentre and multi-valued text groups.
+Now we can explain the opening problem without guessing.
 
-A project-added conversion interprets the code numerically and passes onward text `"7"`. It also joins the two group identifiers with a semicolon. The account is then represented with one group item: `["delivery.read;delivery.dispatch"]`.
+Assume the application still supplies costCentre `007` and the two separate memberships. Its response is read correctly, and the intended schema describes those fields correctly.
 
-Those outcomes describe the deliberately faulty project design. They aren't claims about ISC's default conversion behaviour.
+A project-added converter then does two things:
 
-Trace the evidence across the boundaries:
+1. Converts costCentre to a number and back to text, producing `"7"`.
+2. Joins the group strings with a semicolon, then places that joined text into a list, producing `["delivery.read;delivery.dispatch"]`.
+
+Those are supplied faults in this example, not ISC default behaviour. The schema's text and multi-value settings cannot undo them automatically.
+
+Anything that uses a value is a **consumer**. When investigating, compare what was returned, what was changed and what each consumer received:
 
 ```text
-[Raw response: value and structure]
-                 |
-[Extraction and configured conversions]
-                 |
-[Schema and collected account values]
-                 |
-[Processes using the collected values]
+Application response
+  value + type + list items
+          |
+          v
+Extraction and conversions
+  what was selected or changed?
+          |
+          v
+Schema and collected account
+  what is ISC representing?
+          |
+          v
+Consumers of those values
+  what did each receive and do?
 ```
 
-The arrows guide a human investigation from input through the configuration using it. They don't assert private backend order or claim that the schema performs every conversion.
+The arrows show how to follow the information and its dependencies. This is a human investigation path, not a claim about ISC's private software execution order.
 
-An **identity attribute** is a value on the ISC identity, rather than on an individual source account. An **identity profile** configures identities and the mappings that supply their values. **Identity processing** evaluates identities under the relevant configuration.
+A mapping, an access condition or a lookup that finds an entitlement record can each use a value. Correcting the account value is important because later work may rely on it.
 
-If an identity mapping consumes the bad account code, its result can carry that defect into the identity. A **role** groups access for a business purpose and can use identity values in its assignment conditions.
+An **identity attribute** holds information on the person's identity record, rather than on one application account. An **identity profile** supplies configuration for a population of identities, including mappings that obtain or calculate identity values. **Identity processing** evaluates identity information and the relevant configured effects.
 
-For a supplied condition requiring literal text 007, text 7 isn't the intended value. Inspect the actual mapping, processed identity value and condition before explaining a changed access decision.
+Suppose the profile maps this account's costCentre to an identity attribute. The damaged account code may then become a damaged identity value.
 
-The group defect has another consequence. An **entitlement schema** describes access objects and their identifying attributes. Membership linking requires the appropriate source/type relationship and matching identifiers.
+A **role** represents access associated with a responsibility. A configured role assignment condition may use an identity attribute to decide who qualifies. If the supplied condition requires the literal text `007`, text `7` is a different value. Inspect the actual mapping, resulting identity value and condition; a wrong code alone does not tell us that every role will be granted or removed.
 
-Joining two valid identifiers doesn't automatically identify either existing entitlement. Correct collection structure helps preserve the relationship the next step needs.
+Membership values have a related dependency. ISC needs to connect an account's access identifiers to the corresponding entitlement records. The source establishes which system's access we mean; the entitlement type identifies the kind of access, such as groups. The schema relationship identifies how those account values connect to the entitlement records. One joined string is not the same identifier as either of the two original groups.
 
-## Correct the representation, then inspect what uses it
+## Correct the cause, then check each result
 
-Assume responsible owners approve a supported correction preserving the code as text and keeping the two group identifiers separate.
+Suppose an approved, supported correction removes the faulty conversions. A later appropriate read preserves `007` and both separate group identifiers.
 
-The supplied appropriate re-read represents costCentre as `"007"` and groups as the two intended entries. The target account key and actual memberships remain unchanged.
+The external account key and its actual memberships are unchanged. Recreating the account or granting both groups again would not repair the conversion defect.
 
-This repairs the read-side representation. It doesn't require recreating the account or provisioning duplicate memberships.
+The next checks depend on which consumers use the fields. If an identity mapping uses costCentre, check the resulting identity value after the relevant processing. If an access condition uses that identity value, check its evaluation. If a separate access change is expected, verify its delivery and the application's result.
 
-If an identity mapping consumes the field, inspect its applicable processing and resulting value. If access logic consumes that identity value, inspect the decision and any resulting delivery separately. A saved conversion isn't evidence that every downstream result changed.
+Saving the correction proves that configuration was saved. It does not prove that every dependent result is already current.
 
-The **user interface**, or UI, can make different raw states look alike. A blank cell doesn't reveal whether the original property was absent, null, empty text or a value that failed to display.
+The **frontend** is the screen you interact with. It may show schema definitions, a collected account value or a calculated identity value on different pages. The **backend** is the software handling the requests and processing behind those screens. A blank cell or a saved setting is only evidence of what that particular view reports.
 
-The Account Schema view describes definitions and multi-value settings. Individual account details show represented values. Neither alone proves that the producer returned a complete, correctly typed response.
+Compare the raw response, meaning the original returned data, with extraction settings, schema definitions, collected account values and relevant consumer results. Keep the source, account, operation and time consistent. Comparing yesterday's read from one source with today's account from another can manufacture a disagreement that doesn't explain this fault.
 
-Compare the actual response or file, extracted values, configured conversion, schema, collected account and relevant errors. Keep the source, account, operation and time consistent across the evidence.
+A parser failure also needs investigation. It is not a valid empty-membership result. Depending on the actual integration, an error may affect a field, record or wider operation; check its documented behaviour and run evidence rather than assume a universal skip-or-fail rule.
 
-A parsing failure isn't a valid assertion of no memberships. Silently substituting an empty list can turn an error into misleading access information. Establish the actual connector's failure handling and correction path; don't assume every failure skips one record or fails the entire operation.
+Two other problems can appear before a value reaches a screen:
 
-Two other corrections need the same care. **Character encoding** defines how bytes represent characters. If producer and reader use incompatible encodings, corrupted characters won't be restored by trimming spaces. Preserve the agreed encoding, such as UTF-8 where supported, and inspect the original file.
+**Character encoding** determines how stored or transmitted bytes represent characters. UTF-8 is one encoding; the producer and reader need a supported agreement. If text was decoded incorrectly, trimming it won't restore the original characters.
 
-**Normalization** applies agreed consistency rules, such as removing permitted surrounding whitespace. It doesn't authorize removing significant zeros, lowercasing every identifier or merging values the target treats as different. A cleanup rule is correct only if it preserves the field's agreed meaning.
+**Normalization** is agreed cleanup into a consistent form, such as removing permitted surrounding spaces. It needs a reason tied to the field. Removing leading zeros, changing every identifier to lowercase or merging values that the application distinguishes can destroy meaning.
 
-## Work through the changed inputs
+The useful question is: at which boundary did the information first stop meaning what the producer intended?
 
-### 1. The code changed from 007 to 7
+## Work through a few decisions
 
-An intermediate tool saves the original costCentre 007 as 7. A later source schema defines the field as text. Will that restore the zeros?
+**1. A tool changes 007 into 7 before the data reaches ISC. Would changing the schema to text recover the original code?**
 
-**Worked reasoning:** No. The earlier conversion already lost the original spelling. Recover the authoritative original or use an expressly agreed formatting rule with suitable validation. A later text definition doesn't reconstruct the value, and one example doesn't justify invented padding.
+No. Text `7` is still missing the original zeros. Recover the original input or apply an explicitly agreed formatting rule. The schema cannot infer the lost spelling.
 
-### 2. The producer sends text false
+**2. An input contains the string "false". Project code returns true because the string is non-empty. Is that acceptable Boolean interpretation?**
 
-The input is `"false"`, intended to express Boolean false. A conversion treats every non-empty string as true. Is its result acceptable because the value was present?
+No. The code has tested presence, not truth. Establish the producer's convention and a supported parsing rule, including unexpected input. This example does not describe ISC's default Boolean parser.
 
-**Worked reasoning:** Presence isn't truth. Establish supported parsing of the producer's convention and treatment of unexpected inputs. The supplied conversion changes the intended meaning; it doesn't establish ISC's default Boolean behaviour.
+**3. An attribute is multi-valued, but its value is ["delivery.read;delivery.dispatch"]. Has it captured two memberships?**
 
-### 3. The group list has one joined item
+No. Count the elements: there is one string. Preserve the original separate items, or use the supported, agreed parsing mechanism if the producer really sends joined text. The multi-value setting alone cannot split it.
 
-Groups is `["delivery.read;delivery.dispatch"]`, and the schema is already multi-valued. Does that establish two memberships?
+**4. Should the CSV row be split at every comma and then every semicolon?**
 
-**Worked reasoning:** It is one combined string inside a collection. Inspect the producer, extraction and conversion. Preserve or parse separate identifiers under the supported agreement; brackets and a multi-value setting don't split text by themselves.
+No. Parse the quoted CSV columns first. Operations, Delivery remains one displayName value, leaving four fields. Then interpret the groups field using its separate agreed convention. Separators inside identifiers require their own preserving representation.
 
-### 4. The quoted field contains a comma
+**5. A response omits groups. Can we conclude that the account has no groups or that access was removed?**
 
-The CSV sample contains `"Operations, Delivery"` in displayName. A semicolon separates identifiers inside groups. Should either character be split globally?
+No. Establish scope, completeness, permissions, extraction and omission meaning. A complete empty snapshot can establish no memberships within its scope and time; an omitted field without that guarantee cannot. Neither is evidence that a removal operation succeeded.
 
-**Worked reasoning:** No. CSV quoting keeps the display name inside one column. The semicolon convention applies inside the groups field. Column parsing and field-specific collection parsing have different scopes; the agreed row contains four fields.
+**6. The date 04/11/2026 was read month-first and then written as 2026-04-11. Did the new format fix it?**
 
-### 5. The response omits groups
+No. The producer meant 4 November. Correct interpretation must come before formatting. Establish the separate hour and timezone requirements if an access cutoff depends on the date.
 
-No groups property appears. There is no complete-membership read guarantee or explicit removal result. Does that prove all delivery access was removed?
+**7. A status cell looks blank. Should we default it to false?**
 
-**Worked reasoning:** Establish scope, extraction and omission semantics. The missing property doesn't prove a successful external removal. Even an empty collection needs completeness and operation context before it can establish current membership state.
+First inspect the raw value. It might be absent, null, empty text or a failed extraction. Establish the field's question, type and agreed fallback condition. A valid false must be preserved; unknown status must not silently become a known negative answer.
 
-### 6. A date is standardized after the wrong interpretation
+## Apply the reasoning to a different feed
 
-The producer defines `04/11/2026` as day/month/year. A configuration reads month/day/year and then outputs a consistent date format. Is the result correct?
+An HR (human resources) feed supplies a worker reference with leading zeros, an active-status field using Y/N, a group field separated by pipe characters (`|`) and a date-only contract expiry.
 
-**Worked reasoning:** No. The intended date is 2026-11-04. Verify producer format, parser and output, then any separate business cutoff and time reference. Consistent formatting doesn't repair a day/month interpretation error.
+Someone proposes four shortcuts: convert all digit-only fields to numbers, treat all non-empty status text as true, split every separator, and treat every null as a request to clear a field.
 
-### 7. A blank screen field would default to false
+Which parts would you challenge before using this feed?
 
-An investigator proposes substituting false for every blank-looking field. What must be established first?
+Start with meaning. The worker reference identifies a person, so preserve its significant characters. Agree how Y and N become Boolean values, and how unsupported values are handled. Define the group field's collection rule, including identifiers that might contain the separator.
 
-**Worked reasoning:** Inspect the field type and raw state: omission, null, empty text, whitespace or a display failure. Establish its business meaning and supported fallback conditions. False is a real Boolean value, rather than a universal replacement for unavailable information.
+Next establish the file's column, quoting, escaping and encoding rules. Check which fields and records the read includes, and whether it is a complete snapshot or selected changes. Define omission, null and empty handling for the specific operation; don't borrow a clearing rule from a different API.
 
-## Review a different HR feed
+For expiry, agree the input date order, the intended business cutoff and any required timezone. Formatting a date does not answer when access must end or who performs that change.
 
-A Human Resources (HR) feed uses leading-zero employee references, active status Y/N, pipe-separated group codes and a date-only contract expiry.
+Then follow representative inputs through extraction, conversion, collected values and actual consumers. Include false, zero, significant zeros, empty and missing states, several memberships and unexpected input. Verify the results at each relevant boundary rather than accepting a successful file read as proof of correct meaning.
 
-The proposal says: “Make digit fields numbers, treat every non-empty status as true, split every separator, and use null to clear old access.”
-
-What needs to change in that agreement?
-
-**Worked reasoning:** Establish each field's meaning, supported type and single-value or collection structure. Preserve significant identifier text. Define Y/N conversion and explicit treatment of unexpected or unavailable status values.
-
-Separate file-column parsing from group-field parsing, including quoting, escaping and identifiers containing separators. Establish whether membership information is complete for its scope and time.
-
-Define omission, null, empty-text and empty-collection meanings for the actual read and update operations. Null doesn't invent an access-clearing mechanism.
-
-Agree the input date format and the business time/zone boundary required by expiry logic. Then validate representative and problematic records across original input, extraction, conversion, schema, collected values and dependent processing.
-
-Explain the result through the data: “This is what each field means. This is its supported type and structure. These parsing and conversion rules preserve that meaning. These observations show what reached the account and the processes that use it.”
+When you explain a field to someone else, begin with what it means. Then describe the type and collection structure that preserve that meaning, the rules for reading it, and the evidence that it arrived correctly. That gives you a reason for the configuration instead of only a setting to remember.

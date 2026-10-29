@@ -1,0 +1,20 @@
+UI submission        API submission
+      |                    |
+      +---------+----------+
+                |
+                v
+      ISC request processing
+                |
+                v
+      Required approval granted
+                |
+                v
+      Supported provisioning work
+                |
+                v
+      Connector changes target
+                |
+                v
+      Engineer verifies permission
+
+Alternative entries; successful path.

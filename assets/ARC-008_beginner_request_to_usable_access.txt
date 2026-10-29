@@ -1,0 +1,16 @@
+Submit the intended request
+        |
+        v
+Applicable checks and required review
+        |
+        v
+Provisioning uses the connector
+        |
+        v
+Target grants both permissions
+        |
+        v
+Engineer verifies account and use
+
+Successful example; verification is
+a separate check of the intended result.

@@ -1,0 +1,8 @@
+WEST human accounts: 120
+            |
+   Require ACTIVE as well?
+       /             \
+     Yes              No
+      |                |
+110 accounts      120 accounts
+Disabled omitted  Disabled included

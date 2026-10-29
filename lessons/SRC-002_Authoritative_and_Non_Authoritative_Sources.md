@@ -1,40 +1,38 @@
 # Authoritative for what: the person, a value, a login, or a change?
 
-An employee record contains Finance, but SailPoint Identity Security Cloud (ISC) still shows Vendor Services as the person's department. Both the employee and contractor records have been collected.
+The employee system says Finance, but SailPoint Identity Security Cloud (ISC) still shows Vendor Services as the person's department. Both the employee and contractor records have been collected.
 
-Reading the employee system again looks like the obvious fix. Yet ISC can be following saved configuration correctly while that configuration no longer matches the intended employee arrangement. Find which configuration applies and where it obtains the department value.
+Should another read of the employee system force Finance onto the identity?
 
-To understand the result, separate four responsibilities: establishing the person, producing an identity value, checking sign-in credentials and changing an external account.
+First follow the configuration that produces the identity value. ISC can have the correct employee data and still use a different configured input. The question is which arrangement applies to this person, then where that arrangement obtains department.
 
-## Begin with the person and their records
+## Start with the person and the accounts ISC represents
 
-ISC represents people and their relevant account and access relationships.
+An **identity**, for the people in this example, is ISC's person-level record. An **account** is a record in another system. ISC keeps information representing that external account and can associate it with an identity.
 
-For the people in this example, an **identity** is the person-level record in ISC. An **account** is a record in a particular system, with ISC keeping a representation of that external account.
+A **source** is ISC's configured representation of a system or collection of account data. Its **connector** is the integration software used to read information and perform the operations it supports.
 
-A **source** is ISC's configured representation of a system or collection of account data. Its **connector** is the integration software used for supported reads and other operations.
+**Aggregation** collects account or entitlement information into ISC. An **entitlement** is an access item represented from a source, such as a permission or group membership.
 
-**Aggregation** collects account or entitlement information into ISC. An **entitlement** is an access item represented from a source, such as a permission or group.
+One person can have an employee record, a contractor record, a directory account and an expense account. Those are four account records with different jobs, rather than four people.
 
-A person can have an employee record, a contractor record, a directory account and an expense account. Collecting those records doesn't mean ISC should treat them as four people.
+The design needs to establish the person in ISC and connect the additional accounts to that identity. It also needs rules for producing the person's identity values. These responsibilities are related, but they aren't the same decision.
 
-The design must establish which records identify the person and how the additional accounts belong to that identity.
+## Use an authoritative source together with an identity profile
 
-## An authoritative source and its profile establish the identity
+An **authoritative source** provides accounts used to establish ISC identities through an **identity profile**.
 
-An **authoritative source** provides accounts used to establish identities through an **identity profile**.
+The identity profile holds configuration for those identities. It connects the source to identity establishment and defines how account information supplies identity values, along with relevant sign-in and identity-management settings.
 
-The identity profile is configuration for those identities. It connects the source to identity establishment and defines their relevant value mappings, sign-in settings and identity-management behaviour.
+An **attribute** is a named value. An **account attribute** belongs to a source account, such as its department. An **identity attribute** belongs to the person-level ISC identity.
 
-An **attribute** is a named value. An account attribute belongs to a source account, such as its department. An **identity attribute** belongs to the ISC identity.
+A **mapping** specifies where an identity attribute gets its value. It can select an account field from a source or use supported calculation logic.
 
-A **mapping** specifies how a value supplies an identity attribute. It can select an account field from a source or use supported calculation logic.
+For a simple new-person arrangement, assume a valid employee record is available. Its source is configured with an identity profile, the required mappings are present, and their inputs supply the required identity values.
 
-Consider a simple new-person arrangement. The personnel system has a valid employee record, its authoritative source has an identity profile, and the configured inputs satisfy the required identity values.
+Aggregation brings in that account data. Under the configured arrangement and applicable processing, ISC can establish the identity and populate its mapped values. Marking a source authoritative is therefore only part of the setup: the profile, mappings and usable data complete the intended arrangement.
 
-Aggregation brings in the record. Under that configured arrangement and applicable processing, ISC can establish the identity and populate its mapped values.
-
-Additional collected application accounts can then be matched to their owner. Their ownership association has a different purpose from establishing the person through the authoritative arrangement.
+Additional application accounts can then be associated with the existing person. **Account correlation** matches collected source accounts to identities under configured comparisons.
 
 ```text
 Authoritative account + identity profile
@@ -47,137 +45,135 @@ Authoritative account + identity profile
                  |
 Additional collected application accounts
 
-Arrows show different relationships.
+The arrows show different relationships.
 ```
 
-The arrows show the different relationships. They aren't a private execution sequence, a fixed schedule or a guarantee that every record creates a complete identity and every additional account matches.
+The first relationship establishes the person through the source and profile. The second connects other accounts to that person. The diagram isn't a private execution order, fixed schedule or guarantee that every collected record creates a valid identity and every additional account matches.
 
-Marking a source authoritative isn't the whole onboarding design. The profile, required mappings and usable data must also exist.
+A **non-authoritative source** isn't designated as that profile-backed origin. It can supply additional accounts and data to associate with people established through the organization's authoritative arrangements.
 
-**Account correlation** matches and associates a collected source account with the appropriate ISC identity under configured comparisons. It doesn't turn every business application's inventory into the personnel origin for new identities.
+### What if an application account arrives before it can be matched?
 
-A **non-authoritative source** isn't designated as that profile-backed identity origin. Its accounts can be associated with identities established through the organization's authoritative arrangements.
+An **uncorrelated account** has been collected but hasn't been matched to an established authoritative identity representing its owner.
 
-## Unmatched account data can still have a representation
+ISC can use a **shadow identity**, a placeholder representation for uncorrelated account data. That representation isn't the same result as successfully establishing the intended person through an authoritative profile.
 
-An **uncorrelated account** has been collected without being associated with the intended authoritative person identity.
+So “non-authoritative sources never have any identity representation” would be too absolute. Ask whether the source establishes the intended person through a profile or supplies additional account information for someone established elsewhere.
 
-ISC can use a **shadow identity**, a placeholder representation for uncorrelated account data. That isn't the same outcome as successfully establishing the intended person through an authoritative identity profile.
+An account can be read successfully while its ownership remains unresolved. An account associated with the wrong person has a different problem; it isn't uncorrelated merely because the association is incorrect.
 
-This explains why “non-authoritative sources never have any identity representation” is too absolute.
+## Choose the role according to the source's responsibility
 
-The useful question is whether this source is configured to establish the intended person identity or to supply additional accounts and data for people represented through another arrangement.
+A **Human Resources system**, or **HR system**, can supply employee records. A contractor register can supply another intended population.
 
-An application account collected before its owner can be matched need not be successfully associated merely because the read completed.
+A directory can also be authoritative when its accounts are the organization's chosen basis for identities. Authority isn't reserved for products called HR, and useful finance data doesn't automatically make a finance application's account list the right personnel origin.
 
-## A product name doesn't decide the source's role
+“Authoritative” describes a responsibility in the identity design. It isn't a security or data-quality score. Non-authoritative accounts and data can still need careful governance.
 
-A Human Resources system, or **HR system**, commonly supplies employment records. A contractor register can supply another intended population.
+It also isn't a measure of connector capability. A personnel source supplied through imported files can establish identities through its profile without automatically changing external accounts.
 
-A directory can also be authoritative when the organization's design makes its accounts the basis for identities. The role isn't reserved for systems named HR.
+**Provisioning** carries out supported account or access changes. A non-authoritative application source can support that work when its connector, configuration and external permissions allow it.
 
-Conversely, useful finance data doesn't automatically make the finance application's account inventory an appropriate personnel origin.
+Keep these questions distinct: “Which arrangement establishes this person?” and “Which integration can perform this account change?”
 
-Authority here isn't a security score. A non-authoritative source can provide useful data and accounts requiring governance.
+## Establish the overlap before deciding which profile applies
 
-It also isn't an operation-capability level. A file-fed personnel source can establish identities through its profile without automatically changing external accounts.
+Return to the department mismatch. The person has moved from contractor work into employee work, but both records remain present.
 
-**Provisioning** carries out supported account or access changes. A non-authoritative application source can support provisioning when its connector, configuration and external authority allow it.
+The hypothetical arrangement contains these accounts:
 
-## Give the overlapping records their separate responsibilities
-
-Now return to the department mismatch. The person has moved from contractor work into employee work, while both records remain present.
-
-Use these hypothetical records:
-
-| Source | Account | Responsibility in this design |
+| Source | Account | Responsibility here |
 |---|---|---|
 | Employee HR | `employee-record` | Authoritative source for the Employees identity profile |
 | Contractor Register | `contractor-record` | Authoritative source for the Contractors identity profile |
-| Corporate Directory | `directory-user` | Non-authoritative account source, corporate email input and configured directory-authentication source |
+| Corporate Directory | `directory-user` | Non-authoritative account source; supplies email and checks directory sign-in credentials |
 | Expense application | `expense-user` | Non-authoritative application-account and access information |
 
 Assume all four accounts have been collected and correctly associated with the same existing ISC identity. Both authoritative accounts already belong to it.
 
-They have distinct source-account identifiers and share an appropriate person reference, `workerRef = W-24`. Their association is a supplied fact under the approved matching design, not something inferred from similar names or the reference alone.
+Their external account identifiers are distinct. They share an appropriate person reference, `workerRef = W-24`, under the approved matching design. Their correct association is a supplied fact, rather than a conclusion drawn from similar names or the shared value alone.
 
-The employee account's department is Finance. The contractor account's department is Vendor Services.
+The employee account contains department Finance. The contractor account contains Vendor Services. Neither account value is missing.
 
-The business intent is to use the employee arrangement while both records overlap. That intent has to be reflected in configuration and verified processing. Newer HR data doesn't express the profile-selection policy by itself.
+The business wants the employee arrangement to apply while these records overlap. ISC needs configuration expressing that choice. The employee record being newer doesn't express the policy by itself.
 
-## One identity uses one applicable identity profile
+## Let priority select one applicable profile
 
-ISC associates an identity with one identity profile at a time.
+An identity uses one identity profile at a time. When it has accounts on multiple authoritative sources, ISC selects the highest-priority profile among those sources.
 
-When that identity has accounts on multiple authoritative sources, ISC uses the highest-priority profile among the authoritative sources holding its accounts.
+A **profile priority** is the ordering used for that selection. Lower numerical values have higher precedence: a profile at 10 takes precedence over one at 20.
 
-A **profile priority** is the ordering used for that selection. Lower numerical values have higher precedence.
+First establish applicability, then compare priority. A high-priority profile doesn't apply to every person simply because it exists. This identity must have the relevant authoritative account relationship.
 
-It isn't an administrator privilege, a rating of data quality or a command to merge people. A high-priority profile isn't applicable to everyone merely because it exists.
+By default, earlier-created profiles have higher priority. The first receives 10, the next 20, and the pattern continues. That creation order may no longer fit the intended employee-versus-contractor policy.
 
-By default, earlier-created profiles receive higher priority. That creation order doesn't necessarily match a later employee-versus-contractor policy.
-
-The supplied configuration and approved correction are:
+Here are the supplied settings and the later approved correction:
 
 | Profile | Initial priority | Priority after correction |
 |---|---|---|
 | Contractors | 10, higher precedence | 20, lower precedence |
 | Employees | 20, lower precedence | 10, higher precedence |
 
-These are the example's settings. They don't require every organization to use this particular population design.
+Initially, both authoritative accounts belong to this identity and Contractors has the higher priority. Contractors therefore supplies the applicable profile configuration.
 
-Initially, the identity has both relevant authoritative accounts, and Contractors has the higher priority. Contractors therefore applies.
+Reading Employee HR later doesn't change the selection rule into “last read wins.” Priority chooses the profile; the selected profile then provides the relevant mappings and settings.
 
-Loading the employee record later doesn't replace that rule with “last read wins.” Priority selects the profile; the selected profile then provides the relevant configuration.
+Priority also isn't permission to administer ISC, a data-quality rating or an identity-merging operation. If the two accounts were on separate identities, changing order wouldn't repair that relationship. The starting account associations need to be investigated separately.
 
-If the two accounts were on different identities, they wouldn't satisfy this example's starting condition. Priority isn't an identity-merging mechanism.
+The table describes this example's approved population design. It isn't a rule that every organization must rank employees and contractors this way.
 
-## Follow the selected profile to the department input
+## Follow the selected profile's department mapping
 
-In this supplied configuration:
+The supplied mappings are:
 
-- Contractors maps identity department from Contractor Register's department.
-- Employees maps identity department from Employee HR's department.
-- Both map identity email from the appropriate Corporate Directory account's mail value.
+- Contractors obtains identity department from Contractor Register's department.
+- Employees obtains identity department from Employee HR's department.
+- Both obtain identity email from the intended Corporate Directory account's mail value.
 
-Assume one intended directory account is available, its association is correct and those supported mappings are valid.
+Assume there is one intended directory account, its association is correct, and these supported mappings are valid.
 
-With Contractors selected, its department mapping reads Vendor Services. That produces Vendor Services on the identity.
+Let's trace the initial department result:
 
-HR can simultaneously contain Finance on `employee-record`. There is no contradiction: the source-account value and the processed identity value belong to different records, and the selected mapping explains the difference.
+1. This identity has both relevant authoritative accounts.
+2. Contractors has higher priority, so Contractors applies.
+3. Its department mapping selects the contractor account's department.
+4. That input contains Vendor Services.
+5. The evaluated identity department is Vendor Services.
 
-**Identity processing** evaluates the identity using relevant configuration, including its mapped attributes and applicable access logic.
+Meanwhile, `employee-record` still contains Finance. These values belong to different records. The HR value describes the source account; the identity value is produced through the selected profile's mapping.
 
-Another read can update available account data. Identity values still follow their configured mappings and relevant processing; aggregation order isn't a universal value-conflict rule.
+**Identity processing** evaluates identity data using the relevant configuration, including mapped attributes and applicable access logic.
 
-You can now diagnose the mismatch without changing correct HR data. Inspect the account relationships, selected profile, priority and actual mapping input.
+A new aggregation can update the account information available to that processing. The mapping still determines which input supplies department. Read timing isn't a universal conflict-resolution rule.
 
-## A priority correction can affect more than this department
+You can now investigate the mismatch without overwriting correct HR data. Check the account associations, applicable profile, priority, actual mapping and its input.
 
-A **lifecycle state** is a configured identity state used in identity-management and access behaviour, such as active or leaving arrangements.
+## Review what a priority change can affect
+
+A **lifecycle state** is a configured identity state used in identity-management and access behavior, such as an active or leaving arrangement.
 
 A **role** groups access for a business purpose and can have assignment conditions.
 
-If a mapped department or state changes, configured role and lifecycle logic can evaluate differently. A profile change can also change sign-in settings and other mappings.
+If department or state changes, configured role and lifecycle logic can evaluate differently. A different profile can also bring different sign-in settings and other attribute mappings.
 
-That is why priority is a population configuration decision. Its impact isn't limited to the one identity used to demonstrate the mismatch.
+Priority is population configuration. Changing it can affect other identities with the same overlap, rather than only the person used to demonstrate the mismatch.
 
-Assume responsible owners assess the overlapping population and approve Employees taking precedence. They use the supported configuration and processing path.
+Assume the responsible owners assess those effects and approve Employees taking precedence. They use the supported configuration and processing path.
 
-The source-account values and their identity associations remain unchanged. Supplied verification now shows the same identity associated with Employees and department Finance from HR.
+The underlying account values and their identity associations remain unchanged. The supplied verification now shows the same identity using Employees, with department Finance from HR. Its email remains `person@corp.example` from Corporate Directory.
 
-Its email remains `person@corp.example` from Corporate Directory.
+The correction changes which profile supplies the rules. It doesn't need to falsify Vendor Services on the contractor record or create another identity.
 
-This is the observed result supplied for this example, not a guarantee that every population migration preserves every relationship automatically.
+Verify the saved order, actual profile association, account relationships, mapping inputs and processed values. The preserved relationships are supplied outcomes in this example, not a guarantee that every migration preserves every relationship automatically.
 
-Confirm the intended account associations, saved order, actual profile association, mapping inputs and processed identity values. If access changes were expected, continue to their delivery evidence rather than treating a correct department as completed target provisioning.
+If access changes were also expected, continue into the account-operation and target evidence. A correct department is an identity-side result; it isn't proof that application access has been delivered.
 
-## The identity's origin doesn't have to supply every value
+## Use other sources for values without giving them the identity-origin role
 
-The Employees profile can obtain department from HR and email from a non-authoritative directory through supported mappings.
+The Employees profile obtains department from HR and email from a non-authoritative directory.
 
 ```text
-Employees profile selects inputs
+Employees profile supplies the mappings
   |
   +-- HR department: Finance
   |       |
@@ -189,24 +185,24 @@ Employees profile selects inputs
           v
       Identity email
 
-Two mappings, not two active profiles.
+One applicable profile, two inputs.
 ```
 
-The branches show two configured inputs to identity values. They aren't two active identity profiles or a search across every source for whichever value arrived most recently.
+The source used to establish the identity doesn't have to supply every attribute. Corporate Directory can provide the configured email input without becoming authoritative.
 
-Corporate Directory doesn't need to become authoritative just to provide that email input.
+The diagram shows two mappings in one applicable profile. It doesn't show two simultaneously active profiles or a search for whichever source value arrived last.
 
 A **transform** calculates or formats a value using supported logic. A **fallback** is an explicitly designed alternative when a preferred input cannot be used.
 
-For example, a design can specify how another input is considered when the preferred value is missing. That behaviour belongs in the supported mapping or calculation and its conditions.
+For example, a mapping design can test whether its preferred input is available, then use a specified alternative under the supported conditions. That behavior must exist in the mapping or calculation.
 
-Profile priority doesn't automatically make Contractors a per-field fallback provider when an Employees mapping lacks a value.
+Profile priority doesn't automatically turn Contractors into a per-field fallback provider when an Employees department or email mapping lacks a value.
 
-**Manager correlation** establishes an identity's relationship to its manager's identity through its configured matching mechanism. It isn't the same relationship as account ownership.
+**Manager correlation** establishes the relationship between a person's identity and their manager's identity using its configured matching. Account correlation instead identifies which person owns an account.
 
-Don't extend this department/email mapping example into a universal rule for manager relationships or every other identity relationship. Use the configuration for the particular relationship being established.
+Manager relationships have their own configuration and selection behavior. Don't infer their complete mechanism from the department/email example or generalize the ordinary attribute-mapping explanation to every relationship.
 
-## A successful read can still leave required identity values unresolved
+## Check required identity values separately from successful collection
 
 ISC requires these identity attributes to be mapped and populated:
 
@@ -214,143 +210,145 @@ ISC requires these identity attributes to be mapped and populated:
 - **Work Email**, `email`.
 - **Last Name**, `lastname`.
 
-User Name must be unique across identities from all identity profiles. A unique external account name within one source doesn't establish that identity-wide requirement.
+User Name must be unique across identities from all identity profiles. An external account name that is unique within one source doesn't establish that identity-wide uniqueness.
 
-An **identity exception** reports a problem such as missing required values or a duplicate User Name.
+An **identity exception** reports a problem such as a missing required value or duplicate User Name.
 
-**Null** means no value is supplied. If the email mapping returns null, successful account collection doesn't make that identity value complete.
+**Null** means no value is supplied. Suppose aggregation succeeds, but the Employees email mapping returns null. The account data was collected; the required identity email is still unresolved.
 
-Suppose the Employees email input is unavailable while a lower-priority source contains another address. Inspect the selected mapping, available account data and any explicitly configured alternative. Priority alone doesn't route that address into email.
+An address on a lower-priority source doesn't automatically fill that gap. Inspect the selected mapping, available account data and any explicitly configured alternative.
 
-An **account schema** describes the represented fields on account records. A field defined in that schema doesn't prove the account currently has a usable value.
+An **account schema** describes the fields represented on account records. Defining a mail field in the schema doesn't establish that the relevant directory account currently has a usable mail value.
 
-Resolve the responsible data or mapping issue through the supported process. Don't invent an address to suppress the exception.
+Correct the responsible data or supported mapping. Inventing an address to silence the exception wouldn't repair the missing business information.
 
-The documented required-value check demands a non-null Work Email; it doesn't validate that value as an email address. Passing this check therefore doesn't prove a correct format, deliverability or suitability for sign-in and notifications.
+The documented required-value check also has a specific limit: Work Email must be non-null, but that check doesn't validate it as an email address. Passing it doesn't establish correct format, deliverability or suitability for sign-in and notifications.
 
-## The authentication source checks a different kind of proof
+## Find the source that checks the sign-in credential
 
-A **credential** supplies proof for an accepted identity or access context. **Authentication** checks the required proof.
+A **credential** provides proof used in an authentication check, such as a password. **Authentication** checks the required proof.
 
-An **authentication source** is the supported source configured to check user credentials in ISC's **Directory Connection** arrangement, also called **pass-through authentication**, or **PTA**.
+An **authentication source** is a supported source configured to check user credentials in ISC's **Directory Connection** arrangement, also called **pass-through authentication**, or **PTA**.
 
-In the example, Corporate Directory has that role. Assume the relevant connection and the intended directory account are configured correctly.
+In this example, Corporate Directory has that role. Assume its connection and the intended directory account have been configured correctly and the relevant accounts have already been collected.
 
-The employee/profile arrangement establishes the person while the directory checks their directory-based sign-in credential.
+The employee/profile arrangement establishes the person. The authentication integration checks the person's directory credential for this sign-in path. Those jobs can belong to different sources.
 
-If that directory connection becomes unavailable, making HR authoritative doesn't provide an alternative credential check. Investigate the actual authentication dependency.
+If the directory connection becomes unavailable, making HR authoritative doesn't supply a replacement credential check. Follow the actual authentication dependency and its reported failure.
 
-**Single sign-on**, or **SSO**, is a configured arrangement allowing participating services to rely on an established authentication relationship. Its trust and operation are separate from identity establishment.
+**Single sign-on**, or **SSO**, lets participating services use an established authentication relationship under a configured trust arrangement. It has its own configuration and operation.
 
-Making a source authoritative doesn't copy its users' passwords into ISC or configure SSO for every application. No SSO route is added to this example's PTA path merely because the person has an authoritative HR account.
+Making a source authoritative doesn't copy users' passwords into ISC or configure SSO for every application. The PTA example doesn't acquire an SSO route simply because HR is authoritative.
 
-Profile settings can influence sign-in, so profile changes need authentication impact review. That doesn't make identity origin, attribute sourcing and credential checking interchangeable.
+A profile change can affect sign-in settings, which is why it needs an authentication impact review. That connection doesn't make identity origin, attribute input and credential checking interchangeable.
 
-## Identity authority doesn't supply target write authority
+## Establish target authority for an account change
 
-The **target** is the external system where an account operation would occur. **Authorization** determines what the accepted caller may do there.
+The **target** is the external system where an account operation would occur. **Authorization** determines whether the accepted caller may perform an action there.
 
-The connector needs supported operation capability, correct destination, applicable configuration and the required target authority. Its integration credential has a different purpose from the employee identity receiving access.
+The connector needs support for the operation, the correct destination, applicable configuration and the required target permissions. Its integration credential is used to act in the target; it isn't the employee identity receiving the access.
 
-A **read-only source** collects supported data without configured automatic target changes. Authoritative designation doesn't add an unimplemented account-create operation or provide external privileges.
+A **read-only source** collects supported information without configured automatic target changes. Authoritative designation doesn't implement a missing account-create operation or grant the integration extra target privileges.
 
-Conversely, a source can stay non-authoritative while supporting approved account creation and permission changes.
+A non-authoritative source can still support approved account creation and permission changes. The source's identity responsibility and its supported operations answer different questions.
 
-An **access profile** bundles entitlements from one source. It differs from an identity profile: the access profile groups access, while the identity profile configures identities and their mapped values and settings.
+An **access profile** bundles entitlements from one source. An **identity profile** configures identities, mapped values and related settings. The similar names don't make them interchangeable.
 
-Applicable roles, lifecycle configuration and requests can drive access changes. Having an authoritative account doesn't assign every application permission automatically.
+An **access request** asks for specified access for a recipient.
 
-Identity processing can initiate provisioning work without validating that the target change succeeded. A correct Employees association and calculated Finance department establish identity-side results. The account operation and target effect need their own evidence.
+Applicable roles, lifecycle configuration and access requests can drive account changes. Having an authoritative account doesn't automatically grant every application permission.
 
-## A changed status isn't a removed authoritative account
+Identity processing can initiate provisioning without validating that delivery succeeded. Follow the account action and target result when confirming access. Employees selected and Finance calculated establish identity-side outcomes, rather than completed external changes.
 
-The selection rule concerns the identity's authoritative-account relationships.
+## Distinguish a status change from removal of an authoritative account
 
-Suppose the employee account remains associated while its employment-status value changes. That value change alone isn't removal of the account relationship.
+Suppose the employee account remains associated, but its employment-status value changes.
 
-Don't declare Contractors selected without inspecting the actual profile association and relevant processing or lifecycle configuration.
+The authoritative-account relationship still exists. The changed attribute alone doesn't establish that Contractors now applies. Inspect the actual profile association and relevant lifecycle and processing configuration.
 
-A temporary source outage also doesn't establish that its authoritative accounts were deleted.
+Likewise, a temporary source outage isn't evidence that its authoritative accounts were deleted.
 
-Under the documented full-aggregation and account-deletion conditions, removal of an authoritative account can lead to reassessment. If another authoritative account remains, the identity can be reassigned to the appropriate remaining profile and its values recalculated.
+A different situation arises when the authoritative account is deleted externally. A supported full source aggregation with account deletion enabled can remove its ISC representation, subject to the applicable deletion safeguards. ISC then reassesses the identity's profile association.
 
-If no authoritative account remains, deletion or **hidden-identity** handling has additional conditions. A hidden identity can be retained when dependencies block deletion, rather than remaining a normal profile-backed identity in the usual identity view.
+If another authoritative account remains, the identity can move to the appropriate remaining profile and its values can be recalculated using that profile's mappings. This is a change in the account relationships, not merely a changed employment-status value.
 
-None of that establishes universal immediate removal of every external account.
+If no authoritative account remains, deletion or **hidden-identity** handling has additional conditions. A hidden identity is retained when dependencies prevent deletion; it lacks the normal profile connection and doesn't appear in the usual Identities view. Other accounts or ownership responsibilities are examples of dependencies that can matter.
 
-**Deprovisioning** removes or reduces external access through applicable account-changing behaviour. A profile association change or disappearance from one personnel feed doesn't by itself prove that permissions or sessions ended.
+That retained or deleted identity state doesn't establish that every external account or session ended.
 
-Deleting an identity profile is also a different action. The documented consequences can include making its source non-authoritative, deleting identities unless reassignment is possible and leaving accounts uncorrelated. It doesn't delete the source or its account records, and doesn't itself deprovision the external accounts.
+**Deprovisioning** removes or reduces access through applicable account-changing behavior. A profile change or disappearance from a personnel feed isn't itself evidence of completed deprovisioning.
 
-Use a planned change for those consequences. Profile deletion isn't a way to diagnose the department mismatch.
+### Deleting the profile is another operation again
 
-## Use each screen to answer a specific question
+Deleting an identity profile can make its account source non-authoritative and delete its identities unless they can be reassigned. Accounts associated with deleted identities become uncorrelated.
 
-The **user interface**, or **UI**, displays configuration and represented state. The **frontend** is the interaction the user sees; the **backend** performs the relevant hosted processing.
+The documented operation doesn't delete the source or its ISC account records, and doesn't itself deprovision the external accounts.
 
-The identity-profile view can show priorities, exceptions and processing status. Mapping previews evaluate selected values using available data.
+Those effects need a planned change. Deleting a profile is a poor diagnostic action for our department mismatch: it changes the identity-establishment arrangement rather than correcting the demonstrated priority and mapping choice.
 
-A **preview** shows that evaluation. It isn't evidence that every affected identity has been processed or that external access changed.
+## Connect the screens to the processing they show
 
-**Needs Processing** indicates that relevant profile configuration still needs the supported processing step. Saving a mapping and confirming a calculated preview aren't substitutes for verifying its applied outcome.
+The **user interface**, or **UI**, displays configuration and represented state. The **frontend** is the browser interaction; the **backend** performs the relevant hosted processing.
 
-For the department incident, connect these observations: collected accounts and associations, the identity's actual profile, relevant priorities, the selected mapping and its inputs, then the processed value.
+The identity-profile view can show priorities, exceptions and processing status. A mapping **preview** evaluates selected values using the available data.
 
-If the reported problem is missing application access, continue into delivery evidence. If it is failed sign-in, inspect the configured authentication path.
+A preview helps you inspect a calculation. It doesn't establish that every affected identity has been processed or that target access has changed.
 
-Those investigations can concern the same person while requiring different records and actions.
+**Needs Processing** indicates that relevant profile configuration still needs the supported processing step. Saving a mapping, previewing its result and verifying the applied identity value are different observations.
+
+For the department incident, connect the collected account data and associations to the actual profile, relevant priorities, selected mapping, its inputs and the processed department.
+
+If the reported problem concerns application access, continue into delivery evidence. If it concerns sign-in, inspect the authentication path. The same person can be involved while the responsible configuration and evidence differ.
 
 ## Work through these situations
 
-Each case supplies a separate variation.
-
 ### 1. HR says Finance, but Contractors applies
 
-Both authoritative accounts are on the same intended identity. Contractors has priority 10 and Employees 20. Contractors maps department from the register's Vendor Services value.
+Both authoritative accounts belong to the same intended identity. Contractors has priority 10 and Employees 20. Contractors maps department from the register's Vendor Services value.
 
 Should another HR aggregation force Finance onto the identity?
 
-**Worked reasoning:** No. The supplied profile choice and mapping explain Vendor Services. Check the approved priority design and processing impact. A newer authoritative-account read doesn't override that configuration or justify changing correct HR data.
+**Worked reasoning:** The selected profile and mapping explain Vendor Services. Check the approved priority design and processing impact. A newer read doesn't override that configuration, and changing correct HR data would address the wrong input.
 
 ### 2. The directory supplies email without being authoritative
 
-Employees uses the correct directory account's mail value, and the supported mapping produces `person@corp.example`.
+Employees maps the correct directory account's mail value and produces `person@corp.example`.
 
 Must Corporate Directory become authoritative?
 
-**Worked reasoning:** No. Identity establishment and a particular attribute input are separate responsibilities. The applicable profile can use that supported input without making directory accounts the origin of employee identities.
+**Worked reasoning:** No. The profile can use that supported attribute input while the employee arrangement establishes the identity. Providing a value and supplying the authoritative origin are separate responsibilities.
 
-### 3. The required email value is missing
+### 3. The required email is missing
 
-Collection succeeds, but the email mapping produces null and an identity exception reports missing email. Another address exists on a lower-priority source.
+Collection succeeds, but the email mapping returns null and an identity exception reports missing email. Another address exists on a lower-priority source.
 
 Will priority automatically supply it?
 
-**Worked reasoning:** No. Inspect the selected profile's mapping, available input and explicit fallback logic. Collection didn't resolve the required value. Correct the responsible data or supported mapping rather than assuming cross-profile fallback.
+**Worked reasoning:** Inspect the selected profile's mapping, available input and explicit fallback logic. The required value is unresolved. Priority doesn't implement an alternative per-field input merely because another source has an address.
 
-### 4. The authoritative accounts are on different identities
+### 4. The authoritative accounts are on separate identities
 
-The employee and contractor records concern the same confirmed person, but were incorrectly associated with separate identities. Someone proposes changing priority to merge them.
+The employee and contractor records concern the same confirmed person, but were incorrectly associated with different identities. Someone proposes changing priority to merge them.
 
 Does priority repair that relationship?
 
-**Worked reasoning:** No. Priority selects among relevant authoritative accounts associated with an identity. Investigate identifiers, matching and account associations through the supported duplicate-identity correction process. A population-wide order change isn't a general merge operation.
+**Worked reasoning:** No. Priority selects among the relevant authoritative accounts associated with an identity. Investigate identifiers, matching and account associations through supported duplicate-identity correction. A population-wide order change isn't a general merge operation.
 
 ### 5. HR is authoritative, but PTA fails
 
-Employees is correctly associated and mapped values are valid. The configured directory authentication connection is unavailable.
+Employees applies and the mapped values are valid. The configured directory authentication connection is unavailable.
 
 Does HR authority bypass that dependency?
 
-**Worked reasoning:** No. Follow the separate credential-check path and its reported failure. Identity origin doesn't implement replacement authentication.
+**Worked reasoning:** No. Investigate the configured directory credential-check path. The identity's origin doesn't provide replacement authentication when that integration is unavailable.
 
 ### 6. A read-only application is made authoritative to obtain writes
 
-A separate connector supports only reads. The proposal is to make its source authoritative so it can create target accounts.
+A separate connector supports only reads. Someone proposes making its source authoritative so it can create target accounts.
 
 Does that implement account creation?
 
-**Worked reasoning:** No. It changes identity-establishment responsibility, with potential population consequences. It doesn't add connector capability, provisioning configuration or target privilege. Establish a supported approved change design instead.
+**Worked reasoning:** No. It changes identity-establishment responsibility and can affect the population. Connector capability, provisioning configuration and target privilege are still required for the write. Establish a supported approved design for that work.
 
 ### 7. Employment status changes while the account remains
 
@@ -358,13 +356,13 @@ The employee account remains associated, Employees has higher priority, and an e
 
 Must Contractors now apply?
 
-**Worked reasoning:** No. A changed attribute isn't the removal of the authoritative-account relationship. Inspect configured lifecycle/processing behaviour and the observed profile association. Neither automatic profile fallback nor completed external removal follows from these facts.
+**Worked reasoning:** No. A changed attribute isn't removal of the authoritative-account relationship. Inspect lifecycle and processing behavior and the observed profile association. These facts establish neither automatic profile fallback nor completed external removal.
 
 ## Review an acquisition design
 
-A team proposes making an acquired directory authoritative alongside its existing employee HR profile and letting whichever source aggregates last decide the person and values.
+A team proposes making an acquired directory authoritative alongside its existing employee HR profile, then letting whichever source aggregates last decide the person and values.
 
-What needs to be defined?
+What would you ask the design to define?
 
 **Worked reasoning:** Establish which records identify each intended population, where people overlap and how stable identifiers and supported correlation preserve the intended person relationships.
 
@@ -372,6 +370,6 @@ Where one identity has both authoritative accounts, define applicable profile pr
 
 Specify each profile's attribute inputs, required values, unique identity usernames, usable email and explicitly designed fallback.
 
-Keep authentication and external operation authority separate. Assess sign-in, lifecycle, role and provisioning effects before applying changes, then verify identity-side and target-side results with their own evidence.
+Assess the effects on sign-in, lifecycle behavior, roles and provisioning before applying changes. Keep credential checking and target operation authority separate, then verify identity-side and external results with their own evidence.
 
-Explain the design through its decisions: the authoritative source/profile arrangement establishes the identity; priority selects the applicable profile when accounts overlap; mappings produce values; correlation connects accounts; and authentication and provisioning follow their configured paths.
+Explain how the responsibilities connect: the authoritative source and profile establish the person; account relationships and priority determine the applicable profile; mappings produce values; correlation connects accounts; and authentication and provisioning follow their configured paths.

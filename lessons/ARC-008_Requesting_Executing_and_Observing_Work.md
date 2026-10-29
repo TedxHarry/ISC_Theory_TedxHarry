@@ -1,311 +1,309 @@
 # The request was accepted. What actually finished?
 
-SailPoint Identity Security Cloud (ISC) accepts a person's request for access. Its required approval is recorded. The person opens an account page and still can't see the access they expected.
+A person requests access through SailPoint Identity Security Cloud (ISC). The request is approved. They open an account page, but the access they expected isn't there.
 
-Should you submit again, repair the connection or wait?
+What should you investigate first?
 
-First find out what the page and the other records describe. A decision to allow access, an attempt to change an account and a later reading of that account are different events. You need to connect them before choosing the next action.
+Start with what each result tells you. Acceptance tells you that ISC has received work to process. Approval tells you that the required decision has been made. An account page shows information about an account. To understand what happened, you need to connect those results to the actual account change.
 
-## Begin with the result the person needs
+## Establish what needs to change
 
-Suppose a person needs to read stock information and export it for planning. Their existing production account, `stock-user`, has neither permission.
+Suppose a person needs to read stock information and export it for planning. Their existing account, `stock-user`, has neither permission. The required result is both permissions on that account in production.
 
-An **identity** is ISC's person-level record. An **account** is a record in another system, with ISC keeping a representation of it.
+An **account** is a record a system uses for a user. An **identity** is ISC's record for the person. ISC keeps information about external accounts and associates them with identities. The external account continues to exist in its own system.
 
-A **source** is ISC's configured representation of a connection and its account data. A **connector** is integration software that reads information and performs supported operations. The external system is the **target**.
+That association is **account correlation**. It tells ISC whose account it has collected. Associating `stock-user` with the person gives ISC the ownership relationship; granting a permission is separate work.
 
-The source **Stock-Production** points to the intended production system. Assume `stock-user` already exists, is eligible for the intended change, and is associated with the correct ISC identity.
+ISC's **source** configuration represents the connected system and its account data. A **connector** is the integration software that communicates with that system to read information and perform supported changes. The external system receiving the change is the **target**.
 
-That account-to-identity association is **account correlation**. Correct correlation establishes whose account is represented; it doesn't grant access.
+Here, **Stock-Production** is the source connected to the intended production target. Assume `stock-user` exists there, is correctly associated with the identity, and is eligible for the change.
 
-An **entitlement** is an access item represented from a source. In this hypothetical target, `stock.read` permits reading stock information and `stock.export` permits exporting it.
+An **entitlement** is an access item ISC represents from a source. In this hypothetical target, `stock.read` permits reading stock information; `stock.export` permits exporting it. Reading and exporting are separate capabilities, so possessing only the first won't satisfy the planning requirement.
 
-An **access profile** bundles related entitlements from one source. The **Read and export stock** profile contains those two entitlements.
+An **access profile** groups related entitlements from one source. The **Read and export stock** profile contains these two permissions from Stock-Production. It gives the person a meaningful item to request while identifying the underlying access that must be delivered.
 
-An **access request** asks for specified access for a recipient. Here, the person requests that profile for themselves. The required result is both permissions on `stock-user` in production.
+An **access request** asks for specified access for a **recipient**, the person or entity receiving it. Here, the person requests the profile for themselves.
 
-Assume the profile is requestable for this person, applicable checks allow the request, and required review is configured. The source supports automatic delivery to the intended existing account. There is no missing-account dependency, future activation date, custom script or person who must make the external change in this example.
+For the main example, the profile is available for this person to request, the applicable checks allow it, and required review is configured. The source supports automatically granting these permissions to the existing account. No account needs creating, no future activation date applies, and no custom script or manual fulfiller is needed.
 
-## Follow the successful path before interpreting a failure
+## Follow the request all the way to usable access
 
-The request first needs to be submitted and accepted for processing. It must pass the applicable checks and required review.
+Let's first follow a successful attempt under those conditions.
 
-An **approval** records the required reviewer's decision for the relevant access and recipient. It permits the request to proceed under that configuration; it doesn't perform the target change.
+The person submits the intended request. ISC accepts it for processing and carries out the applicable checks and required review. An **approval** records the required reviewer's decision about this access for this recipient. That decision allows the work to proceed under the configuration.
 
-**Provisioning** is the work of carrying out account or access changes. When the request's required decisions and delivery conditions are satisfied, supported provisioning can address the intended account.
+The approval doesn't itself edit the stock system. **Provisioning** is the work that carries out account or access changes. Once the required decisions and delivery conditions are satisfied, the supported provisioning path can make the account change.
 
-The connector uses its configured path and external authority. In this example, the integration actor `svc-stock` performs the target operation. The account `stock-user` receives the permissions.
+In this setup, the connector uses the integration account `svc-stock` to act in the target. `stock-user` receives the permissions. Keep those accounts separate: one performs the technical operation, while the other is being changed.
 
-Under successful conditions, the target accepts and applies both required permissions, and the integration returns the relevant result. The engineer then checks that the intended account holds them and that the required business use works under the agreed validation process.
+The target accepts the operation and applies both required permissions. The integration returns the relevant result to ISC. The engineer then verifies the permissions on the intended production account and checks the required planning use through the agreed validation process.
 
 ```text
-Submit intended access request
+Submit the intended request
         |
         v
-Applicable checks and required approval
+Applicable checks and required review
         |
         v
-Supported account-change work
+Provisioning uses the connector
         |
         v
-Target applies required permissions
+Target grants both permissions
         |
         v
-Engineer verifies intended result
+Engineer verifies account and use
 
-Successful path; each result has scope.
+Successful example; verification is
+a separate check of the intended result.
 ```
 
-The arrows connect the responsibilities and intended stages. They don't describe private services, guarantee success or promise that ISC automatically performs the final target and business tests.
+The arrows connect responsibilities in this successful example. They don't expose ISC's private service layout or promise that ISC automatically performs the final account inspection and business test.
 
-**Authorization** determines whether a caller may perform an action on a resource. The reviewer's business approval and the integration actor's target authorization answer different questions.
+Why can approval succeed while delivery fails? **Authorization** determines whether a caller, the person or software making an operation, is permitted to act on a resource. The reviewer decides whether the person should receive access. The target separately decides whether `svc-stock` may assign it. The business decision doesn't supply a missing target privilege.
 
-A correct approval can therefore be followed by a target refusal. Conversely, while required approval is still pending, repairing a connector can't supply that decision.
+The same reasoning works in the other direction. If required approval is pending, repairing the connector won't provide the reviewer's decision. First identify the stage waiting for something.
 
-## An accepted interaction can finish before the work does
+## Understand why the submission can finish first
 
-The **user interface**, or **UI**, is the set of pages and controls a person uses. The **frontend** is the browser-facing interaction; the **backend** is the hosted processing behind it.
+A person can submit through the **user interface**, or **UI**, the pages and controls they interact with. Software can use an **application programming interface**, or **API**, to submit supported work.
 
-An **application programming interface**, or **API**, lets software request supported information or actions. Its **contract** documents required input, caller permissions, response and behaviour.
+An API's **contract** describes the input, permissions and behavior expected for an operation, including its responses. An authorized API call and a UI action can be alternative ways to ask for the same business access. They still have to satisfy the applicable request conditions. Their forms, responses and underlying calls needn't be identical.
 
-A UI action and an authorized API call can be alternative ways to submit the intended request. They don't promise identical forms, internal calls or responses, and neither removes the applicable request conditions.
+The **frontend** is the browser-facing interaction. The **backend** performs the service's processing behind it. The browser doesn't have to remain open throughout all the later processing.
 
-The supported access-request submission API is **asynchronous**: its initiating interaction can finish before the requested processing finishes.
+The supported access-request submission API processes requests **asynchronously**. That means the interaction submitting the work can finish while the requested processing continues.
 
-Its documented successful response, **202 Accepted**, means the request was submitted and queued for processing. A **queue** holds work awaiting processing. That explains acceptance without completion; it doesn't reveal ISC's private queue layout, processing priority or completion time.
+Its successful **202 Accepted** response means the request has been submitted and queued for processing. A **queue** holds work awaiting processing. ISC can acknowledge receiving the work before the decisions and account changes have finished. That acknowledgment doesn't promise a completion time or tell you the service's private queue arrangement.
 
-Keep returned tracking information and the relevant references available through supported request tracking. A **request reference** identifies tracked work, separately from the access profile, recipient and account.
+Keep the returned tracking information and relevant references available through supported tracking. A **request reference** identifies the tracked work. It serves a different purpose from the identity reference, access-profile reference or external account name.
 
-A **status query** asks for the reported condition of existing work. It doesn't submit a second request.
+A **status query** asks what is reported about work that already exists. Use it to follow the request rather than submitting another one simply to see what happens.
 
-Ending a client process or closing the browser doesn't by itself cancel accepted asynchronous work. Supported cancellation has its own stage and caller rules.
+Closing the browser or ending the program that submitted the request doesn't, by itself, cancel accepted work. Supported cancellation has its own caller and stage rules.
 
-A lost submission response creates a different problem: the caller hasn't established whether acceptance occurred. Don't assume a caller-side error means ISC received nothing. Use available references and supported tracking to reconcile the attempt before repeating it.
+There is another possibility: the program submits, then loses the response. You don't yet know whether ISC accepted the request. A failure seen by the submitting program isn't enough to conclude that ISC received nothing. Check available references and supported tracking before repeating the submission.
 
-## Find the record that describes the account change
+## Find the records for the delivery work
 
-An **account activity** is tracked account work in ISC. A **status** reports the condition or outcome of its record; a **stage** indicates progress within the relevant action.
+A request's review details help you understand its decisions. To understand the account change, inspect the related provisioning information.
 
-Request tracking can show review steps and errors. Account activity and provisioning-event details describe account work. The records can relate to the same requirement while describing different parts of it.
+An **account activity** records tracked account work in ISC. Its **status** describes the condition or outcome reported for that record. Its **stage** describes progress within the relevant action.
 
-Activity details can identify the action, requester, recipient, sources, last modification, stage, status and reported errors.
+Details can identify the action, requester, recipient, sources, last modification, stage, status and errors. The **requester** initiated the work; the recipient receives it. They are the same person in the self-request example. When someone requests for another person, those fields identify different people.
 
-The **requester** initiated the work. The **recipient** is the person or entity whose account it concerns. A person requesting for someone else gives those fields different purposes.
+Neither field automatically identifies the connector's target credential. The stock operation still uses `svc-stock`.
 
-Neither label alone identifies the connector's technical credential. For the stock change, the external operation still uses `svc-stock`.
+An **event** records something that happened. An **audit record** preserves activity for investigation. Related ISC operation details and target audit records help you connect the attempted change with its external effects.
 
-For this example, assume a supported **SaaS connector** executes the integration in SailPoint's hosted environment. **SaaS**, software as a service, means provider-operated hosted software.
+### Check the integration that actually performs this change
 
-A **Virtual Appliance**, or **VA**, is a customer-deployed virtual machine used for applicable integration work. A **virtual machine** is a software-defined computer using its host's resources.
+Assume this source uses a supported **SaaS connector** running in SailPoint's hosted environment. **SaaS**, software as a service, means software operated by its provider as a hosted service. This connector's ability to grant the stock permissions is part of the supplied setup.
 
-**IQService** is a Windows service used for particular supported Windows-side operations. A Windows service can run without an interactive desktop session.
+Other source configurations use a **Virtual Appliance**, or **VA**: a customer-deployed virtual machine used for the applicable integration work. A **virtual machine** is a software-defined computer that uses resources from its host.
 
-Those components matter only where the actual source and operation use them. This hosted example doesn't require a customer VA or IQService. Don't restart an unrelated component to respond to an unexplained status.
+Some supported Windows-side operations use **IQService**, a Windows service. A Windows service runs without requiring someone to keep an interactive desktop session open.
 
-An **event** records something that happened. An **audit record** preserves relevant activity for investigation. Target audit evidence helps determine which external effects occurred, alongside ISC's account-operation details.
+Investigate the components the actual operation uses. Our hosted stock example doesn't depend on a customer VA or IQService. If the target refuses this operation for missing authority, restarting one of those unrelated components won't supply that authority.
 
-## Read the evidence in time order
+## Compare a partial result with an older account view
 
-Now consider a separate attempt that reaches only part of the desired result.
+Now consider a separate attempt with the same starting requirement: neither permission is present. This attempt grants reading but fails to grant export.
 
-The hypothetical evidence below uses one day and **Coordinated Universal Time**, or **UTC**, a shared time reference. The times illustrate relationships, not service times or a promised entitlement execution order.
+The table supplies hypothetical evidence from one day in **Coordinated Universal Time**, or **UTC**, a shared time reference. These times help us relate the observations; they aren't processing-time promises.
 
-The trace supplies separate results for the two permission changes. It doesn't claim that every connector makes one network call or creates one activity per entitlement.
-
-| Time | Supplied evidence | What it establishes |
+| Time | Supplied evidence | What it tells you |
 |---|---|---|
-| 09:00 | A collection shows neither permission on the intended account | The earlier represented baseline |
-| 10:00 | The request is accepted for processing | Submission, not completed delivery |
-| 10:05 | Required approval is recorded for the profile | The configured decision has been made |
-| 10:06 | Related account-operation details and target audit confirm `stock.read` added to `stock-user` | The read component succeeded |
-| 10:06 | Export assignment is explicitly refused because `svc-stock` lacks the required target authority; target evidence confirms export absent | The export component didn't complete |
-| 10:08 | The inspected account view still reflects the supplied 09:00 collection | This view doesn't describe the later target change |
-| 10:20 | A successful collection includes this account and the relevant permission data: read present, export absent | A later represented state consistent with the partial result |
+| 09:00 | A collection shows neither permission on `stock-user` | The earlier represented account state |
+| 10:00 | ISC accepts the request for processing | The request has been submitted |
+| 10:05 | Required approval is recorded for the profile | The configured review decision is complete |
+| 10:06 | Related operation details and target audit confirm `stock.read` added to `stock-user` | Reading permission was delivered |
+| 10:06 | Export assignment is explicitly refused because `svc-stock` lacks the required target authority; target evidence confirms export absent | Export permission wasn't delivered |
+| 10:08 | The inspected account view still reflects the supplied 09:00 collection | That view describes the earlier account state |
+| 10:20 | A successful collection includes this account and relevant permission data, showing read present and export absent | The later represented state agrees with the partial result |
 
-At 10:08, the old page doesn't undo the read grant. At 10:20, the successful collection doesn't fix export.
+At 10:08, you have evidence that read was granted at 10:06, but you're looking at account data from 09:00. The older view doesn't erase the later grant.
 
-You can now make a precise statement: the profile request was approved, read was delivered, and export delivery failed for the supplied operation-authority reason.
+At 10:20, the new collection gives you a better representation of the target. It shows that read exists and export is missing. The collection has observed the problem; it hasn't performed the missing grant.
 
-Neither “everything succeeded” nor “nothing changed” fits that evidence.
+The two permission results are supplied evidence. They don't establish that every connector makes a separate network call or creates a separate activity for each entitlement.
 
-## A failed overall result can contain a successful change
+## Recognize the part that succeeded
 
-A **partial outcome** means part of the intended work happened while another part didn't.
+A **partial outcome** means part of the intended work happened while another part didn't. Here, `stock.read` remains on the target account and `stock.export` is absent.
 
-For the supplied attempt, the target retains `stock.read`. There is no evidence that the export refusal reversed it.
-
-**Rollback** means undoing earlier effects under a defined transaction or recovery mechanism. Don't assume a multi-step action or connector provides it.
+**Rollback** means undoing earlier effects using defined rules for reversing the work. The export refusal gives us no evidence of such a reversal. We must preserve the read result when planning recovery.
 
 ```text
-Required profile access
+Required access: read and export
         |
-        +-- stock.read --> Added
+        +-- stock.read ----> Present
         |
-        +-- stock.export --> Refused
-                               |
-                               v
-                     Export still missing
+        +-- stock.export --> Absent
+                              |
+                              v
+                    Export needs recovery
 
-Target result: read only, not nothing.
+Read succeeded; full requirement unmet.
 ```
 
-The branches show two required effects and their supplied outcomes. They don't prescribe simultaneous calls, a fixed packet order or two separate approvals.
+The branches show the required effects and observed outcomes. They don't prescribe parallel calls, a fixed order of network messages or a separate approval for each permission.
 
-The full business requirement is unmet because export is missing. That conclusion doesn't erase the read permission already present.
+The full requirement is unmet because the person still can't export. That is different from saying nothing changed. The distinction also matters for a request containing multiple items: inspect the relevant item and account results rather than applying one overall badge to every effect.
 
-The same reasoning applies when a request contains multiple items. One item's failure isn't proof that every other item failed. Inspect the relevant item and account effects rather than letting one overall badge answer every question.
+A useful incident statement is: “The profile request was approved. Reading was delivered to the production account. Export delivery was refused because the integration account lacked the required authority.”
 
-## Reading an account doesn't perform the missing write
+That gives the next engineer the remaining problem and the evidence behind it.
 
-**Aggregation** collects account or entitlement information into ISC. It updates the represented information within its applicable scope; it isn't a command to grant export.
+## Separate changing the target from reading it
 
-A **collection scope** defines which accounts and data a read includes. The 10:20 example explicitly includes `stock-user` and the relevant permission data.
-
-A successful run that excluded this account couldn't establish its later state. A source name or total account count alone doesn't settle the account-level question.
+**Aggregation** collects account or entitlement information into ISC. It updates represented information within the data it reads. Granting a permission changes the target; aggregation reads information from it.
 
 ```text
 ISC -- supported change --> Target
 
 ISC <-- collected data ---- Target
 
-Change and observation are separate.
+A change alters the account.
+A collection observes account data.
 ```
 
-The first arrow represents a supported target change. The second represents a later read into ISC. They are different directions of work, not a guaranteed immediate cycle.
+The arrows show different directions of work. They don't promise an immediate read after every write.
 
-This example's older view is a supplied fact. It doesn't mean every ISC view always waits for a full aggregation after every write. ISC has other supported ways to update represented information.
+The **collection scope** is the set of accounts and information included in a read. Our 10:20 collection explicitly includes `stock-user` and the relevant permission data. A successful run that excluded that account couldn't establish its later state. A total account count or familiar source label doesn't answer that account-specific question.
 
-An **identity attribute** is a named value on the person-level identity, such as department. It differs from a field on the represented source account.
+The older 10:08 view is a supplied fact about this attempt. ISC has other supported ways to update represented information; every write doesn't require a full aggregation before any view can change.
 
-The documented account-page **Aggregate Account** action reloads account-source changes without synchronizing the new data into identity attributes or performing provisioning. Its completion doesn't establish that a person-level value was recalculated.
+There is also a distinction between account data and person-level information. An **identity attribute** is a named value on the ISC identity, such as department. A field collected from an account and a department value calculated for the identity are different stored values.
 
-Keep that claim tied to the selected single-account action. “A read completed” isn't evidence that every downstream process ran.
+The documented account-page **Aggregate Account** action reloads changes from the account source into the related account data. It doesn't synchronize that new data into identity attributes or perform provisioning. Completing this selected single-account action therefore doesn't establish that an identity value was recalculated or access was granted.
 
-A browser refresh is narrower again: it reloads a view. It doesn't by itself start source aggregation, recalculate identity values or repeat provisioning.
+Keep that behavior tied to this action rather than applying it to every aggregation or identity-processing path.
 
-## Match the evidence to the question
+A browser refresh does less again: it reloads the view. Refreshing alone doesn't initiate source collection, recalculate identity values or repeat provisioning.
 
-A **task** or **job** tracks a unit of work under its own rules. Request review, account work, collection and human fulfillment can have different tracked objects.
+## Choose evidence that answers your question
 
-| Question | Useful evidence | Limit |
+A **task** or **job** tracks a unit of work under its own rules. The request, its account work, a collection and a human fulfillment task can have different records and completion meanings.
+
+| Question | Useful evidence | What still needs care |
 |---|---|---|
-| Was the request accepted, and what is it waiting for? | Request reference, status detail and review history | Acceptance or approval isn't target completion |
-| What account action ran? | Related activity/provisioning detail with account, source, operation and error context | Overall and component results have particular scopes |
-| Did the read include the intended account and data? | Aggregation history, scope and relevant account results | Run completion or counts alone don't prove every expected record |
-| What permissions are currently on the intended target account? | Authorized target inspection and relevant audit evidence | Wrong account, environment or observation time answers another question |
-| Can the person perform the required stock export? | An approved test in the intended user/application context | A sign-in or one visible page doesn't prove every permission |
+| Was the request accepted, and what is it waiting for? | Request reference, status detail and review history | Acceptance and approval describe earlier stages than target delivery |
+| What account change ran? | Related activity or provisioning details, including source, account, operation and errors | An overall result and a component result can describe different scopes |
+| Did collection read this account's relevant data? | Aggregation history, scope and account results | Run completion or counts alone don't establish inclusion |
+| What permissions are currently on the target account? | Authorized inspection of the intended target and relevant audit evidence | Confirm the account, environment and observation time |
+| Can the person perform the required export? | An approved test in the intended user and application context | A sign-in or one visible page doesn't test every required action |
 
-Request tracking, provisioning reports and aggregation history provide different windows into the work. Say what succeeded: “the collection completed” or “the export assignment was refused” gives the next engineer something they can act on.
+Request tracking, provisioning reports and aggregation history help with different questions. Say which operation succeeded when recording an outcome.
 
-A target permission check and a business-use check also differ. A required action can depend on application conditions beyond a recorded permission. Preserve the agreed scope of each test.
+The account check and the business-use check also serve different purposes. The target can show a permission assigned while the business action depends on another application condition. Record what each agreed test actually established.
 
-## Connect the records without inventing a relationship
+## Connect the right records at the right time
 
-An **object ID** identifies a particular ISC object. A display name is a label. A request reference and an activity reference identify different records.
+An **object ID** identifies a particular ISC object. A display name is its label. A request reference identifies request work, while an activity reference identifies activity work. These references aren't interchangeable.
 
-Follow recorded relationships and supported tracking information. Don't derive one ID from another or assume one request always means one account activity.
+Use recorded relationships and supported tracking to connect them. Don't derive one ID from another or assume each request produces exactly one account activity.
 
-Confirm the intended recipient, source, external account, operation, entitlement and time when relating evidence.
+Match the recipient, source, external account, operation, entitlement and time. If the operation updated another field or a similarly named test account, its success doesn't establish the required production export permission.
 
-A **tenant** is an organization's environment within ISC. Stock-Production is an ISC source label; the actual external production destination also needs to match.
+A **tenant** is the organization's environment within ISC. Stock-Production is a source label inside it. Confirm that its actual external destination is the intended production system too.
 
-A successful change on a similarly named test account doesn't establish the production result. Nor does a successful update of another field establish that export permission was granted.
+A record's **last-modified time** tells you when that record was updated. It isn't automatically the instant the target permission became effective. Request creation, target audit, collection and opening a page describe different events.
 
-A record's **last-modified time** concerns a change to that record. It isn't automatically the instant a target permission became effective.
+Compare timestamps in compatible time zones, then ask what event each measures. Converting them all to UTC makes comparison possible; it doesn't make them the same event.
 
-Compare time zones and what each timestamp measures. Request creation, target audit, data collection and the time you opened a page describe different events.
+## Investigate a missing result without assuming the work vanished
 
-## Missing from a view doesn't yet mean never attempted
+A **filter** narrows the results returned by a view or query. **Pagination** divides results into pages. A record outside the filter or on a later page can be missing from the page you're examining while still existing.
 
-A **filter** narrows returned results. **Pagination** divides results into pages. Viewing only one page can leave relevant work unseen.
+The population matters as well. “Requests submitted by this person” differs from “requests for this person” when someone else made the request on their behalf.
 
-The inspected population matters too. Requests submitted by a person differ from requests for that person when someone else acts on their behalf.
+Check the supported view or operation, tenant, caller permissions, requester/recipient meaning, time range, retained history, filters and pagination. Resolve the intended query using appropriate authorized access rather than increasing privileges to compensate for an unexplained empty list.
 
-Check the supported operation or view, tenant, caller rights, recipient/requester meaning, time range, retained history, filters and pagination. Resolve the intended query rather than expanding privileges to compensate for an unexplained result.
+Already-held access creates another possibility. The documented submission contract can cancel an equivalent request as a duplicate when the identity already has the access and the relevant account and end-date details are unchanged. The status-list contract also omits ignored requests for access already held.
 
-Already-held access needs different expectations. Under the documented access-request contracts, an equivalent request for existing access can be canceled as a duplicate, and ignored already-held requests aren't listed as ordinary new status entries.
+Check the selected contract and existing access before expecting a new delivery action. If the intended access already exists, another target write may be unnecessary.
 
-Check the selected contract and existing access. No new write is necessarily required to produce access that's already present. Its absence isn't automatically a failed connector.
+**Indexing** prepares represented information for retrieval through Search. Search has update-specific timing: information can change in another view before it is reflected in the search results.
 
-**Indexing** prepares represented information for retrieval by a search system. Different updates have documented Search timing behaviour; information needn't become searchable at the moment another view changes.
+When Search and a direct record view differ, compare their scope and update timing. Waiting can address a visibility delay; it won't repair the explicit export-privilege refusal in our partial example.
 
-If Search and a direct record view differ, compare scope and update timing before concluding the operation was lost. A waiting period isn't a cure for a known wrong-account or privilege defect either.
+Describe the evidence precisely: “I didn't find the activity in this view and time range.” That states what you inspected while leaving the remaining possibilities open.
 
-State the limit of the evidence: “The activity wasn't found in this view and time range.” That leaves room to investigate without claiming that ISC never attempted it.
+## Repairing a condition and recovering failed work are separate steps
 
-## Repair the prerequisite, then recover the work
+Return to the partial export attempt. At 11:00, the source owner makes an approved correction to `svc-stock`'s export-assignment authority.
 
-Return to the partial export attempt. Suppose the source owner makes an approved correction to `svc-stock`'s export-assignment authority at 11:00.
+That corrects the missing authority for a new attempt. That configuration repair doesn't establish that the earlier failed operation ran again.
 
-That restores a required condition. It doesn't establish that the earlier failed change ran again.
+A **retry** is another execution attempt. **Reconciliation** compares tracked work with actual state so you can identify what remains unresolved and choose supported recovery.
 
-A **retry** is another execution attempt. **Reconciliation** compares tracked work with actual state to establish what remains unresolved and how to recover it.
+Before another write, establish the completed effects, any work still running, the current request state and target state, and the operation's supported recovery options. Here, the confirmed read permission must be accounted for while the missing export is investigated.
 
-Before choosing recovery, identify completed effects, work still running, current request state, intended target state and the supported recovery options.
+Also check that the access is still authorized now. A withdrawn requirement or later approved removal changes what should happen next. The old approval doesn't justify blindly replaying the grant.
 
-Check that the access is still authorized now. If the requirement was withdrawn or access was later removed through an approved process, the old approval doesn't justify replaying the grant.
+A supported cancellation changes the handling of pending work. It doesn't establish that already-applied effects were reversed.
 
-Canceling pending work also doesn't establish reversal of effects already applied.
+ISC recognizes particular provisioning errors as retryable and can retry under the applicable conditions. A privilege correction alone isn't evidence that an automatic retry is scheduled. Check the actual error and recovery behavior rather than assuming one schedule applies to every connector operation.
 
-ISC recognizes particular provisioning errors as retryable, and supported automatic retries have applicable conditions. A privilege correction isn't evidence that an automatic retry is scheduled, and one connector's behaviour isn't a universal retry rule.
+### Work out what repeating the operation would do
 
-An operation is **idempotent** when repeating an equivalent request has the same intended target effect as one request.
+An operation is **idempotent** when repeating an equivalent request has the same intended target effect as performing it once.
 
-For example, a hypothetical operation defined as “ensure this named membership exists” can have that property if repetition leaves the same membership. An operation that creates another new record on each call has a different repeat effect. The actual contract, rather than the operation's friendly name, determines its behaviour.
+Consider a hypothetical operation defined as “ensure this named membership exists.” If repetition leaves that same membership present without creating another one, its intended membership effect is idempotent.
 
-Idempotence doesn't promise identical responses or no additional logs. Don't assume every ISC submission, connector action or script has this property.
+Compare an operation that creates a new record each time. Two calls can then create two records. Repeating after an uncertain first result has a different consequence.
 
-For this incident, preserve the confirmed read grant and resolve the missing export through supported recovery under the current authorized state. Deleting the account or repeatedly submitting the profile would introduce more work without establishing what remains necessary.
+The actual contract determines the repeat behavior. Idempotence doesn't require identical responses or prevent another log entry. It also isn't a property you can assume for every ISC submission, connector action or script.
 
-## Recovery creates new evidence without rewriting the past
+For the stock incident, identify supported recovery for the missing export under the current authorized state. Deleting the account or repeatedly requesting the entire profile adds work without first resolving what is already complete.
 
-Continue the hypothetical incident with these supplied observations:
+## Keep the recovery evidence alongside the original failure
+
+Continue the hypothetical timeline:
 
 - At 11:10, an approved supported recovery attempt reports that it added the missing `stock.export`.
 - At 11:12, authorized target inspection confirms both permissions on `stock-user` in production.
-- At 11:15, an approved user-context test confirms the required planning export works.
+- At 11:15, an approved test in the person's application context confirms the required planning export works.
 
-Those observations establish more than the 11:00 configuration repair. They describe a later attempt, current target state and required use.
+These observations add evidence in stages. The 11:00 change repaired a prerequisite. The 11:10 result describes a later delivery attempt. The 11:12 inspection confirms the account state. The 11:15 test confirms the required use.
 
-Keep the original failure and its relationship to the recovery evidence. Later success doesn't turn the failed attempt into a successful past event or guarantee every old badge changes.
+Keep the original failure and link it to the correction and recovery. Later success doesn't make the earlier failed attempt a successful past event or guarantee that every old status badge changes.
 
-Close the requirement using the agreed completion evidence. Record what failed, what correction and recovery followed, and what now confirms the result.
+Close the requirement using the agreed completion evidence, with a clear account of what failed, what was corrected, what recovery followed and what now works.
 
-## A timeout leaves the effect unresolved until evidence settles it
+## Treat a timeout as an unanswered question about the effect
 
 A **timeout** means an expected response didn't arrive within the allowed waiting period.
 
-The work could have failed before reaching the target, been rejected there, or taken effect before the response was lost. These are alternatives to investigate, not simultaneous facts about every timeout.
+The operation could have failed before contacting the target. The target could have rejected it. Or the target could have applied the change before the response was lost. The timeout alone doesn't tell you which happened.
 
-Compare tracked work with authorized target audit and current account evidence. If the effect already occurred, recovery must account for it. If the effect is absent, establish what work is still running and what supported action is appropriate.
+Compare tracked work with authorized target audit and current account evidence. If the effect is already present, account for it before another write. If it's absent, also determine whether work is still running and which supported action is appropriate.
 
-Neither “nothing happened” nor “everything completed” follows from the timeout alone. It also doesn't establish rollback.
+A timeout establishes a missing timely response. Evidence about the target establishes whether the intended effect occurred. Neither rollback nor “nothing happened” follows from the timeout alone.
 
-## Some changes are fulfilled by a person or a service desk
+## Recognize when another person performs the change
 
-**Manual fulfillment** means an assigned person makes the external change rather than the connector completing it automatically. A disconnected or file-fed arrangement can use tracked manual provisioning tasks.
+The main example uses automatic connector delivery. **Manual fulfillment** is a different arrangement: an assigned person makes the external change. Sources without an automatic change connection, including sources supplied through imported files, can use tracked manual provisioning tasks.
 
-A **ticket** is a tracked work record in a service-management system. **Ticket-based fulfillment** coordinates work through a supported integration with that system. These are alternative delivery arrangements, not extra stages every automated request must pass through.
+Such a task can describe the account, source and required change. Marking it complete records the fulfiller's completion assertion. The badge isn't an independent live inspection of the account.
 
-A manual task can identify the required account, source and change. Marking it complete records the fulfiller's completion assertion. That assertion isn't an independent live measurement of target state.
+A **ticket** is a tracked work record in a service-management system. **Ticket-based fulfillment** uses a supported integration to coordinate work through that system. Manual and ticket delivery are alternatives to the main automatic path, rather than additional stages every request must traverse.
 
-For a ticket integration, the configured mapping of ticket statuses can determine when ISC treats related provisioning work as complete. The meaning depends on that integration and mapping.
+For a ticket integration, configured status mappings can tell ISC when to treat related provisioning work as complete. The meaning depends on that integration and mapping.
 
-A ticket number establishes a ticket's existence. A mapped complete status establishes its configured tracking result. Neither alone proves the intended production account has the required permission.
+A ticket number tells you that a ticket exists. A mapped complete status tells you the configured tracking condition has been met. To establish the intended production permission, use the evidence agreed for that delivery arrangement.
 
-Use the completion evidence agreed for that arrangement. If target outcome isn't established, say so and follow up with the responsible fulfiller using the exact account and operation.
+If the target outcome is unresolved, follow up with the responsible fulfiller using the exact source, account and operation. A precise handoff is more useful than a general statement that “access failed.”
 
 ## Put the observations together
 
-Each case supplies a separate situation.
+### 1. Approved, but delivery is still in progress
 
-### 1. Approved, but no delivery result yet
-
-The request passed its required approval. Relevant work is still recorded as in progress. No account-level completion or target confirmation is supplied.
+The request passed required approval. Related work is recorded as in progress. There is no account-level completion or target confirmation.
 
 Can you declare success or diagnose a target rejection?
 
-**Worked reasoning:** Neither conclusion is supported. Approval establishes the decision. Follow the related activity and dependencies for delivery evidence. Don't invent a rejection, promise a completion time or submit another request merely because delivery isn't immediate.
+**Worked reasoning:** Neither conclusion follows. The decision is complete, and delivery evidence is still needed. Follow the related activity and dependencies. The facts don't establish a rejection, a completion time or a reason to submit again.
 
 ### 2. Read succeeded, export was refused
 
@@ -313,15 +311,15 @@ Use the partial trace: target evidence confirms read present and export absent a
 
 Does an overall failure mean neither permission exists?
 
-**Worked reasoning:** No. The result is partial. The full requirement is unmet, but read exists. Investigate the missing export authority and recover the unresolved effect without assuming rollback or undoing the successful component.
+**Worked reasoning:** The result is partial. Reading exists, but the full requirement is unmet. Investigate the missing export authority and supported recovery for that effect while preserving the confirmed read result. No rollback is established.
 
-### 3. The aggregation succeeded
+### 3. Aggregation succeeds and reports export absent
 
-A later collection includes the intended account and correctly reports export absent. Someone says that successful aggregation repaired the grant.
+A later collection includes the intended account and correctly reports export missing. Someone says that successful aggregation repaired the grant.
 
-What succeeded?
+What actually succeeded?
 
-**Worked reasoning:** Collection succeeded in representing the missing permission. It didn't add export. The unresolved work is delivery; making the read return success doesn't satisfy the missing write.
+**Worked reasoning:** The read of account information succeeded. ISC now represents the missing permission correctly. Adding export is still delivery work; a successful observation hasn't performed that write.
 
 ### 4. The target changed before the response timed out
 
@@ -329,36 +327,36 @@ The account action records a timeout. Authorized audit and current target inspec
 
 Should the team repeat it because the timeout means no effect?
 
-**Worked reasoning:** No. The supplied target evidence establishes the effect. Reconcile tracking through supported handling and avoid duplicating completed work. The timeout doesn't erase the target change or prove rollback.
+**Worked reasoning:** The supplied evidence establishes the target effect. Reconcile tracking through supported handling and account for the completed change. Repeating solely because of the timeout would ignore that evidence.
 
 ### 5. A completed manual task names a test account
 
-A manual task is marked complete, but its fulfillment note identifies a test account. The approved requirement concerns `stock-user` in production, with no production confirmation supplied.
+A manual task is marked complete, but its note identifies a test account. The approved requirement concerns `stock-user` in production. No production confirmation is supplied.
 
 Can delivery be reported as verified?
 
-**Worked reasoning:** No. The note and badge don't establish the intended result. Preserve the mismatch and confirm production source, account and permission with the responsible fulfiller.
+**Worked reasoning:** The note describes the wrong account context. Preserve the mismatch and confirm the intended production source, account and permission with the responsible fulfiller. The completion badge doesn't fill that evidence gap.
 
-### 6. One page uses the wrong population filter
+### 6. The query examines the wrong population and only one page
 
-In an authorized on-behalf-of variation, one person requests access for another. A client examines only the first status-list page, despite supplied pagination showing more results. It also selects submissions by the recipient rather than requests for that recipient.
+In an authorized on-behalf-of variation, one person requests for another. A client checks only the first status-list page although pagination shows more results. It also selects requests submitted by the recipient rather than requests for them.
 
 Does the missing entry prove no request was submitted?
 
-**Worked reasoning:** No. The view is incomplete and asks a different population question. Use known references and the correct supported query, caller rights and pagination. Missing evidence there isn't proof of no work.
+**Worked reasoning:** The query asks a different population question and the results inspected are incomplete. Use known references, the correct supported query, appropriate caller rights and pagination. The missing entry on that page doesn't establish that no work exists.
 
 ## Define completion for a payroll project
 
 A payroll team proposes: “Our automation will mark access complete when submission succeeds. If the person still can't use payroll, it will repeat the request and run an aggregation.”
 
-What needs to change?
+How would you change the design?
 
-**Worked reasoning:** Define completion for the intended account and required use. Submission is one result; required decisions, account execution and target outcome need their own evidence.
+**Worked reasoning:** Define completion for the intended account and required use. Submission starts tracked work. Required decisions, delivery and the agreed account or business check need their own evidence.
 
-Retain request references and establish the actual automatic, manual or ticket-based delivery arrangement. Assign responsibility for waiting or failed work and the evidence needed to close it.
+Retain the request references and establish whether delivery is automatic, manual or ticket-based. Assign responsibility for waiting or failed work and for collecting the evidence needed to close it.
 
-Aggregation can refresh represented account information. It doesn't replace missing delivery. Repeated submissions need the selected contract's duplicate and recovery handling.
+Aggregation can update represented account information. It doesn't replace a missing grant. Before repeating a submission, use the selected contract's duplicate and recovery behavior, including what access is already present.
 
-The design must recognize completed components, still-running work and uncertain target effects before another write. Recovery should address the unresolved work under current authorization.
+The design must account for completed components, still-running work and uncertain effects before issuing another write. Recovery must address the unresolved work under current authorization.
 
-A useful completion statement identifies what is established: the required decision, appropriate account-change evidence, and the agreed target or business check. If one is missing, name that gap rather than reporting the whole requirement as done.
+Explain completion using what is established: the required decision, the relevant account-change result and the agreed target or business check. When one is missing, name the remaining work.

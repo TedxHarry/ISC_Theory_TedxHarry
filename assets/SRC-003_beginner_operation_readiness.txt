@@ -1,0 +1,11 @@
+Operation readiness
+  |
+  +-- Intended effect and correct object
+  +-- Selected connector support
+  +-- Target behavior and runtime path
+  +-- Configuration and usable inputs
+  +-- Caller authority for the scope
+  +-- Verified intended result
+
+These are review dependencies,
+not an internal execution sequence.

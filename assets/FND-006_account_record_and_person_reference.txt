@@ -1,0 +1,17 @@
+ISC account record: A-1
+login: finance.user
+native identity: u-778
+employee number: 10482
+ |
+ +-- source --> S-PROD
+ |              finance production
+ |
+ +-- identity -> I-1
+                employee identity
+                employee number 10482
+
+External account represented:
+finance production / u-778
+
+Arrows mean "refers to".
+They do not create accounts or sign in.

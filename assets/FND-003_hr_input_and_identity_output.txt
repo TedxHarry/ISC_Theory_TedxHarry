@@ -1,0 +1,18 @@
+HR worker record
+orgCode = FIN
+        |
+        | account aggregation reads
+        v
+ISC: collected HR account
+orgCode = FIN
+        |
+        | department mapping selects orgCode
+        | transform converts FIN to Finance
+        v
+ISC: employee identity
+department = Finance
+
+The calculation writes the identity value.
+It does not rewrite the HR input.
+
+This is a value path, not a timing chart.

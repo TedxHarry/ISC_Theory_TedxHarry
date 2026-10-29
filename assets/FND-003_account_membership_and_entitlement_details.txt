@@ -1,0 +1,17 @@
+Source: Invoice-Service
+Entitlement type: groups
+
+ISC: collected finance account
+groups includes g-inv-read
+        |
+        | reference matches Entitlement ID
+        | in this source and type
+        v
+ISC: entitlement record
+id = g-inv-read
+name = FIN_INV_READ
+description = Allows invoice reading
+businessArea = Finance
+
+This link describes an existing membership.
+It does not grant access or send a change.

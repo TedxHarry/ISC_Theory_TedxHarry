@@ -1,0 +1,13 @@
+Employees profile supplies the mappings
+  |
+  +-- HR department: Finance
+  |       |
+  |       v
+  |   Identity department: Finance
+  |
+  +-- Directory account mail
+          |
+          v
+      Identity email
+
+One applicable profile, two inputs.

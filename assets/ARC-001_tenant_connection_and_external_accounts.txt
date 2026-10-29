@@ -1,0 +1,20 @@
+SailPoint-hosted service
+  ISC production tenant
+    Identity/account representations
+    Source and access configuration
+    Requests and recorded activity
+           |
+           | Supported integration
+           v
+Customer-provided environment
+  VA cluster and network dependencies
+           |
+           | External connection
+           v
+Supplier production system
+  Integration: svc-supplier
+  Recipient: supplier-reader
+  Actual accounts and permissions
+
+Collection also returns information to ISC.
+Arrows show relationships, not packet routing.

@@ -1,0 +1,6 @@
+ISC -- supported change --> Target
+
+ISC <-- collected data ---- Target
+
+A change alters the account.
+A collection observes account data.

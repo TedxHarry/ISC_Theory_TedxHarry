@@ -6,6 +6,8 @@ The course is for beginners and freshers with some IAM knowledge. Its purpose is
 
 ## GitHub and reading site
 
+October 28 beginner batch 2: the user authorized publishing the 25 completed local revisions through SRC-007. See the [current batch scope and deployment evidence](author/PUBLICATION_2026-10-28_BEGINNER_BATCH_2.md). Historical publication notes below retain their original scope; the course register tracks later local work separately.
+
 - [Repository: ISC_Theory_TedxHarry](https://github.com/TedxHarry/ISC_Theory_TedxHarry)
 - [Read the available lessons](https://tedxharry.github.io/ISC_Theory_TedxHarry/)
 - [Publishing and update instructions](author/PUBLISHING.md)

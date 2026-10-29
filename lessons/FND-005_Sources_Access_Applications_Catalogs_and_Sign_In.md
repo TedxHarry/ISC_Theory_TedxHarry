@@ -1,303 +1,379 @@
 # Sources, access applications, and sign-in: what does "the application" mean?
 
-"I requested Expenses, but I still can't submit a claim."
+“I requested Expenses, but I still can't submit a claim.”
 
-That report can describe different problems. Perhaps the person selected the wrong access package. Perhaps the requested account change failed. Or perhaps the change succeeded, but the expense system is using an old account or does not yet have the relevant permission information.
+Let's follow what that request asked SailPoint Identity Security Cloud, or **ISC**, to change. Then we can check how the expense system uses the result.
 
-Before choosing a repair, establish which application, account, and operation the report concerns. Finding an item in SailPoint Identity Security Cloud (ISC), receiving approval, and using the real business software are connected parts of the experience, but they are not the same event.
+Finding an access choice, receiving approval, getting a permission onto an account and using that permission are different steps. If we treat them as one event, we can easily try to repair the wrong thing.
 
-## The business application is where the work happens
+## Locate the software where the person does the work
 
-An **enterprise application** is the actual business software people use. In this example, it is the expense system where employees create and submit claims. That software has its own accounts, restrictions, and rules about who can submit or approve a claim.
+An **enterprise application** is the real business software people use. Here, it is the expense system where employees create and submit claims.
 
-An **account** is a record in a particular system. Our employee already has a directory account and a separate expense-system account. They belong to the same person, but they remain different records.
+That system has its own accounts and rules. A **permission** allows a particular action. Submitting your own claim and approving someone else's claim are separate actions with different access requirements.
 
-An ISC **identity** is the person-level representation connecting information and associated accounts to that person. A **source** is ISC's configured representation of a system or account dataset. Our source, `Corporate-Directory`, represents the directory integration.
+An **account** is a record in a particular system. Our employee already has an expense-system account and a separate directory account. The directory stores accounts and groups used by other services.
 
-A **connector** provides the integration used to obtain account and access data and perform supported changes. **Aggregation** collects that information into ISC. **Account correlation** matches and assigns a source account to the appropriate ISC identity.
+Both accounts belong to the same person. They remain separate records.
 
-For this hypothetical example, ISC has collected the employee's directory account and associated it correctly. There is one intended existing directory account for the changes we describe, and the integration supports those changes.
+ISC represents the person through an **identity**. It connects their information with associated accounts and access.
 
-We have not configured a separate expense-system source. The expense account already exists, and a separate, working sign-in arrangement connects the employee to it. The employee needs to submit their own claims, not approve other people's claims.
+For this example, ISC is connected to the directory. It does not separately read the expense system's native accounts, meaning the account records held in that application itself. The expense account already exists, and a working sign-in arrangement can connect the employee to it.
 
-These conditions explain why the directory, rather than the expense application's native account database, is central to the access request.
+The employee needs to submit their own claims. They do not need permission to approve other people's claims.
 
-## Why would expense access change a directory account?
+## See why a directory membership can control expense access
 
-The organization has chosen directory groups as an input to the expense system's access decisions. A **group** collects accounts whose memberships can be used to give them specified access.
+A **group** brings accounts together so their memberships can be used to give them specified access.
 
-ISC represents source access items, including these group memberships, as **entitlements**. Our hypothetical directory provides:
+In this hypothetical design, the expense system uses directory group information when deciding what an account may do. The organization has deliberately chosen that arrangement.
 
-| Entitlement | Agreed meaning in this expense design |
+The groups have different purposes:
+
+| Directory group | Agreed effect in the expense system |
 |---|---|
-| `EXP_SUBMIT` | Permit the user to submit their own expense claims |
-| `EXP_APPROVE` | Permit the user to approve other people's claims |
+| `EXP_SUBMIT` | Permit submission of the employee's own claims |
+| `EXP_APPROVE` | Permit approval of other people's claims |
 
-These are illustrative names and application behaviors, not standard SailPoint permissions.
+These names and effects belong to our example. They are not standard SailPoint permissions.
 
-The expense system uses relevant group information supplied through its trusted sign-in arrangement. It also requires the intended expense account to exist and meet its other conditions. A directory membership is therefore part of this design, not a universal way every expense application manages permissions.
+The directory does not become the expense application. It holds a membership that the expense application's configured access rules use.
 
-An **access profile** is a bundle of related entitlements from one source. We define `Submit expenses` containing EXP_SUBMIT and `Approve expenses` containing EXP_APPROVE, both from Corporate-Directory.
+The expense system still needs the correct account, relevant current group information and its other operation requirements. We will follow those checks after the membership change.
 
-A one-entitlement profile is valid. A larger profile could package related directory entitlements, but its contents would still have one entitlement source.
+Another organization could manage native expense permissions through an integration with the expense system itself. The business need can be similar while the technical path differs.
 
-The two profiles express different business needs. The employee should choose Submit expenses. Selecting that package should not give them the separate authority to approve claims.
+## Give ISC a source for the account changes
 
-Delivering the selected access here means changing the directory membership. It does not mean creating the already-existing expense account, writing a native expense permission directly, or creating a directory group named Submit expenses. The profile is an ISC grouping of the represented source access.
+A **source** is ISC's configured representation of a system or account dataset. Our only source in this example is **Corporate-Directory**. We have not configured an expense-system source.
 
-Another organization could use a connector that manages the expense application's native accounts and permissions instead. Its delivery path would differ. The business name alone does not select the technical integration.
+A **connector** provides the integration used to read that system's information and carry out supported changes.
 
-## The access application helps people find the right choice
+For this source, ISC can collect directory accounts and group memberships and deliver the membership changes we describe. Those capabilities are supplied conditions for the example.
 
-Someone looking for expense access may not know that they need a directory group. Making them search for Corporate-Directory would require them to understand the integration before asking for the business access.
+**Aggregation** collects information into ISC. **Account correlation** matches and assigns a source account to the appropriate ISC identity.
 
-An ISC **access application** is a logical access configuration that organizes a source's access profiles for requests and supports configured password-management functions. It gives people a recognizable business-facing grouping without replacing the underlying integration.
+Here, ISC has already collected the employee's directory account and associated it with the correct identity. There is one intended existing directory account for our request.
 
-Our access application is called `Expenses`. Its **account source** is Corporate-Directory: the source holding the account and entitlement data used by this ISC configuration. It groups Submit expenses and Approve expenses.
+This gives us a clear destination. We are going to change a membership on that directory account. We are not going to create the expense account or write a native expense permission through an expense connector.
+
+ISC represents access items from a source, including group memberships, as **entitlements**. EXP_SUBMIT and EXP_APPROVE are the directory entitlements relevant to this design.
+
+An **access profile** bundles related entitlements from one source. We define **Submit expenses**, containing EXP_SUBMIT, and **Approve expenses**, containing EXP_APPROVE.
+
+A profile can contain one entitlement. A larger package could contain several related directory entitlements, but its contents would still come from one source.
+
+The profile gives the access a readable business meaning. It does not create a directory group called Submit expenses. It refers to the EXP_SUBMIT access item that the integration already represents.
+
+Choosing the submit package should therefore lead to EXP_SUBMIT, not EXP_APPROVE. The similar business names do not make their permissions interchangeable.
+
+## Help the requester find the business access
+
+The employee knows they need Expenses. They may have no reason to know that its permission is a directory group.
+
+An ISC **access application** organizes a source's access profiles under a recognizable name for requests. It also supports configured password-management functions.
+
+We call ours **Expenses** and associate Submit expenses and Approve expenses with it.
+
+Its **account source** is Corporate-Directory. That setting identifies the source holding the account and entitlement data used by this ISC configuration.
 
 ```text
-Real business software: expense system
-  Own accounts and claim operations
+Business software: expense system
+  Holds expense accounts and claim rules
 
 ISC access application: Expenses
-  Account source: Corporate-Directory
-  |
-  +-- Access profile: Submit expenses
-  |   Entitlement: EXP_SUBMIT
-  |
-  +-- Access profile: Approve expenses
-      Entitlement: EXP_APPROVE
+Account source: Corporate-Directory
+ |
+ +-- Access profile: Submit expenses
+ |   Entitlement: EXP_SUBMIT
+ |
+ +-- Access profile: Approve expenses
+     Entitlement: EXP_APPROVE
 
-Branches group access choices.
+Branches mean "groups these choices".
 Both profiles use directory access.
 This is not a connection or grant flow.
 ```
 
-Read the branches as "groups these choices." They do not show account changes or a network connection.
+The expense system is where the person submits claims. Expenses is the ISC grouping that helps them find access. Corporate-Directory supplies the represented memberships and the integration for the directory changes.
 
-The expense system is the real software. Expenses is the ISC configuration organizing its access choices. Corporate-Directory is the source supplying the represented group data and supported membership changes.
+Those are three different jobs.
 
-Choosing Corporate-Directory as account source does not install another connector. Naming the access application Expenses does not turn the expense system into a directory or make its native accounts visible in ISC.
+Selecting Corporate-Directory as the account source does not install another connector. Naming the grouping Expenses does not make native expense accounts appear in ISC.
 
-Matching names are not required to prove a correct design. An access application can share a source's name, but that does not make it the source itself. A different name can be appropriate when it describes the business system that uses the source's permissions.
+An access application can have the same name as its source. It can also have a different name when that better describes the business access people recognize. The names alone do not establish whether the design is correct.
 
-One source can also support multiple access applications. The same directory might contain `KB_READ`, a group used by a knowledge service. A Knowledge access application could organize a Read knowledge profile backed by that directory entitlement. Expenses and Knowledge would then use one technical source without creating two directories.
+One source can support more than one access application. Suppose the same directory has a group called `KB_READ`, used by a knowledge service. A **Knowledge** access application can organize a **Read knowledge** profile containing that directory entitlement.
 
-## A catalog entry is an offering, not a record of delivered access
+Expenses and Knowledge then organize different access choices backed by one technical directory source. They do not create two directories.
 
-An **access catalog** is the collection of offerings people can discover and select. ISC's Request Center presents configured access offerings. It is not a complete inventory of every permission held in every business system.
+## Distinguish the offering from the access already held
 
-A **requester** initiates a request. A **recipient** is the identity intended to receive the access. In our main example, the employee requests for themself, so the requester and recipient refer to the same person.
+An **access catalog** is the collection of access offerings people can discover and select. ISC's Request Center presents configured offerings; it is not a complete inventory of everything every account can do.
 
-An **access request** asks for specified access for that recipient. **Requestable** means available to ask for under the configured process. It does not mean already approved or delivered.
+A **requester** initiates a request. A **recipient** is the identity intended to receive the access.
 
-Finding Expenses is therefore only part of choosing access. The employee must select the appropriate profile under it. Requesting Submit expenses does not request every profile grouped under Expenses.
+For the main flow, the employee requests for themself, so the requester and recipient are the same person.
 
-An access application is also not a compulsory container for every request. Access profiles can be independently requestable; applicable individual entitlements and roles can be offered too. A **role** groups access for a responsibility or population and can contain profiles and entitlements.
+An **access request** asks for specified access for that recipient. **Requestable** means the item is available to ask for under the configured process. It does not mean already approved or delivered.
 
-The same profile can be offered through the application grouping and through its own access-item presentation. Those are ways to discover the configured item, not two separate versions of its underlying permission.
+Finding Expenses gets the person to the relevant choices. They still need to choose Submit expenses rather than Approve expenses.
 
-Exact presentation depends on the enabled request experience and configuration. The useful questions remain concrete: which item is selected, who is requesting, who would receive it, and which account should change?
+Selecting one profile does not request every profile grouped under that application.
 
-## Follow Submit expenses to the directory
+Access applications are not compulsory containers for all requests. Access profiles can also be independently requestable. Applicable individual entitlements and roles can be offered too.
 
-Assume the employee can see the intended offering and the required request configuration is in place. Their directory account does not yet have EXP_SUBMIT. They select Submit expenses for their own identity.
+A **role** groups access for a responsibility or group of people and can contain profiles and entitlements. Our main request is for a profile, not a role.
 
-The request identifies that recipient and access profile. The profile identifies the underlying EXP_SUBMIT entitlement from Corporate-Directory. That gives the fulfillment work a specific source and required membership, rather than a vague instruction to "give Expenses."
+The same Submit expenses profile can be discovered through its application grouping or its own access-item presentation. Those are routes to the configured item, rather than separate copies of EXP_SUBMIT.
 
-The applicable request configuration determines the review process. **Approval** records the required decision that this access may be given. For the selected example, the required review approves the request; no universal approver or sequence is assumed.
+The exact presentation depends on the enabled request experience and settings. Keep track of the selected item, recipient and intended account rather than inferring them from a screen label.
 
-This approval is different from approving an expense claim. The ISC decision permits the access grant. Approving a claim inside the expense system is a separate business operation controlled by EXP_APPROVE, which was not requested.
+## Follow the selected profile to the directory account
 
-**Provisioning** carries out supported account or access changes through the configured delivery method. Here it uses the directory integration to add EXP_SUBMIT to the intended existing directory account.
+Assume the employee can see Submit expenses and the required request settings are in place. Their intended directory account does not yet hold EXP_SUBMIT.
 
-The **target system** is the system receiving that attempted change. For this operation, the target is the directory, even though the business purpose is expense access.
+They request that profile for their own identity.
 
-In the supplied successful continuation, the directory accepts the operation and the intended account holds EXP_SUBMIT. The membership has been delivered. The employee has not yet signed into the expense system or demonstrated claim submission there.
+The request identifies the recipient and profile. The profile identifies EXP_SUBMIT from Corporate-Directory. The resulting work now has a specific source, account and membership to deliver.
 
-If the directory instead rejects the update, finding Expenses and receiving approval do not override that result. Investigate the actual attempted membership change and its reported error rather than changing the catalog name.
+The request configuration determines any required review. **Approval** records the decision that the requested access may be given.
 
-Request and account-change activity help establish the selected item, recipient, attempted operation and result. Current directory evidence establishes membership on the account. A later aggregation can refresh ISC's collected observation, but it is not a live guarantee attached to every screen.
+For our successful example, the required review approves the request. We have not assumed a particular approver or a universal sequence of reviews.
 
-## Signing in uses a different relationship
+This is approval to receive access. It is not approval of an expense claim. That business operation needs the separate EXP_APPROVE permission inside the expense system.
 
-The employee now opens the real expense system through its address or the organization's sign-in portal. This is separate from choosing an access application in ISC's request catalog.
+**Provisioning** carries out supported account or access changes through a configured delivery method. Here, it uses the directory integration to add EXP_SUBMIT to the employee's existing directory account.
 
-**Authentication** verifies a claimed identity under the required checks. An **identity provider**, or **IdP**, performs the authentication used by a participating application and supplies information that the application accepts under their configured trust.
+The **target system** is the system receiving that change. For this operation, the target is the directory, even though the business purpose is expense submission.
 
-**Single sign-on**, or **SSO**, lets participating applications use that shared sign-in arrangement. An existing IdP sign-in can avoid another credential prompt when the applicable policies allow it. It does not give the user every permission in those applications.
+In the supplied successful result, the directory accepts the update and the intended account holds EXP_SUBMIT.
 
-For our successful trace, the IdP and expense system already have a valid trust and account-matching arrangement. Assume the directory membership is available to the IdP, relevant current group information is supplied, and the expense system accepts the sign-in information.
+We can now establish delivery of the directory membership. We have not yet established that the employee has signed in to the expense system or submitted a claim.
 
-The application matches the sign-in to the employee's intended existing expense account. That is a separate relationship from ISC's correlation of the directory account to its identity.
+If the directory rejects the update instead, approval does not override that rejection. Investigate the attempted membership operation and its error. Renaming the request grouping cannot repair an update that the directory refused.
 
-Next, **authorization** determines whether that account may perform the particular operation. In this hypothetical application, submission requires the EXP_SUBMIT information, an enabled intended expense account, and the application's other requirements.
+Request records help establish the selected item and recipient. Account-change activity shows attempted work and reported results. Current directory evidence establishes what that account holds now.
 
-Those conditions are met in the supplied successful outcome, so claim submission is allowed.
+A later aggregation can refresh ISC's collected observation. Opening a screen is not a promise that it has just read the directory again.
+
+## Follow the separate sign-in to the expense account
+
+The employee now opens the real expense system through its address or the organization's sign-in portal.
+
+This is a different action from selecting Expenses in ISC's request catalog.
+
+**Authentication** verifies a claimed identity using the required checks. An **identity provider**, or **IdP**, performs the authentication used by a participating application and supplies information the application is configured to accept.
+
+The application and IdP need a **trust arrangement**: configuration telling the application which provider's sign-in information to accept under the required checks.
+
+Creating the Expenses access application does not configure that trust.
+
+**Single sign-on**, or **SSO**, lets participating applications use a shared sign-in arrangement. If the employee is already signed in to the IdP, the applicable policies can let them sign in to another participating application without entering their password again.
+
+SSO does not give the employee every permission in those applications.
+
+For our successful trace, the IdP and expense system already have a valid trust and account-matching arrangement. The directory membership is available to the IdP, relevant current group information reaches the expense system and the application accepts the sign-in information.
+
+The expense system then matches that sign-in to the employee's intended existing expense account.
+
+That is a second account relationship to check. ISC's correlation links the directory account to the ISC identity. The expense system's sign-in mapping selects its own local account.
+
+Correctly establishing the first relationship does not establish the second.
+
+Next, **authorization** determines whether the selected account may perform the requested operation.
+
+In our hypothetical expense system, claim submission requires the EXP_SUBMIT information, an enabled intended expense account and the application's other requirements. Those conditions are met in the supplied successful outcome, so submission is allowed.
 
 ```text
-REQUEST AND DIRECTORY CHANGE
+ISC REQUEST AND DIRECTORY CHANGE
 
 Employee requests Submit expenses
 for their own ISC identity
-             |
-  configured review approves
-             |
-  supported provisioning adds
-             v
-Directory account: EXP_SUBMIT present
+        |
+        | required review approves
+        | supported provisioning adds
+        v
+Directory account holds EXP_SUBMIT
 
 
 SEPARATE SIGN-IN AND OPERATION
 
-Employee opens the expense system
-             |
-  IdP authenticates the user
-  current group information supplied
-             v
-Application accepts trusted information
-and matches the intended expense account
-             |
-  application checks submit requirements
-             v
+Employee opens expense system
+        |
+        | IdP authenticates
+        | relevant current groups supplied
+        v
+Expense system accepts trusted information
+and selects intended expense account
+        |
+        | application checks submit requirements
+        v
 Claim submission allowed
 (supplied successful outcome)
 
-Human verification crosses both paths.
-Arrows show work, not one ISC workflow.
+The first path changes directory membership.
+The second uses the expense application.
+These are not one private ISC workflow.
 No instant refresh or timing is promised.
 ```
 
-The first path changes a directory membership. The second starts when the employee uses the expense system, which accepts trusted sign-in information, selects its account, and evaluates the requested operation.
+The first path ends with a directory membership. The second includes authentication, selection of the expense account and the application's permission decision.
 
-The arrows are logical work and information, not an undocumented private ISC workflow. ISC request approval does not itself sign the employee into the expense system. Creating an access application does not configure the external application's SSO trust or account matching.
+ISC request approval does not sign the person in. The access grouping does not configure external SSO. The application remains responsible for its account selection and operation rules.
 
-This also explains why correct ISC correlation cannot prove correct application sign-in mapping. ISC can associate the right directory account while the expense system selects an old local account. Each relationship needs its own evidence.
+## Investigate a successful sign-in followed by denied submission
 
-## What if the employee signs in but still cannot submit?
+Suppose authentication succeeds, but the employee still cannot submit.
 
-Successful authentication does not establish submission authority. It establishes the sign-in result under the relevant checks.
+Successful sign-in establishes the authentication result. It does not establish that the selected expense account has met the submission requirements.
 
-First confirm the intended directory account and its current EXP_SUBMIT membership. Then inspect what happened at the sign-in and application boundaries.
+Start with the intended directory account. Does it currently hold EXP_SUBMIT?
 
-Did the relevant group information reach the IdP and the expense system? Did the application choose the intended expense account? Is that account enabled? What requirement caused submission to be denied?
+If it does, follow the information and account relationships. Did the IdP obtain the relevant membership? Did the needed information reach the application? Which expense account did the sign-in select? Is that account enabled? Which submission condition failed?
 
-A continuing signed-in context is an application **session**. An existing session may still use information established before a later membership change. You need to establish how this integration obtains and reevaluates access information; the successful trace assumed current information, not an instant refresh of every session.
+A **session** is a continuing signed-in context. An existing application session can still use information established before a later group change.
 
-Do not use a new password prompt as proof of entitlement delivery. SSO may avoid a prompt, while a prompt by itself says nothing about whether EXP_SUBMIT reached the correct directory account.
+So a successful directory update does not tell us that every existing session now uses that new membership. Establish how this particular integration obtains and reevaluates access information. Our successful path explicitly supplied current information.
 
-The **front end** is the interface: a request card, sign-in page, or Submit button. The **back-end work** selects and processes access requests, performs directory changes, verifies sign-ins, maps application accounts, and enforces operation requirements.
+Also, a new password prompt is not evidence that EXP_SUBMIT was delivered. SSO can avoid a prompt, while seeing a prompt does not prove the membership reached the right account.
 
-Those screens can point you toward a symptom, but the producing process determines what each observation means. A disabled Submit button and a rejected directory operation are not interchangeable evidence.
+Now suppose ISC's directory correlation is correct, but sign-in selects an old expense account.
 
-## Why can an administrator find the item when the requester cannot?
+Repeating the correct ISC correlation does not necessarily repair the application's different mapping. The responsible application or sign-in owners need to investigate and make an authorized correction, considering its effect on other users. Then verify the intended expense account and submission behavior.
 
-The main flow assumed visibility and request configuration were correct. If the employee cannot find Submit expenses, investigate that earlier boundary rather than starting with application sign-in.
+The **front end** is the interface we see: an access card, sign-in page or Submit button.
 
-Several settings have different jobs. The access application must be enabled and configured for the intended request presentation. The relevant profiles must be associated with it. The access items need their applicable request settings.
+The **back-end work** processes the access request, changes the directory account, verifies the sign-in, selects the application's account and evaluates its submission rules. These jobs involve the responsible systems; they are not all operations inside ISC.
 
-Application visibility presents the grouping. The profile defines the package, and its request configuration determines how that item is requested and reviewed. An empty application grouping is not a useful replacement for a configured profile.
+A disabled Submit button and a rejected directory update can both matter, but they describe different points in the path.
 
-Audience controls can further limit discovery. An **identity attribute** is a named piece of information on an ISC identity, such as department. An access-request **segment** uses identity information to group requesters and limit visibility of associated access items to that audience.
+## Find out why the requester cannot see the offering
 
-For example, a segment can present an item to Finance requesters. An organization administrator's broader view is not proof that an ordinary requester sees the same offerings.
+Our main flow assumed that Submit expenses was visible and correctly configured. If the employee cannot find it, start with discovery settings.
 
-Now separate visibility from recipient eligibility. The documented segment behavior concerns the requester. A requester who can see an item can request it for another identity they are authorized to request for. The other identity does not automatically become blocked merely because it is outside that requester's segment.
+The access application needs the settings that enable it and present it for requests. Its relevant profiles must be associated with it, and the access items need their applicable request settings.
 
-If only Finance employees may receive Approve expenses, the review and eligibility design must check the actual recipient's requirements. A Finance requester seeing the item does not prove that a colleague they request for is entitled to approval authority.
+These settings do different work. Application visibility exposes the grouping. The profile defines the package. Its request configuration controls how that item is requested and reviewed.
 
-Also, placing one item in a segment does not make every other item private. Items outside segments can remain broadly requestable under their other settings.
+An empty grouping is not a replacement for a configured access profile.
 
-For a missing offering, compare the actual requester, grouping/profile settings, audience configuration, and any already-held-access restrictions. Do not open the entire catalog to everyone to repair one report without finding the cause.
+Audience settings can further limit discovery. An **identity attribute** is a named field on the ISC person record, such as department.
 
-## The grouping does not fill gaps in the source data
+An access-request **segment** groups identities using that information and limits visibility of its associated access items to the targeted requesters.
 
-Our directory source collects directory accounts and memberships. It does not automatically collect the expense system's native accounts or every local privilege merely because the access application is called Expenses.
+For example, a segment can make an item visible to Finance requesters. An organization administrator's broader view does not prove an ordinary employee can see it.
 
-Suppose the expense system separately grants local administrator access unrelated to EXP_SUBMIT or EXP_APPROVE. The directory group list alone cannot establish who has that privilege.
+Now separate the person requesting from the person receiving.
 
-A complete requirement to govern those native accounts or privileges needs an appropriate supported integration or another reliable collection and management arrangement. A recognizable request card cannot supply data the integration does not obtain.
+Under the documented segment behavior, a requester who can see an item can ask for it for another identity they are authorized to request for. That recipient's absence from the requester's segment does not automatically block the request.
 
-Similarly, if the expense account were missing, adding EXP_SUBMIT would not establish that it had been created. The main example assumed an existing account. You would need to identify and verify the actual account-creation mechanism rather than assume the ISC grouping creates it.
+Suppose a Finance requester can see Approve expenses and is allowed to request for a colleague. If only Finance employees may receive approval authority, the review and eligibility design must check that colleague's actual qualifications.
 
-## Password management uses the configured source account too
+Seeing the item is not that qualification check.
 
-Access applications also support configured password management. A **password policy** defines the requirements for acceptable passwords.
+Placing one item in a segment also does not make every other item private. Items outside segments can remain broadly requestable under their other settings.
 
-If Expenses appears in a password-management experience, establish which source account and policy it represents. The business-facing name does not prove that ISC manages a separate password stored natively in the expense system.
+For a missing offering, compare the actual requester, application/profile request settings, audience configuration and any already-held-access restrictions. Establish the cause before broadening catalog visibility.
 
-For our directory-backed configuration, a supported source password change concerns the directory account. It is not an EXP_SUBMIT membership grant or proof that claim submission is now authorized.
+## Recognize what the directory source does not show
 
-The account source for this configuration also should not be confused with a separately configured sign-in authority. Check the actual password and authentication design instead of treating every setting containing the word "source" as interchangeable.
+Corporate-Directory collects directory accounts and memberships. Calling its access application Expenses does not make it collect the expense system's native account database.
 
-## Hiding Expenses is not the same as removing expense access
+Suppose the expense application grants a local administrator privilege unrelated to EXP_SUBMIT or EXP_APPROVE.
 
-Hiding the access application changes the ISC presentation. It does not establish that EXP_SUBMIT was removed from the directory or that the expense system stopped accepting the employee's access.
+The directory group list cannot establish who holds that local privilege. The privilege lies outside the data our source obtains.
 
-Profiles can also be independently requestable. Check their request settings before assuming that hiding one grouping removed every way to request the associated access.
+Governing those native accounts or permissions needs an appropriate supported integration or another reliable collection and management arrangement. A familiar business-facing card cannot fill that data gap.
 
-Deleting an access application likewise is not an access-revocation operation. Identities retain profiles previously assigned through the deleted application. The external software and its native accounts are separate from that deleted ISC configuration.
+The same reasoning applies to account creation. If the employee's expense account were missing, adding EXP_SUBMIT would not prove that a new expense account had been created.
 
-Removing a grouping, revoking an access assignment, changing a source account, and ending an application session are different actions. Choose the action that meets the actual requirement, then verify its execution and effect.
+Our main flow supplied an existing expense account. A different starting condition requires identifying and verifying the actual account-creation mechanism.
 
-## Match each question to evidence that can answer it
+## Follow password management to its source account
 
-| Question | Evidence to inspect | What it does not establish alone |
+Access applications can also support configured password management. A **password policy** defines the requirements for acceptable passwords.
+
+If Expenses appears in a password-management experience, inspect the represented source account and policy. The name does not prove ISC manages a separate password stored in the expense application's own account database.
+
+Where password management is supported and configured for our directory source, its password change concerns the directory account. It does not add EXP_SUBMIT or establish authorization to submit claims.
+
+The account source for the access application also is not interchangeable with a separately configured sign-in authority.
+
+For example, knowing which source holds the account data does not tell us which IdP the expense system trusts. Establish the actual password and authentication design rather than treating every setting containing source as the same relationship.
+
+## Separate hiding the choice from withdrawing access
+
+Hiding Expenses changes the ISC presentation. It does not establish that EXP_SUBMIT was removed from the directory account or that the expense system stopped accepting its access.
+
+Profiles can also be independently requestable. Hiding one grouping does not, by itself, remove every way to ask for its access.
+
+Deleting the access application is different from revoking access too. **Revocation** withdraws access through the applicable removal path.
+
+After an access application is deleted, identities retain profiles previously assigned through it. Deleting this ISC configuration does not delete the external expense service or its native accounts.
+
+If the requirement is to remove expense access, identify the required assignment or membership removal and verify its execution. Also establish any application-session action needed for the required outcome.
+
+Removing a grouping, withdrawing access, changing a source account and ending a session are different actions. Choose the action that matches the requirement.
+
+## Match the question to the evidence
+
+| Question | Evidence to inspect | What it cannot establish alone |
 |---|---|---|
-| Why does Expenses use Corporate-Directory? | Account source, associated profiles and source entitlements | Complete visibility of native expense accounts or permissions |
-| Why is Submit expenses missing? | Actual requester, request settings, grouping and audience configuration | Removal of existing target access |
-| What was requested? | Selected profile and recipient on the request | A request for every package under Expenses |
-| Did the membership change succeed? | Account-change activity, result and current intended directory account | Fresh sign-in information or correct expense-account selection |
-| Why is submission denied after sign-in? | Relevant sign-in/account mapping, group information, account status and operation requirements | That another catalog edit will fix the cause |
+| Why does Expenses use the directory? | Account source, associated profiles and underlying entitlements | Complete native expense-account or privilege visibility |
+| Why is Submit expenses missing? | Actual requester, grouping/profile request settings and audience configuration | Removal of existing account access |
+| What was requested? | Selected profile and recipient | Selection of every profile under Expenses |
+| Did EXP_SUBMIT arrive? | Account-change activity, result and current intended directory account | Fresh sign-in information or correct expense-account selection |
+| Why is submission denied after sign-in? | Group information, sign-in account mapping, account status and operation rules | That another catalog edit will fix it |
 
-You may need more than one observation. Start with the question you need to settle, then select the evidence for that boundary.
+Start with the question you need to settle. Then follow the records and processes that can supply the answer.
 
-## Work through these changes
+## Work through the changed conditions
 
-**Expenses points to a directory.**
+**Expenses uses Corporate-Directory. Does the different business-system name mean the source is wrong?**
 
-The access application uses Corporate-Directory, and Submit expenses contains EXP_SUBMIT from that source. A colleague says it must be wrong because the actual software is a separate expense system.
+The names do not establish an error.
 
-Do the names establish an error?
+Check that the directory group is the intended control, the update reaches the right directory account and the expense system receives and uses the relevant information. The business grouping can differ from the technical source name. That still does not provide visibility of every native expense privilege.
 
-No. Establish that the directory group is the intended control, the operation reaches the right account, and the application receives and uses the relevant information. The grouping need not share the technical source's name. It still does not prove native application visibility.
+**Submit expenses and Approve expenses appear together. The employee requests Submit expenses. Does its approval permit claim approval?**
 
-**One profile was selected.**
+No. The selected profile contains EXP_SUBMIT, not EXP_APPROVE.
 
-The grouping offers Submit expenses and Approve expenses. The employee requests Submit expenses. Does approval establish the right to approve claims?
+Follow the recipient, intended account and membership operation. Approval permits the requested access grant; even the submit membership needs successful delivery. Neither the grouping nor that decision grants the separate business approval operation.
 
-No. The selected profile contains EXP_SUBMIT, not EXP_APPROVE. Follow its recipient, intended directory account and membership operation. Even that submit membership needs a successful delivery result; the approval decision is not the write itself.
+**A Finance requester can see an item and request for a colleague outside the segment. Does the segment automatically exclude that recipient?**
 
-**Someone requests for another person.**
+Not under the stated behavior.
 
-A Finance requester can see an item through a segment and is authorized to request for a colleague outside it. Does that recipient's absence automatically block the request under this segmentation behavior?
+Visibility concerns the requester, who is supplied as authorized to request for that colleague. Appropriate recipient eligibility and review must still be designed. The requester's Finance department does not establish the recipient's entitlement to receive Finance access.
 
-No. Requester visibility and authority to request for the colleague are the stated conditions. The organization must separately design appropriate recipient eligibility and review. Segmentation does not replace those checks.
+**The directory association is correct and EXP_SUBMIT is present, but sign-in selects an old expense account. Should we repeat ISC correlation?**
 
-**Sign-in selects the old expense account.**
+The supplied fault is in the expense system's sign-in-to-account mapping.
 
-ISC's directory-account association is correct, and EXP_SUBMIT is present. The expense system's sign-in mapping selects an old account instead of the intended current account.
+ISC correlation concerns the directory account's association with an ISC identity. Investigate the failed application relationship with its responsible owners, make an authorized correction and verify the intended account and operation. Changing a correct ISC association does not address the stated cause.
 
-Would repeating ISC account correlation necessarily repair this?
+**Expenses was deleted, but the assigned profile and directory membership remain. Did deletion fail?**
 
-No. The supplied fault is in the application's sign-in-to-local-account relationship, not the directory-to-ISC-identity relationship. The responsible application/sign-in owners need an authorized, impact-reviewed correction. Verify the intended account selection and relevant access information afterward instead of changing a correct ISC association.
+Their continued presence is consistent with the documented behavior.
 
-**Expenses was deleted, but access remains.**
+If removal is required, establish the supported revocation, affected account, operation result and current target state separately. Deleting the grouping does not prove that access was removed or an existing expense session ended.
 
-The grouping is gone from ISC, while the previously assigned Submit expenses profile and directory membership remain. Does that prove deletion failed or access was revoked?
+## Trace a business application with a different integration
 
-Neither. The continued profile is consistent with the documented deletion behavior. If the objective is access removal, establish the supported revocation, affected account, operation result and current target state separately. Deleting the grouping also does not prove an existing application session ended.
+A reporting platform has a source that reads its native accounts and permissions. A **Reports** access application offers a **View reports** profile from that source.
 
-## Trace another application's access without relying on its name
+An approved request is successfully delivered to the intended existing reporting account. The platform's sign-in mapping nevertheless selects an old account, where viewing reports is denied.
 
-Consider a reporting platform with a different integration design. ISC has a source reading the platform's native accounts and permissions. A Reports access application offers a View reports profile from that source.
+Should we replace this design with the directory-backed expense arrangement?
 
-Assume an approved request is successfully provisioned to the intended existing reporting account. The platform's sign-in mapping nevertheless selects an old account, and viewing reports is denied there.
+The supplied source design can be valid. It manages native reporting access, while Expenses uses directory memberships.
 
-Should you redesign the request grouping because it did not use the directory?
+The reporting grant succeeded on the intended account. Its sign-in mapping selected a different account. Investigate that relationship and verify the corrected account and operation; the source is not wrong merely because it differs from the expense example.
 
-No. This design uses native platform access rather than the directory-backed expense path. The supplied grant succeeded on its intended account; the reported fault is the separate sign-in account selection. Investigate that mapping and verify the resulting account and operation, without assuming the source choice is wrong because it differs from Expenses.
+Now choose a business application yourself. Identify the real software and accounts, the ISC sources supplying data and changes, and any access application organizing offerings.
 
-Now choose a business application. Identify its real software and accounts, the ISC sources supplying data and changes, and any access application organizing the offerings. Explain what is selected, who receives it, which account changes, and how the separate sign-in and operation checks work.
+Explain what is selected, who receives it, which account changes and how the separate sign-in and permission checks work.
 
-Change one condition: hide the offering, reject the change, select the wrong account during sign-in, or add a local privilege outside the source's data. Identify the affected boundary and what evidence would settle it.
+Then change one condition: hide the offering, reject the update, select the wrong account at sign-in or add a local privilege outside the source's data. Follow the affected part of the path and identify the evidence that would settle it.

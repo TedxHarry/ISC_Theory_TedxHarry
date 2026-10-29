@@ -1,0 +1,30 @@
+ISC REQUEST AND DIRECTORY CHANGE
+
+Employee requests Submit expenses
+for their own ISC identity
+        |
+        | required review approves
+        | supported provisioning adds
+        v
+Directory account holds EXP_SUBMIT
+
+
+SEPARATE SIGN-IN AND OPERATION
+
+Employee opens expense system
+        |
+        | IdP authenticates
+        | relevant current groups supplied
+        v
+Expense system accepts trusted information
+and selects intended expense account
+        |
+        | application checks submit requirements
+        v
+Claim submission allowed
+(supplied successful outcome)
+
+The first path changes directory membership.
+The second uses the expense application.
+These are not one private ISC workflow.
+No instant refresh or timing is promised.

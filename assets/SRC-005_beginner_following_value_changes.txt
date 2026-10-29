@@ -1,0 +1,14 @@
+Application response
+  value + type + list items
+          |
+          v
+Extraction and conversions
+  what was selected or changed?
+          |
+          v
+Schema and collected account
+  what is ISC representing?
+          |
+          v
+Consumers of those values
+  what did each receive and do?

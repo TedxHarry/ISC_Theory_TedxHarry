@@ -1,0 +1,13 @@
+Two incoming items
+  delivery.read
+  delivery.dispatch
+          |
+     +----+----+
+     |         |
+  Preserve    Join with ;
+     |         |
+  Two items   One text value
+     |         |
+  Two group   Put text in a list
+  identifiers |
+              One joined item

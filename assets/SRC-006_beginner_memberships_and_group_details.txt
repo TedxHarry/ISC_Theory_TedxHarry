@@ -1,0 +1,9 @@
+Account read             Group-object read
+     |                          |
+     v                          v
+Membership references    Names and descriptions
+     |                          |
+     +------------+-------------+
+                  |
+                  v
+   Link by source, type and identifier

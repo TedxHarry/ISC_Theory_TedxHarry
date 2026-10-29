@@ -1,0 +1,8 @@
+Account: expense-user
+  groups contains G-206
+          |
+          | Same source and type: groups
+          v
+Group with ID G-206
+  label: Expense Approvers
+  description: approval purpose

@@ -1,38 +1,32 @@
 # What will this source actually represent?
 
-The connection test passes, and SailPoint Identity Security Cloud (ISC) reports a successful account collection. Yet two known production accounts are missing from the result.
+A connection test passes in SailPoint Identity Security Cloud (ISC), and an account collection finishes successfully. Yet two known production accounts are missing.
 
-Creating replacements would be premature. The accounts already exist. First establish which external system, accounts and information the integration was meant to represent.
+Should you create them again?
 
-A successful connection and a complete project requirement aren't the same thing. The source's purpose gives you the basis for comparing them.
+The accounts already exist in the application. First find out whether the collection was supposed to include them and whether it actually read them. A successful read can return exactly the accounts it selected while leaving part of the project's intended coverage unmet.
 
-## The application keeps the accounts. The source represents them in ISC.
+## Start with what a source brings into ISC
 
-A business application holds its accounts and permissions and enforces its own rules.
+A business application keeps its accounts, permissions and rules. ISC needs information about those accounts so it can connect them to the right people and support the agreed access-management work.
 
-A **source** is ISC's configured representation of a system or collection of account data. It gives the collected records a context: which connection or data feed they belong to and how supported work relates to them.
+A **source** is ISC's configured representation of an external system or collection of account data. It gives the records a context: which system or feed they came from and which configured integration handles them.
 
-A **connector** is the integration software used to read information and perform supported operations. The external system is the **target**.
+A **connector** is the integration software that reads information and performs the operations it supports. The external system it communicates with is the **target**.
 
-Creating a source doesn't create another installation of the application. It also doesn't automatically collect every account or grant access to everyone.
+Creating a source doesn't install another copy of the application. It establishes the ISC configuration for representing its data and using the supported integration. Collecting the accounts and enabling any access changes require their own setup and processing.
 
-An **account** is a record in a particular system. A **source account record** is ISC's representation of that external account.
+An **account** is a record in a particular system. A **source account record** is ISC's representation of that external account. The original account remains in the application.
 
-For the people in this example, an **identity** is ISC's person-level record connecting relevant information, accounts and access. Their identities already exist through the organization's personnel-data arrangement.
+An **identity**, for the people in this example, is ISC's person-level record. It connects relevant person information, accounts and access. These identities already exist through the organization's personnel-data arrangement.
 
-The project needs to bring the appropriate warehouse-application accounts into ISC and associate them with those people. It isn't trying to replace the warehouse application or create a new person for every application login.
+The current project is bringing warehouse-application accounts into ISC for those existing people. It needs the right account records and ownership relationships, rather than a new person identity for every application login.
 
-## Which production system are we talking about?
+## Check which external environment the source points to
 
-An **environment** is an operational setting, such as production or a testing sandbox. An application can also separate accounts into organizations, directories or workspaces.
+An **environment** is an operational setting, such as production or a testing sandbox. A hosted application can also separate accounts into organizations, directories or workspaces.
 
-Suppose the warehouse application has two external organizations: `Warehouse-Prod` and `Warehouse-Test`.
-
-A **tenant** is an organization's environment within a hosted service. The ISC tenant and these external application contexts are different. Using the right ISC tenant doesn't prove that its source points to Warehouse-Prod.
-
-An **endpoint** is the address of the interface called by the integration. The destination can also depend on an organization setting, region or credential context.
-
-This project chooses separate production and sandbox source configurations:
+Suppose the warehouse application has two external organizations: `Warehouse-Prod` and `Warehouse-Test`. The project chooses separate source configurations for them.
 
 ```text
 Warehouse-Prod        Warehouse-Test
@@ -43,102 +37,111 @@ Production source    Sandbox source
       v                    v
 Production records   Sandbox records
 
-Arrows show represented data context.
+Each source represents its own context.
 ```
 
-The arrows relate each configured source to its external data context. They aren't network routes or a rule that every application partition must always become a separate ISC source.
+These arrows show the relationship between the external contexts and their ISC records. They aren't network routes. Separate sources are this project's choice, rather than a rule that every application partition requires its own source.
 
-The production source is named **Warehouse Production**. Its label helps people recognize it; the actual settings and returned data establish whether it represents production.
+A **tenant** is an organization's environment within a hosted service. Your ISC tenant and the warehouse application's organizations are different contexts. Being in the correct ISC tenant doesn't establish that the warehouse source connects to production.
 
-Copying that name onto a configuration still pointing to Warehouse-Test doesn't change the destination. A connection test can succeed against the wrong environment.
+An **endpoint** is the address of the interface the integration calls. The destination can also depend on an organization setting, region or the credentials used. Check the combination that actually determines which records the application returns.
 
-A **connection test** runs the checks implemented by the selected connector under the tested configuration. Its success doesn't establish every account or field the project needs.
+The production source is labeled **Warehouse Production**. That name helps people recognize it. Renaming a source that still points to Warehouse-Test won't change where it connects.
 
-Even an identical account string in production and sandbox identifies different account contexts. Finding a sandbox account isn't evidence that its production counterpart was collected.
+A **connection test** performs the checks implemented by the selected connector under the tested configuration. It can succeed against a valid sandbox destination. It doesn't establish that the destination or returned account set meets the production requirement.
 
-## Agree on the account set before counting the result
+Even if `warehouse-user` exists in both environments, those are different account contexts. Finding the sandbox record doesn't prove that the production account was collected.
 
-A **population** here means the set of accounts the project wants this source to represent. It is a design description, not a new ISC object you must create.
+## Agree on which accounts belong in this source
 
-The **coverage boundary** states what is included and what is deliberately outside that set.
+A **population** here means the set of accounts the project wants the source to represent. It's a design description, not another ISC object you have to create.
 
-For this example, the agreed purpose is:
+The **coverage boundary** states what belongs in that set and what is deliberately outside it. For this example, the agreement is:
 
 “Represent human-operated standard and administrative accounts in Warehouse-Prod, across East and West, including disabled accounts. Keep Warehouse-Test outside this source.”
 
-A **disabled account** remains an account record even when its sign-in or use is restricted. Its continued existence is why disabled accounts can still matter to an account inventory.
+A **disabled account** is still an account record, even though its sign-in or use is restricted. If the project needs to examine remaining accounts and access, those records can still matter.
 
-The application owner supplies a complete production inventory at a fixed observation time:
+The application owner supplies a complete production account inventory at a fixed observation time:
 
-| Production account category | Count | Treatment under this agreement |
+| Production account category | Count | Agreed treatment |
 |---|---|---|
-| Standard human accounts | 100 | Included |
-| Additional administrative human accounts | 10 | Included |
-| Integration service accounts | 10 | Outside this particular source; separately owned and tracked |
-| Total | 120 | 110 included, 10 deliberately excluded |
+| Standard human accounts | 100 | Include |
+| Additional administrative human accounts | 10 | Include |
+| Integration service accounts | 10 | Outside this particular source, with separate ownership and tracking |
+| Total | 120 | 110 included; 10 deliberately excluded |
 
-A **service account** is used by software or an integration rather than for a person's ordinary interactive work.
+A **service account** is used by software or an integration rather than for a person's ordinary interactive work. The ten service accounts still need accountable ownership and access management. Their separate treatment is an explicit part of this example's design, not advice to ignore them.
 
-Excluding those ten accounts from this source isn't a recommendation to ignore them. The project has agreed a separately accountable treatment. Their ownership and access still matter.
+The ten administrative accounts belong to ten of the same people who have standard accounts. So this inventory has 110 included accounts belonging to 100 people.
 
-The ten administrative accounts belong to ten of the same people who have standard accounts. The 110 included accounts therefore belong to 100 people in this supplied inventory.
+For one person in West, `warehouse-user` is the ordinary account and `warehouse-admin` is a separate account for approved administrative work. Both are existing production accounts inside the agreement.
 
-The people and accounts are different things to count.
+You can now see why counting people and counting accounts gives different totals. Two legitimate accounts for one person don't require two employee identities. Whether the administrator account still has appropriate privileges is a further review question.
 
-For one person in West, `warehouse-user` is their ordinary account and `warehouse-admin` is their separate account for approved administrative work. Both are existing production accounts inside the agreement.
+## Follow a correctly configured collection
 
-Two legitimate accounts don't require two employee identities. Whether each account's privileges remain appropriate is a further governance question.
+**Aggregation** collects account or entitlement information into ISC. An **entitlement** is an access item ISC represents from a source, such as an application permission or group membership.
 
-## Follow the normal collection into ISC
+For a successful read, the connector must reach the intended organization and obtain the intended accounts and information. It does that under its configured credential context.
 
-**Aggregation** collects account or entitlement information into ISC. An **entitlement** is an access item represented from a source, such as a group or application permission.
+A **credential** provides proof used to establish who is making the call. **Authentication** checks that proof. **Authorization** determines what the recognized caller may read or change.
 
-Under a correctly configured read, the connector reaches the intended external organization using its configured credentials and selects the intended accounts and data.
+Here, `svc-warehouse` is the integration account making the external read. It has permission to read the full intended human-account set. It is separate from the person whose accounts are being represented, and from that person's ordinary and administrator accounts.
 
-A **credential** supplies proof for the accepted caller context. **Authentication** establishes that context; **authorization** determines what the caller may read or change.
+Assume the connector supports the required information and selection, obtains every selected page of results, and processes the returned records successfully. ISC can then represent the acquired accounts under the source.
 
-Here, the integration actor `svc-warehouse` can read the full intended human-account set. It is separate from the person receiving governance coverage and from either of their application accounts.
+### Give the account key and owner reference different jobs
 
-Assume the connector supports the required data and selection, all selected pages are obtained, and records are processed successfully. ISC can then represent the acquired accounts under this source.
+An **attribute** is a named value on a record. For example, region tells us which region an account belongs to; an owner reference helps identify the person responsible for it.
 
-An **attribute** is a named value on a record, such as region or an owner reference. An **account schema** describes the represented fields and their relevant meanings, including the designated account identifier.
+An **account schema** describes the account attributes ISC represents and their relevant roles, including the designated account identifier.
 
-An **account identifier** distinguishes an external account within the source's context. In this example's stated account contract, `warehouse-user` and `warehouse-admin` are different account keys.
+An **account identifier** distinguishes one external account within the source's context. In this example's stated external account design, `warehouse-user` and `warehouse-admin` are distinct account keys. Other systems can use different identifier formats.
 
-Both records carry `workerRef = W-17`. The intended ISC identity has the corresponding person reference.
+Both records also contain `workerRef = W-17`. Here, `workerRef` means the account's reference to its human owner. The corresponding existing ISC identity has the same person reference.
 
-**Account correlation** associates a collected account with the appropriate ISC identity using configured matching. Assume the approved comparison and relevant processing successfully associate these two new records with that existing identity.
+| External account key | Owner reference | Meaning |
+|---|---|---|
+| `warehouse-user` | `W-17` | Ordinary account for this person |
+| `warehouse-admin` | `W-17` | Separate administrator account for the same person |
 
-That leaves two account records and one represented person. The shared worker reference supports ownership matching; it doesn't replace the distinct account keys.
+**Account correlation** associates collected accounts with identities using the configured matching. Assume the approved comparison matches these worker references to the corresponding identity value, and the relevant processing completes successfully for both newly collected accounts.
 
-The **user interface**, or **UI**, is the set of pages and controls a person uses. The **frontend** displays those interactions. The **backend** performs the relevant hosted processing, including representing acquired data and applying supported processing.
+The account keys keep the records distinct. The shared worker reference connects both to one person. The result is two source account records associated with one existing identity.
 
-The source's account view can show the resulting records and their identity associations. A displayed association follows acquired data and matching evidence; merely seeing a source tile doesn't establish that either happened.
+Using W-17 as the unique account key would lose that distinction: both accounts have it. A value can be suitable for matching ownership while being unsuitable for uniquely identifying an account.
 
-This is a conceptual data flow with explicit successful assumptions. It doesn't prescribe private service ordering or guarantee that every future read reevaluates every existing account.
+### Connect that processing to the account page
 
-## Now compare the intended read with the actual read
+The **user interface**, or **UI**, is the set of pages and controls a person uses. The **frontend** presents those interactions in the browser. The **backend** performs the relevant hosted processing, including representing acquired account data and applying supported matching.
 
-A **filter** narrows a selected set. Its supported fields and syntax depend on the connector and external interface.
+The source's account view can display the resulting records and their identity associations. Those results depend on data acquisition and matching. A source tile appearing on a page only tells you the source configuration exists.
 
-Selection can happen in connector configuration, through externally restricted results, or before ISC receives an exported file. There isn't one universal account-filter field that every connector implements.
+This is a conceptual flow with supplied successful conditions. It doesn't prescribe ISC's private service order or promise that every later aggregation reevaluates every existing association.
 
-The **collection scope** is the records and information the particular read is configured and able to collect.
+## Compare the agreed population with the selected population
 
-Keep these questions separate:
+A **filter** narrows a set of records. For example, a supported region condition can select East while leaving West outside the read.
 
-- Which accounts should the project include?
-- Which accounts can the destination and integration authority expose?
-- Which accounts does the saved read condition or supplied file select?
-- Which records did this run actually return and process?
+The available fields and syntax depend on the connector and external interface. Selection can happen in the connector configuration, through restrictions on the external results, or before an exported file reaches ISC. There isn't one universal account-filter setting for every source.
 
-For the supplied incident, the production inventory is stable during the comparison. The integration actor can read all 110 intended human accounts.
+The **collection scope** is the accounts and information a particular read is configured and able to collect.
 
-The hypothetical connector supports selecting human-operated accounts and a region condition. Its saved condition selects East only.
+To investigate missing records, separate four questions:
 
-Of the agreed 110 accounts, 70 are in East and 40 are in West. Both `warehouse-user` and `warehouse-admin` belong to the West set.
+1. Which accounts did the project agree to include?
+2. Which accounts can the destination and integration authority expose?
+3. Which accounts do the saved selection or supplied file include?
+4. Which records did this run actually return and process?
 
-**Pagination** divides a returned collection into pages. This run obtains every page of the selected East set, reports no record-processing failures and returns those 70 accounts.
+For our missing-account incident, the production inventory is stable during the comparison. The integration account can read all 110 intended human accounts.
+
+The hypothetical connector supports selecting human-operated accounts and selecting regions. Its saved condition selects human accounts in East only.
+
+Of the agreed 110 accounts, 70 are in East and 40 are in West. Both `warehouse-user` and `warehouse-admin` are in West.
+
+**Pagination** divides returned results into pages. This run obtains every page of its selected East set and reports no record-processing failures. Its result is all 70 East accounts.
 
 ```text
 Agreed human-account set: 110
@@ -147,226 +150,220 @@ Agreed human-account set: 110
   |
   +-- West: 40 --> Excluded --> Not read
 
-Required coverage: East and West.
-Supplied read condition: East only.
+Agreement: East and West.
+Saved selection: East only.
 ```
 
-The branches show the supplied account-set split and selection. They don't represent provisioning, account deletion or a universal internal filtering pipeline.
+The branches explain the supplied selection and account counts. They aren't account-creation, deletion or provisioning instructions, and they don't describe a universal internal filtering algorithm.
 
-The read succeeded for its configured East set. It didn't satisfy the wider East-and-West agreement.
+The collection completed the read it was configured to perform. The project still lacks the agreed West coverage.
 
-We know the cause from the saved supported condition, complete selected results and comparable inventory. A count of 70 alone wouldn't establish it.
+We can identify that cause because the evidence includes the saved supported condition, complete selected results and a comparable external inventory. A count of 70 by itself wouldn't explain which accounts were missing or why.
 
-Restarting a healthy connection wouldn't expand that condition. Creating replacements would duplicate accounts that already exist. Changing ownership matching wouldn't make an excluded record arrive.
+Restarting a healthy connection won't broaden the condition. Creating replacement accounts would duplicate existing accounts. Changing ownership matching won't make an excluded account arrive.
 
-## Missing from collection and missing from an identity need different investigations
+## Find out whether the account arrived before investigating its owner
 
-Suppose `warehouse-user` is absent from the acquired source records. First investigate destination, readable scope, selection and run results.
+If `warehouse-user` is absent from the acquired source records, investigate the destination, readable scope, selection and run results. The account must reach ISC before its ownership data can be used for matching.
 
-Now consider a separate variation: the account was acquired, but its worker reference is missing and it isn't associated with the intended identity.
+Now consider a separate variation. The record has arrived, but its worker reference is missing. The supplied processing result shows no match to the existing person identity.
 
-An **uncorrelated account**, for this comparison, is a collected account that hasn't been associated with the intended person identity. That isn't the same as an account never acquired by the source.
+An **uncorrelated account** has been collected but hasn't been matched to an established identity representing its owner. ISC can represent it through a **shadow identity**, an identity record for that unmatched account. Seeing such a record isn't evidence that ownership matching to the intended established person succeeded.
 
-The second variation calls for investigation of the missing value and configured comparison. Broadening the region condition doesn't supply an absent worker reference.
+In this variation, investigate the missing value and the configured comparison. Broadening the region selection won't supply that record's absent worker reference.
 
-Also keep the account key separate. Both legitimate accounts share W-17. Using that value as the unique external account identifier would fail to distinguish them.
+Also distinguish this from an account linked to the wrong person. An incorrect association needs review; it isn't uncorrelated merely because its associated person is wrong.
 
-A field can be suitable for matching several accounts to one person while being unsuitable as a unique account key. Its purpose determines the requirement.
+Preserve the distinct account keys while investigating either issue. Changing established identifiers can break references or affect represented records. They aren't the demonstrated cause of the East-only selection problem.
 
-Changes to established account identifiers can affect references and represented records. Don't redesign them as a quick response to a read-selection defect.
+## Verify the corrected read and the resulting view
 
-## Verify the correction against the agreed set
+Assume the responsible owners approve changing the supported region condition to include East and West while retaining the human-account selection.
 
-Assume responsible owners approve changing the supported region condition to include both East and West while retaining the human-account selection.
+The destination, credential context, account identifiers and ownership comparison stay the same.
 
-The destination, credential context, account identifiers and ownership comparison remain unchanged.
+A later supported read obtains all 110 intended accounts, with all selected pages and no processing failures. Both West records arrive with the supplied worker references. The configured comparison and relevant processing associate them with the existing person.
 
-A later supported read returns all 110 intended accounts, with every selected page and no record-processing failures. The two West records are present, and their supplied worker references and configured processing associate them with the existing person.
+That confirms coverage against the compared inventory at that observation time. It doesn't settle every account's privilege legitimacy or guarantee all future runs.
 
-That establishes coverage for the compared inventory and observation time. It doesn't guarantee every future run, every ownership association or the legitimacy of every entitlement.
+Check the displayed view too. A **Correlated** filter shows the associated accounts. An **Uncorrelated** filter shows the corresponding unmatched set. Other display filters and pagination can further narrow the rows you see.
 
-Inspect the view as well as the read. A **Correlated** display filter shows only associated accounts. An **Uncorrelated** filter shows the corresponding unassociated set. Other filters and pagination can narrow what the viewer sees.
+A display filter and a collection filter do different work. The first selects which acquired records you view; the second affects what the connector reads. Seeing 70 rows on a page isn't enough to conclude that only 70 records were acquired.
 
-A display condition doesn't necessarily change the connector's collection condition. Seeing 70 rows on a page doesn't by itself establish that only 70 records were acquired.
+Similarly, the same identity beside two account records can be the correct result for our ordinary and administrator accounts. It doesn't automatically indicate duplicate people.
 
-The same identity appearing beside multiple account records can be the legitimate two-account relationship just described. It isn't automatically duplicate-person evidence.
+## Check the access information as well as the account rows
 
-## Account rows alone don't establish access-data coverage
+Complete usernames don't establish complete access data. A connector can return every intended account while omitting the memberships or permissions the project needs to examine.
 
-The source purpose must also specify which information is needed.
+For this source, the required information includes account keys, region, classification, status, worker reference and relevant access values.
 
-A connector can return accounts while omitting relevant memberships or other permission data. Having all expected usernames wouldn't then establish a complete picture of their access.
+**Classification** here means the agreed category: standard human, administrative human or service account. It isn't a universal connector field named Classification.
 
-For this project, the needed information includes account keys, region, classification, status, worker reference and relevant access values. The connector must support the information, the schema must represent it appropriately, and the returned records must contain what the design relies on.
+The connector must support the information, the schema must represent it appropriately, and the returned records must contain the values the design uses. Those are separate checks. Defining a schema field doesn't make an omitted external value arrive.
 
-**Classification** here means the agreed category, such as standard human, administrative human or service account. It isn't a claim that every connector has a field named Classification.
+Suppose a permission review uses only the East records. Without other relevant evidence, it can't examine omitted West access. A clean East result is a conclusion about East, rather than evidence that West has no excessive permissions.
 
-A permission review based only on East cannot examine omitted West access if no other relevant evidence supplies it. A clean result over East doesn't prove West has no excessive access.
+Keep the coverage statement with the report. That lets its reader understand which accounts and access data the result actually describes.
 
-State coverage limits alongside the results. Otherwise a technically correct report about a partial set can be mistaken for a conclusion about the whole application.
+## Decide whether this source establishes people or adds their application accounts
 
-## Decide what role this source has in the identity model
+An **authoritative source** supplies accounts used to establish ISC identities through an **identity profile**. The profile defines how account information supplies identity values, along with relevant settings for those identities.
 
-An **authoritative source** supplies accounts used to establish identities through an **identity profile**. The profile is configuration defining relevant identity mappings and settings for that source's population.
+A **mapping** specifies how a value supplies a field in another representation. For example, a personnel record can supply a department value on an ISC identity.
 
-A **mapping** specifies how a value supplies a field in another representation. For example, personnel data can supply a person-level identity value.
+A **non-authoritative source** brings additional accounts and information to associate with identities established through the authoritative arrangements.
 
-A **non-authoritative source** supplies additional account information to associate with identities established through the authoritative arrangements.
+Our warehouse source is non-authoritative. The people already exist in ISC. The source adds their warehouse accounts so ownership and access can be governed. Treating each standard and administrator login as another personnel record would serve a different purpose.
 
-The warehouse source is non-authoritative in this example. Its purpose is to govern application accounts for people already represented, rather than treating every standard and administrator login as an independent personnel record.
+Choose that role according to the information's responsibility in the identity model. Application size, a familiar name or confidence in its owner doesn't decide it.
 
-This is a responsibility decision. Application size, a familiar name or confidence in its owner doesn't establish that role.
+Collecting access information also doesn't make it available to request. An **access request** asks for specified access for a recipient. An **access profile** groups related entitlements from one source.
 
-Collecting entitlement information also doesn't make it requestable. An **access request** asks for particular access for a recipient. An **access profile** bundles related entitlements from one source.
+Requestability, required approval, supported delivery and access reviews need their applicable configurations and evidence. Creating the source establishes none of those outcomes by itself.
 
-Whether access can be requested, approved, delivered or reviewed depends on the applicable configuration and available evidence. Creating or naming the source doesn't establish all those controls.
+## Keep the approved read separate from possible writes
 
-## A read boundary isn't automatically a write boundary
+**Provisioning** carries out supported account or access changes. This project's warehouse onboarding is read-only: it hasn't approved external account changes.
 
-**Provisioning** carries out supported account or access changes.
+An incomplete read calls for investigating the read. It isn't a reason to enable provisioning.
 
-This warehouse onboarding is read-only. The project hasn't approved external account changes. Correcting an incomplete read isn't a reason to enable them.
+A **direct connection** communicates with the external system through its configured integration. A **flat-file feed** supplies imported account information through a file. The selected integration and connection determine the available operations; neither label promises every capability.
 
-A **direct connection** communicates with the external system through its configured integration. A **flat-file feed** supplies imported account information through a file. Neither label promises every operation or the authority to perform it.
+Read-only connector offerings also exist. A more privileged credential or a new display name can't implement a write operation the connector doesn't support.
 
-Read-only connector offerings also exist. A display-name change or more privileged credential doesn't implement a missing write capability.
+A **SaaS connector** runs its integration work in SailPoint's hosted environment. **SaaS**, software as a service, means software operated by its provider as a hosted service.
 
-A **SaaS connector** runs its integration work in SailPoint's hosted environment. **SaaS**, software as a service, means provider-operated hosted software.
+Other integrations use a **Virtual Appliance**, or **VA**, a customer-deployed virtual machine for the applicable work. A **virtual machine** is a software-defined computer using resources from its host.
 
-A **Virtual Appliance**, or **VA**, is a customer-deployed virtual machine for applicable integrations. A **virtual machine** is a software-defined computer using its host's resources.
+Assume a supported SaaS connector for the warehouse source. The supported connection design determines where it runs. An application having a cloud website doesn't, by itself, establish a SaaS connector path.
 
-Assume a supported SaaS connector for this warehouse source. Its runtime is selected by the supported connection design, not by the application having a cloud website.
+Hosted execution still needs the correct destination, readable account set and valid external authority.
 
-Hosted execution still needs the intended destination, readable population and valid external authority.
+### A read filter isn't automatically a write control
 
-Now consider a separate design variation: the read selects only East, while the integration credential can modify both East and West.
+Consider a separate design variation. Its read selects East only, but its integration credential can modify accounts in East and West.
 
-The read condition alone doesn't establish an enforceable West-write prohibition. Investigate the supported write scope and effective target permissions.
+Does the East selection prevent every possible West write?
 
-**Least privilege** means granting only the authority needed for approved work. Broad technical authority isn't project authorization to use it, and a collection filter isn't an undocumented substitute for a write control.
+The collection condition describes what is selected for reading. To establish a write restriction, check the supported write operation and the effective permissions enforced in the target. The read condition alone doesn't provide that evidence.
 
-## Make the source definition useful to the next engineer
+**Least privilege** means granting only the authority needed for approved work. The integration account's technical ability to modify West isn't project permission to do so. Use justified target authority and supported controls for the actual operations.
 
-A **source owner** is the person assigned responsibility for the source under ISC's management arrangement.
+## Leave a source definition the next engineer can use
 
-The organization also needs accountable people for external accounts, credentials, classifications, data corrections and integration support. One person can hold more than one responsibility, but the responsibilities still differ.
+A **source owner** is the person assigned responsibility for the source in ISC.
 
-A practical design record can capture them:
+The project also needs accountable people for the external accounts, credentials, classifications, data corrections and integration support. One person can hold multiple responsibilities, but assigning a source owner doesn't automatically make them every account's owner or the external administrator. It doesn't supply target privileges either.
 
-| Question | Agreement in this example | Evidence |
+A practical design record can capture the agreement:
+
+| Question | Agreement in this example | Evidence to retain |
 |---|---|---|
-| Which external context? | Warehouse-Prod, excluding Warehouse-Test | Saved destination and returned production records |
-| Which accounts? | Standard/admin human accounts, both regions, including disabled | Complete comparable inventory and inclusive collection |
-| Which exclusions? | Sandbox and ten separately tracked integration accounts | Approved reason and accountable treatment |
-| What identifies account and person? | Distinct account key; shared worker reference for ownership | Schema and representative multiple-account matching evidence |
-| Which data? | Required account, classification, status, ownership and access information | Supported fields, schema and actual values |
-| Which changes are approved now? | None; read-only onboarding | Source capabilities, configuration and actual integration authority |
-| Who maintains correctness? | Agreed source, application, ISC and integration responsibilities | Named accountable people and evidence-review duties |
+| Which external context? | Warehouse-Prod; Warehouse-Test excluded | Saved destination and returned production records |
+| Which accounts? | Standard and administrative human accounts, both regions, including disabled accounts | Comparable complete inventory and inclusive collection |
+| Which exclusions? | Sandbox and ten separately tracked integration accounts | Approved reasons and accountable treatment |
+| What identifies account and person? | Distinct account key; shared worker reference for ownership | Schema and multiple-account matching evidence |
+| Which data? | Required account, classification, status, ownership and access values | Supported fields, schema and returned values |
+| Which changes are approved now? | None; read-only onboarding | Capabilities, configuration and actual integration authority |
+| Who maintains correctness? | Agreed source, application, ISC and integration responsibilities | Accountable people and evidence-review duties |
 
-This is a design record, not a mandatory new ISC object or a universal connector field list.
+This record documents the design. It isn't a mandatory new ISC object or a connector field list.
 
-Assigning a source owner doesn't automatically make them the external administrator, owner of every account or holder of target privileges.
+If West disappears later, the next engineer can compare the intended coverage with the current evidence. A new exclusion, lost read authority, failed run, external deletion or display filter calls for a different investigation.
 
-If West disappears later, the next engineer needs enough context to distinguish a new exclusion, lost read authority, a failed run, external deletion or a display issue. The purpose statement makes that investigation possible.
+## Compare the actual accounts, not only the totals
 
-## Equal counts can still describe different accounts
+Suppose a later run returns 110 records. A comparison shows ten required human accounts missing and ten excluded service accounts included.
 
-Suppose a later run returns 110 records. Comparing the actual members with the agreement shows ten required human accounts absent and ten excluded service accounts included.
+The total matches, but the members don't.
 
-The count is right; the set is wrong.
+Preserve both differences and investigate the selection or classification. Check the actual account identifiers and external context against the expected set, rather than accepting the result because its size looks right.
 
-Compare actual members and external context with the expected set. Record missing and unexpected accounts and investigate the difference.
+Boundary checks help reveal mistakes: inspect West, disabled and administrative accounts, along with service accounts that should be excluded. A successful sample provides useful evidence about that sample; it doesn't prove every record is correct.
 
-Representative checks at the boundaries help: West accounts, disabled accounts, administrative accounts and deliberately excluded service accounts. A successful sample can reveal useful evidence, but it doesn't prove every record is correct.
+For complete account coverage, reconcile the expected and acquired sets at comparable observation times. If the external inventory changed between them, explain the change instead of forcing the totals to agree.
 
-For a complete coverage claim, reconcile the expected and acquired sets at comparable observation times. If the external inventory changed in between, account for that change instead of forcing totals to agree.
+A current employee list isn't automatically an application-account inventory. Contractors, former-worker accounts, service accounts and orphaned accounts can exist outside it.
 
-A current employee list isn't automatically an account inventory either. Contractors, former workers, orphaned records and service accounts can exist outside it.
+An **orphaned account**, in this operational sense, lacks an established responsible owner under the organization's process. That description isn't a specific product flag or an automatic instruction to delete it.
 
-An **orphaned account**, in this operational sense, lacks an established responsible owner under the organization's process. That description isn't a specific product flag or an automatic deletion decision.
+Coverage asks what should be represented. Reviewing the purpose and legitimacy of each account is further work.
 
-Coverage determines what should be represented. It doesn't settle every account's legitimacy.
+## Review the consequences before changing the boundary
 
-## Treat a scope change as a decision with consequences
+An exclusion needs a reason, accountable treatment and a clear limit on what the results cover. Don't quietly redefine “all accounts” to mean whatever arrived.
 
-An exclusion needs a reason, accountable treatment and a statement of what the results no longer cover. Don't redefine “all accounts” to mean whatever happened to arrive.
+Broader collection also needs review. Another region or account category can introduce sensitive data, ownership relationships and dependencies on other processing. Check the supported change, necessary permissions and those effects before applying it. More records aren't automatically an approved improvement.
 
-Broader collection also needs review. Another region or account category can add sensitive information, ownership relationships and downstream dependencies.
+**Deprovisioning** removes or reduces access through the applicable account-changing process. Leaving an account out of a read isn't itself an instruction that performs that target change.
 
-Check those effects, the supported configuration and necessary permissions before applying a change. More records aren't automatically a better or approved design.
+There can still be effects inside ISC when a previously represented account is missing from a later read. The outcome depends on the read operation, source settings and deletion safeguards. Check those conditions rather than assuming the change merely hides records, always deletes ISC records or always preserves them.
 
-**Deprovisioning** removes or reduces access through the applicable account-changing process. Omitting an account from a read isn't itself that target operation.
-
-Handling of a previously represented but now missing account depends on the read operation, source settings and deletion safeguards. Don't assume a changed filter merely hides records, always removes ISC records or leaves everything unchanged.
-
-Resetting, deleting or recreating a source can also affect represented data and dependent configuration. None is the first diagnostic step for the supplied East-only incident.
-
-Preserve stable identifiers and dependencies while correcting the demonstrated selection issue through the approved process.
+Resetting, deleting or recreating a source can also affect represented data and dependent configuration. For the demonstrated East-only incident, correct the approved selection issue while preserving stable identifiers and dependencies.
 
 ## Work through these decisions
 
-Each case supplies a separate situation.
+### 1. The read succeeds for East
 
-### 1. The read succeeded for East
+The credential can read the complete intended set. The saved supported condition selects East, and all selected pages finish successfully with its 70 accounts.
 
-The credential can read the complete intended set, but the saved supported condition selects East. All selected pages finish successfully and return its 70 accounts.
+Does this establish the agreed 110-account coverage?
 
-Does that prove the agreed 110-account coverage?
-
-**Worked reasoning:** No. The condition and complete selected results establish why West was omitted. Correct the approved scope and verify a later inclusive collection. Account creation and changed ownership matching don't repair an account that wasn't read.
+**Worked reasoning:** The collection completed the selected East read. The saved condition and comparable inventory explain West's omission. Correct the approved scope and verify a later inclusive collection. Creating accounts or changing ownership matching doesn't repair excluded input.
 
 ### 2. A production label points to sandbox
 
-Warehouse Production returns records from Warehouse-Test, including the same account string used by a production account.
+Warehouse Production returns Warehouse-Test records, including the same account string used in production.
 
-Does finding that string establish production coverage?
+Does that establish production coverage?
 
-**Worked reasoning:** No. Match the actual organization and account context to the intended set. The familiar label doesn't change the destination, and a sandbox result isn't production evidence.
+**Worked reasoning:** Check the actual organization and account context. The source's label doesn't change its destination. The sandbox account is evidence about sandbox, not the production account the project needs.
 
 ### 3. There are 110 accounts for 100 people
 
-The included set contains 100 standard accounts and ten additional administrator accounts belonging to ten of those same people.
+The included set contains 100 standard accounts and ten administrator accounts belonging to ten of those same people.
 
 Should ten accounts be deleted or ten person identities created to equalize the counts?
 
-**Worked reasoning:** Neither follows. Preserve distinct account records and establish their owner relationships. Purpose and privilege approval still need review, but unequal counts don't establish duplicates to remove.
+**Worked reasoning:** Neither follows. The different totals describe legitimate multiple-account ownership. Preserve distinct account records and correct owner associations. Account purpose and privileges still need review, but unequal counts don't establish duplicates to remove.
 
-### 4. An acquired account lacks its owner reference
+### 4. An acquired account lacks its worker reference
 
-The source contains `warehouse-user`, but its worker reference is missing and it isn't associated with the intended identity.
+The source contains `warehouse-user`. Its worker reference is missing, and the supplied result shows it hasn't matched to the existing identity.
 
 Should the region selection be expanded again?
 
-**Worked reasoning:** The record already crossed the collection boundary. Investigate the missing value and configured correlation, then use supported correction. More accounts in the read don't provide that record's missing ownership information.
+**Worked reasoning:** The record already reached ISC. Investigate the missing value, the configured comparison and the relevant matching result, then use supported correction. A wider read doesn't supply this account's missing ownership information.
 
 ### 5. The credential can write beyond the read set
 
-A separate design reads East only. The integration actor has target authority to modify both regions, without an approved West write requirement.
+A separate design reads East only. The integration account can modify both regions, but no West write requirement is approved.
 
-Does the East filter enforce a safe West-write prohibition?
+Does the East filter enforce a West-write prohibition?
 
-**Worked reasoning:** No. Establish the supported write behaviour and effective target authority, then apply justified least privilege and approved controls. Don't assume a read condition constrains every external change.
+**Worked reasoning:** A collection filter alone doesn't establish that control. Verify the supported write behavior and target authority, then apply justified least privilege and approved controls. Technical permission doesn't replace project authorization.
 
 ### 6. The count matches, but membership doesn't
 
-A 110-record result omits ten required human accounts and includes ten service accounts outside the agreement.
+The 110-record result omits ten required human accounts and includes ten service accounts outside the agreement.
 
-Can the source be accepted based on the total?
+Can the source be accepted based on its total?
 
-**Worked reasoning:** No. Preserve both differences, identify the classification or selection defect and verify the corrected members. The excluded service accounts still need their separately accountable treatment.
+**Worked reasoning:** Reconcile the actual members. Preserve the missing and unexpected sets, investigate the classification or selection defect and verify the corrected result. The service accounts still need their separately accountable treatment.
 
 ## Review a payroll-export proposal
 
-A finance team proposes using the payroll application's name for a source, importing a monthly active-employee export and declaring complete payroll-account coverage. They also propose using the same export to drive account removal.
+A finance team proposes naming a source after its payroll application, importing a monthly active-employee export and declaring complete payroll-account coverage. It also proposes using that export to drive account removal.
 
 What must be established first?
 
-**Worked reasoning:** Identify the external payroll environment and what the file actually represents. An active-employee export isn't automatically an inventory of application accounts; it can omit administrators, disabled accounts, contractors, former-worker accounts or service accounts.
+**Worked reasoning:** Identify the external payroll environment and what the file actually represents. An active-employee export isn't automatically an inventory of application accounts. It can omit administrators, disabled accounts, contractors, former-worker accounts and service accounts.
 
-Establish the intended account keys, ownership values, classifications, statuses, required access data, export selection, observation time and responsible owners. Compare the expected account set with the file's members rather than treating successful import as proof of coverage.
+Establish the account keys, ownership values, classifications, statuses, required access data, export selection, observation time and responsible owners. Compare the expected account set with the file's members. A successful import only establishes the work within its actual scope.
 
-Decide whether the source establishes personnel identities or represents application accounts for existing identities. The payroll name doesn't make that decision.
+Decide whether this source establishes personnel identities or adds application accounts to existing identities. The payroll name doesn't decide that responsibility.
 
-Removal needs a separately supported, currently authorized process with appropriate evidence and safeguards. A missing row in an active-only monthly file doesn't establish that the external account should be deleted.
+Removal needs a separately supported, currently authorized process with suitable evidence and safeguards. A missing row in an active-only monthly file doesn't establish that the external account should be deleted.
 
-Describe the design through its actual relationships: this system and environment, these included accounts and data, these justified exclusions, these supported operations, and these people responsible for keeping the representation correct.
+Explain the proposed source through its actual relationships: the system and environment it represents, the accounts and data it includes, the justified exclusions, the supported operations and the people responsible for keeping it correct.

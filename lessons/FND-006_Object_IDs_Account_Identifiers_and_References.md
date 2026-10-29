@@ -1,53 +1,77 @@
 # Object IDs, account identifiers, and names: which record are we talking about?
 
-Two search results say "Invoice reader." One represents access in the production finance system; the other represents access in its test environment.
+Two results both say “Invoice reader.” One belongs to finance production. The other belongs to finance test.
 
-An employee needs production invoice reading, not payment release. Choosing whichever result looks familiar is not enough. The displayed words can match while the records point to different systems.
+The employee needs production invoice reading, not payment release. The familiar name helps us find candidates. We still need to establish which permission each result represents.
 
-In SailPoint Identity Security Cloud (ISC), names help you recognize records. Identifiers and their context help you establish which records they are. That distinction matters before you change access, copy a configuration, or investigate an account.
+In SailPoint Identity Security Cloud, or **ISC**, different records can have similar names and different identifiers. Let's follow what each identifier points to before using it in a change.
 
-## What does this ID identify?
+## Separate the person, the account and ISC's account record
 
-An **object** is a particular record ISC manages, such as an identity, a source, an account representation, or an access configuration. An **object ID** identifies that record so another record or operation can refer to it without relying only on a readable name.
+An **identity** is ISC's record representing a person. An **account** is a record in a particular system, such as the employee's finance account.
 
-An **identity** is ISC's person-level representation. An **account** is a record in a particular system. ISC can also hold a collected representation of that external account. The actual account and its ISC representation are not the same record.
+ISC can collect information about that external account and keep its own representation. The account in finance and the record describing it in ISC are separate records.
 
-A **source** is ISC's configured representation of a system or account dataset. A **connector** provides the integration used to read its data and perform supported changes.
+An **object** is a particular record ISC manages. The identity and the collected account representation are two examples.
 
-For our hypothetical example, an employee already has an identity and a finance production account. ISC has collected the relevant data and correctly associated that account with the identity.
+An **object ID** identifies that particular ISC record. Other records and operations can use it to refer to the object without relying only on its readable name.
 
-These short labels stand in for technical IDs. They are not real tenant IDs or values to submit anywhere.
+The short IDs in this example stand for actual technical values. They are not real ISC IDs or values to submit.
 
-| Record or value | Teaching value | What it identifies here |
-|---|---|---|
-| Employee number | `10482` | Employment information under the organization's numbering policy |
-| ISC identity ID | `I-1` | The person-level identity record |
-| ISC source ID | `S-PROD` | The finance production source configuration |
-| ISC account object ID | `A-1` | ISC's representation of one finance production account |
-| External account key | `u-778` | The account in finance production under this integration |
-| Account login | `finance.user` | The username used in the finance system |
+The employee's identity has ID **I-1**. That identifies the person-level record inside ISC.
 
-The employee number is a **business identifier**, supplied and governed by the organization. It is not automatically the ID ISC assigns to the identity. The employee's readable name is a label for recognizing the person, not a substitute for either identifier.
+Their account in finance has the external key **u-778**. That key identifies the account under this finance integration.
 
-Suppose an operation asks for an ISC identity ID. I-1 represents the right kind of identifier. The employee number, account-record ID, and external key answer different questions.
+ISC's representation of that account has ID **A-1**. A-1 identifies the ISC account record, while u-778 identifies the external account it describes.
 
-If an external account operation instead needs the finance account key, I-1 is the wrong kind of value. It identifies the person-level record in ISC, not the external account that operation must address.
+These values are useful together because they answer different questions. I-1 tells us which ISC person. A-1 tells us which ISC account record. u-778 tells us which finance account is represented.
 
-Before copying a value, ask: "ID of what, in which system?"
+## Keep the source and login beside the account key
 
-## Why does one account have several identifying values?
+A **source** is ISC's configured representation of a system or account dataset. A **connector** supplies the integration used to read its information and perform supported changes.
 
-The finance system's key for the account is u-778. The employee signs in using finance.user. In this example, the finance system keeps that key when the login changes.
+Our finance production source has ID **S-PROD**.
 
-ISC's representation has its own ID, A-1, because it is a separate record describing the account and its relationships. A-1 does not replace the finance key or become the person's login.
+The account already exists, and ISC has collected its information. Our main example uses its correct association with the employee's identity.
 
-A **reference** points from one record to another. For A-1, the source reference identifies S-PROD. It says which configured source the represented account belongs to. Its identity reference identifies I-1, saying which ISC identity the account is associated with.
+The employee signs in to finance with the login **finance.user**. In this hypothetical system, that login differs from the key u-778. Finance keeps the key when the login changes.
 
-**Account correlation** is the matching and assignment of source accounts to ISC identities. An **attribute** is a named piece of information on a record, such as employeeNumber.
+That is a supplied feature of this example, not a guarantee about every application.
 
-Suppose the configured matching compares the account's employee-number attribute with the identity's employee-number attribute. Both contain 10482 and, under the supplied data, identify one intended identity. The account is associated with I-1.
+The organization also gives the employee the number **10482**. This is a **business identifier**: a value supplied and governed by the organization for a business purpose.
 
-The number helped establish the match. The resulting relationship points to the identity record. It did not rename the account object to 10482 or turn the identity into a finance account.
+The employee number is not automatically the technical ID ISC assigns to the identity. Their readable person name is another label, useful for recognition but not a substitute for either ID.
+
+We can now put the values beside their meanings:
+
+| Value | What it identifies in this example |
+|---|---|
+| `10482` | Employment information under the organization's numbering policy |
+| `I-1` | ISC identity representing the person |
+| `S-PROD` | ISC source configured for finance production |
+| `A-1` | ISC record representing the finance account |
+| `u-778` | External account under this finance integration |
+| `finance.user` | Login used in the finance system |
+
+Suppose an operation asks for the recipient's ISC identity ID. The real ID represented by I-1 is the right kind of value.
+
+Employee number 10482 would answer a different question. A-1 and u-778 identify account records, not the recipient's ISC identity.
+
+If an external operation needs the finance account key, I-1 is the wrong kind of identifier for that field. The operation needs to address the account in its own system.
+
+Before copying a value, establish the record and system the receiving field expects.
+
+## Follow the account's references
+
+A **reference** points from one record to another.
+
+An **attribute** is a named field on a record. The account and identity can each have an employee-number attribute.
+
+A-1 has a source reference identifying S-PROD. That establishes which source the account record belongs to.
+
+Its identity reference identifies I-1. That establishes which ISC person the account is associated with.
+
+The external account key is described as the **native identity** in this account representation. Native here concerns the account's source-system context; it does not mean the person's ISC identity.
 
 ```text
 ISC account record: A-1
@@ -69,43 +93,77 @@ Arrows mean "refers to".
 They do not create accounts or sign in.
 ```
 
-Follow the first arrow to the source and the second to the associated identity. They mean "refers to," not "creates," "copies every attribute," or "signs in." The external-account line identifies what A-1 represents; it is not a live query of the finance system.
+Follow the source arrow to finance production's configuration. Follow the identity arrow to the person.
 
-This gives you separate checks. The external key can correctly identify an account while that account is associated with the wrong person in ISC. Conversely, the person association can be correct while an attempted account change fails.
+The arrows do not create the account, copy all its attributes onto the person or sign the employee in. The last line identifies the external account being represented. It is not a live query of finance.
 
-The business identifier needs its own governance. If employee numbers are reused, incorrect, or not unique in the relevant population, an apparent equality is not sufficient evidence that the intended person was selected. Check the actual data and matching design.
+The key and the association need separate checks. u-778 could correctly identify the external account while A-1 is linked to the wrong person in ISC. Conversely, the person association can be correct while an attempted finance update fails.
 
-Other references have their own purposes too. An access object's owner reference identifies the responsible identity, not that person's application account. A manager identity reference identifies another person-level record. Neither relationship automatically gives that owner or manager the described access.
+## Understand how the business number helped establish the association
 
-## The permission also has more than one identifying value
+**Account correlation** matches and assigns a source account to an ISC identity using the applicable configuration.
 
-The production finance system has a group with key `g-41`. A **group** collects accounts whose membership the application can use to grant access. In this hypothetical design, g-41 permits invoice reading, not payment release.
+For our example, the configured comparison uses the account's employee number and the identity's employee number. Both contain 10482, and that value identifies one intended identity in the supplied data. The account is therefore associated with I-1.
 
-An **entitlement** is an access item represented from a source, such as that group membership or a permission. ISC represents this group as entitlement record `E-PROD`, with display name `Invoice reader`.
+The number supplied matching information. The resulting relationship points to the identity record.
 
-An **entitlement type** distinguishes a kind of access item within a source. Here the type is `group`, the source is S-PROD, and the source value is g-41.
+It did not turn A-1 into an account named 10482, replace u-778 or merge the identity and finance account.
 
-E-PROD identifies the ISC entitlement record. The value g-41 identifies the source group represented by that record. These are different identification contexts, not alternative spellings of one field.
+The numbering policy matters too. If numbers are reused, wrong or not unique in the relevant population, equal values may select the wrong person. Check the data and matching design rather than treating every employee number as permanently reliable.
 
-If the collected account holds group value g-41, it does not need to hold E-PROD as its native membership value. The finance system uses its group key, not ISC's identifier for the represented entitlement.
+Other references have other purposes. An access object's **owner reference** identifies the responsible identity. A **manager identity reference** identifies another person-level record.
 
-How can ISC connect that membership to the entitlement's details?
+Neither points automatically to that person's application account or gives them the access described by the owned or managed object.
 
-A **schema** describes an object's represented attributes and their designated uses. For the account-attribute linking pattern here, the account schema marks `group` as an entitlement-bearing attribute. Its name matches the configured entitlement type, and its Type is linked to that type.
+## Distinguish the represented entitlement from the source group
 
-The entitlement schema designates an attribute as the **Entitlement ID**. In our supplied group record, that designated attribute contains g-41. The collected account membership also contains g-41 within the intended source/type context, so the values supply the link.
+The finance application has a group with key **g-41**. A **group** brings accounts together so its memberships can be used to give access.
 
-There are two different uses of "ID" here: the ISC record E-PROD and the designated source ID value g-41. The account membership matches the latter under this configuration.
+In this hypothetical application, g-41 permits invoice reading. It does not permit payment release.
 
-A friendly label cannot replace that comparison. If an export or mapping substitutes Invoice reader for g-41 while the designated ID remains g-41, matching displayed words do not repair the reference.
+An **entitlement** is an access item represented from a source, such as a group membership or permission.
 
-Inspect the collected membership value, account schema, entitlement type and entitlement record together. The source/type relationship and designated values explain the link; the label only helps you read it.
+ISC represents this group with entitlement record ID **E-PROD** and display name **Invoice reader**. A **display name** is the readable label shown to help people recognize the item.
 
-## Follow the access package to the source item
+An **entitlement type** identifies a kind of access item within a source. Our type is **group**, and the source is S-PROD.
 
-An **access profile** is a bundle of related entitlements from one source. Our profile `Read invoices`, represented by `P-1`, references source S-PROD and entitlement E-PROD.
+There are now two identifying values:
 
-A **role** groups access for a responsibility or population. The example role `Invoice checking`, represented by `R-1`, includes P-1. Roles can also include entitlements directly; this is one relationship, not a mandatory stack for all access.
+E-PROD identifies the ISC entitlement record. g-41 identifies the source group represented by that record.
+
+The account in finance holds the group membership using g-41. Its membership data does not need to contain E-PROD. The application uses its own group key, rather than ISC's ID for the represented entitlement.
+
+This is the same distinction we made for accounts: ISC has its record ID, and the external system has the identifying value used by its own records.
+
+## Connect a collected membership to the entitlement details
+
+**Aggregation** collects account or entitlement information from a source into ISC.
+
+Suppose the collected account's group field contains g-41. How does ISC connect that membership value with E-PROD's readable details?
+
+A **schema** describes represented fields and their designated uses.
+
+For our linking pattern, the account schema marks the field named `group` as an **Entitlement** attribute. Its name agrees with the entitlement type, and its **Type** setting is linked to that group type.
+
+The entitlement schema designates a field as **Entitlement ID**. On our source group record, that designated field contains g-41.
+
+The collected membership and designated source ID therefore match within S-PROD and the group type. That supplies the link to the represented entitlement.
+
+Here, “Entitlement ID” in the schema means the designated identifying value from the source. It is not the ISC object ID E-PROD.
+
+If the account instead supplies the text Invoice reader while the designated source ID remains g-41, the readable name does not satisfy that comparison.
+
+Inspect the returned and collected membership values, connector or export mapping, account schema, entitlement type and entitlement record. Changing an established ID field merely to make one label match would change the identification design rather than explain the mismatch.
+
+## Follow the package to the actual source item
+
+An **access profile** bundles related entitlements from one source.
+
+Our **Read invoices** profile has ID **P-1**. It references source S-PROD and entitlement E-PROD.
+
+A **role** groups access for a responsibility or group of people. Our **Invoice checking** role has ID **R-1** and includes P-1.
+
+Roles can also include entitlements directly. The profile branch here is one useful configuration, rather than a mandatory layer for every role.
 
 ```text
 R-1: role Invoice checking
@@ -120,173 +178,203 @@ R-1: role Invoice checking
          source value: g-41
          display: Invoice reader
 
-Separate collected account observation:
+Separate collected membership:
 A-1 belongs to S-PROD
 group contains g-41
  |
- +-> E-PROD when source/type/schema
-     and designated ID values match
+ +-> E-PROD through matching
+     source/type/schema and designated ID
 
 Top arrows describe configuration.
 Bottom arrow links membership details.
 Neither shows a completed grant.
 ```
 
-The upper part describes access definitions: what the role and profile contain and which source item the entitlement represents. The lower part describes an account observation: membership value g-41 was collected for A-1.
+The upper part tells us what the role and profile contain. Following E-PROD resolves the access item to finance production, type group, value g-41.
 
-Those arrows do not run from top to bottom every time the employee signs in. The definitions can exist without being assigned to that employee, and collected membership alone does not establish who originally granted it.
+The lower part describes membership information collected for account A-1.
 
-To check the profile, follow its entitlement reference. Resolving E-PROD gives you the actual source, type and value to compare with the requirement.
+These are different facts. A definition can exist without being assigned to this employee. An existing collected membership does not establish who originally granted it.
 
-A reference can be technically valid but wrong for the business need. A profile may point to a real entitlement that permits reading in test when the requirement is reading in production. Checking only that the selected item is called Invoice reader misses the problem.
+The arrows also are not steps run from top to bottom whenever the person signs in. They describe references and a membership link.
 
-## Matching names and values still need the right context
+A technically valid reference can still be wrong for the business need. A profile can reference a real test entitlement while the employee needs production access. Checking only that the name says Invoice reader misses the difference.
 
-Compare the two search results:
+## Check the environment even when names and source values match
 
-| ISC entitlement record | Display name | Source context | Type and source value |
+Return to the two search results:
+
+| ISC entitlement ID | Display name | Source context | Type and source value |
 |---|---|---|---|
 | `E-PROD` | Invoice reader | `S-PROD`, finance production | `group`, `g-41` |
 | `E-TEST` | Invoice reader | `S-TEST`, finance test | `group`, `g-41` |
 
-The source value matches as well as the label. They are still different represented access items. Test can contain copied keys and names without providing production access.
+Both the label and source value match. The source references do not.
 
-An **environment** is an operating context such as production or test. An ISC **tenant** is a particular hosted organizational environment containing its configuration and represented data. Establish both the ISC tenant you are using and the business-system environment represented by the source.
+Test can have copied group keys and names. Membership in its group still does not give production access.
 
-Type also matters within the source. A group value and a permission value do not become interchangeable merely because their characters match. Read the enclosing record and configured relationship.
+An **environment** is an operating context such as production or test. An ISC **tenant** is a particular hosted organizational environment containing its own configuration and represented data.
 
-"Update u-778" is incomplete until you know which source system and environment owns that key. Likewise, when moving a design between ISC test and production tenants, resolve and map the intended destination objects. Names can help locate candidates; they do not establish that copying technical IDs produces the intended relationships.
+Check both: which ISC tenant are you using, and which business-system environment does this source represent?
 
-## Read field names in the interface that supplies them
+Type matters within a source too. A group value and a permission value do not become interchangeable just because their characters match.
 
-An **API** is a software interface for reading information or requesting operations. An **endpoint** identifies a particular resource or operation address.
+Likewise, “update u-778” is incomplete without its system and environment. The key needs the context that tells the integration where it belongs.
 
-In an account API representation, you can encounter these fields:
+When moving a design between ISC test and production tenants, resolve the intended destination objects and map the references to them. Names can help locate candidates. They do not establish that copied technical IDs address the intended destination records.
 
-| Field | Meaning in that account representation |
+## Read the field definition for the interface you are using
+
+An **API**, or application programming interface, lets software read information or request an operation. An **endpoint** is the address for a particular resource or operation.
+
+An account API representation can expose several of the relationships we have followed:
+
+| Account field | Meaning in that representation |
 |---|---|
-| `id` | ISC account object ID, A-1 in our example |
-| `sourceId` | ID of the source the account belongs to, S-PROD |
-| `identityId` | When populated, ID of the identity it is correlated to, I-1 |
-| `nativeIdentity` | Identifier of the account in its source-system context, u-778 |
+| `id` | ISC account object ID, represented here by A-1 |
+| `sourceId` | Source record ID, represented by S-PROD |
+| `identityId` | When populated, correlated identity ID, represented by I-1 |
+| `nativeIdentity` | Account identifier in its source context, represented by u-778 |
 
-A **native identity** is that source-context identifier. Our example deliberately separates it from the login finance.user. A real connector can use a username, a directory distinguished name, or another system-specific value instead.
+Read each field as a different question about the account. Which ISC account record? Which source? Which associated identity? Which external account?
 
-A **distinguished name** is a directory-style name locating an object within the directory. If the name or location changes, that identifier can change. Do not turn our persistent-key example into a rule that every native identity survives renaming.
+Our nativeIdentity differs from the login because we supplied that design. A real connector can instead use a username, a directory distinguished name or another system-specific value.
 
-You may also see `uuid` as a separate account field. The account model describes it as the account's unique ID determined by its schema. Do not assume uuid, nativeIdentity and the ISC object id have one universal meaning or mapping. Their actual relationship must be established from the relevant connector, schema and account data.
+A **distinguished name** locates an object within a directory. If its name or location changes, that identifying value can change. Do not assume every native identity behaves like our persistent finance key.
 
-The source account schema designates which attributes provide **Account ID** and **Account Name**. Those roles describe identification and naming in the source account data. They are not instructions to write A-1 into the external account's identifier field.
+You can also encounter a separate account field called `uuid`. The account model describes it as the account's unique ID determined by its schema. Do not assume uuid, nativeIdentity and the ISC object id are universally interchangeable.
 
-Search adds another reason to check context. ISC Search's nested account field `accountId` uses the source's `aiqAccountName` value when available; otherwise it uses the account display name. It must not automatically be interpreted as the account API's object `id`.
+The source's account schema designates fields for **Account ID** and **Account Name**. Those settings identify and name accounts in the source data. They do not tell you to put A-1 into the finance system's account-key field.
 
-Here, aiqAccountName is the source-provided account-name value described for that Search field. Search data and an account API response have different field definitions, even though both concern accounts.
+To establish the actual relationships, inspect the connector's definitions, schema and returned account data.
 
-Before carrying a value from one view to another, check the receiving field's documented object type and meaning. The English word "ID" is not an interface contract.
+Search gives us another example. An identity Search result can contain account information inside it. In that nested account information, the field `accountId` uses the source's `aiqAccountName` value when available; otherwise it uses the account display name.
 
-## What changes when you edit a display name?
+Here, aiqAccountName is the source-provided account-name value described for that Search field.
 
-Suppose an administrator changes E-PROD's ISC display name from Invoice reader to `Finance invoice reading`. Its ID, source, type and source value remain unchanged.
+Despite ending in Id, Search's accountId must not automatically be treated as the account API's object id. The two representations define their fields differently.
 
-P-1 still references E-PROD. E-PROD still represents S-PROD's group g-41. The new label helps someone understand that same access item.
+Before moving a value between them, check what the receiving field expects. The word ID alone cannot establish that.
 
-ISC entitlement display-name and description edits are not sent to the external source. This edit neither renames the finance group nor changes who belongs to it.
+## Change a label without confusing it with an identifier change
 
-A saved label also does not prove every Search result or open page has refreshed. Inspect the current record and relevant view before treating a label discrepancy as a new object.
+Suppose an administrator changes E-PROD's ISC display name from Invoice reader to **Finance invoice reading**.
 
-Now change the direction: someone renames a group in the external system. That is not automatically the same kind of edit.
+Its object ID, source, type and source value remain unchanged.
 
-If the integration uses a persistent group key and only a separate label changes, the key can remain the same. If the integration identifies the object by its name, changing the name changes the identifying value.
+P-1 still references E-PROD. E-PROD still represents S-PROD's group g-41. We have made the same represented item easier to recognize.
 
-**Aggregation** collects account or entitlement data from a source into ISC. The identifier matters when ISC interprets that data. SailPoint's Snowflake connector, for example, uses source user/role `name` values as account/entitlement identifiers and warns against changing those values after aggregation.
+ISC entitlement display-name and description edits are not sent to the external source. This edit does not rename the finance group or change its memberships.
 
-That is a connector-specific counterexample, not a rule that every rename has identical consequences. A field that looks readable can still be the identifier on which the integration depends.
+A saved label also does not prove that every Search result or open page has refreshed. Inspect the current record and the view showing the older name before concluding that they are different objects.
 
-## A schema change, a key change, and a label change are different
+Now consider a rename inside the external application.
 
-Changing a **schema designation** changes which attribute ISC treats as Account ID, Account Name, or the entitlement's designated ID/Name. You are changing how the integration identifies or names the represented records.
+If that integration uses a persistent key and only a separate label changes, the key can remain the same. If it uses the name itself to identify the object, changing that name changes an identifying value.
 
-Changing an **external identifier value** changes data in the actual source system. A supported rename procedure and the connector's handling determine what that change means.
+A real SailPoint example is the **Snowflake** connector. It uses source user and role name values as account and entitlement identifiers and warns against changing those values after aggregation.
 
-Editing an ISC entitlement display label does neither of those things.
+So a readable name can be an identifier the integration depends on. Snowflake's documented warning does not establish the handling of every rename in every other connector.
 
-SailPoint strongly discourages changing Account ID or Account Name designations after account aggregation because of duplicate-record and broken-reference risks. Changing designated entitlement ID/Name attributes after aggregation can also create duplicate entitlements.
+## Compare a schema change with a source-key change
 
-These warnings are reasons to inspect dependencies and supported procedures, not a promise that every change produces the same error.
+Changing a **schema designation** changes which field ISC treats as Account ID, Account Name or the entitlement's designated ID or Name.
 
-For a separate hypothetical variation, the external finance key changes from u-778 to `u-991`. Someone says, "It's still the same employee's account."
+Changing an **external identifier value** changes data in the actual source system.
 
-That states the business intention. It does not establish how the connector recognizes the changed record, preserves its ISC association, or addresses outstanding operations that use the old key.
+Editing an ISC display label does neither.
 
-Inspect before-and-after source data, schema, returned account records and the supported change behavior. Do not assume automatic tracking, duplication, or deletion from the sentence alone.
+These changes can look similar on a screen, but they affect different parts of the relationship.
 
-## Deleting and recreating is not another name for renaming
+SailPoint strongly discourages changing Account ID or Account Name designations after account aggregation because of duplicate-record and broken-reference risks. Changing the designated entitlement ID or Name after aggregation can also create duplicate entitlements.
 
-Suppose the test entitlement E-TEST is removed. A later current entitlement has the same label but a different ISC record ID, `E-TEST-NEW`.
+The warnings tell us to investigate dependencies and supported procedures. They do not predict one exact error for every integration.
 
-Under those supplied facts, it is a different ISC object. The matching display name does not make E-TEST-NEW the old E-TEST.
+For another variation, the external finance key changes from u-778 to **u-991**.
 
-Inspect any saved configuration or handoff still referring to E-TEST. Do not assume it retargets itself by visible name. Missing-reference rejection and cleanup behavior depend on the actual feature; neither is established just by our example.
+“The account still belongs to the same employee” describes the business intention. It does not establish how the connector recognizes the changed record or whether old references and pending operations still address it correctly.
 
-An identifier precisely addresses a record in context. It does not promise that the record survives deletion, source resets, or migration.
+Inspect the before-and-after source data, schema, returned account records, association and supported change behavior.
 
-For the same reason, deleting and recreating a source is not a safe first repair for unexplained account data. It can affect the dependencies you need to investigate. Start with read-only records and configuration instead.
+Those facts are needed before concluding that ISC automatically tracks the change, creates a duplicate or deletes the old record. None of those outcomes is supplied just by the new key.
 
-## Use the names to navigate, then check the relationships
+## Distinguish a recreated record from a renamed one
 
-The **front end** is the interface you see. The **back end** is the trusted processing behind it. The interface can display names for source, identity and entitlement references without showing every technical identifier beside them.
+Suppose E-TEST is removed. A later current entitlement has the same display name but the different ISC ID **E-TEST-NEW**.
 
-The documented account and access models expose those relationships. They do not establish a private SailPoint database layout.
+Under these supplied facts, it is a different ISC object.
 
-For an investigation, establish the tenant and business environment first. Then identify the particular record and its type, follow its relevant references, and compare the resolved source identifiers with the requirement.
+A saved configuration or handoff that still refers to E-TEST needs investigation. Do not assume it automatically switches to E-TEST-NEW because the name matches.
 
-If a change was attempted, continue into its operation evidence. **Provisioning** carries out supported account or access changes. For example, after an applicable access decision, a supported finance integration could attempt to add g-41 to the intended account u-778. The **target system** is the system receiving that attempted change.
+The particular feature determines whether a missing reference is rejected, cleaned up or handled another way. Our example does not establish that behavior.
 
-Correct references establish which records and source values the work concerns. They do not prove permission to perform the change, connector support, successful execution, or current usable access.
+An identifier helps address a record in context. It does not promise the record survives deletion, a source reset or a migration.
 
-A reported operation result, a collected membership and an actual application-use check answer different questions. Keep them separate even when all three display the same friendly permission name.
+For that reason, deleting and recreating a source is not a safe first response to unexplained account information. It can affect the dependencies we need to inspect. Begin with read-only records and configuration.
 
-A support note saying "Invoice reader failed" leaves the recipient and environment unresolved. A useful handoff identifies the tenant, source S-PROD, profile P-1, entitlement E-PROD with source value g-41, and account A-1 representing u-778. Add the operation, time, observed result and evidence still missing.
+## Use the relationships to investigate the intended change
 
-Use approved channels and omit credentials. An object ID is not a password or an authorization grant, but identity/account details still need appropriate handling.
+The **front end** is the interface we inspect. It can display readable source, person and permission names without showing every technical identifier beside them.
 
-## Work through these identifier choices
+The **back-end work** uses record relationships while processing configured operations. The documented models expose those relationships; they do not reveal a private SailPoint database layout.
 
-**A field asks for the recipient's ISC identity ID.**
+Start with the tenant and business environment. Identify the record and its type, follow its references, then compare the resolved source item with the requirement.
 
-You have employee number 10482, account object ID A-1, source key u-778 and identity ID I-1. Which belongs in that field?
+If a change was attempted, continue to that operation's evidence.
 
-Use the real identity ID represented by I-1 after verifying that it resolves to the intended identity in the intended tenant. The other values identify employment data or account records. Having the right-looking format is not a substitute for resolving the record.
+**Provisioning** carries out supported account or access changes. After an applicable access decision, a configured finance integration could attempt to add g-41 to the intended account u-778.
 
-**A production request uses the test profile.**
+The **target system** is the system receiving that attempted change.
 
-The selected profile belongs to S-TEST and references E-TEST, labeled Invoice reader. The requirement is production access on S-PROD. Is the matching label enough, and should you retry immediately?
+Correct references establish which records and values the work concerns. They do not establish connector support, permission to perform the operation or successful delivery.
 
-No. The configured relationship addresses the wrong environment for the requirement. Inspect the profile/source/entitlement and actual request or fulfillment record. Repeating the request does not correct that definition. The supplied facts also do not establish which account changed or whether any operation succeeded.
+The operation result tells us what was reported about the attempt. Collected membership tells us what ISC obtained from a read. A current application-use check tells us about the intended account's actual permitted action.
 
-**The permission has a new ISC label.**
+Those are different kinds of evidence, even when each displays Invoice reader.
 
-E-PROD is now called Finance invoice reading. Its ID, source, type and source value are unchanged. Does the employee need a new finance group because of this edit?
+A support note saying “Invoice reader failed” leaves the person, account and environment unclear.
 
-No. It is the same represented access item under a different ISC label. The edit is not sent to the source and establishes neither a new group nor a new membership. Follow E-PROD to S-PROD/group/g-41 to verify the relationship.
+A useful handoff identifies the tenant, source S-PROD, profile P-1, entitlement E-PROD with source value g-41, and account A-1 representing u-778. Include the operation, time, observed result and evidence still missing.
 
-**The membership contains the readable words.**
+Use approved channels and omit credentials. An object ID is not a password or an authorization grant, but person and account information still needs appropriate handling.
 
-The account's entitlement-marked group attribute contains Invoice reader, while the corresponding entitlement's designated source ID is g-41. Does the display name make them equal?
+## Work through the identifier choices
 
-No. Inspect raw source/collected data, export or connector mapping, schemas and entitlement details to find where the identifier became a label. The specified linking condition needs the designated value. Do not redesign the established ID field merely to hide one mismatch.
+**An operation needs the recipient's ISC identity ID. Which value should you use?**
 
-**Two accounts are renamed in different integrations.**
+We have employee number 10482, ISC account ID A-1, external key u-778 and identity ID I-1.
 
-The finance login changes from finance.user to `invoice.reader`, while its source key remains u-778. Another source instead uses the login as its native account identifier, and that login changes too.
+Use the real ID represented by I-1 after checking that it resolves to the intended identity in the intended tenant. The other values identify different information or records. A familiar format alone is not that check.
 
-Are the technical changes equivalent, and can you guarantee all references survive?
+**A production request selects a profile on S-TEST that references E-TEST, named Invoice reader. Should we retry it?**
 
-No. One retains the stated external key; the other changes the value used to identify the account. Inspect each integration's schema, supported rename handling, returned records, association and relevant operation results. Neither the word "rename" nor these facts establish the handling of every pending operation or reference.
+First establish the wrong-environment relationship.
 
-## Trace the same relationships in a warehouse system
+The name matches the required access, but the selected profile points to test. Inspect the profile, source, entitlement and actual request or fulfillment record. Repeating the request does not correct the definition.
 
-A warehouse platform supplies these hypothetical records. All technical labels are again teaching stand-ins.
+The supplied facts do not establish which account changed or whether any operation succeeded.
+
+**E-PROD is now called Finance invoice reading. Does that require a new finance group?**
+
+No. Its ID, source, type and source value are unchanged.
+
+Follow E-PROD to S-PROD/group/g-41. The ISC label edit was not sent to finance and establishes neither a new group nor a new membership.
+
+**The account membership contains Invoice reader, but the designated source ID is g-41. Do the matching words repair the link?**
+
+No. The linking condition needs the designated value in its source and type context.
+
+Inspect raw and collected membership data, export or connector mapping, schemas and entitlement details. Find where an identifier became a label before considering an authorized correction. Do not redesign established identification merely to hide one mismatch.
+
+**One integration keeps u-778 when finance.user changes to invoice.reader. Another uses the login itself as native identity and that value changes. Are these equivalent renames?**
+
+No. The first retains the stated external key. The second changes the value used to identify the account.
+
+Inspect each integration's schema, supported rename procedure, returned records, association and relevant operation results. Include outstanding work in that investigation. Neither the word rename nor these facts guarantees that every reference survives or breaks.
+
+## Follow the same relationships in a warehouse system
+
+Use these hypothetical warehouse records:
 
 | Record | Supplied facts |
 |---|---|
@@ -294,15 +382,23 @@ A warehouse platform supplies these hypothetical records. All technical labels a
 | Test source | `W-TEST`, warehouse test |
 | Production account representation | `W-ACCOUNT`; native identity `w-305`; login `stock.operator`; correlated identity `W-IDENTITY` |
 | Production entitlement | `W-READ`; label Stock reader; type permission; source value `stock.read`; source W-PROD |
-| Test entitlement | `W-READ-TEST`; same label/type/value; source W-TEST |
+| Test entitlement | `W-READ-TEST`; same label, type and value; source W-TEST |
 | Production profile | `W-PROFILE`; source W-PROD; entitlement reference W-READ |
 
-Which records should a production permission change concern? Is W-READ-TEST an acceptable substitute because its name and source value match? What would changing only W-READ's ISC display name establish?
+The technical IDs are again teaching labels.
 
-Follow W-PROFILE to W-PROD and W-READ. For the stated account, distinguish ISC object W-ACCOUNT from external account w-305 and person-level identity W-IDENTITY. A supported production write must address the intended source account and permission in that production context; its operation format comes from the actual connector, not these labels.
+Which records should a production permission change concern? Can W-READ-TEST substitute for W-READ because the readable name and source value match?
 
-W-READ-TEST belongs to another source and is not an interchangeable entitlement reference for the production profile. Equal values in copied environments do not remove that source boundary.
+Follow W-PROFILE to W-PROD and W-READ.
 
-A display-name-only change to W-READ changes the ISC label, not the represented permission or the warehouse membership. It proves neither a grant nor removal. Use operation and current target evidence to establish delivered access.
+For the intended account, distinguish ISC object W-ACCOUNT from external account w-305 and person-level identity W-IDENTITY.
 
-Now explain one complete relationship to a teammate: from the profile to the represented entitlement and its source value, then to the intended source account. The readable name helps locate the item; resolving its identifiers and context tells you what the work actually concerns.
+A supported production change must address the intended account and permission in that production context. The actual connector determines the operation format; this table is not a request payload.
+
+W-READ-TEST belongs to another source. Copied labels and values do not make it interchangeable with the production reference.
+
+Now change only W-READ's ISC display name.
+
+That changes the label, not the represented source permission or warehouse membership. It proves neither grant nor removal. Use operation and current target evidence to establish delivery.
+
+Explain the complete relationship to a teammate: from the profile to its entitlement, the source value it represents and the intended source account. Include the tenant and environment, and distinguish that identification from evidence that the change succeeded.

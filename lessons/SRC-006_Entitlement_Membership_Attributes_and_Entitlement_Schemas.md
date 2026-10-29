@@ -1,41 +1,50 @@
 # The group exists. Why doesn't the account's access connect to it?
 
-ISC has collected an account's group membership and a separate record describing that group. The group record uses `G-206` as its identifier. The account's collected membership contains `expense.approvers`.
+An account already belongs to Expense Approvers in an application. SailPoint Identity Security Cloud (ISC) has read information about the account and a separate record describing the group.
 
-The application owner recognizes both as referring to Expense Approvers. Why doesn't ISC connect them as intended?
+Yet the two don't connect as intended. The account's collected group value is `expense.approvers`, while the group record is identified by `G-206`.
 
-The connection depends on what the configured fields identify, rather than on a person's ability to recognize two names. To see where it breaks, first follow the relationship when the values agree.
+The application owner knows these refer to the same group. ISC needs the configured references to agree.
 
-## An account holds access; a group record describes it
+Let's first follow the connection with the correct values. Then we can see exactly what the mismatch breaks.
 
-An **account** is a record in an external system. In SailPoint Identity Security Cloud (ISC), an **identity** represents a person or another entity. Accounts can be associated with that identity.
+## There are two records because they answer different questions
 
-A **source** is ISC's configured representation of a system or collection of account data. Its **connector** provides supported integration behaviour.
+An **account** is a record used to access an external system. An ISC **identity** represents a person or another entity; that identity can have accounts on different systems.
 
-Assume our source, `Expenses-Production`, represents an expense application. The account `expense-user` already belongs to its Expense Approvers group. In this hypothetical application design, that membership allows expense review within the account's approval limits.
+A **source** is ISC's configured representation of a system or collection of account data. Its **connector** supplies the supported integration used to read that information and, where supported and configured, make changes.
 
-An **entitlement** represents an access right. A **membership** is the relationship between an account and an access object such as this group.
+Suppose the source Expenses-Production represents an expense application. The existing account expense-user belongs to Expense Approvers. In this example, that group allows expense review within the account's approval limits.
 
-The account's membership tells us which group it belongs to. The group record tells us what that group is.
+That is the meaning of this particular access. The name alone doesn't tell us the approval limits; the application determines them.
 
-That group can have many members, one member or no members. Its existence doesn't depend on this particular account.
+An **entitlement** represents an item of access, such as this group. A **membership** is the relationship between an account and the group it belongs to.
 
-An **attribute** is a named piece of information on a record. A **schema** defines represented attributes and their designated uses. We need definitions for both kinds of record:
+Now ask two separate questions:
 
-| Schema | Record it describes | Information it can represent |
+- Which group does expense-user belong to?
+- What is that group called, and what does it allow?
+
+The account record can answer the first by carrying a group reference. A separate group record can supply the name, description and other details. Every member doesn't need a separate copy of the full group definition.
+
+The group can also exist with no members. Its existence isn't dependent on this one account, so “the group exists” and “this account belongs to it” need separate evidence.
+
+An **attribute** is a named piece of information on a record. A **schema** defines the attributes ISC represents and how selected attributes are used.
+
+We therefore need to describe both records:
+
+| Schema | What one record represents | Information it can contain |
 |---|---|---|
-| Account schema | One application account | Account key and membership references, alongside other account attributes |
-| Entitlement schema | One access object of a supported type | Object identifier, name, description and other supported details |
+| Account schema | One application account | Account key, group references and other account information |
+| Entitlement schema | One access object of a supported category | Identifier, name, description and other supported object details |
 
-The account needn't repeat the group's full description for every member. It can carry an identifying reference, while the entitlement record supplies the details.
+The schemas describe the fields. Individual account and group records supply their values.
 
-This is a data relationship we need to preserve through collection.
+## Read the account reference before reading the group details
 
-## Follow the account reference and the group identifier
+Assume the integration supports reading both accounts and group objects through the application's **API**, or application programming interface. An API lets software exchange requests and results.
 
-Assume the integration supports reading both accounts and group objects through the application's **API**, or application programming interface, a supported way for software to exchange requests and results.
-
-Here is a selected account response in **JSON**, JavaScript Object Notation. Curly braces enclose an object with named properties. Square brackets enclose an array, a collection of values.
+Here are selected fields returned for the account:
 
 ```json
 {
@@ -44,11 +53,15 @@ Here is a selected account response in **JSON**, JavaScript Object Notation. Cur
 }
 ```
 
-Groups contains one text value, G-206. In the supplied **integration contract**, the agreement about exchanged data and behaviour, that value identifies a group.
+This is **JSON**, a format for exchanging structured data. The braces enclose one object. Each property has a name on the left of the colon and a value on the right.
 
-The **membership attribute** is the account field carrying these access references. Here it is named groups.
+The accountKey value identifies this account. The groups value is an **array**, or list, shown inside square brackets. It contains one **string**, meaning text: `G-206`.
 
-Now inspect the selected response describing the group:
+The field groups is the **membership attribute**: the account field carrying references to the groups it belongs to.
+
+What does G-206 identify? The application and integration must agree on that. Their **integration contract** is the agreement about exchanged data and behaviour. In this example, G-206 is the identifying value for Expense Approvers.
+
+Now look at selected fields returned for the group itself:
 
 ```json
 {
@@ -59,233 +72,253 @@ Now inspect the selected response describing the group:
 }
 ```
 
-An **entitlement type** identifies a supported category of access object on the source. Its entitlement schema defines the details represented for objects in that category.
+The groupKey value identifies the group. The label makes it recognizable to a reader. The description explains its purpose. TechnicalName is another name held by the application.
 
-Here the application's supported category is groups. Its **native object type** is that external category's name, rather than a friendly name invented for the ISC screen. The configured entitlement-type name must match that native object-type name.
+These fields have different jobs. The fact that technicalName sounds technical doesn't automatically make it the identifying field ISC should use.
 
-The schema selects groupKey as **Entitlement ID**, the attribute supplying the object's identifying value. It selects label as **Entitlement Name**, the attribute supplying its naming/display value.
+These are hypothetical returned records. Their field names and selections illustrate one supported design; they aren't defaults for every expense connector.
 
-| Item | Supplied selection or value | What it tells us |
+## Choose which field identifies the group
+
+An **entitlement type** describes a supported category of access object on a source. For this example, the category is groups. The entitlement schema describes the information represented for each group in that category.
+
+The category's name on the external system is its **native object type**. The configured entitlement-type name must match that native name. We can't invent a more convenient category name and assume the connector will know what to read.
+
+Within the group's schema, two selections matter here:
+
+**Entitlement ID** selects the attribute whose value identifies the object. We select groupKey, so this group's identifying value is G-206.
+
+**Entitlement Name** selects the attribute used for the object's naming/display value. We select label, so the chosen name is Expense Approvers.
+
+Keep the selection separate from the value it selects:
+
+| Item | Supplied selection or value | Its job |
 |---|---|---|
-| Entitlement type | groups | Which supported category the object belongs to |
-| Entitlement ID attribute | groupKey | Which field supplies the identifier |
-| Entitlement ID value | G-206 | Which particular group this is |
-| Entitlement Name attribute | label | Which field supplies the selected name |
-| Selected name value | Expense Approvers | A recognizable name for that group |
-| Additional technical name | expense.approvers | Another group attribute, not the selected ID |
+| Entitlement type | groups | Selects the supported category of access object |
+| Entitlement ID attribute | groupKey | Selects the field used to identify each group |
+| Entitlement ID value | G-206 | Identifies this particular group |
+| Entitlement Name attribute | label | Selects the field used for its name |
+| Selected name value | Expense Approvers | Helps a reader recognize the group |
+| Additional technical name | expense.approvers | Describes another name; it isn't the selected ID |
 
-GroupKey is a field name. G-206 is a value in that field. Those are different parts of the design.
+GroupKey is a field name. G-206 is a value inside that field. Selecting groupKey does not make the literal word groupKey every group's identifier.
 
-TechnicalName sounds like it might be the identifier, but its spelling doesn't decide its role. In this design it is additional descriptive information.
+This distinction matters whenever someone says, “Use the entitlement ID.” You need to know which field was designated and what value that field contains on the actual object.
 
-All these records, field choices and outcomes are supplied examples. They aren't a real tenant observation or the default configuration of an actual expense connector.
+## Connect the account field to the right kind of object
 
-## What makes the two records connect?
+A **mapping** selects incoming information for a represented field and can include supported conversions. For the normal case, assume the mappings preserve G-206 on the account and groupKey = G-206 on the group.
 
-A **mapping** selects or converts incoming data into represented attributes. For the normal case, assume the supported mappings preserve G-206 on the account and groupKey = G-206 on the group.
+The values agree. The schema also needs to say what kind of thing the account's value refers to.
 
-The documented account-attribute linking model also needs a schema agreement. The account attribute must be marked as an entitlement, its name must match the entitlement type name, and its values must match the designated Entitlement ID values.
+In the account schema, marking groups as **Entitlement** identifies it as access information. Its **Type** relationship points to the groups entitlement type. This tells ISC that values in this account field refer to objects in that category.
 
-The account attribute's Type relationship connects it to the appropriate entitlement type.
+For this account-attribute linking model, the field must be marked as an entitlement. Its name must be identical to the entitlement type's name. Each collected reference must match the value of the field selected as Entitlement ID on the corresponding collected object.
 
-For this supplied design, check each part together:
+For this example, the complete agreement is:
 
-- The account attribute is groups and is marked Entitlement.
-- Its relationship points to the supported groups entitlement type.
-- The account's membership value is G-206.
-- The group's selected identifying field, groupKey, contains G-206.
-- Both belong to the intended Expenses-Production source context.
+- The account attribute is named groups and is marked Entitlement.
+- Its Type relationship points to the supported groups entitlement type.
+- The account carries G-206 as a membership value.
+- The group's selected ID field, groupKey, also contains G-206.
+- The account and group belong to the intended Expenses-Production source context.
 
-When these documented conditions are met, ISC automatically links the access information collected from the account attribute with the separately collected entitlement details.
+Under these conditions, ISC automatically links the access information collected from the account attribute with the separately collected group details.
 
-```text
-[Account: expense-user]
-          |
-[groups contains G-206]
-          |
-[Same source + type groups]
-          |
-[Group identified by G-206]
-          |
-[Expense Approvers + description]
-```
-
-The lines show the reference relationship, rather than a sequence of backend jobs. They connect the account's G-206 membership to the same source/type's G-206 group and its description. They don't grant access at each step.
-
-An **account aggregation** collects account records and their attributes, including represented membership values. An **entitlement aggregation** collects access-object information under the supported entitlement schemas.
-
-When the relevant data has been collected and the relationship agrees, the detailed object can explain the access reference on the account. Collection represents a membership that already exists in this example.
-
-**Provisioning** performs supported account or access changes in the external system. Linking the two collected records isn't an instruction to add the membership again.
-
-## The field settings answer different questions
-
-A **multi-valued attribute** holds a collection rather than one value. **Cardinality** describes this single-value or collection distinction.
-
-Our selected account has one groups item. Another account can have several. A collection containing one item is still a collection.
-
-Marking the field as Entitlement tells ISC to interpret it as access information. Marking it as multi-valued permits multiple values. Neither setting alone establishes that the correct identifiers were collected.
-
-A list of phone numbers can be multi-valued without representing access. Conversely, a supported access model can have a single-valued entitlement attribute.
-
-You may also see Type set to a named entitlement type in the schema editor. That expresses a relationship to another schema. It isn't simply a basic value kind such as text or a **Boolean**, which means true or false.
-
-For groups, there are two related ideas: the references are text values, and those values refer to objects of the groups type. Choosing that type doesn't replace G-206 with the word groups.
-
-The technical attribute model represents value type and schema association through separate properties. Don't assume that a UI label and every API property use an identical representation.
-
-Existing connectors have supported default schemas and mappings. Inspect their actual relationships before editing. Another connector's field name isn't a reason to rename a production groups field.
-
-## Keep object identification separate from person matching
-
-Technical schema representations use `identityAttribute` and `displayAttribute` to name the attributes selected for object identification and display.
-
-For our group schema, those selections correspond to groupKey and label. They select fields, rather than supplying the group's particular identifier or name directly.
-
-“Identity” inside identityAttribute concerns identification of the object described by that schema. It doesn't mean “find the person who owns the expense account.”
-
-An **ISC object ID** identifies a stored ISC record. An entitlement record and its schema have their own object contexts. G-206, the selected source-group identifier, isn't automatically either record's ISC ID.
-
-When someone asks for “the entitlement ID,” establish whether they mean G-206, an ISC entitlement-record ID or the schema's ID. Substituting one for another can identify a different object or fail to find it.
-
-**Account correlation** associates an account with its appropriate ISC identity using configured matching. That relationship can tell you who owns expense-user. It doesn't decide which group G-206 identifies.
-
-A membership reference identifies an access object. A person-matching value identifies an intended account owner. Correct ownership association won't repair a wrong membership value.
-
-## Account and entitlement reads provide different evidence
-
-The **entitlement catalog** is the inventory of access items recorded in ISC.
-
-Entitlements can originate from values collected during account aggregation, before a separate entitlement read supplies richer names and descriptions. Entitlement aggregation can also collect an access object that no account currently holds.
-
-That gives us two information responsibilities:
+Follow the reference in this diagram:
 
 ```text
-[Account read]     [Entitlement read]
-      |                    |
-[Membership IDs]     [Object details]
-      |                    |
-      +---------+----------+
-                |
- [Link by source, type and identifier]
+Account: expense-user
+  groups contains G-206
+          |
+          | Same source and type: groups
+          v
+Group with ID G-206
+  label: Expense Approvers
+  description: approval purpose
 ```
 
-The branches show what the supported reads supply. The lower connection represents their schema agreement. They don't prescribe a universal order, simultaneous execution, schedule or internal queue.
+The account's value points to the group identified by G-206. The linked group record supplies the recognizable name and description.
 
-Suppose the catalog contains G-999, but the inspected account has no G-999 membership. You have evidence that an access object was collected, rather than evidence of this account holding it.
+The arrow represents that data relationship. It doesn't mean ISC grants access while moving down the diagram, or that these are separate background jobs.
 
-Now reverse the observation. An account has G-206, but the recorded entitlement has only a raw-looking name and no description. The access reference exists; its descriptive information may be incomplete.
+**Account aggregation** reads account records into ISC or refreshes their collected information, including represented memberships. **Entitlement aggregation** reads information about the access objects under their supported schemas.
 
-Check whether supported entitlement collection read the object, whether the correct fields were mapped and whether the producer supplied the details. Missing description alone doesn't make the membership invalid.
+Here, collection records access the account already has. **Provisioning** is the separate process that carries out supported account or access changes in the external system. Linking the collected information doesn't require granting the membership again.
 
-Don't assume a universal screen appearance or duplicate-handling result for every mismatch. Read the actual records and collection evidence.
+## A list setting, an access setting and a type relationship have different jobs
 
-A **direct-connect source** reads through a configured connector connection. Supported entitlement aggregation can be started manually or scheduled. A **flat-file source** imports supplied files; its entitlement-import mechanism is manual and doesn't support multiple entitlement types.
+Our selected account has one groups item. Another account can belong to several groups.
 
-An account-only connector doesn't gain access-object aggregation simply because someone adds a schema. Likewise, a completed groups read doesn't establish that another type was included. Check what the selected operation actually covers.
+A **multi-valued attribute** holds a collection. **Cardinality** describes whether the field holds a single value or a collection. One item inside square brackets is still a collection; the number of items in this record doesn't change the field's purpose.
 
-## The label can be right while the reference is wrong
+Marking a field multi-valued permits multiple values. Marking it Entitlement gives it access meaning. A list of two phone numbers can be multi-valued without representing access.
 
-Now return to the opening mismatch.
+A supported access model can also have a single-valued entitlement attribute. Access meaning and collection structure are independent questions.
 
-The account API returned G-206. A project-added mapping replaced that reference with technicalName, producing expense.approvers on the collected account.
+The Type label needs care too. A basic value type describes the kind of value, such as text or a **Boolean**, which means true or false. A named entitlement type in the schema editor expresses a relationship to another schema.
 
-The detailed group still has groupKey = G-206 as its selected identifier.
+For groups, the actual references are text values such as G-206, and the relationship says those values identify objects of type groups. Selecting groups does not replace G-206 with the word groups.
 
-Those values don't satisfy the intended identifier match. A person recognizing them as names for the same business group doesn't change the configured relationship.
+The technical attribute model represents basic value type and schema association through separate properties. The screen's labels and an API's properties aren't necessarily identical ways of expressing the configuration.
 
-Changing the group's displayed label to expense.approvers would change descriptive information, while leaving the selected ID as G-206. It wouldn't correct the account reference.
+Existing connectors have supported default schemas and mappings. Read those relationships before changing them. Another connector using a different field name doesn't establish that a production source needs its field renamed.
 
-In this supplied investigation, responsible owners approve correcting the account mapping to preserve G-206. Appropriate subsequent collection represents the corrected value, and the supplied verified result links it to the existing detailed group.
+## Follow the two reads without confusing inventory and membership
 
-The target account and its actual membership remain unchanged. This is a correction of ISC's read-side representation, rather than a grant or removal.
+The **entitlement catalog** is ISC's inventory of recorded access items.
 
-Changing the designated Entitlement ID to accommodate the bad mapping would be another design change. It isn't a harmless shortcut. Changing Entitlement ID or Entitlement Name selections after aggregation can cause duplicate entitlements; review supported handling and dependent references first.
+An entitlement record can originate from a membership value discovered during account aggregation. A separate entitlement aggregation can then supply richer object details. That separate read can also collect a group that no account currently holds.
 
-For a new schema, the first attribute is initially marked as both Entitlement ID and Entitlement Name. Review those selections before collection. Field-entry order isn't a business decision about which value should identify the object.
+The reads answer different questions:
 
-## Different access categories need their own relationships
+```text
+Account read             Group-object read
+     |                          |
+     v                          v
+Membership references    Names and descriptions
+     |                          |
+     +------------+-------------+
+                  |
+                  v
+   Link by source, type and identifier
+```
 
-Suppose a supported direct-connect integration also exposes the native type appRoles. An **application role** here is an access object defined in the expense application. It is different from an ISC role used to group access for business assignment.
+The two branches show information supplied by the reads. Their convergence shows why the schema relationship and matching identifiers matter. It doesn't prescribe which read must always run first, that both run together, or how ISC queues their work.
 
-In this conditional extension:
+Suppose the catalog contains G-999. The inspected account has no supplied G-999 membership. We know an access object was collected; we don't yet have evidence that this account holds it.
 
-- groups contains G-206, identifying Expense Approvers.
-- appRoles contains R-51, identifying Audit Exporter.
+Now suppose the account has G-206, but the recorded entitlement has a raw-looking name and no description. The membership reference exists. Its descriptive details may simply be incomplete.
 
-The account's groups relationship points to groups; its appRoles relationship points to appRoles. Each has its supported schema and identifying fields.
+Check whether the supported entitlement read included the group, whether the application supplied the description, and whether the mapping selected it. Missing description alone doesn't establish an invalid external group or a failed membership.
 
-Don't direct both account attributes to groups simply because both represent access. The account-schema configuration doesn't allow multiple attributes to be marked with the same entitlement type.
+Inspect actual records and collection results. A mismatch doesn't have one universal screen appearance or duplicate-handling outcome.
 
-Equal text can also occur in different categories. A group 51 and an application role 51 aren't established as one object merely because their identifiers look alike.
+A **direct-connect source** reads through a configured connector connection. Where supported, entitlement aggregation can be started manually or scheduled. A **flat-file source** imports supplied files; its entitlement-import mechanism is manual and doesn't support multiple entitlement types.
 
-Keep source, type and identifier together. The same rule applies across environments: G-206 in Expenses-Test isn't established as the same governed object as G-206 in Expenses-Production.
+The connector's capability still matters. Adding a schema to an account-only connector doesn't give it an object-reading capability it lacks. A completed read of groups also doesn't establish that another entitlement type was included.
 
-If a proposed source exposes a category differently, investigate its actual supported model. Don't invent a second native type or silently merge fields just to make the configuration diagram look convenient.
+The operation's **scope** is what it was configured and allowed to read. Check that scope, its time and its result before deciding what the data proves.
 
-## Some access relationships exist between entitlements
+## Now trace the wrong reference
 
-Where the target and connector support it, one access object can grant another kind of access object.
+Return to the opening mismatch. In this example, the application's account response contains the correct G-206.
 
-For example, a group schema can contain an attribute referring to application roles. Its Type relationship can point to the role entitlement type, with cardinality appropriate to that supported relationship.
+A project-added mapping replaces that reference with the group's technicalName. The collected account therefore contains expense.approvers, while the group's selected ID remains G-206.
 
-This describes an entitlement-to-entitlement relationship. It doesn't establish an additional direct appRoles membership read from the account.
+A person can recognize the two names. The intended identifier comparison still fails: expense.approvers and G-206 are different values.
 
-**Hierarchy** describes parent/child relationships between access objects. Its supported representation depends on the connector and schema. A friendly group name doesn't encode a hierarchy, and importing group names doesn't discover every inherited permission.
+Changing the displayed group label to expense.approvers doesn't repair the reference. The selected ID would still be G-206.
 
-A **permission** is an allowed operation on a resource, such as reading or writing it. Supported sources can distinguish permissions held directly by an account from permissions granted through entitlements.
+The supplied correction is to preserve G-206 in the account mapping, after the responsible owners approve the supported change. An appropriate later collection reads the corrected account value. In this example, verification then confirms that it connects to the existing detailed group.
 
-The type name permission is specially handled for direct permissions. Don't create an ordinary entitlement type with that name in any capitalization as a substitute for the supported permission model.
+That repairs ISC's collected representation. The target account, its identifier and its actual membership are unchanged. No new grant, removal or account recreation is part of this correction.
 
-**Effective access** means what an account can actually do after relevant grants and restrictions are considered. A membership list is useful evidence, but doesn't by itself establish every indirect path or restriction.
+Saving the mapping alone doesn't establish that the collected account now contains G-206. Check the later read and the resulting relationship.
 
-For schema work, establish which objects and relationships the connector exposes. Keep groups, application roles, direct permissions and indirect relationships recognizable instead of flattening them into one invented category.
+Changing the selected Entitlement ID to accommodate the faulty mapping would redesign identification instead. Changing Entitlement ID or Entitlement Name selections after aggregation can cause duplicate entitlements to be aggregated. Review existing references and supported handling before changing those selections.
 
-## Compare the right screen with the right record
+For a new entitlement schema, the first attribute you create is initially marked as both Entitlement ID and Entitlement Name. Review those choices before collection. The order in which fields were entered isn't a reason for the first field to identify every object.
 
-The **user interface**, or UI, presents several kinds of evidence.
+## The group's identifier isn't the person's identity
 
-Account Schema shows field definitions and their settings. Entitlement Types and Schemas shows categories, attributes and selected ID/Name fields. These configuration views don't prove that all corresponding records were collected.
+You may see `identityAttribute` and `displayAttribute` in a technical schema representation.
 
-Individual account details show represented values for an account. The Entitlements view shows recorded access objects and their details.
+They contain the names of the attributes selected for identification and display. In this group schema, those selections correspond to groupKey and label.
 
-For our mismatch, compare the intended source and account, actual groups elements, type relationship, groupKey and applicable collection results. Include the operation's scope, collection times and errors.
+The word identity inside identityAttribute concerns identifying the object described by the schema. Here, that object is a group. It doesn't mean the ISC identity of the person using expense-user.
 
-An **audit event** records an activity or configuration change. A schema-change event can establish that someone changed the definition. It doesn't establish that a later read collected the intended data or that linking now works.
+There is another distinction: an **ISC object ID** identifies a stored record inside ISC. The entitlement record and its schema have their own record contexts. G-206, the source group's selected identifier, isn't automatically either record's ISC ID.
 
-If the account references an object that the entitlement read doesn't return, investigate both read scopes and times alongside the exact values and target records. The object could be outside the read scope, the reference could be stale, or a mapping could be wrong. Choose the diagnosis supported by this case's evidence.
+When someone asks for an ID, establish which object and system they mean. Substituting a schema ID for a group identifier doesn't refer to the same thing.
 
-Similarly, a missing description needs an input-to-result trace: did the source provide it, did the mapping select it, and did the relevant read collect it? A schema definition can't invent unavailable upstream data.
+**Account correlation** matches an account to its appropriate ISC identity through configured comparisons. That relationship answers who the account belongs to.
 
-## Editing a description is different from changing a schema designation
+Membership linking answers which access object an account reference identifies. Correctly associating expense-user with a person won't turn expense.approvers into G-206. The ownership link and the group link need their own correct information.
 
-**Metadata** is descriptive or governance information about an access item. Editing an entitlement record's Display Name or Description in ISC updates that information; those edits aren't sent to the external source.
+## Keep different access categories recognizable
 
-That is different from changing which schema attribute supplies Entitlement Name or Entitlement ID. A record-level text edit and a schema-level selection have different responsibilities and impact.
+Suppose a supported extension of this direct-connect integration also exposes the native type appRoles.
 
-Manually updated names and descriptions can be protected from replacement during later aggregation. If the external source has a new description but ISC retains older wording, inspect manual-update state as well as mapping and collection.
+An **application role** here is an access object defined in the expense application. It differs from an ISC role used to organize access for business assignment.
 
-The visible text alone doesn't establish that the connector failed to read the new description. Nor does an unchanged external description establish a failed provisioning operation when the action was an ISC metadata edit.
+In this extension, groups contains G-206 for Expense Approvers, while appRoles contains R-51 for Audit Exporter. The account's groups field points to the groups type; appRoles points to appRoles. Each type has its supported schema and identifying fields.
 
-Useful descriptions still matter. An **access request** asks for access through a configured request process. A **certification** is an access review in which a responsible person evaluates recorded access.
+Both fields describe access, but that doesn't make them the same category. The account schema doesn't allow multiple attributes to be marked with the same entitlement type.
 
-Clear names, descriptions and populated entitlement attributes help someone understand what they are requesting or reviewing. G-206 alone communicates less than the group's purpose and approval limits.
+The identifier text alone isn't enough either. A group identified by 51 and an application role identified by 51 aren't established as one object. Keep the source, type and identifying value together.
 
-An **entitlement owner** is the responsible party recorded for the item. Depending on configuration, that owner can participate in request or review decisions. Ownership doesn't mean personally holding the entitlement.
+The source matters across environments too. G-206 in Expenses-Test isn't established as the same governed object as G-206 in Expenses-Production.
 
-An **access profile** bundles entitlements from one source. An ISC **role** can group access profiles and direct entitlements. These definitions can refer to entitlement records, so an identifier redesign deserves more care than a readability edit.
+If the target exposes its categories differently, inspect that supported model. Inventing another native type or silently merging fields can hide a design problem instead of resolving it.
 
-Catalog presence also doesn't make an item requestable to everyone. The applicable request configuration and access policies still matter.
+## Some access is reached through another entitlement
 
-## Removing a schema isn't revoking the access it describes
+Consider a different supported design: a group grants an application role to its members.
 
-Deleting an entitlement type removes that type's schema configuration. It doesn't delete the associated entitlement records or their target memberships. Objects of that type won't be aggregated or updated until another type is created for them.
+The group schema can contain an attribute referring to objects of the application-role type. Its Type relationship points to that other entitlement type; its single-value or collection setting follows the actual supported relationship.
 
-Account aggregation also doesn't delete an entitlement merely because no accounts currently hold it. The access object may still exist externally.
+This describes a connection from one entitlement to another. It doesn't establish that an account directly received an appRoles membership.
 
-These distinctions follow the records. A schema describes a category. A catalog record describes an access item. A membership relates an account to it. Removing or editing one representation isn't automatically an external change to another.
+To understand the access, follow both relationships: the account belongs to the group, and the group grants the role. A direct role assignment would be a different path.
 
-If the requirement is to remove access, identify the supported external operation and verify its result on the intended account. Schema deletion, an absent membership observation or catalog cleanup isn't proof of successful target revocation.
+A **hierarchy** describes parent/child relationships between access objects. The connector and schema determine which relationships can be represented. A friendly group name doesn't encode the hierarchy, and importing names doesn't discover every inherited access right.
+
+A **permission** is an allowed operation on a resource, such as reading or writing it. Supported sources can expose permissions held directly by accounts and permissions granted through entitlements.
+
+The type name permission is specially handled for direct permissions. Don't create an ordinary entitlement type named permission, in any capitalization, as a substitute for the supported permission model.
+
+**Effective access** means what an account can actually do after relevant grants and restrictions are considered. A membership list contributes evidence, but it doesn't establish every indirect path or restriction by itself.
+
+For schema work, identify which categories and relationships the connector exposes. Keep direct memberships, links between entitlements and permissions distinguishable so you can explain how the access is obtained.
+
+## Use each screen for the question it can answer
+
+The **frontend** is the user interface, or UI: the part of ISC you interact with. It presents configuration and collected records on different pages. The **backend** is the software handling the reads, processing and requests behind those screens.
+
+Account Schema shows field definitions and their settings. Entitlement Types and Schemas shows categories, their attributes and selected ID/Name fields.
+
+Those views describe the configuration. They don't prove that the corresponding account or group records have been collected.
+
+Individual account details show represented values for that account. The Entitlements view shows recorded access objects and their details.
+
+For the opening mismatch, compare the original account response, the mapping, the actual collected groups elements, the Type relationship and the group's groupKey value. Keep the source and account consistent, and include read scope, collection time and errors.
+
+An **audit event** records an activity or configuration change. A schema-change event establishes that the definition changed. It doesn't establish that a later read collected the expected values or that linking now works.
+
+If an account references a group absent from the entitlement read, inspect both sides. Did the object fall outside the read's scope? Is the account reference stale? Did a mapping change the value? Compare the actual application records and operation evidence to choose the explanation.
+
+For a missing description, follow the information similarly: did the application supply it, did the mapping select it, and did the applicable read collect it? A schema cannot invent details that were never supplied.
+
+## A clearer description changes what people understand
+
+**Metadata** is descriptive or governance information about an access item. Editing an entitlement record's Display Name or Description in ISC changes that information. Those edits aren't sent to the external source.
+
+That differs from selecting a different schema attribute as Entitlement Name or Entitlement ID. One edits text on a record; the other changes which field supplies naming or identification across the type.
+
+Manual name and description updates can be preserved during later aggregation. If ISC keeps older manual wording while the application supplies a new description, inspect the manual-update state as well as the mapping and read results.
+
+The unchanged wording alone doesn't prove a failed read. An unchanged external description doesn't prove a failed write either when the action was only an ISC metadata edit.
+
+Readable descriptions help with real decisions. An **access request** asks for access through a configured request process. A **certification** is an access review in which a responsible person evaluates recorded access.
+
+Someone requesting or reviewing G-206 needs to understand what Expense Approvers permits and where its approval limits apply. A name, useful description and populated entitlement attributes give them more than an unexplained code.
+
+An **entitlement owner** is the responsible party recorded for the item. That owner can participate in request or review decisions when configured to do so. Being responsible for the entitlement doesn't mean the owner personally holds it.
+
+An **access profile** bundles entitlements from one source. An ISC **role** can contain access profiles and direct entitlements to organize access around a responsibility. Those definitions can refer to entitlement records, so an identifier redesign can affect more than the text displayed on an account.
+
+Catalog presence also doesn't make an entitlement requestable to everyone. Its request configuration and applicable access policies still matter.
+
+## Removing a schema doesn't remove the access
+
+Deleting an entitlement type removes its type/schema configuration. It doesn't delete the associated entitlement records or the application's memberships. Entitlements of that type won't be aggregated or updated until another type is created for them.
+
+The records have different jobs. The schema describes the category. The entitlement record describes the access item. The membership connects an account to that item. Deleting the schema is not an external command to remove every member.
+
+Account aggregation also doesn't delete an entitlement merely because no accounts currently hold it. The access object can still exist in the application with zero members.
+
+If the requirement is to revoke access, identify the supported external change and verify its result for the intended account. A schema deletion, a catalog observation or a membership value missing from a read is not proof that a revocation operation succeeded.
 
 ## Try changing one fact
 
@@ -293,58 +326,58 @@ If the requirement is to remove access, identify the supported external operatio
 
 An account contains Expense Approvers. The detailed group has groupKey G-206 and label Expense Approvers. GroupKey remains the selected Entitlement ID. Does the matching label establish the intended link?
 
-**Worked reasoning:** No. Compare the actual account reference with the selected ID under the supported schema relationship. Investigate the raw value and mapping. Don't redesign a working identifier merely to accommodate a wrongly mapped label.
+**Worked reasoning:** No. Compare the account's actual reference with the value selected as the group's ID under the supported relationship. The label's readability doesn't replace that match. Trace the input and mapping before considering any redesign of the identifier.
 
 ### 2. The field holds two phone numbers
 
-BackupPhones is multi-valued. Someone proposes marking it Entitlement because it is a list. Does that structure establish access meaning?
+BackupPhones contains two values. Someone proposes marking it Entitlement because it is a list. Does that establish access meaning?
 
-**Worked reasoning:** No. Cardinality describes the number and structure of values. Entitlement designation requires access meaning and the appropriate supported model. Phone numbers don't become access rights because there are two.
+**Worked reasoning:** No. Multi-valued describes the collection. Entitlement designation describes access meaning under a supported model. Two phone numbers don't become access rights because they share a list.
 
 ### 3. The catalog contains a group
 
-An entitlement read collects G-999. No supplied account record contains it. Can you report that the expense account holds it?
+An entitlement read collects G-999, but no supplied account record contains that value. Can you report that the expense account holds it?
 
-**Worked reasoning:** Inventory doesn't establish membership. Inspect the relevant account's access values and, when reporting a person's access, its identity association. For effective access, investigate relevant indirect paths separately rather than inventing a direct assignment.
+**Worked reasoning:** No. Inventory is evidence about the object. Inspect the account's access values for membership evidence. If reporting a person's access, also establish the account's identity association. Investigate relevant indirect paths separately when the question concerns effective access.
 
 ### 4. Membership exists but details are sparse
 
 The account has G-206. Its entitlement record has a raw-looking name and no description. Only account aggregation is confirmed. Is the group invalid?
 
-**Worked reasoning:** That conclusion doesn't follow. Account aggregation can originate entitlements without richer details. Check supported entitlement collection, scope, mapping and supplied object data. Missing description isn't by itself evidence of an invalid external group or failed membership.
+**Worked reasoning:** That conclusion doesn't follow. Account aggregation can originate entitlement records with limited details. Check the supported object read, its scope, mappings and supplied application data. Missing description alone doesn't invalidate the group or its membership.
 
 ### 5. Two types use the same short code
 
-A supported source represents a group 51 and an application role 51 under separate types. Should they be merged?
+A supported source represents group 51 and application role 51 under separate types. Should they be merged?
 
-**Worked reasoning:** No. Source, type and identifier identify the intended access object together. Follow each supported schema relationship; equal identifier text across categories doesn't establish one object.
+**Worked reasoning:** No. Follow the source, type and identifying value together. Equal text across different categories doesn't establish one access object.
 
 ### 6. A description changes only in ISC
 
 An administrator edits Description in ISC. The external description stays unchanged, and a later read preserves the manual wording. Is this a provisioning failure?
 
-**Worked reasoning:** No provisioning operation was supplied. The edit concerns ISC metadata, which isn't sent to the source. Inspect manual-update preservation, mapping and collection before diagnosing a failed read or write.
+**Worked reasoning:** No provisioning operation was supplied. The record edit updates ISC metadata and isn't sent to the source. Inspect manual-update preservation, mapping and collection before diagnosing a failed read or write.
 
 ### 7. An entitlement type is deleted
 
-The team deletes the type and says everyone's access is removed. What has that action established?
+The team deletes a type and says everyone's access is removed. What has the action established?
 
-**Worked reasoning:** It removed type/schema configuration and interrupted that type's collection/update until another type is created. It didn't delete the associated entitlements or target memberships. Access removal requires a supported operation and resulting-state evidence.
+**Worked reasoning:** It removed the type/schema configuration and interrupted that type's collection and updates until another type is created. It didn't delete the associated entitlements or target memberships. Revocation needs a supported operation and evidence of its external result.
 
 ## Review a different application's design
 
-An application returns teams = ["T-8"] on accounts. A separate team export contains teamCode T-8, displayLabel Regional Reviewers and a description. The supported native type is teams.
+An application returns teams = ["T-8"] on accounts. A separate team export contains teamCode T-8, displayLabel Regional Reviewers and a description. Its supported native type is teams.
 
-The proposal maps memberships to Regional Reviewers, selects teamCode as Entitlement ID, assumes every imported team belongs to every account, and points both teams and emergencyTeams at the same entitlement type.
+The proposal maps account memberships to Regional Reviewers, selects teamCode as Entitlement ID, assumes every imported team belongs to every account, and points both teams and emergencyTeams at the same entitlement type.
 
-What needs correcting?
+What would you change, and what would you investigate?
 
-**Worked reasoning:** Preserve the intended T-8 identifier in the account's teams attribute. Connect that entitlement-marked attribute to the supported teams type and match its value with teamCode. Use an appropriate display field without replacing the reference with its label.
+**Worked reasoning:** Preserve T-8 in the account's teams attribute. Mark that field as access information, connect it to the supported teams type, and match its value to the selected teamCode value. Use the display field to explain the item without replacing its identifier.
 
-An imported team establishes inventory information. Read the relevant account values before asserting membership.
+The team export establishes inventory information. Read the relevant account's values before asserting membership.
 
-The proposed duplicate account-attribute/type association conflicts with the documented constraint. Establish what emergencyTeams means and how the actual connector supports it. Don't invent a new native category or silently merge the fields to bypass the issue.
+The duplicate account-attribute/type association conflicts with the documented constraint. Establish what emergencyTeams means and how the actual connector represents it. Don't invent a second native category or silently merge fields to bypass the problem.
 
-Check scope, data quality, identity association where needed, representative linking results and supported handling of existing identifiers. If the design also needs access changes, establish those operations and authority separately.
+Check scope, data quality, the intended source, identity association where needed and representative linking results. If identifiers are already in use, establish supported handling and affected references before changing their design. Any required access changes also need their own operations and authority.
 
-Explain the connection through the records: “The account holds access references. The entitlement schema identifies and describes the objects they refer to. The references connect when source, type and identifying values agree under the supported configuration.”
+When you explain the relationship, follow one reference all the way through: which account field carries it, which source and access category it belongs to, and which selected object value it matches. Then explain what the linked record adds. That is how an account's access value becomes understandable access information.

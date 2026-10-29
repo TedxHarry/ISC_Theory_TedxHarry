@@ -1,0 +1,16 @@
+User supplies directory credentials
+        |
+        v
+Configured integration checks them
+        |
+        v
+Authentication source returns result
+        |
+        v
+Accepted plus required ISC checks
+        |
+        v
+ISC session for the intended user
+
+Separate PTA setup; this isn't another
+step in the normal SAML sign-in.

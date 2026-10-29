@@ -1,0 +1,18 @@
+Approved View suppliers request
+  |
+  v
+ISC initiates supported change
+  |
+  v
+Integration reaches supplier system
+  |
+  +-- May svc-supplier perform this update?
+        |
+        +-- Yes: apply supplier.view
+        |
+        +-- No: reject this update
+              No permission delivered
+              in this rejected case
+
+A separate account read can still succeed.
+The branch isolates update authorization.

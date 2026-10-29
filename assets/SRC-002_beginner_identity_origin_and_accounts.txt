@@ -1,0 +1,11 @@
+Authoritative account + identity profile
+                 |
+       establishment and mappings
+                 v
+         ISC person identity
+                 ^
+       configured owner association
+                 |
+Additional collected application accounts
+
+The arrows show different relationships.

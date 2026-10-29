@@ -1,0 +1,19 @@
+Browser opens ISC
+        |
+        v
+Browser follows the IdP sign-in route
+        |
+        v
+IdP authenticates or uses its session
+        |
+        v
+Browser carries SAML response to ISC
+        |
+        v
+ISC checks response and user mapping
+        |
+        v
+ISC session for the intended user
+
+Successful path with configured trust
+and an existing matching identity.

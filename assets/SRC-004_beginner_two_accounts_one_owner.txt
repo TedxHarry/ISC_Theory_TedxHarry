@@ -1,0 +1,9 @@
+Account: acct-standard
+     employeeNumber: E-24
+                \
+                 > One ISC identity
+                /    employeeNumber: E-24
+Account: acct-admin
+     employeeNumber: E-24
+
+Two account keys; one matched person.

@@ -1,0 +1,29 @@
+COLLECTED INPUTS
+HR department: FIN
+Directory department: OPS
+          |
+Department mapping selects directory
+          |
+Identity department: OPS
+Identity employment status: ACTIVE
+          |
+Role requires FIN AND ACTIVE
+    /                    \
+  no                     yes
+   |                      |
+No new grant         Role assigned
+from this path            |
+                  Profile viewing right
+                          |
+                     Provisioning
+                  rejected -> inspect
+                  applied
+                          |
+                  Target holds right
+                          |
+                  Check intended use
+
+OBSERVE SEPARATELY
+Reporting account -> collection -> ISC
+
+Investigators compare each connection.

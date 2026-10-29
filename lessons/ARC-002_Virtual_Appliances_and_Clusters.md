@@ -1,32 +1,38 @@
 # Virtual Appliances and clusters: where does the connection work happen?
 
-To read an account or change its access, SailPoint Identity Security Cloud, or ISC, needs communication with the system that holds it. Saving instructions in the hosted service doesn't, by itself, establish that connection.
+An account is stored in an application. SailPoint Identity Security Cloud, or **ISC**, needs to read that account or change one of its permissions. Which machine actually contacts the application?
 
-For connections that use a **Virtual Appliance**, or **VA**, this customer-deployed component performs the applicable integration work against the external system. You need to establish both where the work comes from and which machine must be able to carry it out.
+For a connection that uses a **Virtual Appliance**, or **VA**, the appliance performs the applicable integration work. ISC holds the configuration and initiates the work; the VA needs a working connection to the external system to carry it out.
 
-A second appliance can keep a worker available when the first is unavailable. It still needs its own working path to the target.
+That distinction helps explain an otherwise puzzling situation: you can open ISC successfully while an account update fails. Your browser reached ISC. The appliance still has a different journey to make.
 
-## What is actually running?
+## Where does the VA sit?
 
-The VA is a Linux-based virtual machine deployed in the customer's operating environment to support applicable integrations with ISC.
+The VA is a Linux-based **virtual machine**, or **VM**, deployed in the customer's operating environment. A virtual machine is a software-defined computer that uses processing, memory and storage supplied by a hosting platform.
 
-A **virtual machine**, or **VM**, is a software-defined computer using resources supplied by a hosting platform. The VA needs a running machine, sufficient allocated resources and the required connectivity. A name in the ISC interface is only part of its setup.
+The organization provides that hosting environment and the required connectivity. The appliance runs the applicable integration software. It is not a local installation of the whole ISC application.
 
-An ISC **tenant** is an organizational environment in the hosted service. A **source** is its configured representation of a system or collection of account data. A **connector** provides the integration used to read data and perform supported changes.
+The hosted ISC environment for your organization is called a **tenant**.
 
-With a VA-based source, the hosted service holds the source configuration and related information, while the VA performs the applicable connector work against the external system. The VA is not a complete local installation of ISC.
+Inside it, a **source** holds the configuration and represented account information for a system or account dataset. A **connector** provides the integration used to read information and perform supported changes in that system.
 
-An **identity** represents a person in ISC. An **account** is a record in another system, with ISC keeping a representation of it. Running two appliances does not create two person identities or two application accounts. Appliances perform integration work; they don't multiply the people being governed or decide which business access those people should receive.
+For example, a source can describe how ISC connects to an asset application. With a VA-based connection, the appliance performs the applicable connector work against that application. The source configuration stays part of the hosted tenant.
 
-Not every connector uses this path. **Software as a service**, or **SaaS**, means a provider-operated hosted software service. A **SaaS connector** uses the supported SaaS connectivity path without customer-deployed VAs for that connection.
+The distinction also applies to people and accounts. An **identity** represents a person in ISC. An **account** is a record in a particular external system, with ISC holding its collected representation.
 
-Check the connector's documented options and the actual source configuration. An application being hosted in the cloud doesn't, by itself, tell you which connector path is configured.
+Adding a second VA gives the deployment another appliance to perform work. It does not create another person or another application account, or decide which business permissions someone should receive.
 
-## A source is associated with a cluster
+There is also a connection path that does not require these customer-deployed appliances. **Software as a service**, or **SaaS**, means a provider-operated hosted software service. A **SaaS connector** uses its supported SaaS connectivity path without a customer-deployed VA for that connection.
 
-A **VA cluster** is a configured group of appliances supporting the relevant connection work. Sources are associated with the cluster; individual VAs are its members.
+Check the connector's documented options and the source's actual configuration. The application being hosted in the cloud does not, by itself, identify which connection path is in use.
 
-For example, suppose an ISC production tenant has two sources, Assets-Production and Operations-Directory. **Production** means the environment used for live operations. Both sources are associated with the cluster `assets-prod`, containing `va-01` and `va-02`.
+## A source uses a cluster, and a cluster has members
+
+A **VA cluster** is a configured group of appliances that supports the relevant connection work. Each appliance in that group is a **member**.
+
+Suppose an ISC tenant has two sources: Assets-Production and Operations-Directory. Both use a cluster named `assets-prod`. Its members are `va-01` and `va-02`.
+
+Here, **production** means the environment used for live operations. The names identify this hypothetical configuration.
 
 ```text
 ISC production tenant
@@ -42,31 +48,37 @@ ISC production tenant
                          +-- va-01
                          +-- va-02
 
-Lines show configured relationships.
-They do not send every job to both VAs.
+Lines show configured associations.
+They do not copy each job to both VAs.
 ```
 
-The lines show source-to-cluster and cluster-to-member relationships. They do not describe network routes or duplicate every task onto both appliances.
+Start at Assets-Production and follow its line. Its work belongs to assets-prod. Then look at the two members that can handle work for that cluster.
 
-SailPoint documents source operations as requests sent to the source's associated cluster, where they form a **queue**: work awaiting handling. Each running VA **polls** that queue, meaning it repeatedly asks for available work.
+SailPoint describes source operations being sent as requests to the associated cluster. Those waiting requests form a **queue**.
 
-A connection test, an account collection and a supported permission update can all generate cluster work. They are different operations. Passing a connection test doesn't establish that every account read or permission update will succeed.
+Each running VA **polls** its cluster's queue. Polling means repeatedly asking whether work is available. A member obtains work and performs the applicable connector operation.
 
-In the documented running-member arrangement, either member can pick up work. The first-created VA is not automatically a permanent primary worker, and the second is not automatically an idle standby.
+Under the documented running-member arrangement, either member can pick up work. Creating va-01 first does not make it a permanent primary worker with va-02 always waiting idle.
 
-That matters when testing a deployment. An operation isn't guaranteed to use the member you checked yesterday. Each member that can handle the source needs that source's required dependencies.
+This is why checking one appliance is only part of checking the deployment. The next operation can be handled by the other member. Every member that handles the source needs its required connectivity and configuration.
 
-The shared cluster also creates a shared operational scope. A cluster issue can affect both sources. Each source still has its own connection settings, credentials and target requirements, so a successful Assets-Production operation doesn't validate Operations-Directory.
+The diagram shows those associations, not network routes or an instruction to perform every operation twice.
 
-## Cloud-originated work can use a VA-initiated connection
+Now follow the other source. Operations-Directory uses the same cluster, so a cluster problem can affect both sources.
 
-The request originates from an ISC operation, but the VA initiates the required network communication toward SailPoint's cloud services.
+Each source still has its own connection settings and target requirements. Its **credentials**, such as a password or access token, are used to establish the identity making the connection. A successful asset-system operation does not test the directory connection.
 
-The VA polls for work through that outbound communication and can receive a response over the communication it initiated. **Outbound** describes connection initiation here, not a rule that information can travel in only one direction.
+A connection test is also a particular operation. It tests what that connector's test is designed to check. Reading accounts and changing permissions require their own successful operations.
 
-You therefore don't need to expose a new public inbound service on the VA so that ISC can start an unsolicited connection for every aggregation.
+## How does cloud work reach an appliance inside the customer environment?
 
-The VA also needs communication with the configured external system. An **endpoint** is the address of the service or operation being contacted. Reaching cloud services and reaching the external endpoint are separate dependencies.
+An ISC operation requests the work. The VA starts the required network communication with SailPoint's cloud services.
+
+The VA uses that **outbound** communication to poll for its cluster's work. Cloud services can return work in response over the communication the appliance initiated.
+
+Outbound describes how the communication begins. It does not mean information can travel in only one direction.
+
+The VA then needs communication with the external system too. An **endpoint** is the address of the service or operation it contacts.
 
 ```text
 Connection initiation
@@ -81,232 +93,273 @@ Work over the configured connections
   VA reports data/results to cloud
 
 Responses use initiated communication.
-These are roles, not packet-level steps.
+The lines describe communication roles.
 ```
 
-The first part identifies where communication is initiated. The work exchange describes responsibilities over the configured connections. It doesn't specify packet order, acknowledgements, polling intervals or retry rules.
+The first part shows where communication starts. The second shows how work and results pass between the participants. It does not specify private packet ordering, polling intervals, acknowledgements or retry rules.
 
-A VA can reach SailPoint's cloud endpoints while failing to reach an application endpoint. Your laptop can also open ISC while that VA has a connectivity problem. Those tests originate from different machines and may use different network paths.
+An account collection beginning in ISC therefore does not require exposing a new public inbound service on the VA for each request.
 
-## Follow a supported operation through the member
+Keep the two destinations separate when investigating a failure. A member can reach SailPoint's cloud services while being unable to reach the asset application.
 
-An **entitlement** is an access item represented from a source, such as a permission or group membership. **Aggregation** collects account or entitlement information into ISC. **Provisioning** carries out supported account or access changes.
+Your laptop opening ISC tests another path again. It tells you about communication from your laptop, not whether va-02 can contact the configured application endpoint.
 
-For a read, the VA's connector needs to find and reach the target, authenticate and read the requested records. ISC can then represent the collected information.
+## Follow one permission change through the connection
 
-For a write, reaching the target is still necessary, but the target must also permit the particular change.
+An existing account, `asset-reader`, needs permission to view asset records. It is already associated with the intended ISC identity. In this example, `asset.read` allows viewing and excludes asset administration.
 
-Suppose `asset-reader` is an existing account correctly associated with the intended identity. The example permission `asset.read` allows asset viewing, excluding asset administration.
+An **entitlement** is an access item represented from a source, such as a permission or group membership. Here, asset.read is the entitlement we want the account to receive.
 
-An **access profile** bundles related entitlements from one source. Here, **Read assets** contains `asset.read` from Assets-Production. An **access request** asks for specified access for a specified recipient.
+An **access profile** bundles related entitlements from one source. **Read assets** contains only asset.read from Assets-Production.
 
-Assume the request is permitted, its configured review approves it, and the integration supports adding the permission to this existing account. ISC initiates that supported work for the source's cluster. A running member obtains the work and performs the applicable connector operation.
+An **access request** asks for specified access for a specified recipient. For this successful trace, the recipient does not already hold the profile or asset.read.
 
-The connection uses an **integration account**, `svc-assets`, rather than the receiving account `asset-reader`. **Credentials** are the secrets or tokens used to authenticate the connection.
+The request is permitted, the configured review approves it, and the integration supports adding that permission to the existing account.
 
-**Authentication** verifies the connecting actor. **Authorization** determines whether that actor may perform the operation. The target can accept the integration credential while rejecting a permission update it isn't authorized to make.
+Approval records the access decision. **Provisioning** performs supported account or access changes. The permission still needs to be applied in the external system.
 
-Under the successful conditions, the member reaches the correct target, authenticates and performs the permitted update. The target applies `asset.read` to `asset-reader`, and the operation response is returned through the integration.
+ISC initiates the supported source operation for assets-prod. A running member obtains that work.
 
-To establish delivery, inspect both the operation evidence and the actual target-account permission. A working appliance, approved request or accepted credential alone doesn't establish that result.
+The connection uses an **integration account**, `svc-assets`, to perform the operation. asset-reader is the account receiving the permission. Keep those two accounts separate: one makes the change; the other benefits from it.
 
-**Account correlation** matches and assigns a source account to an ISC identity through configured comparisons. It concerns which person an account belongs to. It is different from the network connection used to collect or change that account.
+The connection uses svc-assets's credentials for **authentication**, which verifies the connecting actor. **Authorization** determines whether that actor may perform the requested operation.
 
-A hostname lookup failure is a connection-stage problem, not a decision about which person owns the account.
+For this successful run, the member reaches the correct asset system, the system accepts svc-assets's authentication, and that integration account has permission to perform the update.
 
-## A saved VA record still needs a working appliance
+The asset system is the **target**, meaning the system receiving the attempted change. It applies asset.read to asset-reader and returns the operation response through the integration.
 
-Deployment involves both the actual machine and its registration/configuration in ISC.
+Now we can connect the decision to the result: the required review approved the access, ISC initiated the work, a member performed the supported operation, and the asset system applied the intended permission.
 
-**Pairing** associates a deployed appliance with its tenant and cluster through the supported setup process. A VA record can be saved without pairing, but it is not operational in that state.
+Inspect the operation evidence and the actual target-account permission to establish delivery. Appliance availability, approval and an accepted credential each establish part of that chain.
 
-The deployed machine must be configured, paired and able to complete the required setup and communication. Saving its name doesn't demonstrate those conditions.
+The same connection also carries reads. **Aggregation** collects account or entitlement information into ISC. The member needs to find and reach the target, authenticate and read the requested information; ISC can then represent what was collected.
 
-The **cluster passphrase** is a setup secret whose value must be consistent across member VAs under the documented setup. It is different from a local machine login password, the external integration credential and the recipient's application password.
+Read permission and update permission can differ. A connection can authenticate and collect accounts while the target refuses an update the integration is not authorized to make.
 
-Keep setup secrets out of tickets, screenshots and casual notes. Use the approved deployment process rather than copying another project's values.
+**Account correlation** uses configured comparisons to associate a source account with an ISC identity. That establishes which person an account belongs to. It is a different job from making the network connection that collects the account.
 
-You can also encounter **Cloud Connector Gateway**, or **CCG**. It is the cluster component used for the core connector connectivity discussed here and is enabled by default for the applicable ISC clusters.
+If a member cannot find the application's network address, investigate that connection problem. Changing person-matching rules will not supply the missing address.
 
-A cluster can support additional licensed components with their own resource requirements. A VA running a different standalone component doesn't establish that the source-connector component is configured. Verify the intended components and allocate their required resources; visibility of a component option isn't a reason to enable it.
+## A saved VA name still needs a working machine
 
-## Check dependencies from the appliance doing the work
+There are two sides to deployment: the appliance running in the hosting environment and its registration/configuration in ISC.
 
-Begin at the configured endpoint and the member that actually attempted the operation. A successful check from a laptop or another VA doesn't establish that member's path.
+**Pairing** associates the deployed appliance with its tenant and cluster through the supported setup process.
 
-**DNS**, the **Domain Name System**, resolves a service name into an address. If the VA cannot resolve the configured application name, it cannot use that name to find the target. An application password doesn't correct this name-resolution failure.
+A VA record can be saved without pairing. In that state, the record exists, but the appliance is not operational. The actual machine still needs completed setup, pairing and required communication.
 
-A **firewall** permits or blocks traffic according to configured rules. **Routing** determines the network path toward a destination. A target reachable from one network segment may be unreachable from another.
+The **cluster passphrase** is a setup secret. Its value must be consistent across the member VAs under the documented setup. It is separate from the local machine login password, svc-assets's integration credential and asset-reader's application password.
 
-Reaching a server also differs from establishing the required secure connection. **Transport Layer Security**, or **TLS**, protects an applicable connection and includes certificate checks under the configured trust requirements. The server's certificate helps establish its identity; the VA must trust it appropriately.
+Protect those secrets through the approved deployment process. Do not copy another project's setup values into tickets, screenshots or casual notes.
 
-**HTTP** is a protocol for exchanging web requests and responses. **HTTPS** protects that communication using TLS.
+You will also encounter **Cloud Connector Gateway**, or **CCG**. It is the cluster component used for the core connector connectivity discussed here, enabled by default for the applicable ISC VA clusters.
 
-A **proxy** forwards traffic for another component. In the documented HTTP proxy configuration, HTTP/HTTPS source traffic can also pass through the proxy. Inspect the actual mode and any configured bypass exceptions instead of assuming every target connection is direct.
+A cluster can support additional licensed components. Each can add resource requirements. An appliance set up for a different standalone component does not establish that source-connector connectivity is ready.
 
-A **port** identifies a network service endpoint on a host. Requirements depend on the target protocol and connector. This asset-system example uses HTTPS on port 443; other targets need their own documented ports and connection requirements.
+Check which components the deployment is intended to run and allocate the required resources. An available component checkbox is not a reason to enable it.
 
-Bring these dependencies together when investigating:
+## Check the path from the member doing the work
 
-| Dependency | Evidence needed |
+A **dependency** is something an operation needs to succeed. For a VA-based connection, several dependencies must work together.
+
+Begin with the source's configured endpoint and the member that attempted the operation. A successful test from another machine does not establish this member's path.
+
+**DNS**, the **Domain Name System**, resolves a service name into an address. When the source uses an application hostname, the member needs to resolve that name before it can use the address to contact the application.
+
+If that lookup fails, the connection cannot proceed using the configured name. Resetting an application password does not repair the lookup.
+
+After finding the address, communication still needs a usable path. **Routing** determines the network path toward a destination. A **firewall** permits or blocks traffic according to configured rules.
+
+Two appliances can have different paths or rules. A target reachable from va-01's network position may be unreachable from va-02's.
+
+Reaching the server is also different from establishing the required secure connection. **Transport Layer Security**, or **TLS**, protects an applicable connection. Its configured certificate and trust checks help establish the server's identity.
+
+A **certificate** provides identity information used in those checks. The VA needs appropriate trust for the configured connection. This is a different check from whether the application accepts the integration account's password or token.
+
+**HTTP**, the Hypertext Transfer Protocol, carries web requests and responses. **HTTPS** protects that communication using TLS.
+
+A **port** identifies a network service endpoint on a host. Our hypothetical asset connection uses HTTPS on port 443. Other connectors and target protocols have their own requirements.
+
+A **proxy** forwards traffic for another component. With the documented HTTP proxy configuration, HTTP/HTTPS source traffic can also go through that proxy. Inspect the actual configuration and any bypass exceptions before assuming the VA contacts the application directly.
+
+Bring the checks back to the operation:
+
+| Dependency | What you need to establish |
 |---|---|
-| Running VM and resources | Appliance is running with required processing, memory and storage |
-| Cloud communication | This VA can reach the required services for its configuration and region |
-| Target name and path | This VA can resolve and reach the configured external endpoint |
-| Secure connection | Applicable certificate trust and connection requirements are satisfied |
-| Target identity and authority | Integration authenticates and can perform this particular operation |
-| Work and result | Intended operation ran, and its outcome is established |
+| Running VM and resources | This appliance is running with the required processing, memory and storage. |
+| Cloud communication | This member reaches the services required by its configuration and region. |
+| Target name and path | This member resolves and reaches the configured application endpoint. |
+| Secure connection | Applicable certificate, trust and connection requirements are satisfied. |
+| Target identity and authority | The integration authenticates and may perform this particular operation. |
+| Work and result | The intended operation ran, and its outcome is established. |
 
-“Allow port 443” is incomplete on its own. Required destinations, name resolution, **time synchronization** to keep the appliance's clock aligned, deployment mode and target-specific ports still matter.
+“Allow port 443” leaves several of these questions unanswered. Which destinations are allowed? Can the member resolve their names? Does its deployment mode use a proxy? What does the target protocol require?
 
-Use current deployment requirements for concrete resource sizes, supported hosting, destinations and network values. The reasoning remains useful when those details change; copied values from an older project may not.
+The VA also needs **time synchronization**, keeping its clock aligned with the required time service.
 
-## Connected is an appliance status
+Use current deployment requirements for resource sizes, supported hosting, required destinations, time services and ports. Values copied from an older project may describe a different environment.
 
-SailPoint describes **Connected** as the appliance operating as expected. That is useful appliance-health information, but it isn't a separate successful test of every operation on every source.
+## Read Connected at the appliance's scope
 
-Read the health views at their actual scope. The cluster view concerns the group and its members. An individual VA view concerns one appliance. A component/process view concerns that process's availability. A source or operation view concerns particular integration work.
+SailPoint describes **Connected** as the VA operating as expected.
 
-For example, a member can maintain cloud communication while failing to resolve the asset-system hostname. Both observations can be true.
+Use that as appliance-health information, then investigate the specific operation. A member can maintain cloud communication while failing to resolve one application's hostname.
 
-The documented component status **Busy** means that process is unavailable for new processing or updates while in that state. The label alone does not establish a tenant-wide outage. Inspect the work, warning/error details and timestamps.
+The health views answer different questions. A cluster view concerns the group and its members. An individual VA view concerns that appliance.
 
-Similarly, an inactive member means the deployment has lost part of its redundancy. Another member showing Connected doesn't restore the missing capacity merely by appearing healthy.
+A **process** is a running program that performs work. A component/process view concerns that process's availability. A source or operation view concerns particular integration work.
 
-## Two members protect against some failures
+For example, a component process marked **Busy** is unavailable for new processing or updates while in that state. That process status does not identify a tenant-wide outage.
 
-**High availability**, or **HA**, means maintaining working capacity and redundancy so the required service can continue when a component becomes unavailable.
+Read warning and error details with their timestamps. An inactive member means one fewer appliance is available to handle work, even when another member is Connected.
 
-A **sandbox** is an environment used for testing. For standard core ISC VA deployments, current requirements call for at least one production cluster and one sandbox cluster, with at least two VAs per cluster. A single saved VA record doesn't meet that redundancy design.
+The **front end** presents those records and statuses to the administrator. The **back-end work** still includes the member obtaining work and performing the external operation. The displayed scope matters when connecting the two.
 
-When one member is unavailable, another running member can handle cluster work. During rolling updates, VAs are updated and restarted one at a time.
+## What does the second appliance protect?
 
-Now look at what remains shared. Two VMs on one failed hosting platform can both stop. Two members using one broken route can both lose the target. Counting appliances doesn't remove a common dependency.
+**High availability**, or **HA**, means maintaining enough working capacity and redundancy to continue service when a component becomes unavailable. Redundancy gives the deployment another member that can perform work.
 
-The remaining member also needs sufficient capacity and correct source connectivity. A second member that has never been tested against the required target is an unverified part of the design.
+For standard core ISC VA deployments, current requirements call for at least one production cluster and one **sandbox** cluster, with at least two VAs per cluster. A sandbox is an environment used for testing. One saved VA record does not meet that design.
 
-Two members don't establish that one aggregation runs twice as fast, or that an interrupted operation resumes at exactly the point where it stopped. Workload, source behaviour and supported processing matter. Available workers and completed work are different outcomes.
+When one member becomes unavailable, another running member can handle cluster work. During **rolling updates**, members are updated and restarted one at a time.
 
-## A remaining worker can still fail before reaching the target
+The remaining member still needs sufficient capacity and the required source connectivity.
 
-Return to the requirement: `asset.read` on the existing account `asset-reader`. The source uses `assets-prod`, with `va-01` and `va-02`.
+Now consider what the members share. Two appliances depend on their hosting environments; a common hosting failure can stop both. Two appliances that depend on the same broken route can both lose contact with the target.
 
-For this different run, consider these hypothetical observations:
+Counting members tells you how many appliances exist. You also need to identify which failures their deployment can actually withstand.
+
+Two members do not promise that one aggregation runs twice as fast. They also do not establish that an interrupted operation resumes from exactly where it stopped. Available capacity and completed work need separate evidence.
+
+## Follow a remaining member that cannot find the target
+
+Now consider a separate run in which asset-reader has not received asset.read. Assets-Production uses assets-prod with va-01 and va-02.
+
+Use these hypothetical observations:
 
 | Observation | What it establishes |
 |---|---|
-| The host running `va-01` has failed | One member cannot perform work |
-| `va-02` is Connected and can poll cluster work | The remaining member has the demonstrated cloud communication |
-| Operation evidence identifies `va-02` handling the attempt | That member attempted this work |
-| Diagnostics from `va-02` show failure to resolve the configured target hostname | The attempt fails before target authentication or permission update |
-| Current target evidence shows `asset.read` absent from `asset-reader` | The required permission is not delivered at the checked time |
+| The host running va-01 has failed. | That member cannot perform work. |
+| va-02 is Connected and can poll cluster work. | The remaining member has the demonstrated cloud communication. |
+| Operation evidence identifies va-02 handling the attempt. | This member attempted the work. |
+| Diagnostics from va-02 show failure to resolve the configured target hostname. | This attempt fails before target authentication or the permission update. |
+| Current target evidence shows asset.read absent from asset-reader. | The viewing permission is missing at the checked time. |
 
-The second appliance preserved a running worker. It didn't provide the missing name resolution.
+The second appliance preserved a running member. Its separate DNS problem prevented it from reaching the target using the configured name.
 
-Compare the source's configured endpoint and the name-resolution/network setup from each relevant member. Test from the member's position, not only from the administrator's laptop.
+Compare the source endpoint and each relevant member's name-resolution and network setup. Use evidence from the member's position, rather than relying only on an administrator's laptop test.
 
-The evidence doesn't justify resetting the recipient password or the integration credential: the attempt never reached application authentication. Reapproving the request wouldn't repair DNS either.
+The supplied failure occurs before the application checks svc-assets's credential. Resetting that credential, changing the recipient password or approving the request again would leave the name-resolution problem in place.
 
-The authorized infrastructure/network team corrects the dependency. The ISC team then addresses affected work through the supported recovery procedure and verifies the intended account's permission. Restoring name resolution alone doesn't establish that the earlier failed update completed.
+The authorized infrastructure/network team corrects the dependency. The ISC team then examines the failed work, uses its supported recovery procedure and verifies the intended target permission.
 
-## A healthy separate cluster is not automatically a standby
+Restoring DNS makes the connection prerequisite available again. The operation result and current account permission establish whether the missing access was subsequently delivered.
 
-**Disaster recovery**, or **DR**, concerns restoring service after a broader failure, such as loss of a hosting location. The source-to-cluster association remains relevant during recovery.
+## A separate healthy cluster needs the right source association
 
-SailPoint documents an **all VAs running** arrangement where members in different locations belong to the same cluster and run concurrently. Either location's members can obtain that cluster's work. If primary-location members fail, the remaining members can continue handling requests under that arrangement.
+**Disaster recovery**, or **DR**, concerns restoring service after a broader failure, such as loss of a hosting location.
 
-Every participating location still needs the target dependencies. Consider **latency**, the communication delay between the appliance and target, when evaluating distant members and the workload.
+There are different documented arrangements. The source-to-cluster association explains why they behave differently.
 
-The documented **switch-clusters** strategy uses separate primary and DR clusters, both running. The sources initially use the primary cluster. The DR cluster doesn't receive those sources' work simply because it is powered on.
+In the **all VAs running** arrangement, members in different locations belong to the same cluster and run concurrently. Either location's members can obtain that cluster's work. If the primary-location members fail, the remaining members continue handling requests under that arrangement.
 
-Failover requires reassociating the sources with the DR cluster. The documented procedure also requires reentering source credentials. Prepare authorized access to those secrets and validate the operational plan before an outage.
+Each location still needs the target dependencies. **Latency** is communication delay; a more distant member can experience more delay when contacting the target. Evaluate that path with the actual workload.
 
-A **runbook** records the approved actions, conditions, responsibilities and verification for an operational task. It should establish affected sources, target reachability from the recovery location, required configuration/credentials and how resumed work will be checked.
+The **switch-clusters** arrangement uses separate primary and DR clusters, both running. Sources initially use the primary cluster.
 
-Two healthy clusters aren't one automatic tenant-wide worker pool. Their associations and purposes can differ.
+The DR machines are ready as a separate deployment, but those sources' requests still go to their associated primary cluster. Failover requires reassociating the sources with the DR cluster.
 
-## Updates and replacement have their own scope
+That documented procedure also requires reentering source credentials. Prepare authorized access to the required secrets before an outage.
 
-For the standard SailPoint-provided image, SailPoint manages VA software updates. The customer provides hosting/connectivity and monitors the deployment.
+Compare the relationships:
 
-Rolling updates support continuity, but long-running work can be interrupted under the documented conditions. A Busy process is not a promise that updates will wait indefinitely.
+| Arrangement | Where the sources' work goes | Recovery implication |
+|---|---|---|
+| Running members across locations in one cluster | To the shared associated cluster | Surviving members can continue handling its work, with their own capacity and target dependencies. |
+| Separate running primary and DR clusters | To the cluster currently associated with each source | Switching requires source reassociation, required credential reentry and verification of the recovery path. |
 
-Standard VA guidance also warns that when a member is not connected, updates are not made to the VAs in that cluster. Inspect the actual alert and follow the supported operational process.
+A **runbook** records the approved actions, conditions, responsibilities and verification for an operational task. For recovery, it should identify affected sources, target reachability from the recovery location, required configuration and credentials, and how resumed work will be checked.
 
-An **operating system**, or **OS**, is the system software on which the VA components run. It is different from the external business application's software.
+Two healthy clusters are not one automatic tenant-wide pool. Their source associations determine which work they receive.
 
-There is a documented **customer-provided OS** option, available to selected customers on request under its documented conditions. It adds customer OS patching, maintenance and reboot responsibilities while requiring acceptance of applicable SailPoint software updates. Check the actual deployment option before assigning maintenance work; the standard-image assumptions don't cover every option.
+## Maintenance and replacement affect different things
 
-For replacement or relocation, SailPoint strongly advises against moving or migrating existing VAs. The documented approach creates new VAs, establishes connectivity, adjusts source associations as needed and then retires the old deployment through the approved process.
+For the standard SailPoint-provided image, SailPoint manages VA software updates. The organization provides hosting and connectivity and monitors the deployment.
 
-That is a replacement approach, not a reason to delete or rebuild a live cluster before investigating. Inventory affected sources and preserve evidence first.
+Rolling updates support cluster continuity. Individual in-progress work, including applicable long-running aggregations, can still be interrupted under documented update conditions.
 
-A cluster restart, source reassociation and VM replacement affect different scopes. They can disrupt working integrations as well as the failing one. Follow the specific procedure and verify affected work afterward.
+Busy process status helps coordinate updates, but it does not defer necessary updates indefinitely. Check the particular job's result afterward.
 
-## An interrupted response can leave a different outcome
+Standard VA guidance also states that an unconnected member prevents updates to the VAs in that cluster. Inspect the actual alert and follow the documented operational process.
 
-The DNS example establishes that the target wasn't reached. Now change that condition: suppose a target applies the permission, but its response is interrupted. The account has the permission while the recorded operation result is inconclusive.
+An **operating system**, or **OS**, is the system software on which the VA components run.
 
-A timeout or lost response alone doesn't establish that nothing changed.
+A documented **customer-provided OS** option is available to selected customers on request under its conditions. It adds customer OS patching, maintenance and reboot responsibilities while requiring acceptance of applicable SailPoint software updates.
 
-Compare the target state, relevant audit evidence and recorded attempt. Determine the operation's supported reconciliation or recovery behaviour before repeating it. A retry is not universally harmless, and duplicate-prevention behaviour is operation-specific.
+Establish which deployment option is actually in use before assigning maintenance work. Standard-image responsibilities do not describe every deployment.
 
-After a cluster returns, “Connected again” establishes appliance health, not completion of all interrupted collections and updates.
+For replacement or relocation, SailPoint strongly advises against moving or migrating existing VAs. Its documented approach creates new VAs, establishes connectivity, adjusts source associations as needed and then retires the old deployment through the approved process.
 
-ISC can also display previously collected accounts during a connection problem. Read the observation's age and scope. A failed read alone doesn't establish that a worker left the organization or that every external account disappeared.
+Before acting, inventory the affected sources and preserve evidence. The replacement approach does not mean deleting or rebuilding a live cluster is the first diagnostic step.
+
+Restarting a cluster, reassociating a source and replacing a VM change different things. A cluster restart can affect integrations that were working too. Follow the procedure for the actual scope and verify affected work afterward.
+
+## A lost response can mean something different from an unreachable target
+
+The DNS case established that the attempt never reached target authentication.
+
+Now suppose an operation reaches the asset system, the system applies asset.read, and the response is interrupted. The current account has the permission, while the recorded operation result is inconclusive.
+
+A **timeout** means the expected response did not arrive within the applicable waiting period. By itself, it does not establish whether the target made the change.
+
+Compare the current target state, relevant application audit evidence and recorded attempt. Determine the supported way to reconcile or recover that operation before repeating it.
+
+**Reconciliation** here means establishing how the recorded attempt relates to the actual target state, then using the appropriate supported handling.
+
+Losing the response does not mean the target automatically undoes its change, known as **rollback**. Establish what already happened before issuing another change. Whether a repeat is safe, and how duplicate requests are handled, depends on the operation.
+
+The same distinction applies after appliances return. Connected again tells you about appliance health. Inspect interrupted reads and updates to establish what completed and what still needs attention.
+
+ISC can also continue displaying previously collected accounts during a connection problem. That information describes the earlier observation. A failed read alone does not establish that a person left the organization or that all external accounts disappeared.
 
 ## Work through the connection decisions
 
-### 1. The first-created VA
+**Only va-01 can handle the source because it was created first. Is that enough evidence?**
 
-Assets-Production uses `assets-prod`, with two running members. A colleague says only `va-01` can run its work because it was created first.
+Follow the source's cluster association. In the documented running-member arrangement, either running member can obtain its work. Check actual member evidence and dependencies; creation order does not establish permanent ownership.
 
-**Worked reasoning:** The source is associated with the cluster. Running members poll its queue, and either can handle work in the documented arrangement. Inspect actual operation/member evidence and member dependencies; creation order doesn't establish a permanent worker assignment.
+**An aggregation starts in the cloud. Must the team expose a new public inbound service on the VA?**
 
-### 2. An inbound firewall change
+The work originates in ISC, but the VA initiates required outbound communication and receives responses over it. Use the supported network design. Work origin does not require the proposed inbound exposure.
 
-An engineer proposes exposing a new inbound service because an ISC aggregation begins in the cloud.
+**The remaining member is Connected, but its target-name lookup fails. Should the team reset the integration credential?**
 
-**Worked reasoning:** Work origin differs from network initiation. The VA initiates the required outbound cloud communication, polls for cluster work and receives responses over that communication. Follow the documented network design; the cloud origin doesn't require the proposed inbound exposure.
+The supplied failure occurs before target authentication. Check the endpoint and that member's DNS/path, correct the authorized dependency, then recover and verify the affected work. A credential reset does not repair name resolution.
 
-### 3. Connected, but DNS fails
+**The primary cluster is unavailable. A healthy separate DR cluster exists, and the source still uses the primary. What is missing in switch-clusters recovery?**
 
-The remaining VA is Connected. Its diagnostics show that the target hostname cannot be resolved. Should you reset the integration credential?
+The source needs reassociation through that procedure, including the required credential preparation. Check recovery-location connectivity, authorization, affected sources and resulting work. Powered-on DR machines alone have not switched the source.
 
-**Worked reasoning:** The observed failure occurs before target authentication. Verify the source endpoint and that member's DNS/network setup. Correct the authorized dependency, then recover and verify affected work. Credential changes aren't supported by the supplied failure evidence.
+**Two members exist. Does a rolling update guarantee every long-running aggregation finishes uninterrupted?**
 
-### 4. A healthy DR cluster
+Cluster continuity and an individual job's completion are different outcomes. Documented update conditions permit interruption. Inspect the actual job result and its supported recovery requirements.
 
-The primary cluster is unavailable. A separate DR cluster is healthy, but the asset source is still associated with the primary. The organization uses switch-clusters recovery.
+**A response was lost, but current target evidence shows asset.read on the intended account. Does the timeout prove no change occurred?**
 
-**Worked reasoning:** The source needs reassociation through that recovery process, including the documented credential preparation. Check recovery-location connectivity, affected sources, authorization and verification. Powered-on spare machines alone don't complete failover.
-
-### 5. A rolling update
-
-Two members are deployed. An engineer assumes rolling updates guarantee every long-running aggregation continues uninterrupted.
-
-**Worked reasoning:** The documented behaviour permits interruption under update conditions. Verify the particular operation result and supported recovery. Cluster availability differs from uninterrupted completion of an individual job.
-
-### 6. Permission present after a lost response
-
-After an interrupted operation, current target evidence shows `asset.read` on the intended account. Its recorded outcome remains inconclusive.
-
-Does the timeout prove that nothing happened?
-
-**Worked reasoning:** No. Compare current account state with the attempted operation and audit evidence. Establish what occurred and how the work should be reconciled or recovered before retrying. An incomplete response neither proves no change nor guarantees rollback.
+The account's current permission contradicts that conclusion. Compare the attempted operation and audit evidence to establish how it arose and how to reconcile the work. An incomplete response guarantees neither no effect nor rollback.
 
 ## Apply the reasoning to Payroll
 
-A VA-based Payroll source uses two VAs on different hosts. Both rely on one network route to the Payroll server.
+A VA-based Payroll source uses two VAs on different hosts. Both depend on one network route to the Payroll server.
 
 That route fails. Both VAs can still reach the required cloud services. The Payroll accounts visible in ISC were collected before the failure.
 
-Explain which redundancy remains, what evidence is missing and what would establish recovery.
+Which redundancy remains, what evidence is missing, and what would establish recovery?
 
-**Worked reasoning:** The deployment has appliance redundancy but a shared target-network dependency. Both workers can reach the cloud while neither can use the failed route to Payroll.
+There are still two appliances, but they share the failed target-network dependency. Both can reach the cloud while neither can use that route to Payroll.
 
-Establish the configured cluster and target, each member's target-connectivity results, the network event and the affected read/write operations. The visible account data is an older observation, not a current Payroll connectivity test.
+Establish the configured cluster and target, each member's target-connectivity results, the network event and the affected reads and writes. The visible accounts are older observations, rather than current Payroll connectivity evidence.
 
 The authorized network team corrects the route. The ISC team identifies and recovers affected work through supported procedures, then verifies relevant read and write outcomes within the connector's capabilities. Preserve unrelated approved access.
 
-Explain the connection to another engineer: the source identifies its cluster, running members obtain work through cloud communication, and whichever member handles an operation still needs a working, authorized path to the target.
+Explain the connection to another engineer: which cluster receives the source's work, how a running member obtains it, what that member needs to reach and use the target, and which evidence establishes the intended result?

@@ -1,0 +1,22 @@
+ISC identity
+department = Finance
+jobCode = AP_READER
+        |
+        | identity processing:
+        | both assignment comparisons match
+        v
+Role assigned: Accounts payable reader
+        |
+        | configured provisioning
+        |
+ +------+------------------+
+ |                         |
+ v                         v
+Finance application        Directory
+finance account            directory account
++ InvoiceRead              + FinanceWorkspace
++ SupplierRead
+
+Each branch needs its own successful delivery.
+The branches do not promise an order
+or a single cross-system transaction.

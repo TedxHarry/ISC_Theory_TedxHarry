@@ -1,0 +1,14 @@
+One existing ISC identity
+  |
+  +-- HR-Workers
+  |     +-- hr-worker
+  |
+  +-- Corporate-Directory
+  |     +-- directory.user
+  |
+  +-- Warehouse-Production
+        +-- stock-daily
+        +-- stock-admin
+
+Branches show account associations.
+They do not combine account rights.

@@ -1,0 +1,15 @@
+Approved Buyer assignment in ISC
+                |
+                v
+Target creates buyer-user
+                |
+                v
+Target adds buyer-user to buyers
+                |
+      later supported account read
+                |
+                v
+ISC collects account and membership
+
+Creation, assignment and observation
+have separate results.

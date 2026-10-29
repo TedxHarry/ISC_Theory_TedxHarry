@@ -1,80 +1,108 @@
 # The ISC tenant: what SailPoint runs, and what your organization still owns
 
-When you open SailPoint Identity Security Cloud, or ISC, you're using an application that SailPoint operates. Your organization doesn't install and maintain the core ISC application servers as its own deployment.
+SailPoint operates the core Identity Security Cloud application. Your organization still has to decide which person needs which permission, and make the connection to the system that will apply it.
 
-That removes a substantial operating responsibility. It still leaves decisions such as which people need access, which application permissions meet that need, and which external account should receive them.
+Those responsibilities meet during an ordinary access change.
 
-A working hosted service can carry out a configuration that points to the wrong system. It can also attempt a correctly approved change that an external application refuses. Understanding the boundary helps you investigate the actual operation and bring in the people who can resolve it.
+An employee can receive approval in SailPoint Identity Security Cloud, or **ISC**, while the supplier application refuses the update. That does not contradict the approval. The decision and the external operation have different jobs.
 
-## The tenant is your working environment inside the service
+Let's locate those jobs, then follow one change between them.
 
-ISC is **software as a service**, or **SaaS**: a hosted application service operated by the provider. A **tenant** is a particular organizational environment within that service. Your configurations and represented identity/access information exist in that tenant.
+## Locate the tenant inside the hosted service
 
-The platform is **multi-tenant**. It serves multiple organizational environments while maintaining boundaries between their data and configuration. Sharing the platform does not give your administrators access to another organization's records. It also does not mean your tenant is a physical computer that your ISC administrator owns.
+ISC is **software as a service**, or **SaaS**. SailPoint operates the hosted application rather than requiring your organization to install and maintain the core ISC application servers.
 
-For daily work, the tenant tells you where a record or change belongs. “I changed the source” needs an environment: was that the testing tenant or the one handling live access?
+Your configuration and represented identity/access information belong to a particular organizational environment called a **tenant**.
 
-A **sandbox** is an environment used for testing and configuration work. **Production** is the environment used for live operations. An organization can have separate sandbox and production tenants; establish which environments actually exist for your implementation.
+The service is **multi-tenant**: the platform serves multiple organizational environments while keeping their data and configuration logically separate. Your organization's administrator does not gain access to another customer's records by using the same platform.
 
-Within a tenant, a **source** is a configured representation of a system or collection of account data. One tenant can contain many sources.
+The tenant is also not a physical computer that your ISC administrator owns. It is the environment in which your organization's records and configuration are managed.
 
-An **identity** is ISC's person-level record. An **authoritative source** supplies the group of people from which ISC establishes identities. An **identity profile** configures that population, including how person information is populated.
+This matters when identifying a change. “I updated it in ISC” does not yet tell us which environment was changed.
 
-For example, one tenant can contain an HR source supplying worker information, a directory source and several application sources. Adding another source or identity profile changes configuration inside that tenant. It doesn't create a new tenant.
+A **sandbox** is an environment used for testing and configuration work. **Production** is used for live operations. An organization can have separate sandbox and production tenants; establish which environments actually exist for your implementation.
 
-The tenant contains representations and instructions. The connected applications continue to exist as their own systems.
+A setting saved in one tenant belongs to that environment. Its name alone does not identify an equivalent setting in another tenant.
 
-## An account represented in ISC still belongs to another system
+## Separate the tenant's records from the systems they describe
 
-An **account** is a record in a particular system. ISC keeps a representation of that account using information collected through its integration.
+An **identity** is ISC's record representing a person.
 
-Suppose an existing account, `supplier-reader`, needs permission to view supplier records in the production supplier system. The account is already associated with the intended ISC identity.
+A **source** is ISC's configured representation of a system or account dataset. One tenant can contain many sources: for example, human resources, a directory and several business applications.
 
-An **entitlement** is an access item represented from a source, such as a permission or group membership. Here, `supplier.view` allows supplier-record viewing. It does not allow changing supplier bank details. These are the permission meanings in this example.
+An **authoritative source** supplies account records used to establish person identities. An **identity profile** provides configuration for that group of identities, including how their information obtains values.
 
-ISC can represent that entitlement, make it available through a configured access process and initiate a supported change. The supplier system still maintains the actual account and applies its own permission checks when the person uses it.
+Adding another source or profile changes the tenant's configuration. It does not create a new tenant.
 
-**Authorization** determines whether an actor may perform an operation. There are two authorization questions here: may the integration change this account's access, and may the person using the account view supplier records? The external system applies its relevant rules to each.
+An **account** is a record in a particular system. ISC can collect information about it and hold its own representation.
 
-Your organization must establish which permission in that system meets the business requirement. If a supposedly read-only access package includes bank-detail-change rights, hosting ISC as SaaS doesn't correct that design.
+The real account still exists in the application. The tenant contains information about it and instructions for managing it; it does not replace the application itself.
 
-The supplier system may itself be another SaaS service. “Outside ISC” describes a service boundary; it doesn't necessarily mean equipment inside your office.
+For our example, the production supplier system already has an account called **supplier-reader**, correctly associated with the intended ISC identity.
 
-## The account making the change is different from the account receiving it
+That account needs to view supplier records. It must not receive authority to change supplier bank details.
 
-A **connector** provides the integration used to read source information and perform supported changes. Which operations it supports depends on that connector.
+## Establish what permission meets the business need
 
-**Aggregation** collects account and access information into ISC. **Provisioning** carries out supported account or access changes. Reading an account and changing its permissions are different operations, even when they use the same connection.
+A **permission** allows a particular action. An **entitlement** is an access item represented from a source, such as a permission or group membership.
 
-The **integration account** is the account or software identity the connection uses in the external system. For this example, call it `svc-supplier`. It performs the update; `supplier-reader` receives the permission.
+In our hypothetical supplier system, **supplier.view** allows supplier-record viewing. It does not permit bank-detail changes.
 
-**Credentials** are the secrets or tokens used to authenticate that connection. **Authentication** verifies the connecting actor. An accepted credential establishes that the connection met the applicable authentication requirements. It doesn't, by itself, authorize every operation.
+Your organization needs to establish that meaning from the actual system. A package called View suppliers could still be badly designed if someone included bank-detail-change rights in it.
 
-An integration account can have account-reading permission without membership-update permission. In that arrangement, a read can succeed while an access change is rejected.
+SailPoint hosting the platform does not choose the correct business permission for that package.
 
-The integration also needs **network reachability**: the relevant component must be able to communicate with the required destination. A valid credential doesn't open a blocked network path. An open network path doesn't supply missing write privileges.
+ISC can represent the access item and initiate supported changes. The supplier system maintains its account and enforces its own operation rules.
 
-Keep three actors separate:
+**Authorization** determines whether an actor may perform an operation. We will need to distinguish two authorizations: the integration's authority to change permissions and the employee account's authority to view suppliers.
 
-| Actor | Authority needed for this work |
+The external supplier system could itself be another SaaS application. Outside ISC means a separate system or service; it does not necessarily mean equipment in your office.
+
+## Identify the actor making the change
+
+A **connector** provides the integration used to read source information and perform supported changes. The particular connector determines which operations it supports.
+
+**Aggregation** collects account and access information into ISC. **Provisioning** carries out supported account or access changes.
+
+Reading the supplier account and changing its permissions are separate operations, even if they use the same connection.
+
+The **integration account** is the account or software identity the connection uses in the external system. Call ours **svc-supplier**.
+
+svc-supplier performs the update. supplier-reader receives the business permission. They are different accounts.
+
+**Credentials** are authentication information, such as a password or access token, used by the connection. **Authentication** verifies the connecting actor under the required checks.
+
+If the supplier system accepts the credential, that establishes successful authentication for the connection. It does not establish permission to perform every operation.
+
+For example, svc-supplier can have authority to read accounts while lacking authority to update their memberships. Account collection can succeed under that arrangement, while a permission change is refused.
+
+The connection also needs **network reachability**: the relevant component must be able to communicate with the required destination.
+
+A valid credential does not open a blocked path. A reachable destination does not supply a missing write privilege.
+
+Keep the actors and their authority together:
+
+| Actor | What their authority concerns |
 |---|---|
-| ISC administrator | Applicable permission to manage the tenant's configuration and investigate its activity |
-| Integration account, `svc-supplier` | External permission to carry out the particular supplier-system operation |
-| Recipient account, `supplier-reader` | The business permission being granted for supplier-record viewing |
+| ISC administrator | Managing permitted tenant configuration and investigating activity |
+| Integration identity svc-supplier | Performing the specific operation in the supplier system |
+| Recipient account supplier-reader | Using supplier-record viewing after receiving the business permission |
 
-An ISC administrator's permissions don't automatically become the integration account's external permissions. Changing the recipient's password would not supply a missing privilege to the integration account either.
+The administrator's ISC privileges do not automatically become svc-supplier's external privileges. Changing supplier-reader's password would not give svc-supplier a missing update privilege either.
 
-## Where does the connection run?
+## Locate the component used by this connection
 
-The connector's documented connection path determines which components are involved.
+Some connectors use a **Virtual Appliance**, or **VA**, a customer-deployed integration component that connects ISC with enterprise systems.
 
-A **Virtual Appliance**, or **VA**, is a customer-deployed integration component used by VA-based connectors to connect ISC with enterprise systems. A **cluster** groups VAs for the relevant connectivity arrangement. It is not another tenant or a local copy of the whole ISC application.
+A **VA cluster** groups VAs for that connectivity arrangement. It is not another tenant or a local installation of the whole ISC application.
 
-A **SaaS connector** uses the supported SaaS connectivity path without requiring a customer-deployed VA cluster for that connection.
+A **SaaS connector** uses its supported SaaS connection path without requiring a customer-deployed VA cluster for that connection.
 
-An **API** is an interface through which software reads information or requests operations. A SaaS connector still needs the external API access and permissions required by its integration. Removing the VA dependency does not remove those requirements.
+An **API**, or application programming interface, lets software request information or an operation from another system. A SaaS connection still needs the external API access and permissions required by its integration.
 
-The supplier example assumes a supported VA-based connection. Its system boundaries look like this:
+Removing a VA dependency does not remove those requirements.
+
+Our supplier example uses a supported VA-based connection:
 
 ```text
 SailPoint-hosted service
@@ -85,7 +113,7 @@ SailPoint-hosted service
            |
            | Supported integration
            v
-Customer-managed environment
+Customer-provided environment
   VA cluster and network dependencies
            |
            | External connection
@@ -93,48 +121,65 @@ Customer-managed environment
 Supplier production system
   Integration: svc-supplier
   Recipient: supplier-reader
-  Accounts and enforced permissions
+  Actual accounts and permissions
 
-Collection also returns data to ISC.
+Collection also returns information to ISC.
+Arrows show relationships, not packet routing.
 ```
 
-The arrows show the integration relationship across the environments. They do not describe packet routing, a permanent session or an exact internal execution sequence. Collection also brings information back into ISC.
+The hosted tenant holds represented information, instructions and activity.
 
-The hosted tenant holds configuration, represented information and activity. The customer-managed environment provides the applicable VA hosting and connectivity. The supplier system holds the external accounts and enforces its permissions.
+The customer-provided environment supplies the applicable VA hosting and connectivity.
 
-A SaaS connector uses a different connection path. Don't place every connector behind the VA shown here.
+The supplier system holds the external accounts and applies its permission rules.
 
-## Follow one approved change across those systems
+The arrows connect these responsibilities. They do not describe an exact private execution sequence or a permanent connection session. Information collected from the supplier system also returns to ISC.
 
-An **access request** asks for specified access for a specified recipient. An **access profile** bundles related entitlements from one source.
+A SaaS connector uses a different path. Do not put every connection behind the VA in this example.
 
-Here, **View suppliers** contains only `supplier.view` from the supplier production source. The business requirement is viewing, so the package excludes bank-detail-change access.
+## Follow an approved viewing request
 
-The recipient has the existing correctly associated account `supplier-reader`. The profile is available through the permitted request process, the required reviewer is configured, and the integration supports the required access update.
+An **access profile** bundles related entitlements from one source.
 
-In the successful path, the request identifies the intended recipient, profile, source and account. The reviewer approves it. ISC then initiates the supported change through the integration.
+Here, **View suppliers** contains only supplier.view from the supplier production source. The viewing requirement is expressed without bank-detail-change access.
 
-The supplier system is the **target system** for this change: the external system ISC is asking to update. It accepts the integration's authorized operation and adds `supplier.view` to `supplier-reader`.
+An **access request** asks for specified access for a specified recipient.
 
-The result depends on connected pieces of work: the organization chose the correct permission and account; the tenant configuration expressed that choice; the connection reached the right system; and the integration had authority for that specific update.
+For this successful trace, supplier-reader already exists, is associated with the correct identity and does not yet hold supplier.view. The profile is available through the permitted request process, the required reviewer is configured and the integration supports the update.
 
-Approval was the decision to allow the change. It was not evidence that the later external operation had completed.
+The request identifies the recipient, profile, source and intended account.
 
-Now consider a different run. All times in this hypothetical sequence use **Coordinated Universal Time (UTC)**, one shared time reference:
+The reviewer approves it. **Approval** records the decision that this access may be given. ISC then initiates the supported change through the configured integration.
 
-| Time | Observed event in this example |
+The supplier system is the **target system**, meaning the system receiving that attempted change.
+
+It accepts svc-supplier's authorized operation and adds supplier.view to supplier-reader.
+
+The result depends on several connected facts. The organization chose the intended permission and account. Its tenant configuration expressed that choice. The connection reached the correct supplier system, and the integration had authority for the update.
+
+The approval permitted the work. It did not prove that the later external operation had completed.
+
+## Explain why a read can succeed while a write fails
+
+Now consider a different run.
+
+All times below use **Coordinated Universal Time**, or **UTC**, so the observations share one time reference.
+
+| Time | Supplied observation |
 |---|---|
-| 09:00 | An application-security change removes membership-update permission from `svc-supplier`. Account-reading permission remains. |
-| 09:10 | An account aggregation successfully reads current supplier-system account data. |
+| 09:00 | A supplier-system security change removes membership-update permission from svc-supplier. Account-reading permission remains. |
+| 09:10 | Account aggregation successfully reads current supplier account data. |
 | 09:15 | The View suppliers request is approved in the ISC production tenant. |
 | 09:16 | The supplier system rejects the attempted update because the integration lacks the required permission. |
-| 09:20 | A current external account check confirms that `supplier.view` is absent from `supplier-reader`. |
+| 09:20 | A current external account check confirms supplier.view is absent from supplier-reader. |
 
-The times establish the order of these observations. They are not standard ISC processing intervals or delivery promises.
+The times establish the order in this example. They are not standard ISC intervals or delivery promises.
 
-The engineer can still open the request in ISC. The account read succeeds. The write fails. These observations are consistent because the external integration identity has different permissions for reading and updating access.
+The engineer can still open the request. The account read succeeds. The update fails.
 
-The diagram isolates that authorization condition after the operation reaches the supplier system:
+These observations fit together because opening an ISC page, reading supplier data and changing supplier access test different operations.
+
+The supplier system accepted the read authority that svc-supplier retained. It rejected the update authority that account no longer had.
 
 ```text
 Approved View suppliers request
@@ -145,192 +190,221 @@ ISC initiates supported change
   v
 Integration reaches supplier system
   |
-  +-- Integration can make this update?
+  +-- May svc-supplier perform this update?
         |
         +-- Yes: apply supplier.view
         |
         +-- No: reject this update
               No permission delivered
-              in the rejected case
+              in this rejected case
 
-Separate account read can still succeed.
+A separate account read can still succeed.
+The branch isolates update authorization.
 ```
 
-Other failures can stop an operation before this branch, such as invalid credentials or a blocked connection. A failed write alone therefore doesn't prove that someone removed a permission.
+This diagram starts after the attempted operation reaches the supplier system. A blocked network path or invalid credential could stop work before that branch.
 
-Here, the privilege change and the application's rejection are both given as evidence. They explain this failure. The current account check confirms the unmet access requirement.
+A failed write alone therefore does not prove that someone removed a privilege. Here, the security change and permission rejection are supplied evidence, and the current account check confirms the viewing requirement is still unmet.
 
-Recorded activity can help you identify the attempt and its reported result. Current target evidence concerns the actual external account at the time checked. Neither should be silently substituted for the other.
+Recorded activity helps establish the attempt and reported result. The external check establishes the account's state at the time inspected. Keep both observations rather than silently replacing one with the other.
 
-## Put the responsibilities beside the work
+## Put responsibility beside the work
 
-SailPoint operates the hosted ISC platform and provides its documented capabilities. Your organization configures how those capabilities apply to its people and systems.
+SailPoint runs the hosted platform and provides its documented capabilities. Your organization configures how those capabilities apply to its people and systems.
 
-A **mapping** specifies how a value is populated, such as taking a person's department from HR. **Account correlation** compares configured account and identity fields to match and assign the account to a person-level record. For example, an employee-number comparison can find the wrong person if the number was copied onto the wrong account. The service can execute the comparison correctly while the resulting business relationship is wrong. Your organization needs to validate both the data and the intended relationship.
+A **mapping** specifies how a value is populated, such as taking a person's department from human resources.
 
-That relationship requires operational ownership across the complete access path:
+**Account correlation** compares configured account and identity fields to associate an account with a person. If an employee number was copied onto the wrong account, the comparison can run as configured and still associate it with the wrong person.
+
+The organization needs to validate the input, configuration and intended relationship.
+
+The same reasoning applies to access review. A reviewer can approve the exact package presented, while the package itself includes excessive access. Correct routing is not proof of suitable contents or correctly delivered permissions.
+
+The responsibilities extend across the operation:
 
 | Area | SailPoint service contribution | Organization's implementation responsibility |
 |---|---|---|
 | Hosted platform | Operates and maintains the SaaS platform | Manages tenant configuration and who may administer it |
-| Identity information | Provides collection and person-data evaluation capabilities | Supplies trustworthy data and validates mappings and matching |
-| Access decisions | Provides access models, requests, reviews and configured automation | Defines permission meanings, eligible recipients, reviewers and acceptable exceptions |
-| Integration | Provides documented connector capabilities | Configures the connection and maintains required external credentials, permissions and connectivity |
-| Customer-deployed components | Provides applicable integration software and requirements | Maintains required hosting/network dependencies and responds to component conditions |
-| Operational assurance | Provides activity, reports, health signals and support mechanisms | Monitors outcomes, investigates exceptions, coordinates owners and verifies results |
+| Identity information | Supplies collection and evaluation capabilities | Supplies reliable data and validates mappings and matching |
+| Access decisions | Supplies access models, requests, reviews and automation capabilities | Defines permission meanings, recipients, reviewers and acceptable exceptions |
+| Integration | Supplies documented connector capabilities | Maintains connection configuration, required external credentials, permissions and connectivity |
+| Customer-deployed components | Supplies applicable software and requirements | Maintains the required hosting/network environment, monitors conditions and takes documented actions |
+| Operational assurance | Supplies activity, reports, health signals and support mechanisms | Investigates outcomes and exceptions, coordinates owners and verifies results |
 
-The capabilities available in a tenant depend on what is enabled for that environment. Check the documented requirements for the implementation.
+Check which capabilities are enabled for the actual tenant and implementation.
 
-Similarly, a reviewer can approve exactly the item presented while the item contains excessive access. Correct routing, suitable business authorization and correct delivered permissions are separate things to establish.
+An organization can delegate work to a partner or managed service provider. It still needs an accountable arrangement for its data, access decisions and outcomes. Delegating the operation does not make every business configuration choice SailPoint's decision.
 
-An organization can delegate configuration or operations to a partner or managed service provider. It still needs an accountable arrangement for its data, decisions and outcomes. Delegation doesn't make every implementation choice SailPoint's decision.
+## Correct the dependency, then recover the affected work
 
-## Who corrects the denied supplier update?
+For the rejected supplier update, the ISC engineer inspects the intended account, source, profile, attempted operation and recorded result.
 
-The ISC engineer checks the intended account, source, profile, attempted operation and recorded result. The application team checks the integration identity's current privileges and the application's audit evidence.
+The application team checks svc-supplier's current privileges and relevant application audit evidence.
 
-The security or access owner establishes the minimum privilege required for the approved integration operation. The team authorized to manage that privilege corrects it through the organization's change process.
+The security or access owner establishes the minimum privilege needed for the approved integration operation. The team authorized to manage that privilege corrects it through the organization's change process.
 
-Giving the integration unrestricted administrator access just to remove the error would broaden authority beyond the demonstrated need. Establish the scoped operation it actually requires.
+Giving svc-supplier unrestricted administrator access would broaden its authority beyond the demonstrated requirement. Establish the specific operation it needs.
 
-After correcting the dependency, address the affected request or operation through its supported recovery procedure. Then verify the intended permission on the intended external account. Restoring a privilege doesn't prove the earlier failed work completed, and you cannot assume every failure automatically retries.
+Restoring that authority corrects a prerequisite. It does not prove the earlier failed update has now completed.
 
-Also check the affected scope. If the integration lost write authority for a period, there may be other failed operations to investigate.
+Inspect the affected request or operation and use its supported recovery procedure. Then verify supplier.view on the intended external account. Do not assume every failure automatically retries.
 
-If evidence points to unsupported connector behavior or a service defect, SailPoint support may need to investigate. Customer and vendor work can proceed together. The boundary map helps organize evidence; it doesn't establish that every incident has a single cause or a single responsible team.
+Also investigate the affected scope. Other operations attempted while the write privilege was missing may need attention.
 
-For a useful handoff, identify the tenant/environment, affected source and operation, time with time zone, scope, error, recent changes and checks already completed.
+If evidence indicates a service defect or unsupported connector behavior, SailPoint support may need to investigate. Customer and vendor work can proceed together.
 
-An **object ID** identifies a particular ISC record. Keep it with its tenant and object context so the next engineer can locate the intended source or operation.
+The boundary map does not establish that every incident has one cause or one responsible team.
 
-Use approved support channels and share the information needed for the investigation. Exclude passwords and access tokens. Logs and exports can still contain sensitive identity/access information even when they contain no credentials.
+A useful handoff identifies the tenant and business environment, affected source and operation, time with time zone, scope, error, recent changes and checks already completed.
 
-## A customer-deployed VA still has shared maintenance
+An **object ID** identifies a particular ISC record. Keep it with the tenant and object context so another engineer can locate the intended source or operation.
 
-SailPoint manages VA software updates. Your organization maintains the required deployment environment and connectivity, monitors health and performs documented operational actions when needed.
+Use approved support channels and omit passwords and access tokens. Logs and exports can contain person/access information even when no credentials are included.
 
-For example, an update can be prevented by a connectivity condition. Vendor-managed updates do not repair every customer network issue. Equally, a locally deployed component isn't an invitation to replace SailPoint-managed software with an improvised patch.
+## Maintain the VA environment without taking over its managed software
 
-Follow the documented maintenance process for the component. Check whether the issue concerns the managed software, the customer-provided hosting/network environment or the external destination.
+SailPoint manages VA software updates. The organization maintains the required deployment environment and connectivity, monitors health and performs documented operational actions when needed.
 
-Rolling updates also do not guarantee that every long-running job finishes without interruption. The documented VA update behavior permits interruption of in-progress work under applicable conditions. Component availability and completion of an individual job are different outcomes.
+Those responsibilities can meet during an update. A connectivity condition can prevent a VA update from proceeding.
 
-## Tenant administration needs its own access controls
+Vendor-managed software does not repair every customer network condition. A locally deployed component also does not justify replacing managed software with an improvised patch.
+
+Follow the documented maintenance process and establish whether the issue concerns software, customer-provided hosting/network conditions or the external destination.
+
+VA updates are performed through rolling updates and reboots. **Rolling** means updating members in turn rather than all together.
+
+Maintaining cluster availability does not guarantee that each individual job finishes uninterrupted. Documented VA update behavior permits interruption of in-progress work, including applicable long-running aggregations.
+
+Check the component's condition and the particular job's result separately.
+
+## Govern tenant administration as access too
 
 An ISC **administrative user level** grants applicable management capabilities within the tenant. **Org Admin** is a broad organization-administrator level.
 
-It doesn't automatically grant external supplier-system administrator rights. Nor does it grant `svc-supplier` additional write permission.
+It does not automatically grant supplier-system administrator rights or give svc-supplier a missing external privilege.
 
-Your organization must govern tenant privileges as well as business application access. Give people and automation authority appropriate to their work, review it and remove it when it is no longer appropriate.
+Your organization must govern these tenant permissions as well as business application access: give people and automation the authority needed for their work, review it and remove it when no longer appropriate.
 
-A business **role** groups access needed for duties or a population. It has a different purpose from an ISC administrative user level. Being assigned a Procurement business role does not, by definition, authorize editing ISC source configuration.
+A business **role** groups access for duties or a group of people with a shared need. It serves a different purpose from an ISC administrative user level.
 
-Available administration options depend on the supported permission model and enabled tenant capabilities. Seeing an option in documentation does not establish that your subscription includes it or your signed-in user can use it.
+For example, assigning a Procurement business role does not, by definition, authorize someone to edit ISC source configuration.
 
-## A sandbox label doesn't isolate the whole test
+Administration options depend on the supported permission model and enabled capabilities. A documented option does not prove that the tenant subscription includes it or the current user is allowed to use it.
 
-Suppose a sandbox tenant and a production tenant both contain a source named Supplier production. Their equal names don't establish that the source configurations reach separate external environments.
+## Trace a sandbox test to its actual destination
 
-If the sandbox source actually points to the live supplier system and uses a credential authorized to write there, a supported test update can affect live accounts. The sandbox tenant's data boundary doesn't turn that external credential into a read-only credential.
+A sandbox tenant and production tenant can both contain a source named Supplier production.
 
-Trace the intended test all the way to its destination. Establish which ISC tenant contains it, which external system each source or action reaches, and which credentials and permissions it uses. Also establish what data can be collected, which actions can run and who can receive notifications.
+Equal names do not establish separate external destinations.
 
-Test data needs controls too. A separate tenant doesn't make copied production identity data suitable for every tester.
+Suppose the sandbox source points to the live supplier system and uses a credential authorized to write there. A supported test update can affect live accounts under those conditions.
 
-An **instance badge** is a configurable interface label that helps you recognize an environment such as sandbox or production. It helps orientation; it does not enforce destination isolation or external permissions.
+The sandbox's tenant boundary does not turn that credential into a read-only credential.
 
-Check the actual environment before a consequential action, including software operations through an API. A browser badge cannot prevent a script from addressing the wrong tenant.
+Trace the test all the way through: the ISC tenant, external destination, credentials, permissions and actions that may run. Establish what data can be collected and who can receive notifications too.
 
-## Moving configuration is different from applying its effects
+Copied production identity data also needs appropriate tester controls. A separate tenant does not make the copied information suitable for every tester.
 
-Tenant administrators use supported interfaces and capabilities. They don't administer ISC as a customer-owned application server or directly edit the hosted platform's private database.
+An **instance badge** is a configurable interface label identifying an environment, such as sandbox or production. It helps recognition; it does not enforce destination isolation or external authorization.
 
-When moving a design from sandbox to production, inspect the destination's dependencies. Sources, owners, identity references, access definitions and external destinations need to resolve correctly there.
+An API or script needs the same actual environment check. A browser badge cannot stop software from addressing the wrong tenant.
 
-An export is configuration information, not proof of portability. It can contain references to other records and settings specific to one environment. Use the applicable supported deployment process, checking what it supports and what must be mapped or configured for the destination.
+## Separate moving a configuration from applying its effects
 
-A successful import establishes neither that the design is suitable nor that its intended access changes have completed.
+Administrators use supported ISC interfaces and capabilities. They do not administer the tenant as a customer-owned core application server or directly edit the hosted platform's private database.
 
-For example, changing a role's criteria changes the instructions used to decide who qualifies. **Identity processing** evaluates identity information and applicable configured access. The relevant processing or documented application step must use the changed configuration before its effects can be established.
+Moving a design from sandbox to production requires checking its destination dependencies.
 
-Any resulting provisioning then has its own attempted operations and outcomes. Saving the criterion, evaluating it and completing an external update are different events.
+A **dependency** is something the configuration needs to use correctly, such as a source, owner, identity reference, access definition or external destination.
 
-Retain evidence of the intended change, affected scope, tests, approvals and verification. A configuration can be valid in format yet point to the wrong external environment.
+An export can contain environment-specific references and settings. Use the supported deployment process, checking which objects it handles and which destination relationships need mapping or configuration.
+
+A successful import does not establish that the design is suitable or that its access changes have completed.
+
+Suppose a role's criteria change. The saved criteria are instructions for deciding who qualifies.
+
+**Identity processing** evaluates identity information and applicable configured access. The relevant processing or documented application step must use the changed configuration before its effects can be established.
+
+Any resulting provisioning then has its own attempted operations and outcomes.
+
+Saving the instruction, evaluating it and completing an external change are different events.
+
+Retain evidence of the intended change, affected scope, tests, approvals and verification. Valid configuration format can still point to the wrong external system.
 
 ## Read a health signal at the scope it actually tests
 
-The **front end** is the interface people use. The **back end** is the processing behind it.
+The **front end** is the interface people use. The **back-end work** processes information and configured operations behind it.
 
-Opening a page confirms that the observed interaction succeeded. It does not test every source, background operation or external write permission.
+Opening a page establishes that observed interaction. It does not test every source, background job or external write permission.
 
-A successful aggregation confirms the applicable read operation and its scope. It doesn't establish that every supported write can be completed.
+A successful aggregation establishes the applicable read and its scope. It does not establish that every supported write can succeed.
 
-SailPoint provides configurable system notifications for source and VA conditions. Your organization needs people who receive and act on them. An alert delivered to an unmonitored mailbox does not resolve the underlying problem.
+SailPoint provides configurable system notifications for source and VA conditions. The organization needs recipients who receive and act on them. Delivering an alert to an unmonitored mailbox does not resolve the condition.
 
-Compare the actual operation history with the target evidence, retaining the time and scope of each observation. Use applicable service-health and support channels as additional evidence when a broad service problem is suspected.
+Compare operation history with target evidence and preserve the time and scope of each observation. Use appropriate service-health and support channels as additional evidence when a broader service problem is suspected.
 
-Finding no recent customer change does not eliminate a service defect. One failed source operation does not establish a platform-wide outage either. Follow the evidence for the specific work before deciding where the failure occurred.
+No recent customer change does not rule out a service defect. One failed source operation does not establish a platform-wide outage either. Follow the evidence for the actual work.
 
 ## Work through the responsibility boundaries
 
-### 1. A page opens, but the update fails
+**The dashboard opens, but a supplier update reports an authorization rejection. Does the page load prove the write path is healthy?**
 
-The ISC dashboard opens successfully. A supplier-system access update reports an authorization rejection.
+It proves the observed interface interaction.
 
-Does the page load establish that the connector and target write permissions are healthy?
+Inspect the affected account/source operation and external permission evidence. A successful read and a denied update can coexist because they require different authority.
 
-**Worked reasoning:** It establishes the observed interface interaction. The failed external operation needs its own source/account and permission evidence. In the earlier incident, reads succeed while membership updates are denied. Those tests cover different operations.
+**Human resources supplies the wrong manager identifier. The configured comparison links the employee to the wrong manager. Would a platform update necessarily fix it?**
 
-### 2. HR supplies the wrong manager identifier
+**Manager correlation** establishes which ISC identity represents a person's manager using configured matching information.
 
-**Manager correlation** establishes which ISC identity represents a person's manager using configured matching information. In this case, HR supplies the wrong manager identifier, and the configured comparison matches it to the wrong manager.
+In this case, investigate the authoritative input, mappings and matching configuration. A platform update does not identify the intended manager for the business.
 
-Would a hosted-service update necessarily resolve that relationship?
+Verify the corrected input, resulting relationship and affected work separately. If the evidence contradicts supported behavior, vendor investigation may also be appropriate.
 
-**Worked reasoning:** The organization needs to investigate the authoritative input and the relevant mappings and matching configuration. A platform update doesn't identify the intended manager. Verify the corrected input, resulting person-level relationship and affected business work separately. If supported behavior is contradicted by evidence, vendor investigation may also be needed. This case supplies a wrong match; it does not predict every missing-manager outcome.
+This case supplies a wrong match; it does not predict every missing-manager outcome.
 
-### 3. Org Admin is available, but external write authority is missing
+**The engineer has Org Admin, while svc-supplier lacks update permission. Can the tenant user level substitute for it?**
 
-An engineer has Org Admin in ISC. The external integration identity lacks membership-update permission.
+The engineer, integration identity and receiving account are different actors.
 
-Can the engineer's user level substitute for it?
+The authorized application/security team must establish the required scoped external privilege. Tenant authority neither supplies that privilege nor fulfills the failed request.
 
-**Worked reasoning:** The administrator, integration identity and receiving account are different actors. The authorized application/security team must establish the appropriate external integration privilege. Tenant authority doesn't supply that privilege or fulfill the failed request.
+**A sandbox source reaches production with a write-authorized credential. Does its sandbox label block live changes?**
 
-### 4. A test reaches a live destination
+Under the supplied conditions, a supported operation can reach and change the live destination.
 
-A sandbox source points to the production supplier system with a valid write-authorized integration credential. A colleague expects the sandbox label to prevent live updates.
+Establish the intended isolation, actual destination, credentials, actions and data controls. The label does not enforce them.
 
-**Worked reasoning:** The supported operation can reach and change that live destination under the stated conditions. Establish the intended isolation, destination, credentials, permitted actions and data controls before testing. The label itself does not enforce them.
+**The required VA cannot communicate through the customer network. Can the team leave it to managed software updates?**
 
-### 5. The VA cannot communicate
+Managed software and customer-provided connectivity are separate dependencies.
 
-A required VA cannot communicate through the customer network. The team declines to investigate because SailPoint manages the software updates.
+Inspect hosting, network conditions, component health and documented update status. Follow the supported maintenance process. Ignoring the network or improvising a software patch does not resolve the dependency.
 
-**Worked reasoning:** Managed software updates and customer-provided connectivity are separate dependencies. Inspect the hosting, network, component health and documented update status. Follow the supported operating process; neither ignoring the network nor improvising patches resolves the responsibility boundary.
+**Scoped write privilege is restored, but no recovery or current supplier.view is evidenced. Is the access incident complete?**
 
-### 6. Write privilege has been restored
+A prerequisite has been corrected.
 
-The application team restores scoped write authority to `svc-supplier`. There is no evidence of recovery for the failed operation or of `supplier.view` on `supplier-reader`.
+Address the failed work through the supported recovery procedure and verify the intended target permission. Check other affected operations and retain evidence of both correction and outcome. Do not assume all failed work automatically retried.
 
-Is the access incident complete?
+## Follow the same responsibilities through a SaaS connector
 
-**Worked reasoning:** A dependency has been corrected. Address the affected work using the applicable recovery procedure and verify the intended target permission. Check other affected operations and preserve evidence of both the correction and the outcome. Don't assume every failed operation automatically retried.
+A hosted document service uses a SaaS connector with no customer-deployed VA.
 
-## Trace the same responsibilities without a VA
+The employee's account already exists and needs a read-only folder entitlement. The request is approved.
 
-A hosted document service uses a SaaS connector. This connection has no customer-deployed VA.
+The document service accepts the integration token, but rejects the membership update because its permissions allow account reads only.
 
-An employee's account already exists and needs a read-only folder entitlement. The request is approved. The document service accepts the integration token but rejects the membership update because its permissions allow account reads only.
+Which responsibilities remain, and what would establish completion?
 
-Explain which responsibilities remain, what successful authentication establishes, and what would demonstrate a completed change.
+Removing the VA removes that component dependency. It leaves the hosted ISC service, connector support, external document system, integration permissions and the organization's access design involved.
 
-**Worked reasoning:** Removing the VA removes that component dependency. The hosted ISC service, connector support, external document system, integration permissions and customer's access design still have separate roles in the outcome.
+The accepted token establishes authentication under the service's requirements. It does not establish authorization to update membership.
 
-The accepted token establishes successful authentication under the service's requirements. It does not establish authorization to update membership.
+Validate the intended folder access, receiving account, supported operation, required scoped integration privilege and request configuration. The authorized external-permissions team corrects the missing privilege.
 
-Validate the intended folder permission, recipient account, supported operation, required scoped integration privileges and request configuration. The authorized external-permissions team corrects the missing privilege.
+Then investigate recovery and the operation result, and check current document-service access for the intended account and folder. Preserve unrelated approved access.
 
-Then investigate recovery and the operation result, and check current document-service access for the intended account and folder. Preserve unrelated approved access. A later collection records an observation; it does not establish that the earlier failed attempt succeeded.
+A later collection provides an observation. It does not prove the earlier failed attempt succeeded.
 
-Explain the chain to another engineer: which work happens in the hosted tenant, which external identity performs the change, which account receives it, and which evidence establishes that the business requirement was met?
+Explain the chain to another engineer: which work belongs to the hosted tenant, which external identity performs the change, which account receives it and which evidence establishes the intended business result?

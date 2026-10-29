@@ -1,0 +1,9 @@
+Warehouse-Prod        Warehouse-Test
+      |                    |
+      v                    v
+Production source    Sandbox source
+      |                    |
+      v                    v
+Production records   Sandbox records
+
+Each source represents its own context.

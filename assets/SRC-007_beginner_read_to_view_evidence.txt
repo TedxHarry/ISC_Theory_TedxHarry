@@ -1,0 +1,13 @@
+Destination and read actor
+            |
+            v
+Request and returned records
+            |
+            v
+Filtering, paging and extraction
+            |
+            v
+Collected accounts and access values
+            |
+            v
+Viewing conditions and freshness

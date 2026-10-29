@@ -1,0 +1,26 @@
+CHANGE THROUGH ISC
+Authorized export-removal instruction
+       |
+ISC initiates supported removal
+       |
+Target receives the operation
+ rejected -> this removal not applied
+ applied
+       |
+Target account loses Export reports
+       |
+Application checks current permission
+       |
+Export denied; reading retained
+
+OBSERVE THE ACCOUNT
+Target account information
+       |
+Aggregation reads included data
+       |
+ISC's collected account information
+
+SEPARATE HUMAN WORK
+Compare requirement, records and behavior
+Check account, resource, time and rules
+Manual correction uses another operator

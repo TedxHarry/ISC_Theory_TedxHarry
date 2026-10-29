@@ -1,0 +1,10 @@
+Required access: read and export
+        |
+        +-- stock.read ----> Present
+        |
+        +-- stock.export --> Absent
+                              |
+                              v
+                    Export needs recovery
+
+Read succeeded; full requirement unmet.

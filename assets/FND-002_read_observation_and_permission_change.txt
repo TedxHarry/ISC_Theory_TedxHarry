@@ -1,0 +1,27 @@
+READ
+Production account: finance-user
+Already holds InvoiceRead
+        |
+Configured connector read
+        |
+Finance-Production account record
+        |
+Matching associates employee identity
+
+CHANGE
+Approved instruction: add InvoiceExport
+        |
+Configured provisioning through connector
+        |
+Same production account
+ accepts -> InvoiceExport added
+ rejects -> inspect failure
+        |
+ISC records operation result
+
+CHECK SEPARATELY
+Current production permission and use
+Later collected account observation
+
+Arrows describe work and information.
+They do not show physical hosting.

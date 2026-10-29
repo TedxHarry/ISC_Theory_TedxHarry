@@ -6,7 +6,7 @@ Publication update, October 28: the current authorized snapshot includes all 91 
 
 ## Record maintenance
 
-October 28 beginner-explanation pass: the user authorized application from SYS-001 after TRN-004 pilot refinement. SYS-001, SYS-002 and SYS-003 revisions 3.0 and teaching specification 3.2 are published in [beginner batch 1](PUBLICATION_2026-10-28_BEGINNER_BATCH_1.md). Earlier local-only entries describe authoring history. The other 88 learners retain their earlier revision status. See the current SYS-001/SYS-002/SYS-003 records for checked claims, preserved coverage and review limits.
+October 28 beginner-explanation pass: the user authorized application from SYS-001 after TRN-004 pilot refinement. SYS-001 through SYS-003 revisions 3.0 and specification 3.2 are published in [beginner batch 1](PUBLICATION_2026-10-28_BEGINNER_BATCH_1.md). SYS-004 through SYS-006, FND-001 through FND-007, ARC-001 through ARC-008 and SRC-001 through SRC-007 revisions 3.0 remain local. All six Module 1 lessons, all seven Module 2 lessons, all eight Module 3 lessons and the first seven Module 4 lessons are individually revised; the other 63 learners retain their earlier revision status. Earlier local-only entries describe authoring history. Current individual records distinguish preserved coverage, source checks and simulated author read-through from pending real learner validation.
 
 Keep official sources mapped to lesson sections or claims, together with the revision reviewed, documentation-check date, limitations, and review status. A saved citation is not evidence of fresh verification. Update these records when technical content is checked or changed.
 
@@ -71,13 +71,14 @@ The full questions and worked answers are in the learner lesson. These author fi
 
 ## FND-001
 
-Publication update, October 26: revision 2.0 is included in the verified [published snapshot](PUBLICATION_2026-10-26.md). Local-only and prior published-version statements below describe the earlier author-review stage.
+Publication history, October 26: FND-001 revision 2.0 was included in the verified [published snapshot](PUBLICATION_2026-10-26.md). The current beginner-explanation revision 3.0 below is local and not included in that publication.
 
-- Current learner source: [FND-001](../lessons/FND-001_Identity_and_Account.md), revision 2.0, October 25, 2026, under teaching specification 3.1, saved locally only.
-- Current coverage comparison, thirteen primary sources, assessment/explanation review and executed checks: [FND-001 concept-led revision record](revisions/FND-001_Concept_Led_Revision_Record.md).
-- Current diagram: [identity and associated accounts](../assets/FND-001_identity_and_associated_accounts.txt), embedded verbatim in the learner source.
+- Current learner source: [FND-001](../lessons/FND-001_Identity_and_Account.md), beginner-explanation revision 3.0, October 28, 2026, under specification 3.2, saved locally.
+- Current coverage, sources and review: [FND-001 revision 3.0 record](revisions/FND-001_Beginner_Explanation_Revision_Record.md). All 45 prior purposes remain; full simulated-beginner author review is distinct from actual learner validation.
+- Current diagram: [person record and system accounts](../assets/FND-001_person_record_and_system_accounts.txt), embedded verbatim in the learner.
+- Historical revision 2.0 [record](revisions/FND-001_Concept_Led_Revision_Record.md) and [diagram](../assets/FND-001_identity_and_associated_accounts.txt) remain unchanged for comparison.
 - Person-level identity, external account, collected representation and configured operations remain distinct. Neutral values demonstrate matching; they are not real account data or mandatory field names.
-- No tenant execution, beginner teach-back, graphical publication validation or formal approval has occurred. The site still contains revision 1.3 until another publication is requested.
+- No tenant execution or observed beginner teach-back is claimed. Revision 3.0 graphical publication-format review remains pending; the published FND-001 learner is revision 2.0.
 
 ### Historical reference record: revisions 1.x
 
@@ -258,8 +259,9 @@ Unique example number 13003 and consistent campaign/certification meanings; manu
 
 ## SYS-004
 
-- Current lesson: [SYS-004](../lessons/SYS-004_Intended_Known_and_Effective_Access.md), concept-led revision 2.0.
-- Current coverage, sources and review: [SYS-004 revision 2.0 record](revisions/SYS-004_Concept_Led_Revision_Record.md), October 25, 2026 under teaching specification v3.1. It records 62 coverage mappings, 17 official references, the two timelines, narrow diagram, four checkpoint purposes, two-account transfer and teach-back.
+- Current lesson: [SYS-004](../lessons/SYS-004_Intended_Known_and_Effective_Access.md), beginner-explanation revision 3.0, saved locally.
+- Current coverage, sources and review: [SYS-004 revision 3.0 record](revisions/SYS-004_Beginner_Explanation_Revision_Record.md), October 28, 2026, under specification 3.2. All 62 prior purposes remain; the complete simulated-beginner author read-through is distinct from pending actual learner validation.
+- Historical coverage and review: [SYS-004 revision 2.0 record](revisions/SYS-004_Concept_Led_Revision_Record.md), October 25, 2026, retained with its source, timeline and assessment mappings.
 - The rewrite follows the collected permission, failed delivery and actual application check before broader record definitions. It preserves the different grant/session variants and adds a scoped requested-entitlement reprovisioning explanation.
 - Documentation-based author review is separate from observed beginner validation, graphical publication review and formal approval. Local only; no tenant operation, staging, commit or publication.
 
@@ -329,8 +331,9 @@ Unique example number 14004; Search date-query GMT/browser-display behavior sele
 
 ## SYS-005
 
-- Current lesson: [SYS-005](../lessons/SYS-005_Implementation_Administration_Support_and_Governance.md), revision 2.0, October 25, 2026, under teaching specification 3.1.
-- Current coverage comparison, ten official references, explanation/assessment review and executed checks: [SYS-005 concept-led revision record](revisions/SYS-005_Concept_Led_Revision_Record.md).
+- Current lesson: [SYS-005](../lessons/SYS-005_Implementation_Administration_Support_and_Governance.md), beginner-explanation revision 3.0, saved locally under specification 3.2.
+- Current coverage, sources and review: [SYS-005 revision 3.0 record](revisions/SYS-005_Beginner_Explanation_Revision_Record.md), October 28, 2026. All 62 earlier purposes remain with connected explanation, four worked decisions and warehouse transfer; full simulated-beginner author read-through is distinct from pending actual learner validation.
+- Historical coverage and review: [SYS-005 revision 2.0 record](revisions/SYS-005_Concept_Led_Revision_Record.md), October 25, 2026; retained with the historical pilot and earlier diagrams.
 - Current diagram: [work and evidence handoffs](../assets/SYS-005_work_and_evidence_handoffs.txt), embedded verbatim in the learner file. Historical diagram and pilot assets remain unchanged.
 - Neutral permission and incident illustrations replace the named narrative. Existing-account scope is a design requirement to enforce, not an automatic prevention setting. Decision, execution and observed target effects remain separate.
 - Author review is documentation-based. No tenant execution, beginner teach-back, graphical publication validation or formal publication approval has occurred.
@@ -397,8 +400,9 @@ Unique example number 15005 and consistent campaign/certification meanings. The 
 
 ## SYS-006
 
-- Current lesson: [SYS-006](../lessons/SYS-006_Following_an_Access_Problem_Across_the_Enterprise.md), revision 2.0, October 25, 2026, under teaching specification 3.1.
-- Current coverage reconciliation, fifteen primary references, assessment/explanation review and executed checks: [SYS-006 concept-led revision record](revisions/SYS-006_Concept_Led_Revision_Record.md).
+- Current lesson: [SYS-006](../lessons/SYS-006_Following_an_Access_Problem_Across_the_Enterprise.md), beginner-explanation revision 3.0, saved locally under specification 3.2.
+- Current coverage, sources and review: [SYS-006 revision 3.0 record](revisions/SYS-006_Beginner_Explanation_Revision_Record.md), October 28, 2026. All 58 prior purposes remain with selected-input/qualification reasoning, four changed-evidence demonstrations, four worked decisions and warehouse transfer; full simulated author read-through is distinct from actual beginner validation.
+- Historical reconciliation and review: [SYS-006 revision 2.0 record](revisions/SYS-006_Concept_Led_Revision_Record.md), October 25, 2026, retained with earlier diagram and source/assessment records.
 - Current diagram: [records, decisions and delivery](../assets/SYS-006_records_decisions_and_delivery.txt), embedded verbatim. The historical enterprise map remains unchanged.
 - Neutral report-viewing evidence replaces the named employee narrative. Selected input, evaluated condition, required access, attempted write and usable application result remain distinct.
 - Documentation-based author review only. No tenant action, beginner teach-back, graphical publication validation or formal publication approval has occurred.
@@ -482,13 +486,14 @@ The feedback's proposed restoration of learner citations conflicts with the curr
 
 ## FND-002
 
-Publication update, October 26: revision 2.0 is included in the verified [published snapshot](PUBLICATION_2026-10-26.md). Local-only and prior published-version statements below describe the earlier author-review stage.
+Publication history, October 26: FND-002 revision 2.0 was included in the verified [published snapshot](PUBLICATION_2026-10-26.md). The current beginner-explanation revision 3.0 is local and not included in that publication.
 
-- Current learner source: [FND-002](../lessons/FND-002_Sources_Connectors_and_Connected_Systems.md), revision 2.0, October 25, 2026, under teaching specification 3.1, saved locally only.
-- Current coverage comparison, thirteen primary references, assessment/explanation review and executed checks: [FND-002 concept-led revision record](revisions/FND-002_Concept_Led_Revision_Record.md).
-- Current diagram: [collection and authorized changes](../assets/FND-002_collection_and_authorized_changes.txt), embedded verbatim. The historical read/write map is retained unchanged.
-- Neutral account/source names and supplied read/write/file conditions replace the employee biography. They are not observed tenant results.
-- No tenant execution, beginner teach-back, graphical publication validation or formal approval occurred. Published FND-002 remains revision 1.0 until another publication is requested.
+- Current learner source: [FND-002](../lessons/FND-002_Sources_Connectors_and_Connected_Systems.md), beginner-explanation revision 3.0, October 28, 2026, under specification 3.2, saved locally.
+- Current coverage, sources and review: [FND-002 revision 3.0 record](revisions/FND-002_Beginner_Explanation_Revision_Record.md). All 57 prior purposes remain; full simulated-beginner author review is distinct from actual learner validation.
+- Current diagram: [read observation and permission change](../assets/FND-002_read_observation_and_permission_change.txt), embedded verbatim.
+- Historical revision 2.0 [record](revisions/FND-002_Concept_Led_Revision_Record.md) and [diagram](../assets/FND-002_collection_and_authorized_changes.txt) remain unchanged, alongside the earlier read/write boundary map.
+- Neutral account/source names and supplied read/write/file conditions are hypothetical, not tenant observations. The current learner retains operation-specific capability, actual manual delivery and observation-age reasoning.
+- No tenant execution or observed beginner teach-back is claimed. Revision 3.0 graphical publication-format review remains pending; the published FND-002 learner remains revision 2.0.
 
 ### Historical reference record: revision 1.0
 
@@ -551,13 +556,15 @@ Worked answers and supplied facts remain in the learner lesson. The metadata abo
 
 ## FND-003
 
-Publication update, October 26: revision 2.0 is included in the verified [published snapshot](PUBLICATION_2026-10-26.md). Local-only and prior published-version statements below describe the earlier author-review stage.
+Publication history: revision 2.0 was included in the verified [October 26 published snapshot](PUBLICATION_2026-10-26.md). The October 28 beginner batch did not replace this lesson. Revision 3.0 below is local only.
 
-- Current learner revision: 2.0, saved locally October 25, 2026 under teaching specification v3.1.
-- Current coverage, thirteen primary sources, assumptions, assessments and checks: [FND-003 revision 2.0 record](revisions/FND-003_Concept_Led_Revision_Record.md).
-- Current diagrams: [read/calculation/sync](../assets/FND-003_read_calculate_and_sync.txt) and [membership reference/details](../assets/FND-003_membership_reference_and_details.txt).
-- Previous lessons are preserved. Learner validation, graphical publication review and formal approval remain pending.
-- No tenant operations or new publication. Published FND-003 remains revision 1.0. The following documentation applies to the historical lesson, not the current neutral example.
+- Current learner revision: 3.0, saved locally October 28, 2026 under teaching specification 3.2.
+- Current coverage, thirteen primary references, assumptions, assessment intent and executed checks: [FND-003 beginner explanation record](revisions/FND-003_Beginner_Explanation_Revision_Record.md).
+- Current diagrams: [HR input and identity output](../assets/FND-003_hr_input_and_identity_output.txt) and [account membership and entitlement details](../assets/FND-003_account_membership_and_entitlement_details.txt).
+- [Revision 2.0 record](revisions/FND-003_Concept_Led_Revision_Record.md), [read/calculation/sync diagram](../assets/FND-003_read_calculate_and_sync.txt) and [membership reference/details diagram](../assets/FND-003_membership_reference_and_details.txt) remain historical evidence, unchanged.
+- The six Module 1 revisions and FND-001/FND-002 revisions remain unchanged. Full simulated-beginner author read-through is complete; independent learner comprehension remains pending.
+- No tenant operations, staging, commit, push or deployment. Published FND-003 remains revision 2.0; FND-004 is next locally.
+- The following revision 1.0 documentation and assets are historical; they are not the current neutral example.
 
 ### Historical revision 1.0 reference record
 
@@ -623,13 +630,15 @@ Questions and worked answers remain in the learner lesson. Assessment metadata a
 
 ## FND-004
 
-Publication update, October 26: revision 2.0 is included in the verified [published snapshot](PUBLICATION_2026-10-26.md). Local-only and prior published-version statements below describe the earlier author-review stage.
+Publication history: revision 2.0 was included in the verified [October 26 published snapshot](PUBLICATION_2026-10-26.md). The October 28 beginner batch did not replace this lesson. Revision 3.0 below is local only.
 
-- Current learner revision: 2.0, saved locally October 25, 2026 under teaching specification v3.1.
-- Current coverage, thirteen primary references, assumptions, assessments and verification: [FND-004 revision 2.0 record](revisions/FND-004_Concept_Led_Revision_Record.md).
-- Current diagrams: [object map](../assets/FND-004_role_profile_entitlement_map.txt) and [assignment/account changes](../assets/FND-004_identity_assignment_and_account_changes.txt).
-- Earlier lessons are preserved. Beginner validation, graphical publication review and formal approval remain pending.
-- No tenant operation or new publication. Published FND-004 remains revision 1.0. The following references describe the historical example, not the current neutral records.
+- Current learner revision: 3.0, saved locally October 28, 2026 under teaching specification 3.2.
+- Current coverage, thirteen primary references, example controls, assessment intent and executed checks: [FND-004 beginner explanation record](revisions/FND-004_Beginner_Explanation_Revision_Record.md).
+- Current diagrams: [access requirement containment](../assets/FND-004_access_requirement_containment.txt) and [assignment to source accounts](../assets/FND-004_assignment_to_source_accounts.txt).
+- [Revision 2.0 record](revisions/FND-004_Concept_Led_Revision_Record.md), [role/profile/entitlement map](../assets/FND-004_role_profile_entitlement_map.txt) and [identity assignment/account changes](../assets/FND-004_identity_assignment_and_account_changes.txt) remain historical evidence, unchanged.
+- The six Module 1 revisions and FND-001 through FND-003 revisions are preserved. Full simulated-beginner author read-through is complete; actual independent learner comprehension remains pending.
+- No tenant operation, staging, commit, push or deployment. Published FND-004 remains revision 2.0; FND-005 is next locally.
+- The following revision 1.0 references and assets describe historical material, not the current neutral example.
 
 ### Historical revision 1.0 reference record
 
@@ -701,13 +710,15 @@ Learner facts and worked answers stay in the lesson. Assessment intent, limitati
 
 ## FND-005
 
-Publication update, October 26: revision 2.0 is included in the verified [published snapshot](PUBLICATION_2026-10-26.md). Local-only and prior published-version statements below describe the earlier author-review stage.
+Publication history: revision 2.0 was included in the verified [October 26 published snapshot](PUBLICATION_2026-10-26.md). The October 28 beginner batch did not replace this lesson. Revision 3.0 below is local only.
 
-- Current learner revision: 2.0, saved locally October 25, 2026 under teaching specification v3.1.
-- Current coverage, fourteen primary references, conditions, assessments and verification: [FND-005 revision 2.0 record](revisions/FND-005_Concept_Led_Revision_Record.md).
-- Current diagrams: [business grouping/source](../assets/FND-005_business_grouping_and_directory_source.txt) and [request/change/sign-in](../assets/FND-005_request_change_and_separate_sign_in.txt).
-- Earlier lessons are preserved. Beginner validation, graphical publication review and formal approval remain pending.
-- No tenant action or new publication. Published FND-005 remains revision 1.0. The following references describe the historical employee/application example, not the current neutral records.
+- Current learner revision: 3.0, saved locally October 28, 2026 under teaching specification 3.2.
+- Current coverage, fourteen primary references, conditions, assessment intent and executed checks: [FND-005 beginner explanation record](revisions/FND-005_Beginner_Explanation_Revision_Record.md).
+- Current diagrams: [business choice and account source](../assets/FND-005_business_choice_and_account_source.txt) and [membership delivery and application use](../assets/FND-005_membership_delivery_and_application_use.txt).
+- [Revision 2.0 record](revisions/FND-005_Concept_Led_Revision_Record.md), [business grouping/directory source](../assets/FND-005_business_grouping_and_directory_source.txt) and [request/change/separate sign-in](../assets/FND-005_request_change_and_separate_sign_in.txt) remain historical evidence, unchanged.
+- The six Module 1 revisions and FND-001 through FND-004 revisions are preserved. Full simulated-beginner author read-through is complete; actual independent learner comprehension remains pending.
+- No tenant operation, staging, commit, push or deployment. Published FND-005 remains revision 2.0; FND-006 is next locally.
+- The following revision 1.0 references and assets describe historical material, not the current neutral example.
 
 ### Historical revision 1.0 reference record
 
@@ -776,13 +787,15 @@ Questions and worked answers stay in the learner lesson. Source references, limi
 
 ## FND-006
 
-Publication update, October 26: revision 2.0 is included in the verified [published snapshot](PUBLICATION_2026-10-26.md). Local-only and prior published-version statements below describe the earlier author-review stage.
+Publication history: revision 2.0 was included in the verified [October 26 published snapshot](PUBLICATION_2026-10-26.md). The October 28 beginner batch did not replace this lesson. Revision 3.0 below is local only.
 
-- Current learner revision: 2.0, saved locally October 26, 2026 under teaching specification v3.1.
-- Current coverage, fifteen primary references, assumptions, assessments and checks: [FND-006 revision 2.0 record](revisions/FND-006_Concept_Led_Revision_Record.md).
-- Current diagrams: [account/source/identity](../assets/FND-006_account_record_source_and_identity.txt) and [definition/membership references](../assets/FND-006_definition_and_membership_references.txt).
-- Previous lessons are preserved. Beginner validation, graphical publication review and formal approval remain pending.
-- No tenant action or new publication. Published FND-006 remains revision 1.0. The following references describe the historical named example, not the current neutral values.
+- Current learner revision: 3.0, saved locally October 28, 2026 under teaching specification 3.2.
+- Current coverage, sixteen primary references, conditions, assessment intent and executed checks: [FND-006 beginner explanation record](revisions/FND-006_Beginner_Explanation_Revision_Record.md).
+- Current diagrams: [account record and person reference](../assets/FND-006_account_record_and_person_reference.txt) and [profile/entitlement/membership links](../assets/FND-006_profile_entitlement_and_membership_links.txt).
+- [Revision 2.0 record](revisions/FND-006_Concept_Led_Revision_Record.md), [account/source/identity](../assets/FND-006_account_record_source_and_identity.txt) and [definition/membership references](../assets/FND-006_definition_and_membership_references.txt) remain historical evidence, unchanged.
+- The six Module 1 revisions and FND-001 through FND-005 revisions are preserved. Full simulated-beginner author read-through is complete; actual independent learner comprehension remains pending.
+- No tenant operation, staging, commit, push or deployment. Published FND-006 remains revision 2.0; FND-007 is next locally.
+- The following revision 1.0 references and assets describe historical material, not the current neutral values.
 
 ### Historical revision 1.0 reference record
 
@@ -848,15 +861,15 @@ Questions and worked reasoning remain in the learner file. Reference evidence, t
 
 ## FND-007
 
-Publication update, October 26: revision 2.0 is included in the verified [published snapshot](PUBLICATION_2026-10-26.md). Local-only and prior published-version statements below describe the earlier author-review stage.
+Publication history: revision 2.0 was included in the verified [October 26 published snapshot](PUBLICATION_2026-10-26.md). The October 28 beginner batch did not replace this lesson. Revision 3.0 below is local only.
 
-- Current learner revision: **2.0**, revised October 26, 2026 under teaching specification v3.1.
-- Current [coverage, fifteen primary references, assumptions, assessments and verification record](revisions/FND-007_Concept_Led_Revision_Record.md).
-- Person/account association is established before a complete supported request; automatic assignment, already-held profiles and value lookup are then distinguished.
-- Neutral account/source labels and supplied comparison value 10482 replace the earlier biography, Stockroom brand and unnecessary object-ID stand-ins. Six diagnostic cases and the payroll transfer remain.
-- Current editable [person/account map](../assets/FND-007_person_sources_and_separate_accounts.txt) and [selection-context map](../assets/FND-007_automatic_and_requested_account_choice.txt).
-- Documentation-based author review is separate from beginner validation, graphical publication review and formal approval, which remain pending. No tenant operation was performed.
-- Revision 2.0 is local only; published FND-007 remains revision 1.0. The baseline is recoverable at 895c6b5b295c926d5397239db521abc1c8b639d1.
+- Current learner revision: 3.0, saved locally October 28, 2026 under teaching specification 3.2.
+- Current coverage, fifteen primary references, example controls, assessment intent and executed checks: [FND-007 beginner explanation record](revisions/FND-007_Beginner_Explanation_Revision_Record.md).
+- Current diagrams: [person and distinct account records](../assets/FND-007_person_and_distinct_account_records.txt) and [request/automatic account selection](../assets/FND-007_request_and_automatic_account_selection.txt).
+- [Revision 2.0 record](revisions/FND-007_Concept_Led_Revision_Record.md), [person/source/account map](../assets/FND-007_person_sources_and_separate_accounts.txt) and [automatic/request account choice](../assets/FND-007_automatic_and_requested_account_choice.txt) remain historical evidence, unchanged.
+- All six Module 1 and all seven Module 2 learners have been individually revised; earlier revisions remain unchanged. Full simulated-beginner author read-through is complete; actual independent comprehension remains pending.
+- No tenant operation, staging, commit, push or deployment. Published FND-007 remains revision 2.0; ARC-001 is next locally.
+- The following revision 1.0 references and assets describe historical material, not the current neutral values.
 
 ### Historical verification record: revision 1.0
 
@@ -925,19 +938,18 @@ Questions and worked reasoning stay in the learner file. Source references, asse
 
 ## ARC-001
 
-Publication update, October 26: revision 2.0 is included in the verified [published snapshot](PUBLICATION_2026-10-26.md). Local-only and prior published-version statements below describe the earlier author-review stage.
-
-- Current learner revision: **2.0**, revised October 26, 2026 under teaching specification v3.1.
-- Current [coverage, twenty first-party references, conditions, assessment and verification record](revisions/ARC-001_Concept_Led_Revision_Record.md).
-- Establishes tenant/service/external-account boundaries and the three actors, then completes a normal request before comparing denied-write, maintenance, administration, sandbox, promotion and health evidence.
-- Neutral supplier-reader, svc-supplier and supplier.view retain the necessary actor/permission distinction. Biography, 31001 and Supplier Register brand are removed. All six original cases and the SaaS document-service transfer remain.
-- Current editable [tenant/connection/target map](../assets/ARC-001_hosted_tenant_connection_and_target.txt) and [authorization-condition map](../assets/ARC-001_approved_change_external_permission.txt).
-- Author review is documentation-based; beginner validation, graphical publication review and formal approval remain pending. No tenant or support action was performed.
-- Revision 2.0 is local only; published ARC-001 remains revision 1.0. Baseline recoverable at 895c6b5b295c926d5397239db521abc1c8b639d1.
+- Current learner revision: **3.0**, revised October 28, 2026 under teaching specification 3.2; saved locally only.
+- Current [94-purpose coverage, twenty first-party references, explanation review, conditions, assessment and verification record](revisions/ARC-001_Beginner_Explanation_Revision_Record.md).
+- Defines hosted tenant, represented records and external systems before separating administrator, integration identity and recipient. A successful supported request precedes the five-event denied-write variation, with prerequisite correction, recovery and actual target evidence kept distinct.
+- Neutral supplier-reader, svc-supplier and supplier.view retain actor and permission meanings; no company or biography is required. All six worked cases, administration/VA/sandbox/deployment/health boundaries and the no-VA document-service transfer remain.
+- Current editable [tenant/connection/external-account map](../assets/ARC-001_tenant_connection_and_external_accounts.txt) and [scoped authorization map](../assets/ARC-001_approved_update_and_integration_authority.txt).
+- Historical [revision 2.0 record](revisions/ARC-001_Concept_Led_Revision_Record.md), [tenant map](../assets/ARC-001_hosted_tenant_connection_and_target.txt) and [authorization map](../assets/ARC-001_approved_change_external_permission.txt) are preserved.
+- Documentation-based source/coverage and full simulated-beginner author read-through are complete. Actual beginner validation and rendered publication review remain pending separately. No tenant, native permission or support action was performed.
+- Published ARC-001 remains revision 2.0 in the verified [October 26 snapshot](PUBLICATION_2026-10-26.md); revision 3.0 is not pushed or deployed. The earlier version is recoverable at main 0b1a003ca94a8c4fc0665f5a1d4222665f4acba4. ARC-002 is the next local revision target.
 
 ### Historical verification record: revision 1.0
 
-The preserved record below describes the earlier version and examples. Current verification is in the revision-2.0 record above.
+The preserved record below describes the earlier version and examples. Current verification is in the revision-3.0 record above.
 
 - Lesson: [ARC-001](../lessons/ARC-001_ISC_Tenant_and_Customer_Responsibilities.md), revision 1.0.
 - Course placement: Module 3.1.
@@ -1006,17 +1018,21 @@ Questions and worked reasoning remain in the learner file. Reference evidence, a
 
 ## ARC-006: UI, APIs, automation, and platform capabilities
 
-- Current [lesson](../lessons/ARC-006_UI_APIs_Automation_and_Platform_Capabilities.md): revision 2.0, Module 3.6; teaching specification 3.1.
-- Documentation checked: October 26, 2026. The [revision record](revisions/ARC-006_Concept_Led_Revision_Record.md) maps 95 coverage purposes and 23 primary references, with scope, assumptions, assessment reasoning and verification.
-- Author review: complete conditional request/review/delivery before deeper input/authority/tracking; description-only configuration scope; API contracts and token/user authority; actual connector responsibility; Workflow event filter, data input, executed choice, action and scoped success. No private architecture or tool-based bypass inferred.
-- Preserved: five original cases with worked reasoning, training-application scheduler transfer and separate API/target caller contexts. Added concrete Operations-to-Finance normal notification path with unrelated-attribute and Marketing alternatives.
-- Neutral values: reports-reader, report.read, Reports-Production, Read reports and svc-reports. No employee biography, company brand, runnable object IDs or credentials. All operation/event/target evidence is hypothetical.
-- Current diagrams: [request entry, processing and delivery](../assets/ARC-006_request_entry_processing_and_delivery.txt) and [event filter, execution and choice](../assets/ARC-006_event_filter_execution_and_choice.txt); widths 37 and 41. Historical assets are retained.
-- Tenant execution: none. Actual beginner validation, full graphical publication review and formal approval remain pending; author checks do not establish comprehension.
-- Publication update: revision 2.0 is included in the authorized October 26 batch 2. See [current deployment verification](PUBLICATION_2026-10-26_BATCH_2.md). Earlier publication/local-only statements below describe the review stage.
-- Revision 1.0 remains recoverable at that commit. Historical verification below is preserved context, not current review status.
+- Current learner revision: **3.0**, revised October 28, 2026 under teaching specification 3.2; saved locally only.
+- Current [95-purpose coverage, twenty-three primary references, explanation review, conditions, assessment and verification record](revisions/ARC-006_Beginner_Explanation_Revision_Record.md).
+- Explains operation intent before entry tool: UI/frontend/backend and API client/script roles lead to an allowed self request, configured review, supported connector change and separate target verification. Description-only save, requestability and collection have different purposes.
+- Defines contract/method/tenant/object references, payload/JSON, SDK/CLI, user-level/scope and PAT credential-to-access-token flow. Asynchronous 202, supported status/reference/duplicate handling and later target delivery remain distinct.
+- Traces the notification-only Workflow from department-change event/filter through execution/data flow/comparison/action, including Operations-to-Finance, unrelated-attribute no-run and Marketing successful no-notification paths. Changed identity and notification recipient/input format remain distinct.
+- Saved definitions, mock versus executed test actions, execution-time playback and scoped success do not imply an access grant. All five original cases and the scheduled training-request transfer remain.
+- Neutral reports-reader/report.read, Reports-Production/Read reports and svc-reports preserve conditions without biography, runnable IDs or credentials.
+- Current editable [alternative-entry/delivery map](../assets/ARC-006_alternative_entries_and_later_delivery.txt) and [trigger-selection/execution map](../assets/ARC-006_trigger_selection_and_execution_paths.txt).
+- Historical [revision 2.0 record](revisions/ARC-006_Concept_Led_Revision_Record.md), [request-entry map](../assets/ARC-006_request_entry_processing_and_delivery.txt) and [event/choice map](../assets/ARC-006_event_filter_execution_and_choice.txt) are preserved.
+- Source/coverage and full simulated-beginner author read-through are complete. Actual beginner validation and rendered publication review remain pending separately. No tenant, API, token, request, Workflow test/run or notification operation was performed.
+- Published ARC-006 remains revision 2.0 in the verified [October 26 batch 2](PUBLICATION_2026-10-26_BATCH_2.md); revision 3.0 is not pushed or deployed. Earlier revision is recoverable at main 0b1a003ca94a8c4fc0665f5a1d4222665f4acba4. ARC-007 is next.
 
 ### Historical verification record: revision 1.0
+
+The following record preserves revision 1.0 and its examples. Current verification is in the revision-3.0 record above.
 
 - Revision: 1.0. Course placement: Module 3.6.
 - Documentation checked: October 20, 2026. Current access-request submission contract, API authentication/authorization/version strategy, access-profile update behavior, Workflow concepts/triggers/actions/operators/history, and request/provisioning evidence reviewed.
@@ -1082,16 +1098,16 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## ARC-007: ISC sign-in, identity providers, and source passwords
 
-- Current [lesson](../lessons/ARC-007_Signing_Into_ISC_Identity_Providers_and_Source_Passwords.md): revision 2.0, Module 3.7; teaching specification 3.1.
-- Documentation checked: October 26, 2026. The [revision record](revisions/ARC-007_Concept_Led_Revision_Record.md) reconciles 103 coverage purposes and 23 primary references, conditions, assessments and verification.
-- Author review: normal SAML sign-in before trust/mapping variation, separate supported directory check, then complete standalone source-password operation. Account correlation, authoritative/authentication sources, MFA/recovery ownership, shared-source/group effects and session evidence retain distinct purposes.
-- Preserved: seven original investigations with worked reasoning and purchasing-application transfer. Necessary source/account support, policy, verification and target-actor assumptions remain explicit.
-- Neutral values: support-user, directory-user, Support-Production, svc-support and reserved person@corp.example/person@old.example mapping comparison. No employee/company biography, runnable credentials or actual authentication/password outcomes.
-- Current diagrams: [browser, IdP and ISC session](../assets/ARC-007_browser_idp_and_isc_session.txt), [directory credential check and session](../assets/ARC-007_directory_credential_check_and_session.txt) and [password operation and target result](../assets/ARC-007_password_operation_and_target_result.txt); widths 38, 38 and 39. Historical assets remain preserved.
-- Specific current checks include normal SSO precedence, PTA first-encountered account, elevated registration/direct TOTP distinction, identity reset not clearing MFA, flat-file incompatibility, PTA group-failure gate versus non-PTA partial outcomes, disabled-account reset restriction, browser retention and lack of ISC SAML SLO.
-- No tenant/sign-in/password/MFA/token/policy/session/connector/target operation was performed. Actual beginner validation, full graphical publication review and formal approval remain pending.
-- Publication update: revision 2.0 is included in the authorized October 26 batch 2. See [current deployment verification](PUBLICATION_2026-10-26_BATCH_2.md). Earlier publication/local-only statements below describe the review stage.
-- Baseline revision 1.0 remains recoverable at that commit. Historical verification below is preserved context, not current review status.
+- Current [lesson](../lessons/ARC-007_Signing_Into_ISC_Identity_Providers_and_Source_Passwords.md): revision 3.0, Module 3.7; teaching specification 3.2.
+- Documentation checked: October 28, 2026. The [beginner revision record](revisions/ARC-007_Beginner_Explanation_Revision_Record.md) reconciles all 103 earlier purposes, 23 primary references, explicit conditions, seven investigations and purchasing transfer.
+- Author review: full saved learner read-through and simulated beginner reasoning complete. Actual independent beginner validation remains pending; it is separate from continued authorized writing.
+- Explanation: account/identity and credential ownership before authentication/authorization/session; successful SAML browser path before trust and user matching; separately configured PTA; complete standalone target password operation before shared-source/group and session evidence.
+- Current diagrams: [SAML sign-in](../assets/ARC-007_beginner_saml_sign_in.txt), [directory sign-in](../assets/ARC-007_beginner_directory_sign_in.txt) and [password operation](../assets/ARC-007_beginner_password_operation.txt); exact inline matches with maximum widths 37, 38 and 40 characters. No fixed visual quotas.
+- Examples: existing correctly associated accounts; matching identity with JIT off; separate supported one-account directory-user setup; eligible standalone support-user on Support-Production with svc-support authority. Email match/mismatch uses reserved person@corp.example/person@old.example values. No company/employee storyline.
+- Current behavior checks preserve SSO precedence, first-encountered PTA account, elevated authenticator registration/direct challenge, dedicated MFA reset, flat-file/disabled-account restrictions, conditional group failure/partial results, browser retention and unsupported ISC SAML SLO.
+- Revision 3.0 remains local. Published ARC-007 remains 2.0; no staging, commit, push, deployment or real tenant/credential/session operation occurred. Baseline main: 0b1a003ca94a8c4fc0665f5a1d4222665f4acba4; deployed content: 63ca4364628ade00fafc1450534aaf60e0b0a9ea.
+- Preserved historical [revision 2.0 record](revisions/ARC-007_Concept_Led_Revision_Record.md) and all six earlier diagram assets. Earlier verification below records its own review date, not current lesson status.
+- Course position: twentieth of 91; 71 existing lessons remain. ARC-008 is next, locally and one at a time. ROL-007 remains reserved without a stub.
 
 ### Historical verification record: revision 1.0
 
@@ -1166,16 +1182,17 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## ARC-008: Requesting, executing, and observing work
 
-- Current [lesson](../lessons/ARC-008_Requesting_Executing_and_Observing_Work.md): revision 2.0, Module 3.8; teaching specification 3.1.
-- Documentation checked: October 26, 2026. The [revision record](revisions/ARC-008_Concept_Led_Revision_Record.md) reconciles 104 purposes and 17 primary references with conditions, assessments and verification.
-- Author review: intended account/access and complete normal mechanism precede the partial UTC trace. Acceptance, review, account work, effect, collected state and business use retain distinct evidence; recovery uses current authorization and preserves completed effects/history.
-- Preserved: all six original diagnostic cases, all meaningful baseline/partial/recovery timestamps, manual/ticket alternatives, query/indexing/single-account limitations and payroll-design transfer.
-- Neutral values: stock-user, svc-stock, Stock-Production, stock.read/stock.export and Read and export stock. Employee/company narrative and opaque profile/request/activity stand-ins removed without losing their separate reference purposes. All operation evidence is hypothetical.
-- Current diagrams: [request, decision, delivery and verification](../assets/ARC-008_request_decision_delivery_and_verification.txt), [required effects and partial result](../assets/ARC-008_required_effects_and_partial_result.txt) and [target change and account observation](../assets/ARC-008_target_change_and_account_observation.txt); widths 39, 41 and 36. Historical assets remain preserved.
-- Specific source checks include current asynchronous submission/duplicates/ignored status entries, request and account evidence, account-page single-account action scope, Search timing, recognized retry errors and generic ticket-status completion mapping. No fixed timing or universal recovery rule is invented.
-- No tenant/API/request/approval/account/collection/privilege/ticket/target operation occurred. Beginner validation, full graphical publication review and formal approval remain pending.
-- Publication update: revision 2.0 is included in the authorized October 26 batch 2. See [current deployment verification](PUBLICATION_2026-10-26_BATCH_2.md). Earlier publication/local-only statements below describe the review stage.
-- Baseline revision 1.0 remains recoverable at that commit. Historical verification below is preserved context, not current review status.
+- Current [lesson](../lessons/ARC-008_Requesting_Executing_and_Observing_Work.md): revision 3.0, Module 3.8; teaching specification 3.2.
+- Documentation checked: October 28, 2026. The [beginner revision record](revisions/ARC-008_Beginner_Explanation_Revision_Record.md) reconciles all 104 earlier purposes, 17 primary references, supplied conditions, six investigations and payroll transfer.
+- Author review: complete saved read-through and simulated beginner reasoning complete. Actual independent beginner validation remains pending separately from continued authorized writing.
+- Explanation: intended production account and read/export use precede complete successful request/decision/delivery/verification. Asynchronous acceptance and actor/record meanings establish what the partial UTC trace demonstrates. Collection observes account data; recovery addresses unresolved currently authorized effects.
+- Preserved: all meaningful baseline/partial/recovery timestamps, account-page single-account scope, query/indexing limits, idempotence and timeout reasoning, manual/ticket alternatives, all six original cases and payroll design transfer.
+- Current diagrams: [request to usable access](../assets/ARC-008_beginner_request_to_usable_access.txt), [partial permission result](../assets/ARC-008_beginner_partial_permission_result.txt) and [change versus collection](../assets/ARC-008_beginner_change_and_collection.txt); exact inline matches with maximum widths 40, 41 and 35 characters. Visual counts follow this topic.
+- Neutral values: stock-user, svc-stock, Stock-Production, stock.read/stock.export and Read and export stock. No company or employee storyline, runnable credentials or actual operation results. The existing account, allowed self-request and supported automatic hosted delivery are explicit conditions.
+- Specific current checks include queued 202, equivalent held-access duplicate conditions/ignored statuses, cancellation scope, selected Aggregate Account limits, Search timing, recognized retry errors, and configured service-desk completion mapping. No universal timing, retry, rollback or exactly-once rule is invented.
+- Revision 3.0 remains local. Published ARC-008 remains 2.0; no staging, commit, push, deployment or real request/account/privilege/collection/ticket/target operation occurred. Baseline main: 0b1a003ca94a8c4fc0665f5a1d4222665f4acba4; deployed content: 63ca4364628ade00fafc1450534aaf60e0b0a9ea.
+- Historical [revision 2.0 record](revisions/ARC-008_Concept_Led_Revision_Record.md) and all six earlier assets remain preserved. Earlier verification below describes its own review stage.
+- Course position: twenty-first of 91; 70 existing lessons remain. All eight Module 3 lessons individually revised; SRC-001 is next, locally and one at a time. ROL-007 remains reserved without a stub.
 
 ### Historical verification record: revision 1.0
 
@@ -1245,16 +1262,17 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## SRC-001: Source purpose and represented population
 
-- Current [lesson](../lessons/SRC-001_The_Purpose_of_a_Source_and_Its_Population.md): revision 2.0, Module 4.1; teaching specification 3.1.
-- Documentation checked: October 26, 2026. The [revision record](revisions/SRC-001_Concept_Led_Revision_Record.md) reconciles 107 purposes and 14 primary references with conditions, assessment intent and verification.
-- Author review: external context and intended set precede a complete conditional read/representation/ownership/UI flow; supplied East-only failure then separates intended/readable/selected/acquired sets. Account/person counts, row/access-data coverage, source role and read/write authority retain their purposes.
-- Preserved: 120 total/110 included/100 people/70 East/40 West inventory, both West account records, separately accountable service accounts, approved inclusive correction, six original cases and payroll-export design transfer.
-- Neutral values: Warehouse-Prod/Warehouse-Test, Warehouse Production, warehouse-user/warehouse-admin, svc-warehouse and shared workerRef W-17. Employee/company biography and source-ID stand-ins removed without losing context or record identity distinctions.
-- Current diagrams: [external environments and source records](../assets/SRC-001_external_environments_and_source_records.txt) and [agreed accounts and selected read](../assets/SRC-001_agreed_accounts_and_selected_read.txt); widths 37 and 40. Historical assets remain preserved.
-- Specific checks include connector-dependent filters, source account/association display, identifier-reference risks, source/profile role, conditional missing-record safeguards and runtime-specific support. A read condition alone isn't proof of a write enforcement boundary; actual supported operation/authority needs verification.
-- No source/tenant/API/credential/schema/filter/correlation/aggregation/provisioning/target/deletion operation occurred. Beginner validation, full graphical publication review and formal approval remain pending.
-- Publication update: revision 2.0 is included in the authorized October 26 batch 2. See [current deployment verification](PUBLICATION_2026-10-26_BATCH_2.md). Earlier publication/local-only statements below describe the review stage.
-- Baseline revision 1.0 remains recoverable at that commit. Historical verification below is preserved context, not current review status.
+- Current [lesson](../lessons/SRC-001_The_Purpose_of_a_Source_and_Its_Population.md): revision 3.0, Module 4.1; teaching specification 3.2.
+- Documentation checked: October 28, 2026. The [beginner revision record](revisions/SRC-001_Beginner_Explanation_Revision_Record.md) reconciles all 107 earlier purposes, 14 primary references, supplied conditions, six investigations and payroll-export transfer.
+- Author review: complete saved read-through and simulated beginner reasoning complete. Actual independent beginner validation remains pending separately from continued authorized writing.
+- Explanation: source/account/identity and actual external context establish intended coverage; complete inventory and successful read precede East-only failure. Distinct account keys and common workerRef W-17 explain two accounts for one person. Intended/readable/selected/acquired sets, unmatched/shadow versus wrong-owner states, corrected read and display/data/role/write scope retain separate meanings.
+- Preserved: 120 total accounts, 110 included across 100 people, 70 East/40 West, both West account records, ten separately accountable service accounts, disabled-record inclusion, approved inclusive correction, six original cases and payroll-export design transfer.
+- Current diagrams: [external contexts](../assets/SRC-001_beginner_external_contexts.txt) and [agreed versus selected accounts](../assets/SRC-001_beginner_agreed_and_selected_accounts.txt); exact inline matches with maximum widths 39 and 40 characters. Three tables serve inventory, account/owner distinction and design agreement; visual counts follow the topic.
+- Neutral values: Warehouse-Prod/Warehouse-Test, Warehouse Production, warehouse-user/warehouse-admin, svc-warehouse and workerRef W-17. No employee/company storyline, runnable credentials or actual operation outcomes. Supported SaaS read, field/selection capability and successful association are explicit hypothetical conditions.
+- Specific source checks include source/connector/runtime distinctions, read-only offerings, account ID reference risks, connector-dependent filters, correlated/uncorrelated/shadow display, profile role and conditional missing-record safeguards. A read condition alone doesn't establish an enforceable write boundary.
+- Revision 3.0 remains local. Published SRC-001 remains 2.0; no staging, commit, push, deployment or native source/credential/schema/filter/correlation/aggregation/provisioning/deletion operation occurred. Baseline main: 0b1a003ca94a8c4fc0665f5a1d4222665f4acba4; deployed content: 63ca4364628ade00fafc1450534aaf60e0b0a9ea.
+- Historical [revision 2.0 record](revisions/SRC-001_Concept_Led_Revision_Record.md) and all four earlier diagram assets remain preserved. Earlier verification below records its own review stage.
+- Course position: twenty-second of 91; 69 existing lessons remain. SRC-002 is next, locally and one at a time. ROL-007 remains reserved without a stub.
 
 ### Historical verification record: revision 1.0
 
@@ -1323,16 +1341,17 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## SRC-002: Authoritative and non-authoritative source responsibilities
 
-- Current [lesson](../lessons/SRC-002_Authoritative_and_Non_Authoritative_Sources.md): revision 2.0, Module 4.2; teaching specification 3.1.
-- Documentation checked: October 26, 2026. The [revision record](revisions/SRC-002_Concept_Led_Revision_Record.md) reconciles 101 purposes and 14 primary references with assumptions, assessment reasoning and verification.
-- Author review: normal authoritative/profile establishment precedes same-identity employee/contractor overlap; applicable priority selects configuration, mappings provide values, approved processing produces the supplied corrected outcome. Attribute fallback, required values, authentication and target work remain separate.
-- Preserved: both authoritative accounts on one identity, initial/corrected priorities 10/20, Vendor Services/Finance, directory-sourced email, shadow/required-value/removal/preview boundaries, all seven original cases and acquisition transfer.
-- Neutral values: employee-record, contractor-record, directory-user, expense-user, workerRef W-24, Employees/Contractors and person@corp.example. Employee biography, numbered native accounts and opaque I-42 stand-in removed; all configuration and outcome evidence is hypothetical.
-- Current diagrams: [profile-backed identity and account matching](../assets/SRC-002_profile_backed_identity_and_account_matching.txt) and [selected profile and mapped inputs](../assets/SRC-002_selected_profile_and_mapped_inputs.txt); widths 41 and 38. Historical assets remain preserved.
-- Specific checks include one applicable profile, relevant associated authoritative accounts, lower-number precedence/creation defaults, required uid/email/lastname, no email-format validation in that required-value check, shadow representation, PTA and supported account-removal/profile-deletion consequences. No atomic migration or universal fallback is invented.
-- No identity/source/account/profile/priority/mapping/processing/authentication/credential/target operation occurred. Beginner validation, full graphical publication review and formal approval remain pending.
-- Publication update: revision 2.0 is included in the authorized October 26 batch 2. See [current deployment verification](PUBLICATION_2026-10-26_BATCH_2.md). Earlier publication/local-only statements below describe the review stage.
-- Baseline revision 1.0 remains recoverable at that commit. Historical verification below is preserved context, not current review status.
+- Current [lesson](../lessons/SRC-002_Authoritative_and_Non_Authoritative_Sources.md): revision 3.0, Module 4.2; teaching specification 3.2.
+- Documentation checked: October 28, 2026. The [beginner revision record](revisions/SRC-002_Beginner_Explanation_Revision_Record.md) reconciles all 101 earlier purposes, 14 primary references, supplied conditions, seven investigations and acquisition transfer.
+- Author review: complete saved read-through and simulated beginner reasoning complete. Actual independent beginner validation remains pending separately from continued authorized writing.
+- Explanation: normal valid authoritative-account/profile establishment and additional-account association precede same-identity employee/contractor overlap. Applicable priority selects the profile, then a five-step mapping trace explains Vendor Services beside correct HR Finance. Approved correction yields supplied Employees/Finance and unchanged directory email.
+- Preserved: both authoritative accounts on one identity, initial/corrected 10/20 priorities, cross-source mapped email, shadow/required-value/exception/PTA/removal/profile-deletion/preview boundaries, all seven original cases and acquisition design transfer.
+- Current diagrams: [identity origin and account association](../assets/SRC-002_beginner_identity_origin_and_accounts.txt) and [one profile with two inputs](../assets/SRC-002_beginner_one_profile_and_two_inputs.txt); exact inline matches with maximum widths 41 and 39 characters. Two tables explain account responsibilities and priority changes; counts follow the topic.
+- Neutral values: employee-record, contractor-record, directory-user, expense-user, workerRef W-24, Employees/Contractors and person@corp.example. No employee/company storyline or real credentials; all configuration/processing/outcome evidence is hypothetical.
+- Specific current checks include lower-number precedence/default order, required uid/email/lastname and the non-null email check's limits, separate manager relationship configuration, processing versus target completion, PTA and conditional full-account-deletion/profile removal. No merge, latest-read, automatic per-field fallback or atomic migration is invented.
+- Revision 3.0 remains local. Published SRC-002 remains 2.0; no staging, commit, push, deployment or native identity/source/profile/priority/mapping/processing/authentication/target operation occurred. Baseline main: 0b1a003ca94a8c4fc0665f5a1d4222665f4acba4; deployed content: 63ca4364628ade00fafc1450534aaf60e0b0a9ea.
+- Historical [revision 2.0 record](revisions/SRC-002_Concept_Led_Revision_Record.md) and all four prior assets remain preserved. Earlier verification below describes its own review stage.
+- Course position: twenty-third of 91; 68 existing lessons remain. SRC-003 is next, locally and one at a time. ROL-007 remains reserved without a stub.
 
 ### Historical verification record: revision 1.0
 
@@ -1382,17 +1401,17 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## SRC-003: Reading a connector capability matrix
 
-- Current revision: 2.0. Course placement: Module 4.3. Teaching specification: 3.1.
-- Current coverage, first-use explanations, primary references, assumptions, preserved assessments and executed checks: [SRC-003 revision record](revisions/SRC-003_Concept_Led_Revision_Record.md).
-- Documentation checked: October 26, 2026; 12 primary-reference rows in the current record cover actual connector feature columns, framework operations and HTTP configuration, test-connection limits, AD IQService requirements, file representation, source modes, provisioning/activity/certification/correlation and RFC 9110 refusal semantics.
-- Author review: normal successful create/add/target-check/later-read mechanism precedes capability variants; 70 coverage purposes reconciled; all seven original cases and payroll transfer preserved.
-- Neutral example: Purchasing-Production source, buyer-user recipient, svc-purchasing technical actor and existing buyers group/Buyer. One existing ISC identity, no initial target account, one intended recipient and valid creation inputs. All target behaviours, outcomes and errors are hypothetical.
-- Read/create/department-update/add have supplied positive evidence. Removal has no supported target API; disable has a configured endpoint with explicit caller/account permission denial and enabled target; delete has no approved configured/tested path. These are project conditions, not actual application product claims.
-- Current editable diagrams: [supported change then collection](../assets/SRC-003_supported_change_then_collection.txt) and [operation support and ready conditions](../assets/SRC-003_operation_support_and_ready_conditions.txt); exact inline matches, maximum widths 40 and 41 characters. Distinct create/add effects, later observation and human dependency review aren't atomic rollback, fixed schedule or private processing order.
-- Historical [operation-readiness dependencies](../assets/SRC-003_operation_readiness_dependencies.txt) and [change versus collection paths](../assets/SRC-003_change_and_collection_paths.txt) remain unchanged.
-- No tenant, source/mode, account, credential, endpoint, privilege, fulfillment, certification, aggregation, provisioning or target operation. Actual beginner validation, full graphical review and formal approval remain pending.
-- Publication: SRC-003 revision 2.0 is local only; published version remains 1.0. The 23 revised lessons through SRC-002 are published; see [batch 2 verification](PUBLICATION_2026-10-26_BATCH_2.md). No commit/push in this subsequent local revision; original ISC_Theory_Learning unchanged.
-- Next existing lesson: SRC-004, body unopened in this task. New authoring remains paused at reserved ROL-007.
+- Current [lesson](../lessons/SRC-003_Reading_a_Connector_Capability_Matrix.md): revision 3.0, Module 4.3; teaching specification 3.2.
+- Documentation checked: October 28, 2026. The [beginner revision record](revisions/SRC-003_Beginner_Explanation_Revision_Record.md) reconciles all 70 earlier purposes, 12 reference rows containing 16 primary pages, supplied conditions, seven investigations and payroll transfer.
+- Author review: complete saved read-through and simulated beginner reasoning complete. Actual independent beginner validation remains pending separately from continued authorized writing.
+- Explanation: object/effect and caller/recipient meanings precede a complete supported create/add/target-check/later-read example. Real AD matrix excerpt, separate read/write effects and eight-row project matrix distinguish product support, source configuration and verified outcomes.
+- Preserved: Purchasing-Production, buyer-user, svc-purchasing, existing buyers/Buyer, one existing ISC identity/no initial target account, valid creation inputs and supported Web Services SaaS path. Read/create/department/add evidence, absent remove API, explicit denied disable and unconfigured/untested delete remain hypothetical project findings.
+- Current diagrams: [changes and later collection](../assets/SRC-003_beginner_changes_and_later_collection.txt) and [operation readiness](../assets/SRC-003_beginner_operation_readiness.txt); exact inline matches with maximum widths 36 and 40 characters. Two tables serve real matrix reading and project evidence; visual counts follow this topic.
+- Specific current checks include AD object-column support/IQService conditions, Delimited File status representation, Web Services SaaS operation/HTTP/test configuration, read-only/deep-governance restrictions, certification sign-off/fulfillment and HTTP 403 refusal semantics.
+- Current published SRC-003 is 2.0: its lesson at known deployed content 63ca4364628ade00fafc1450534aaf60e0b0a9ea matches the task baseline, and the stored published revision record declares 2.0. Earlier local-only/published-1.0 entries below describe their historical review stage.
+- Revision 3.0 remains local. No staging, commit, push, deployment or native source/account/credential/API/privilege/fulfillment/certification/aggregation/provisioning/target operation occurred. Main baseline: 0b1a003ca94a8c4fc0665f5a1d4222665f4acba4.
+- Historical [revision 2.0 record](revisions/SRC-003_Concept_Led_Revision_Record.md) and all four prior diagrams remain preserved. No source/course links or author metadata enter learner prose.
+- Course position: twenty-fourth of 91; 67 existing lessons remain. SRC-004 is next, locally and one at a time. ROL-007 remains reserved without a stub.
 
 ### Historical verification record: revision 1.0
 
@@ -1444,19 +1463,17 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## SRC-004: Account schemas, identifiers and display attributes
 
-- Current revision: 2.0. Course placement: Module 4.4. Teaching specification: 3.1.
-- Current coverage, first-use explanations, primary references, assumptions, preserved assessments and executed checks: [SRC-004 revision record](revisions/SRC-004_Concept_Led_Revision_Record.md).
-- Documentation checked: October 26, 2026; seven primary references cover schema definitions/designations/discovery/subsequent collection/audit/change warnings, schema and attribute-definition models, Delimited File schema replacement, account correlation/default naming and identity-profile/provisioning boundaries.
-- Author review: 81 coverage purposes reconciled; complete supported read/mapping/representation precedes failure variants; account identification and ownership matching remain distinct; all seven original cases and payroll transfer remain.
-- Neutral example: Billing-Production, accountKey acct-standard/acct-admin, loginName billing-user/billing-admin, shared employeeNumber E-24, repeated descriptive fullName, Billing Operations, officeCode BLR, textual costCentre 044, billing-read/billing-support. No named employee, company brand or arbitrary identity-ID stand-in.
-- Assumptions: legitimate standard/admin accounts, stable distinct supported keys/names, one intended production context, available read fields and unambiguous existing identity under configured employee-number comparison. All values and results hypothetical.
-- Normal officeCode-to-office BLR mapping is explained first. A distinct variation reads absent siteCode; approved mapping correction and later supported collection supply office BLR. Missing API input/read authority or legitimate absence require different evidence.
-- Current editable diagrams: [read values and schema definition](../assets/SRC-004_read_values_and_schema_definition.txt) and [distinct accounts, one person](../assets/SRC-004_distinct_accounts_one_person.txt); exact inline matches, maximum widths 37 and 41 characters. Neither asserts private backend order, merger or matching score.
-- Historical [record to account representation](../assets/SRC-004_record_to_account_representation.txt) and [account keys and person matching](../assets/SRC-004_account_keys_and_person_matching.txt) remain unchanged.
-- Documented Account Name immutability/post-aggregation duplicate warnings and Account ID reference risks are preserved. Default Account Name/name correlation adds a concrete non-cosmetic connection without replacing supplied explicit employee-number matching or teaching full correlation order.
-- No schema, source, data, mapping, correlation, aggregation, identity, credential, permission, target rename or provisioning operation. Actual beginner validation, full graphical review and formal approval remain pending.
-- Publication: revision 2.0 local only; published SRC-004 remains 1.0. SRC-003 revision 2.0 also remains local. The 23 revised lessons through SRC-002 remain the [verified published snapshot](PUBLICATION_2026-10-26_BATCH_2.md). No staging/commit/push/deployment; original ISC_Theory_Learning unchanged.
-- Next existing lesson: SRC-005, learner body unopened in this task. New authoring remains paused at reserved ROL-007.
+- Current [lesson](../lessons/SRC-004_Account_Schemas_Identifiers_and_Display_Attributes.md): revision 3.0, Module 4.4; teaching specification 3.2.
+- Documentation checked: October 28, 2026. The [beginner revision record](revisions/SRC-004_Beginner_Explanation_Revision_Record.md) reconciles all 81 earlier purposes, seven primary references, supplied conditions, seven investigations and payroll-feed transfer.
+- Author review: complete saved read-through and simulated beginner reasoning complete. Actual independent beginner validation remains pending separately from continued authorized writing.
+- Explanation: two legitimate account records establish field/name/value/schema meanings before Account ID/Name and separate owner matching. Complete officeCode-to-office read/mapping path, explained JSON selectors and two-account association lead to naming/change/absence/discovery/conflicting-key and dependency reasoning.
+- Preserved: Billing-Production; acct-standard/acct-admin; billing-user/billing-admin; shared E-24 and descriptive fullName; Billing Operations, BLR officeCode, textual 044 costCentre and billing-read/billing-support. Correct mapping versus absent-siteCode variation and regional u17 payroll transfer retain their exact purposes.
+- Current diagrams: [fields and collected values](../assets/SRC-004_beginner_fields_and_collected_values.txt) and [two accounts with one owner](../assets/SRC-004_beginner_two_accounts_one_owner.txt); exact inline matches with maximum widths 35 and 41 characters. Two tables and one small JSON fragment serve this topic; counts aren't quotas.
+- Specific current checks include Account Name immutability/duplicate guidance, Account ID reference risks, identityAttribute/displayAttribute field selection, type/multi-value/entitlement definitions, connector-specific discovery/replacement, subsequent-read/audit meanings and default correlation's specific identity name field.
+- Published SRC-004 is 2.0: its lesson at known deployed content 63ca4364628ade00fafc1450534aaf60e0b0a9ea matches the task baseline, and its stored revision record declares 2.0. Earlier local-only/published-1.0 statements describe historical authoring status.
+- Revision 3.0 remains local. No staging, commit, push, deployment or native source/schema/account/identity/mapping/correlation/aggregation/provisioning/credential/rename operation occurred. Main baseline: 0b1a003ca94a8c4fc0665f5a1d4222665f4acba4.
+- Historical [revision 2.0 record](revisions/SRC-004_Concept_Led_Revision_Record.md) and all four prior assets remain preserved. Source/course links and author metadata stay outside learner prose.
+- Course position: twenty-fifth of 91; 66 existing lessons remain. SRC-005 is next, locally and one at a time. ROL-007 remains reserved without a stub.
 
 ### Historical verification record: revision 1.0
 
@@ -1505,20 +1522,18 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## SRC-005: Attribute types, multiple values and data formats
 
-- Current revision: 2.0. Course placement: Module 4.5. Teaching specification: 3.1.
-- Current coverage, first-use explanations, primary sources, assumptions, preserved assessments and executed checks: [SRC-005 revision record](revisions/SRC-005_Concept_Led_Revision_Record.md).
-- Documentation checked: October 26, 2026; 12 primary references cover source attribute/type models, schema settings/Boolean entitlement constraint, Web Services response mapping/structure, dateFormat, JSON/CSV/timestamp standards, identity mappings/provisioning and background integer ranges.
-- Author review: 82 coverage purposes reconciled; selected input and complete correct representation precede failure variants; all seven original cases and independent HR-feed transfer retained.
-- Neutral example: Delivery-Production, delivery-user, employeeNumber E-25, textual costCentre 007, isActive true, openTaskCount 4, groups delivery.read/delivery.dispatch, day-first contractEnd 04/11/2026, backupPhone null. No named employee, biography or company brand.
-- Correct extraction and intended text/multi-value schema are supplied. A project-added converter creates text 7 and one joined group item; these aren't ISC defaults. Approved supported correction and later collection restore text 007 and two items without changing target account or memberships.
-- CSV alternative: four fields, displayName Operations, Delivery quoted as one field, separate agreed inner semicolon membership parser. Not a complete snapshot/upload or universal connector delimiter. HR transfer is independent.
-- Date meaning: 4 November 2026 becomes 2026-11-04 under agreed dd/MM/yyyy to yyyy-MM-dd patterns. Timestamp pair 18:00+05:30 and 12:30Z represents one instant; formatting doesn't choose cutoff, schedule or completed revocation.
-- Current editable diagrams: [separate values or joined text](../assets/SRC-005_separate_values_or_joined_text.txt) and [input-to-consumer evidence](../assets/SRC-005_input_to_consumer_evidence.txt); exact inline matches, maximum widths 36 and 39 characters.
-- Historical [list preservation and joining](../assets/SRC-005_list_preservation_and_joining.txt) and [value/shape evidence trace](../assets/SRC-005_value_and_shape_evidence_trace.txt) remain unchanged.
-- No universal coercion, splitter, null-clear, deduplication, array-order access meaning, parser skip/fail behaviour or private engine order is asserted. Invalid input can't silently stand for a valid no-membership result.
-- No actual tenant, source/schema, account/identity, rule/transform/mapping, aggregation, access/role, credential, permission, provisioning or target operation. Actual beginner validation, full graphical review and formal approval remain pending.
-- Publication: revision 2.0 local only; published SRC-005 remains 1.0. SRC-003/004 revisions 2.0 are also local. The 23 revised lessons through SRC-002 remain the [verified published snapshot](PUBLICATION_2026-10-26_BATCH_2.md). No staging/commit/push/deployment; original ISC_Theory_Learning unchanged.
-- Next existing lesson: SRC-006, learner body unopened in this task. New authoring remains paused at reserved ROL-007.
+- Current revision: 3.0. Module 4.5. Teaching specification 3.2. October 28, 2026.
+- [Current coverage, primary sources and executed checks](revisions/SRC-005_Beginner_Explanation_Revision_Record.md); [preserved revision 2.0 record](revisions/SRC-005_Concept_Led_Revision_Record.md).
+- All 82 coverage purposes, seven original worked cases and independent HR-feed transfer retained. Meaning/type/cardinality and a complete normal read precede conversion faults; full saved author read-through clarifies first-use terms and pacing. Simulated beginner author review is distinct from pending actual learner validation.
+- Twelve primary references freshly inspected October 28, 2026: attribute/type/schema, Web Services extraction/root, dateFormat, JSON/CSV/timestamp standards, identity/provisioning and background integer types. No tenant execution or private engine-order claim.
+- Existing-account example retains Delivery-Production, delivery-user, E-25, significant text 007, Boolean true, count 4, two separate delivery.read/delivery.dispatch memberships, day-first 04/11/2026 and explicit backupPhone null. No named employee or fictional company.
+- Correct extraction/schema are supplied. Later project-added numeric and join conversions damage representation; approved supported correction plus appropriate read restore values without changing native account/memberships. These are hypothetical conditions, not ISC defaults or measured results.
+- CSV alternative has four fields, quoted Operations, Delivery and an agreed inner semicolon parser. Seven missing/empty states remain operation-specific. Date means 4 November 2026; 18:00+05:30 equals 12:30Z; formatting is separate from cutoff, scheduling and access delivery.
+- Current editable diagrams: [preserving separate values](../assets/SRC-005_beginner_preserving_separate_values.txt) and [following value changes](../assets/SRC-005_beginner_following_value_changes.txt), exact inline matches. Timestamp pair is a data block, not a third diagram.
+- Four historical diagram assets and earlier author record remain unchanged. Source and check details stay outside learner prose; no source/course links or revision metadata in the learner.
+- Publication: revision 3.0 local only; published SRC-005 remains 2.0, confirmed by a local comparison with known deployed content 63ca4364628ade00fafc1450534aaf60e0b0a9ea. No live verification, staging, commit, push or deployment.
+- Progress: 26 of 91 existing lessons individually revised under 3.2; 65 remain. First five Module 4 lessons complete; SRC-006 is next and its learner body was not opened here. New authoring remains reserved at ROL-007 without a stub.
+- Actual beginner validation and graphical publication review remain separate and pending.
 
 ### Historical verification record: revision 1.0
 
@@ -1574,20 +1589,19 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## SRC-006: Entitlement membership attributes and entitlement schemas
 
-- Current revision: 2.0. Course placement: Module 4.6. Teaching specification: 3.1.
-- Current coverage, first-use explanations, official sources, assumptions, preserved assessments and executed checks: [SRC-006 revision record](revisions/SRC-006_Concept_Led_Revision_Record.md).
-- Documentation checked: October 26, 2026; seven primary references map account-schema linking, native entitlement types/schema designation/relationships/deletion, separate object aggregation, catalog/metadata/permissions, schema/attribute models and account correlation.
-- Author review: 86 purposes reconciled; complete normal source/type/ID relationship before mismatch; explicit automatic linking under documented conditions; all seven original cases and teams transfer retained.
-- Neutral example: Expenses-Production, expense-user, existing Expense Approvers membership G-206; groups native type/account attribute, groupKey selected ID, label selected Name, technicalName expense.approvers and supplied expense-approval-limit description. No employee biography/number or company brand.
-- Supported account/object reads and valid mappings are normal assumptions. Faulty project mapping substitutes technicalName while selected group ID stays G-206; approved preservation of G-206 and later supported collection produce the supplied link without changing target membership.
-- Native type name must match the supported source category. Named UI Type relationships are distinguished from basic value types and technical schema association properties; no unverified payload or invented native category is prescribed.
-- Conditional appRoles R-51 Audit Exporter, typed code51 and Expenses-Test/Production illustrate context. G-999 is inventory-only; independent teams T-8/teamCode/displayLabel transfer challenges label substitution, inventory-as-membership and duplicate account-attribute/type association.
-- Current editable diagrams: [reference to access object](../assets/SRC-006_reference_to_access_object.txt) and [membership and object reads](../assets/SRC-006_membership_and_object_reads.txt); exact inline matches, maximum widths 33 and 38 characters. Historical [account membership to entitlement](../assets/SRC-006_account_membership_to_entitlement.txt) and [two read responsibilities](../assets/SRC-006_two_read_responsibilities.txt) remain unchanged.
-- Diagrams show relationships/information responsibilities, not private backend order, universal schedule or target grants. Account-to-person matching, direct membership, indirect entitlement paths and effective access remain distinct evidence questions.
-- Ordinary Display Name/Description edits don't write to the source; manual-update preservation can explain later visible text. Schema ID/Name changes carry duplicate risk; type deletion doesn't remove associated entitlements or target memberships.
-- No actual source/schema/type, account/identity, mapping/correlation, collection, metadata/access/request/review, permission/hierarchy, provisioning or target operation. Actual beginner validation, full graphical review and formal approval remain pending.
-- Publication: revision 2.0 local only; published SRC-006 remains 1.0. SRC-003 through SRC-005 revisions 2.0 also remain local. The 23 revised lessons through SRC-002 remain the [verified published snapshot](PUBLICATION_2026-10-26_BATCH_2.md). No staging/commit/push/deployment; original ISC_Theory_Learning unchanged.
-- Next existing lesson: SRC-007, learner body unopened in this task. New authoring remains paused at reserved ROL-007.
+- Current revision: 3.0. Module 4.6. Teaching specification 3.2. October 28, 2026.
+- [Current coverage, primary sources and executed checks](revisions/SRC-006_Beginner_Explanation_Revision_Record.md); [preserved revision 2.0 record](revisions/SRC-006_Concept_Led_Revision_Record.md).
+- All 86 purposes, seven original worked cases and independent teams transfer retained. Two record questions, explained JSON and ID/Name field-versus-value choices lead to the complete correct relationship before the mapping fault. Simulated beginner author read-through is distinct from pending actual learner validation.
+- Seven primary references freshly inspected October 28, 2026: account-schema linking/constraints, entitlement types/native names/designations/relationships/deletion, object aggregation, metadata/manual-update/no-holder/permissions, schema/attribute models and account correlation.
+- Existing Expenses-Production account expense-user holds G-206, Expense Approvers, under the supplied expense-approval-limit meaning. Native type and account attribute are groups; groupKey supplies G-206 as selected ID, label supplies selected Name, technicalName expense.approvers is additional information. No biography or fictional company.
+- Supported normal readings and schema relationship preserve G-206 on both sides. A project mapping substitutes technicalName; approved supported correction plus later collection and supplied verification restores linking without changing native membership. No ISC-default fault or measured tenant outcome is asserted.
+- Conditional appRoles R-51 Audit Exporter, equal code51 in different types and test/production G-206 preserve context. A separate supported indirect group-to-role design differs from direct account assignment and complete effective access. Teams T-8/teamCode/displayLabel Regional Reviewers transfer challenges labels-as-IDs, inventory-as-membership and duplicate account-attribute/type association.
+- Current editable diagrams: [account reference to group](../assets/SRC-006_beginner_account_reference_to_group.txt) and [memberships and group details](../assets/SRC-006_beginner_memberships_and_group_details.txt), exact inline matches, maximum widths 40 and 47 characters. Four older SRC-006 assets and historical author record remain unchanged.
+- Diagrams show data references/information responsibilities, not a private backend sequence, schedule or grant. Multi-value shape, entitlement meaning and schema Type relationship remain separate.
+- Frontend/backend and configuration/account/catalog views have distinct evidence. Metadata edits don't write to the source; manual-update preservation differs from mapping/read failure. Schema designation changes have duplicate risk; type deletion doesn't delete associated entitlement records or target memberships.
+- Publication: revision 3.0 local only; published SRC-006 remains 2.0, confirmed by local comparison with known deployed content 63ca4364628ade00fafc1450534aaf60e0b0a9ea. No live verification, staging, commit, push or deployment.
+- Progress: 27 of 91 existing learners individually revised under 3.2; 64 remain. First six Module 4 lessons complete; SRC-007 is next and its learner body wasn't opened here. New authoring remains reserved at ROL-007 without a stub.
+- Actual beginner validation and graphical publication review remain separately pending; no actual ISC/connector/target operation.
 
 ### Historical verification record: revision 1.0
 
@@ -1636,20 +1650,20 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## SRC-007: Filters and collection scope
 
-- Current revision: 2.0. Course placement: Module 4.7. Teaching specification: 3.1.
-- Current coverage, first-use explanations, official sources, supplied conditions, preserved assessments and executed checks: [SRC-007 revision record](revisions/SRC-007_Concept_Led_Revision_Record.md).
-- Documentation checked: October 26, 2026; nine primary references cover loading-account modes/deletion/history/Search, SDK/native filtering, Okta selection, Entra account/group/membership interaction, entitlement collection, response mapping/paging, API query parameters and account correlation.
-- Author review: 86 purposes reconciled; normal WEST/HUMAN selection evaluated before additional ACTIVE condition; all eight original cases and independent payroll transfer remain.
-- Neutral example: Service-Production; west-disabled WEST/HUMAN/DISABLED, west-active WEST/HUMAN/ACTIVE, east-active EAST/HUMAN/ACTIVE, west-service WEST/SERVICE/ACTIVE. Actual fields determine scope; keys aren't inferred classifications. No named employee, biography, employee number or company brand.
-- Supplied comparable inventory: 500 overall = 120 intended + 380 outside; 120 = 110 active + 10 disabled. Counts are accounts, not unique people. Disabled target records retain memberships.
-- First-collection main case has no prior west-disabled ISC record. Actor can read intended120; supported native inclusion query addsACTIVE; all110 selected records/pages are consumed. Approved removal ofACTIVE preservesWEST/HUMAN and supplied later read represents120 with target unchanged.
-- Conceptual conditions aren't runnable source syntax. Okta status example is connector-specific; Entra account-over-group priority isn't generalized; SDK facility isn't every standard connector's filter contract.
-- Distinct existing-record variation explains full-run missing-account handling/safeguards and conditional authoritative effects. Separate100-account cursor case and ACTIVE-changed-today payroll export test completeness, not default page size or replacement semantics.
-- Current editable diagrams: [required population and active filter](../assets/SRC-007_required_population_and_active_filter.txt) and [read scope to view evidence](../assets/SRC-007_read_scope_to_view_evidence.txt); exact inline matches, maximum widths 31 and 39 characters. Historical [active-only scope comparison](../assets/SRC-007_active_only_scope_comparison.txt) and [collection evidence boundaries](../assets/SRC-007_collection_evidence_boundaries.txt) stay unchanged.
-- Diagrams compare inclusion designs and evidence boundaries, not private processing order or universally separate controls. Collection, ownership, membership scope and viewing/Search freshness are distinguished.
-- No actual source/filter/query, actor authorization, collection, deletion setting, account/identity, correlation, provisioning or target operation. Actual beginner validation, full graphical review and formal approval remain pending.
-- Publication: revision 2.0 local only; published SRC-007 remains 1.0. SRC-003 through SRC-006 revisions 2.0 also remain local. The 23 revised lessons through SRC-002 remain the [verified published snapshot](PUBLICATION_2026-10-26_BATCH_2.md). No staging/commit/push/deployment; original ISC_Theory_Learning unchanged.
-- Next existing lesson: SRC-008, learner body unopened in this task. New authoring remains paused at reserved ROL-007.
+- Current revision: 3.0. Module 4.7. Teaching specification 3.2. October 28, 2026.
+- [Current coverage, primary sources and executed checks](revisions/SRC-007_Beginner_Explanation_Revision_Record.md); [preserved revision 2.0 record](revisions/SRC-007_Concept_Led_Revision_Record.md).
+- All 86 purposes, eight original worked cases and independent payroll transfer retained. Population and representative account decisions precede the extra ACTIVE defect. Full saved simulated-beginner author review is distinct from pending actual learner validation.
+- Nine primary references freshly inspected October 28, 2026: account modes/deletion safeguards/authoritative outcomes/Search freshness; SDK facilities; scoped Okta and Entra filters; separate entitlement reads; Web Services extraction/paging; ISC query parameters and account correlation.
+- Neutral Service-Production example: west-disabled, west-active, east-active and west-service use actual region/kind/status values. Inventory is 500 overall = 120 intended + 380 outside; 120 intended = 110 active + ten disabled. No biography or fictional company.
+- Main case is first collection with no earlier west-disabled ISC record, sufficient actor authority and complete paging/extraction of the native ACTIVE-only result. Supported approved removal of ACTIVE while retaining WEST/HUMAN plus appropriate collection supplies all 120, with target status and memberships unchanged.
+- Native versus post-retrieval filters, permission boundaries, extraction/mapping and result/view/correlation absence remain distinct. Account, membership and group-object scope are checked separately; no universal connector syntax or filter precedence.
+- Full/delta/optimized/single-account and full-state/change-file meanings remain distinct. Separate existing-record handling covers full-source account deletion settings, safeguards and applicable authoritative profile/reassignment/deletion/hidden effects. No universal automatic identity deletion or target revocation claim.
+- Current editable diagrams: [required and selected accounts](../assets/SRC-007_beginner_required_and_selected_accounts.txt) and [read-to-view evidence](../assets/SRC-007_beginner_read_to_view_evidence.txt), exact inline matches, maximum widths 35 and 36 characters. Four historical diagram assets and earlier author record remain unchanged.
+- Diagrams compare inclusion choices and guide human evidence checks, not private backend order or two running jobs. Eight cases and payroll ACTIVE/FUTURE/TERMINATED versus ACTIVE-only changed-today transfer retain count/identifier/completeness and deletion reasoning.
+- Frontend configuration/history/account views and Search freshness support different conclusions. Source/check metadata remains author-only; no source/course links or revision footer in learner prose.
+- Publication: revision 3.0 local only; published SRC-007 remains 2.0, confirmed by local comparison with known deployed content 63ca4364628ade00fafc1450534aaf60e0b0a9ea. No live verification, staging, commit, push or deployment.
+- Progress: 28 of 91 existing learners individually revised under 3.2; 63 remain. First seven Module 4 lessons complete; SRC-008 is next and its learner body wasn't opened here. New authoring remains reserved at ROL-007 without a stub.
+- Actual beginner validation and graphical publication review remain separately pending; no actual ISC/connector/target operation.
 
 ### Historical verification record: revision 1.0
 
@@ -6861,17 +6875,20 @@ No actual tenant/API/source/account/role/profile/list/request/review/aggregation
 
 ## ARC-005
 
-- Current [lesson](../lessons/ARC-005_Connection_Dependencies_and_Operation_Support.md): revision 2.0, Module 3.5; teaching specification 3.1.
-- Documentation checked: October 26, 2026. The [revision record](revisions/ARC-005_Concept_Led_Revision_Record.md) maps 108 coverage purposes and 18 primary references, their claim scope, applicability and verification dates.
-- Author review: explains the required change, actual runtime and successful mechanism before developing destination, DNS, reachability, trust, credentials, operation authority, connector support, valid input and outcome evidence. These conditions are not a fixed internal execution order.
-- Preserved: evidence-backed export denial, five original investigations with reasoned answers, interrupted-operation reconciliation and the read-only SaaS disable-design transfer. Repairing communication, recovering work and confirming target state remain distinct.
-- Neutral examples: existing recipient orders-reader, integration caller svc-orders, entitlement orders.export, ISC source Orders-Production, external workspace Orders-Prod and cluster orders-prod with va-01/va-02. The main attempt's va-02 and direct target path are supplied evidence. No tenant execution or production observation is claimed.
-- Current diagrams: [runtime operation paths](../assets/ARC-005_runtime_operation_paths.txt) and [evidence, scoped action and recovery](../assets/ARC-005_evidence_scoped_action_and_recovery.txt). Historical diagrams remain preserved.
-- Learner validation, full graphical review and formal publication approval: pending. Author review and local checks do not establish beginner comprehension.
-- Publication update: revision 2.0 is included in the authorized October 26 batch 2. See [current deployment verification](PUBLICATION_2026-10-26_BATCH_2.md). Earlier publication/local-only statements below describe the review stage.
-- Baseline revision 1.0 is recoverable at that commit. The record below preserves its historical verification context and is not the current review status.
+- Current learner revision: **3.0**, revised October 28, 2026 under teaching specification 3.2; saved locally only.
+- Current [108-purpose coverage, nineteen primary references, explanation review, conditions, assessment and verification record](revisions/ARC-005_Beginner_Explanation_Revision_Record.md).
+- Defines the exact export requirement and actual runtime before tracing a completed supported update. Destination, name/path, trust, accepted caller, operation/resource authority, connector support and valid inputs retain separate purposes.
+- The main denial follows supplied va-02/production/protected-path and target audit evidence. Five original investigations, response/component/detail distinctions and the read-only SaaS disable-design transfer remain.
+- Defines required terms locally, including DNS resolver, payload/field/mapping/schema, HTTP responses, request reference/timezone, registration/admission, reconciliation, rollback/idempotence and frontend/backend. The human investigation loop is separate from internal processing order or an automatic retry mechanism.
+- Neutral orders-reader/svc-orders/orders.export, Orders-Production/Orders-Prod and orders-prod with va-01/va-02 retain necessary conditions. Existing viewing access, missing export and hypothetical repeat-effect examples remain explicit; no biography or company story is required.
+- Current editable [actual connector-path map](../assets/ARC-005_actual_connector_paths.txt) and [investigation/correction/verification map](../assets/ARC-005_investigation_correction_and_verification.txt).
+- Historical [revision 2.0 record](revisions/ARC-005_Concept_Led_Revision_Record.md), [runtime operation paths](../assets/ARC-005_runtime_operation_paths.txt) and [evidence/recovery map](../assets/ARC-005_evidence_scoped_action_and_recovery.txt) are preserved.
+- Source/coverage and full simulated-beginner author read-through are complete. Actual beginner validation and rendered publication review remain pending separately. No tenant, runtime, credential, privilege, recovery or target action was performed.
+- Published ARC-005 remains revision 2.0 in the verified [October 26 batch 2](PUBLICATION_2026-10-26_BATCH_2.md); revision 3.0 is not pushed or deployed. Earlier revision is recoverable at main 0b1a003ca94a8c4fc0665f5a1d4222665f4acba4. ARC-006 is next.
 
 ### Historical verification record: revision 1.0
+
+The following record preserves revision 1.0 and its examples. Current verification is in the revision-3.0 record above.
 
 - Lesson: [ARC-005](../lessons/ARC-005_Connection_Dependencies_and_Operation_Support.md), revision 1.0.
 - Course placement: Module 3.5.
@@ -6939,18 +6956,20 @@ Questions and worked reasoning remain in the learner file. Reference evidence, a
 
 ## ARC-004
 
-- Current learner revision: **2.0**, revised October 26, 2026 under teaching specification v3.1.
-- Current [coverage, twenty-two primary references, conditions, assessments and verification](revisions/ARC-004_Concept_Led_Revision_Record.md).
-- Establishes operation-specific Windows work, component/account roles and a complete group assignment before protected connection, failure, evidence, scripting and maintenance details.
-- Neutral docs-reader and short component/account labels replace biography and employee number 34004. Group purpose and the four credential roles remain explicit. All six cases and the read-operation transfer remain.
-- Current editable [operation map](../assets/ARC-004_isc_va_iqservice_and_directory.txt) and [prerequisite/verification map](../assets/ARC-004_connection_admission_and_target_checks.txt).
-- Documentation-based author review is separate from beginner validation, graphical publication review and formal approval, which remain pending. No tenant/infrastructure or security operation performed.
-- Revision 2.0 remains local; published ARC-004 remains revision 1.0. Baseline recoverable at da1e1da7c94421e03e8437e94eb49e3fe56fd3ec. Revised publication remains through ARC-001.
-- Publication update: revision 2.0 is included in October 26 batch 2. See [current deployment verification](PUBLICATION_2026-10-26_BATCH_2.md); earlier local-only statements describe the authoring/review stage.
+- Current learner revision: **3.0**, revised October 28, 2026 under teaching specification 3.2; saved locally only.
+- Current [101-purpose coverage, twenty-three primary references, explanation review, conditions, assessment and verification record](revisions/ARC-004_Beginner_Explanation_Revision_Record.md).
+- Explains operation-specific Windows work and ISC/VA/IQService/directory roles before an existing-account group change. Four account purposes distinguish recipient, source target authority, registered client and Windows service logon.
+- The normal assignment precedes the separate expired-certificate run. Server trust, client admission, operation capability and directory authority remain separate, as do repair, supported recovery and verified membership.
+- Defines necessary terms locally, including registration/admission, process, certificate/key/trust, frontend/backend, script/handler/context, reconciliation, timeout and rollback. Current TLS/client-authentication and ScriptExecutor requirements remain verified rather than inferred from old form labels or workarounds.
+- All six worked cases, five supplied expiry observations, shared endpoint/update dependencies and different-connector required-read transfer remain. No biography or fictional company is required.
+- Current editable [directory-group component map](../assets/ARC-004_components_in_a_directory_group_update.txt) and [secure-connection/separate-checks map](../assets/ARC-004_secure_connection_and_separate_checks.txt).
+- Historical [revision 2.0 record](revisions/ARC-004_Concept_Led_Revision_Record.md), [operation map](../assets/ARC-004_isc_va_iqservice_and_directory.txt) and [prerequisite map](../assets/ARC-004_connection_admission_and_target_checks.txt) are preserved.
+- Source/coverage and full simulated-beginner author read-through are complete. Actual beginner validation and rendered publication review remain pending separately. No tenant, Windows, service, account, credential, security or target operation was performed.
+- Published ARC-004 remains revision 2.0 in the verified [October 26 batch 2](PUBLICATION_2026-10-26_BATCH_2.md); revision 3.0 is not pushed or deployed. Earlier revision is recoverable at main 0b1a003ca94a8c4fc0665f5a1d4222665f4acba4. ARC-005 is next.
 
 ### Historical verification record: revision 1.0
 
-The preserved record below describes the earlier version and examples. Current verification is in the revision-2.0 record above.
+The preserved record below describes the earlier version and examples. Current verification is in the revision-3.0 record above.
 
 - Lesson: [ARC-004](../lessons/ARC-004_Where_IQService_Fits.md), revision 1.0.
 - Course placement: Module 3.4.
@@ -7019,18 +7038,19 @@ Questions and worked reasoning remain in the learner file. Reference evidence, a
 
 ## ARC-003
 
-- Current learner revision: **2.0**, revised October 26, 2026 under teaching specification v3.1.
-- Current [coverage, eighteen primary references, conditions, assessments and verification](revisions/ARC-003_Concept_Led_Revision_Record.md).
-- Separates application hosting from connector runtime, establishes destination/caller/settings, completes read and supported change, then develops evidence, authentication variants, external dependencies and eligible migration.
-- Neutral Projects-Production, project-reader and existing technical workspace/client/permission values replace biography, 33003 and ProjectBoard. Six original cases and the private-Payroll proposal remain.
-- Current editable [runtime/API comparison](../assets/ARC-003_runtime_and_external_api_paths.txt) and [collection/change map](../assets/ARC-003_collected_data_and_supported_change.txt).
-- Documentation-based author review is separate from beginner validation, graphical publication review and formal approval, which remain pending. No tenant/API operation or migration performed.
-- Revision 2.0 remains local; published ARC-003 remains revision 1.0. Baseline recoverable at da1e1da7c94421e03e8437e94eb49e3fe56fd3ec. Latest revised published snapshot remains through ARC-001.
-- Publication update: revision 2.0 is included in October 26 batch 2. See [current deployment verification](PUBLICATION_2026-10-26_BATCH_2.md); earlier local-only statements describe the authoring/review stage.
+- Current learner revision: **3.0**, revised October 28, 2026 under teaching specification 3.2; saved locally only.
+- Current [102-purpose coverage, eighteen primary references, explanation review, conditions, assessment and verification record](revisions/ARC-003_Beginner_Explanation_Revision_Record.md).
+- Separates browser/application hosting from connector runtime, then explains the API target, production/test destination, integration caller and source settings before tracing a complete collection and supported access change.
+- Defines required concepts locally, including schema/account identifier, pagination/continuation, frontend/backend, token methods, reconciliation and migration/type/timing dependencies. Source labels, represented data and actual target results retain distinct meanings.
+- Neutral Projects-Production, Delivery-Prod/Delivery-Test, project-reader, isc-project-prod and project.view preserve technical conditions without biography or a fictional company. All six worked cases, separate partial-read/lost-response variations and private-payroll transfer remain.
+- Current editable [hosted/VA execution comparison](../assets/ARC-003_hosted_and_va_connector_execution.txt) and [read/permission-change map](../assets/ARC-003_read_and_permission_change.txt).
+- Historical [revision 2.0 record](revisions/ARC-003_Concept_Led_Revision_Record.md), [runtime/API map](../assets/ARC-003_runtime_and_external_api_paths.txt) and [collection/change map](../assets/ARC-003_collected_data_and_supported_change.txt) are preserved.
+- Source/coverage and full simulated-beginner author read-through are complete. Actual beginner validation and rendered publication review remain pending separately. No tenant, API, token, permission or migration operation was performed.
+- Published ARC-003 remains revision 2.0 in the verified [October 26 batch 2](PUBLICATION_2026-10-26_BATCH_2.md); revision 3.0 is not pushed or deployed. Earlier revision is recoverable at main 0b1a003ca94a8c4fc0665f5a1d4222665f4acba4. ARC-004 is next.
 
 ### Historical verification record: revision 1.0
 
-The preserved record below describes the earlier version and examples. Current verification is in the revision-2.0 record above.
+The preserved record below describes the earlier version and examples. Current verification is in the revision-3.0 record above.
 
 - Lesson: [ARC-003](../lessons/ARC-003_SaaS_Connectors_and_Their_Connection_Path.md), revision 1.0.
 - Course placement: Module 3.3.
@@ -7097,18 +7117,19 @@ Questions and worked reasoning remain in the learner file. Documentation, assess
 
 ## ARC-002
 
-- Current learner revision: **2.0**, revised October 26, 2026 under teaching specification v3.1.
-- Current [coverage, fourteen primary references, conditions, assessments and verification](revisions/ARC-002_Concept_Led_Revision_Record.md).
-- Establishes the actual component, source/cluster/member relationship and outbound exchange, completes a supported normal operation, then develops dependency/health/HA/DR and failure/recovery reasoning.
-- Neutral source/member/account labels replace biography, 32002 and AssetDesk. All six cases, the five-condition DNS failure and Payroll transfer remain.
-- Current editable [cluster/member map](../assets/ARC-002_sources_cluster_and_running_members.txt) and [connection/work map](../assets/ARC-002_connection_initiation_and_work.txt).
-- Documentation-based author review is separate from beginner validation, graphical publication review and formal approval, which remain pending. No actual infrastructure/tenant operation was performed.
-- ARC-002 revision 2.0 remains local after the authorized publication through ARC-001. Published ARC-002 remains revision 1.0; baseline recoverable at da1e1da7c94421e03e8437e94eb49e3fe56fd3ec.
-- Publication update: revision 2.0 is included in October 26 batch 2. See [current deployment verification](PUBLICATION_2026-10-26_BATCH_2.md); earlier local-only statements describe the authoring/review stage.
+- Current learner revision: **3.0**, revised October 28, 2026 under teaching specification 3.2; saved locally only.
+- Current [90-purpose coverage, fourteen primary references, explanation review, conditions, assessment and verification record](revisions/ARC-002_Beginner_Explanation_Revision_Record.md).
+- Explains source/cluster/member association, queue and polling before tracing VA-initiated cloud communication, the separate target path and a complete supported update. Actual-member dependencies connect DNS, health and recovery reasoning.
+- Neutral asset-reader/svc-assets/asset.read and the two-source/two-member map preserve the actor and relationship distinctions. The five-observation DNS variation, six worked cases, separate lost-response outcome and Payroll shared-route transfer remain.
+- Compares one-cluster cross-location members with separate-cluster switching; keeps required credential preparation, capacity/target dependencies, maintenance/replacement scope and conditional customer-provided-OS duties.
+- Current editable [source/cluster/member-work map](../assets/ARC-002_source_cluster_and_member_work.txt) and [initiated-connection/work-exchange map](../assets/ARC-002_initiated_connections_and_returned_work.txt).
+- Historical [revision 2.0 record](revisions/ARC-002_Concept_Led_Revision_Record.md), [cluster/member map](../assets/ARC-002_sources_cluster_and_running_members.txt) and [connection/work map](../assets/ARC-002_connection_initiation_and_work.txt) are preserved.
+- Source/coverage and full simulated-beginner author read-through are complete. Actual beginner validation and rendered publication review remain pending separately. No infrastructure, tenant, network, credential or native-access operation was performed.
+- Published ARC-002 remains revision 2.0 in the verified [October 26 batch 2](PUBLICATION_2026-10-26_BATCH_2.md); revision 3.0 is not pushed or deployed. Earlier revision is recoverable at main 0b1a003ca94a8c4fc0665f5a1d4222665f4acba4. ARC-003 is next.
 
 ### Historical verification record: revision 1.0
 
-The preserved record below describes the earlier version and its examples. Current verification is in the revision-2.0 record above.
+The preserved record below describes the earlier version and its examples. Current verification is in the revision-3.0 record above.
 
 - Lesson: [ARC-002](../lessons/ARC-002_Virtual_Appliances_and_Clusters.md), revision 1.0.
 - Course placement: Module 3.2.

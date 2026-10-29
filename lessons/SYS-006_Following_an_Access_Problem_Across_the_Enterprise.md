@@ -1,100 +1,122 @@
 # Follow the access problem across the systems
 
-An employee has moved into Finance. They can sign in to the reporting application, but they cannot view the Finance reports they need.
+An employee moves into Finance. They can sign in to the reporting application, but they cannot open the Finance reports they need.
 
-Human resources, or HR, says the transfer is complete. The directory team says the workplace account is enabled. The SailPoint Identity Security Cloud (ISC) administrator says the reporting connection is working.
+Human Resources, or **HR**, confirms that the transfer is complete. The team managing workplace accounts confirms that the employee's account is enabled. The administrator of SailPoint Identity Security Cloud, or **ISC**, says the reporting connection works.
 
-All three statements can be correct. None, on its own, explains whether the right report permission reached the account being used.
+ISC is a cloud service for managing identities and access across systems. A working connection helps it communicate with a system. It does not explain whether this employee received the required report access.
 
-Let's make the missing result precise. The approved requirement gives active Finance employees permission to view Finance reports, not edit or export financial data. The application owner confirms that the employee's existing reporting account lacks the required viewing permission and has no alternative access that permits the operation.
+First, make the missing result specific.
 
-We now have something specific to investigate: the right account can sign in, but a particular operation is denied because a required permission is missing.
+A **permission** allows an action on a resource. Here, the action is viewing, and the resource is the Finance report collection. The approved requirement gives active Finance employees viewing access, without editing or exporting financial data.
 
-The question is how the employee's changed department was supposed to produce that permission, and where that connection stopped.
+The application owner checks the employee's reporting account. It is enabled and can sign in, but it lacks the viewing permission. There is no alternative grant that permits this operation. Editing and exporting are also unavailable.
 
-## Follow the same person without treating every record as the same record
+We now know more than “reporting does not work.” We know which action is denied, which account is involved and which permission is missing.
 
-An **account** is a record used by a person or service in a particular system. The reporting account holds information such as its identifier, enabled state, and permissions.
+The remaining question is how the department change was supposed to lead to that permission. Let's follow the information and decisions connecting them.
 
-An **identity** in ISC represents the person and connects information about their accounts and access. It is not the reporting application's own account.
+## Keep track of the person and the separate records
 
-That distinction matters because the same person appears in several places.
+An **account** is a record used by a person or service in a particular system. The reporting account has its own identifier, enabled status and permissions.
 
-HR holds an employment record. A **directory** stores workplace accounts and related information that other systems can use. The reporting application holds the account that opens reports. ISC holds collected representations of accounts, the person's identity, and the configuration used to manage access.
+ISC keeps a person-level record called an **identity**. It connects the person's information with accounts and access across systems. It is not the reporting application's account.
 
-A department value on the directory account can differ from the department on the HR record. The organization may expect them to agree, but they are still separately stored values.
+The same employee therefore appears in several records.
 
-Before following the information, confirm that the records belong to the intended person. Use the relevant identifiers and system context, not a shared display name alone. Two people can have the same name, and one person's account names can differ across systems.
+HR holds the employment record. A **directory** stores workplace accounts and related information that other systems can use. The reporting application holds its own account. ISC holds collected account information, the identity and the configuration used to manage access.
 
-An employee identifier identifies the person under the organization's rules. The system context and account identifier tell you which particular account you are following. They answer different questions.
+Suppose HR says department Finance while the directory says Operations. Those are separately stored values. Updating the HR record does not, by itself, replace the directory's value.
 
-For the main investigation, assume those relationships have been verified: there is an existing ISC identity, the relevant accounts belong to it, and the employee is using the one suitable, enabled reporting account. There is no wrong-person or wrong-account association hiding in the supplied facts.
+Before comparing them, establish that they belong to the same person.
 
-Those are established conditions for this example, not checks you can omit from a real investigation.
+An employee identifier distinguishes the employee under the organization's rules. An account identifier, together with its system context, identifies a particular account.
 
-## A value must reach ISC before ISC can use it
+A shared display name is not enough. Two people can share a name, and the same person's account names can differ across systems.
 
-Within ISC, a **source** is the configured representation of a system or collection of account data. A **connector** provides the integration used to obtain that data and, where supported and configured, perform changes.
+For our main investigation, those relationships have been verified. The ISC identity exists, the relevant accounts belong to that person, and the employee is using the one suitable, enabled reporting account.
 
-The reporting source is therefore not the reporting application itself. It represents information and integration configuration inside ISC; the employee opens reports in the external application.
+This means the supplied problem concerns the intended person and the account actually being used for reports. In real work, those relationships still need evidence before you rely on them.
 
-Here, ISC has sources for HR, the directory, and reporting.
+## Check what information reached ISC
 
-**Aggregation** collects account information into ISC. For example, HR may already hold the new department while ISC still holds information read before the transfer. A completed business change and a completed collection are separate events.
+ISC represents the HR, directory and reporting account data through configured **sources**. A source represents a system or collection of account data being managed.
 
-Collection gives ISC an observation of account data within the operation's scope. It does not guarantee that every account was included, and it is not a permanent live view of the external system.
+The **connector** provides the integration used to read that data and perform supported, configured changes. The source is the representation inside ISC; the reporting application is where the person opens reports.
 
-**Account correlation** associates a collected account with the appropriate ISC identity. Configured matching can compare an account value with a corresponding identity value to establish that relationship.
+Reading source account information into ISC is **account aggregation**.
 
-Aggregation answers, "What information did ISC obtain?" Correlation answers, "Which identity is this account associated with?" Neither means that every value on the account automatically becomes the identity's corresponding value.
+For example, the current HR record might already contain Finance while ISC still holds an earlier observation containing Operations. The employment change and its collection are different events.
 
-This is the next connection to inspect.
+Aggregation tells us what information ISC obtained within that operation's scope. It does not promise that every account was included or that the displayed information remains current forever.
 
-## Which department is actually used on the identity?
+The collected account also needs to be associated with the right identity.
 
-An **attribute** is a named piece of information on a record. Department on an HR account, department on a directory account, and department on the ISC identity are three attributes on three records.
+**Account correlation** matches and associates a source account with an ISC identity. Configured matching can compare a selected account value with a corresponding identity value.
 
-The shared word "department" does not make them one shared value.
+That relationship answers whose account ISC is representing. It does not copy every account value into the identity automatically.
 
-A **mapping** specifies where an output attribute gets its value, either from a selected input or a calculation. An identity department mapping could select department from an associated HR account or from an associated directory account. Those choices can produce different results for the same person.
+So we have two separate questions: did ISC obtain the new HR information, and what instruction determines the value used on the identity?
 
-The configuration that includes identity-attribute mappings is the **identity profile**. It is associated with an **authoritative source**, whose records provide the basis for establishing that population of identities. HR supplies the employee population here.
+## Follow the department value into the identity
 
-Do not read "authoritative" as "supplies every value." HR can establish the population while a mapping uses another source for a particular attribute. That can be intentional, such as taking an email address from a directory. You need the actual mapping to know what supplies department.
+An **attribute** is a named field on a record. Department on the HR account, department on the directory account and department on the ISC identity are different attributes on different records.
 
-For this investigation, the approved design says HR supplies employment department. Selecting directory department conflicts with that agreement. It would not be inherently wrong in every organization.
+The common name does not make them one shared field.
 
-Now inspect the supplied observations. The transfer became effective at 08:00. The values and times below are hypothetical evidence, not a tenant execution trace.
+The identity needs a department value. A **mapping** tells ISC where that output value comes from, using a selected input or a calculation.
 
-| Record or configuration | Observed value or selection |
+A mapping that selects HR department can produce a different result from one that selects directory department. Both inputs may be available at the same time.
+
+For this employee population, the approved design says HR supplies employment department.
+
+Now compare the actual information. The transfer took effect at 08:00. These are hypothetical observations on the same day in the same time zone, not a promised processing interval.
+
+| Record or configuration | What we find |
 |---|---|
 | Current HR employment record | Department FIN; employment status ACTIVE |
-| HR account data collected into ISC at 08:10 | Department FIN; employment status ACTIVE |
+| HR account collected into ISC at 08:10 | Department FIN; employment status ACTIVE |
 | Current directory account | Department OPS |
-| Directory account data collected into ISC at 08:15 | Department OPS |
+| Directory account collected into ISC at 08:15 | Department OPS |
 | Identity department mapping | Select department from the associated directory account |
 | Identity employment-status mapping | Select employment status from HR |
-| Current ISC identity, after applicable processing | Department OPS; employment status ACTIVE |
+| Current ISC identity after applicable processing | Department OPS; employment status ACTIVE |
 
-Here, `FIN` means Finance and `OPS` means Operations. Employment status is an illustrative attribute describing employment information. `ACTIVE` means active employment in this example; it does not establish that an application account is enabled or that an identity is included in every ISC process. Those conditions need their own evidence.
+**FIN** means Finance. **OPS** means Operations. **ACTIVE** describes active employment in this example.
 
-Follow just the department value for a moment.
+That employment-status value is not the reporting account's enabled status. It also does not establish that an identity is eligible for every ISC processing operation. Those are separate conditions; the relevant processing has run for this identity in our supplied case.
 
-HR's FIN reached ISC. The directory's OPS also reached ISC. Both inputs are available, but the mapping selects the directory input. The identity therefore has OPS under this configuration.
+Let's follow only department.
 
-ISC has not failed to obtain HR's new value. It is using a different input for the identity attribute.
+HR's FIN reached ISC at the collected HR account. The directory's OPS also reached ISC. The mapping selects the directory value, so the identity receives OPS.
 
-What would another collection of the unchanged HR record accomplish? It could read FIN again. It would not redirect a mapping that still selects the directory.
+Nothing in that instruction says “use whichever account has the newest department” or “use HR because it exists.” The selected input controls the result in this configuration.
 
-The directory's older department may deserve its own investigation. But changing that value is not a substitute for making this identity mapping agree with the approved design.
+This explains why another collection of unchanged HR data would not fix the selection. It could obtain FIN again, but the mapping would still read the directory's OPS.
 
-## How does an identity value lead to a permission?
+The directory's older value may need its own follow-up. It is not a reason to leave the identity mapping in conflict with the approved HR-input design.
 
-A department value is information. The application needs an access right. Something must connect the two.
+### Where is this selection configured?
 
-A **role** groups access for a responsibility or population. Its assignment configuration determines who receives it automatically, where that automatic path is used.
+An **identity profile** holds shared configuration for a population of identities, including their identity-attribute mappings.
 
-**Assignment criteria** are the conditions used to decide who qualifies. In this example, an enabled role named "Finance Reports" requires:
+It is associated with an **authoritative source**, whose accounts establish that identity population. HR establishes the employee population here.
+
+Establishing the population and supplying every attribute are different jobs. The profile could use HR for employment facts and a directory for an email address.
+
+Calling HR authoritative therefore does not answer where identity department comes from. Inspect the actual mapping.
+
+Selecting directory department is wrong in this case because the approved design selects HR. It is not inherently wrong for every organization or every attribute.
+
+## Connect the identity value to the required access
+
+A department value is information. It is not a report permission.
+
+A **role** groups access for a business responsibility or population. Its automatic assignment configuration determines which identities qualify through that path.
+
+**Assignment criteria** are the conditions used to decide who qualifies.
+
+Our enabled role, “Finance Reports,” uses these complete conditions:
 
 ```text
 Identity department equals FIN
@@ -102,348 +124,368 @@ AND
 Identity employment status equals ACTIVE
 ```
 
-AND means both conditions must be true. An active employee outside Finance does not qualify through these conditions.
+AND means both conditions must be true. An active employee outside Finance does not qualify through this rule.
 
-Notice what the criteria read: identity attributes. FIN on the collected HR account cannot directly satisfy a condition that reads an identity department currently equal to OPS.
+The first condition reads **identity department**. FIN on the collected HR account cannot satisfy a comparison whose actual input is the identity's OPS.
 
-The role also needs access contents.
+Evaluate the two conditions with the values already found:
 
-An **entitlement** is an access item represented from a source, such as an application permission or group membership. The reporting application gives this example's viewing permission its meaning: opening the Finance report collection, without edit or export permission.
+- Department OPS equals FIN: false.
+- Employment status ACTIVE equals ACTIVE: true.
+- False AND true: false.
 
-An **access profile** bundles related entitlements from one source. Here, a profile named "Finance report viewing" contains that viewing entitlement, and the Finance Reports role includes the profile.
+The condition does not qualify this identity for the role.
 
-The criteria answer who qualifies. The access contents answer what the role requires for someone who qualifies. The application determines what those rights actually allow.
+Assigning the role would associate its access requirements with the identity. Here, the role was not already assigned, and this automatic path does not newly assign it. It therefore does not generate the expected new grant.
 
-Other role designs can use supported account attributes or entitlements as inputs. Inspect the configured input type rather than assuming every condition reads the identity.
+That is different from an attempted account update being rejected. We have not reached the qualifying decision that would require this new addition.
 
-**Identity processing** evaluates identity information and applicable access configuration. It applies identity mappings and evaluates role eligibility as part of that work. When this path assigns the role, the required access can initiate **provisioning**, the process that performs supported account or access changes.
+These comparisons explain the supplied configuration and values. They do not claim that ISC exposes a separate log entry for every condition.
 
-The **target system** is the system receiving the attempted change. Here, it is the reporting application, and the intended change is adding the viewing permission to the existing reporting account.
+### What access would a qualifying identity receive?
 
-For the main path, assume the necessary ISC services are enabled, the role and its contents are correctly configured, and the integration supports the required addition. The role was not already assigned, the permission is absent, and no other grant path provides it.
+ISC represents source access rights as **entitlements**. The report-viewing permission is represented as an entitlement from the reporting source.
 
-Now evaluate the identity values supplied in the table:
+An **access profile** bundles related entitlements from one source. The profile “Finance report viewing” contains the viewing entitlement, and Finance Reports includes that profile.
 
-Department OPS does not equal FIN. Employment status ACTIVE does equal ACTIVE. One condition is false, so the combined condition is false.
+The role's criteria decide who qualifies. Its contents specify what access is required. The application determines what the permission allows.
 
-The role is not newly assigned through this automatic path. Consequently, this path does not generate the expected new grant.
+For this example, the viewing right permits opening the Finance report collection. It does not permit editing or exporting. It is an ordinary held permission, with no separate activation needed after delivery.
 
-That does not mean a provisioning attempt failed. The required assignment condition was not met in the first place.
+This is one chosen role design. Other supported role criteria can read source account attributes or entitlements. Other roles can contain entitlements directly. Inspect the actual input types and contents rather than assuming every role follows this arrangement.
 
-This comparison is reasoning from supplied values and configuration. It is not a promise that ISC displays a separate log line for each condition.
+## What would turn a matching condition into a usable permission?
 
-## Read the map as connected responsibilities
+**Identity processing** evaluates identity information and applicable access configuration. It applies identity mappings and evaluates role eligibility as part of that work.
 
-The relationship between data, configuration, decisions, and delivery can now be drawn:
+When this path assigns the role, its required access can initiate **provisioning**, which makes supported account or access changes.
+
+The **target system** is the system receiving the operation. Here, it is the reporting application, and the operation adds the viewing permission to the employee's existing reporting account.
+
+A **technical account** is an account the integration uses to perform work in the target. The employee's **recipient account** receives the permission. Authority to update that account belongs to the integration actor; permission to view reports belongs to the recipient.
+
+Some connectors use another supported authentication mechanism instead of a dedicated technical account. The requirement for authority to perform the update still applies.
+
+The person and account are correctly associated. The necessary ISC services are enabled, the role and profile are correctly configured, and the connector supports the addition. Provisioning is enabled, connectivity works and the integration has the authority needed for the successful delivery described later.
+
+The viewing permission is initially absent, and no other grant path supplies it.
+
+A qualifying identity would therefore create a requirement that still needs delivery. The application must accept and apply the change. Its own permission rules then determine whether the report can be opened.
+
+In our starting state, the input selection prevents the qualifying decision. The working reporting connection cannot compensate for that earlier mismatch.
+
+## Put the connections beside one another
+
+The current collected department inputs, the selected identity value and the access decision connect like this:
 
 ```text
-HR: FIN                  Directory: OPS
-   |                           |
-aggregation               aggregation
-   v                           v
-Collected FIN             Collected OPS
-   \                           /
-    \                         /
-     Department mapping selects
-          directory input
-                 |
-                 v
+COLLECTED INPUTS
+HR department: FIN
+Directory department: OPS
+          |
+Department mapping selects directory
+          |
 Identity department: OPS
-Employment status: ACTIVE, from HR
-                 |
-        identity processing
-                 v
-Role: department FIN AND status ACTIVE?
-        /                     \
-      no                       yes
-      |                         |
-      v                         v
-No new grant              Role assigned
-from this path                  |
-                                v
-                         Required access
-                         profile contents
-                                |
-                           provisioning
-                                v
-                         Reporting account
-                         applied/rejected
-                                |
-                         application check
-                                v
-                         Viewing allowed
-                         or denied
+Identity employment status: ACTIVE
+          |
+Role requires FIN AND ACTIVE
+    /                    \
+  no                     yes
+   |                      |
+No new grant         Role assigned
+from this path            |
+                  Profile viewing right
+                          |
+                     Provisioning
+                  rejected -> inspect
+                  applied
+                          |
+                  Target holds right
+                          |
+                  Check intended use
 
-Separate observation:
-Reporting account --aggregation--> ISC
+OBSERVE SEPARATELY
+Reporting account -> collection -> ISC
 
-Arrows show example dependencies,
-not ISC's internal service topology.
+Investigators compare each connection.
 ```
 
-The department selection shown is the current, incorrect selection for this approved design. The status input comes from HR. After the department mapping is corrected and applied, FIN can reach the identity and the same criteria can take the matching branch.
+The mapping has both collected inputs available and selects the directory input. The employment-status input comes from HR.
 
-The "yes" branch requires more than a matching comparison to produce usable access. The role requires the profile's access; provisioning attempts the account change; the application applies or rejects it; and the application checks the actual viewing operation.
+The displayed OPS leads to the no branch. Correcting and applying the department mapping can supply FIN, allowing the same condition to take the yes branch.
 
-The observation line reads information back into ISC. It does not perform the write or prove that the application operation works.
+The yes branch needs the role contents, supported delivery, target acceptance and application permission rule. A matching comparison alone does not establish usable access.
 
-These arrows show dependencies in this example, not private ISC services or a guaranteed immediate round trip. A connector can have additional execution and network dependencies. The map does not diagnose or correct them automatically.
+The separate observation line reads the reporting account back into ISC. It does not perform the grant or test report viewing.
 
-Your investigation supplies the human connection: compare what was required, which inputs were selected, which decisions followed, and what the application actually did.
+The arrows show these example dependencies. They are not a private ISC service map, fixed processing sequence or guarantee of immediate readback. A real connector can have additional execution and network dependencies.
 
-## Investigate from the symptom, then explain the cause forward
+The investigator supplies the comparison between required and observed results. Drawing the map does not automatically diagnose or correct the systems.
 
-When someone reports missing reports, you do not yet know that the mapping is wrong.
+## Explain the cause from the evidence
 
-You can work backward from the application: which account was used, which operation was denied, which right is missing, and what was supposed to provide it?
+When the report problem first arrives, you do not yet know that the mapping is wrong.
 
-You can also work forward from the transfer: what changed in HR, what reached ISC, what populated the identity, and what condition consumed that value?
+You can investigate backward from the denied application action: which account, which report, which missing permission and which expected grant path?
 
-Neither starting point is mandatory. The important thing is to connect the evidence rather than stop at the first reassuring status.
+You can also start with the transfer: which HR value changed, what reached ISC, which mapping selected it and which rule used the output?
 
-For this example, application evidence identifies the missing viewing permission and corresponding denial. The verified account association establishes that you are following the intended person and account. The approved access design identifies the automatic role as the expected grant path.
+Either direction can work. The result needs to connect the same person, records and operation.
 
-The role's current criteria use identity department and employment status. Those identity values do not qualify. The mapping and collected inputs explain why: the mapping selects directory OPS even though the approved input, HR FIN, is available.
+For the supplied case, the application confirms the missing viewing right and its corresponding denial. The account association is verified. The approved access design identifies the automatic role as the expected path.
 
-The comparison is doing what its configured input tells it to do. The defect is the input selection's disagreement with the design.
+The role reads identity department and employment status. Those values do not qualify. The mapping explains why the identity has OPS despite collected HR FIN being available.
 
-You can state the cause in connected sentences:
+You can now give a cause another engineer can inspect:
 
-> HR's FIN value reached ISC. The identity department mapping selects directory OPS instead. The Finance Reports criteria therefore do not match, so this automatic path has not generated the expected grant. The reporting account lacks the permission, which explains the application's denial under the supplied rule.
+> HR's FIN value reached ISC. The identity department mapping selects directory OPS instead. The Finance Reports criteria do not match, so this automatic path has not generated the expected new grant. The reporting account lacks the viewing permission, which explains the application's denial under the supplied rule.
 
-Each sentence has a link another engineer can inspect.
+The rule is comparing the input it was configured to read. The defect is the mapping's disagreement with the approved input design.
 
-An empty activity search would not establish that chain on its own. It might reflect search scope, available history, record freshness, processing not having run, or a different grant path. Here, the conclusion depends on the configuration, values, processing conditions, and application evidence together.
+An empty activity search would not establish that explanation on its own. The query might exclude the relevant work, the history might be unavailable, processing might not have run or another grant path might apply.
 
-## Correct the wrong connection without changing the requirement
+Here, the conclusion comes from the values, configuration, confirmed evaluation conditions and application evidence together.
 
-Several actions might change a symptom without repairing the cause.
+## Correct the selected input without changing who should qualify
 
-Changing HR back to OPS would corrupt correct employment information. Resetting the employee's reporting password would not change the role's input. Repeatedly collecting unchanged HR data would still leave the mapping pointed at the directory.
+Changing HR back to OPS would damage correct employment information. Resetting the employee's password would not redirect the mapping. Repeating collection would still leave the same selection.
 
-Changing the role to include every active employee would be worse: it would replace a Finance-only access policy with a wider one just to make one person qualify.
+Changing the role to include every active employee would alter the approved policy. Active Operations employees would then qualify too.
 
-The lasting correction here is to select the approved HR input for identity department.
+The lasting correction for the demonstrated fault is to select the approved HR input for identity department.
 
-But the mapping is shared configuration. It does not apply only to the employee who reported the problem.
+Before applying it, assess the shared configuration.
 
-Consider another person whose directory says FIN while HR says OPS. Switching department to HR could make that person's value change in the opposite direction. Their eligibility could change too. That might be the intended correction, but the affected access needs assessment before applying it.
+Imagine another employee whose directory says FIN while HR says OPS. Switching the mapping to HR can change that person's identity department in the opposite direction.
 
-A **dependency** is something that relies on another value or capability. A role that reads department depends on the department mapping's result. Other access rules, calculations, or configured automation may use that value as well.
+Their access eligibility may change too. That might be the intended result, but it must be understood rather than discovered accidentally.
 
-Find those consumers and assess the affected population, including people who should gain access and people whose existing access could change. Preserve the original evidence before replacing it with the corrected state.
+A **dependency** is something that relies on another value or capability. The role depends on the mapped department value. Other access conditions, calculations or configured automation may depend on it as well.
 
-Use the available preview and testing facilities. A mapping preview helps inspect the proposed value for selected identities. It does not execute every later application change or establish the final permission outcome.
+Find those uses and the affected population. Consider both people who should newly qualify and people whose existing access could change. Preserve the original evidence before the corrected state replaces it.
 
-An urgent business need may justify a separately authorized temporary grant. It still needs a defined recipient, scope, tracking, and removal plan. It does not correct the shared mapping, and its presence must be considered when checking later results.
+A **mapping preview** lets you inspect the proposed identity value for selected identities. It helps check the selection. It does not execute every later target change or verify the final report permission.
 
-## Follow the corrected value all the way to use
+If urgent work needs a temporary grant, use a separately authorized arrangement with a defined recipient, scope, tracking and removal plan. That grant does not correct the shared mapping. Include its presence when explaining later results.
 
-After impact assessment and authorization, the engineer changes the mapping to select HR department and applies the required processing through the supported procedure.
+## Follow the correction through to the report
 
-Saving a mapping is not the same as having its result applied to the identity. Verify the current identity value and the applicable processing rather than treating a configuration screen as the outcome.
+After assessment and authorization, the engineer changes the mapping to select HR department and applies the required processing through the supported procedure.
 
-In this hypothetical successful continuation, the results are:
+Saving the selection and applying its result are different events. Check the current identity value and relevant processing, rather than treating the saved configuration screen as the completed outcome.
 
-| Evidence point | What is established |
+For this hypothetical continuation, the identity is eligible for the applicable processing, which evaluates the current mappings and role configuration.
+
+The results are:
+
+| Evidence | What we establish |
 |---|---|
-| Applied identity values | Department FIN; employment status ACTIVE |
-| Role assignment | The identity now qualifies and Finance Reports is assigned |
-| Required access | The included profile requires the report-viewing permission |
-| Provisioning result | The supported addition to the intended reporting account reports success |
-| Current application account | The viewing permission is present |
-| Authorized, controlled use | That account can view the intended Finance reports |
-| Access boundary check | The change has not added edit or export permissions |
+| Current applied identity values | Department FIN; employment status ACTIVE |
+| Role assignment | Both conditions now match, and Finance Reports is assigned |
+| Required access | The included profile requires the viewing permission |
+| Provisioning result | The supported addition reports success for the intended account |
+| Current target account | The viewing permission is present |
+| Controlled application use | The same account can open the intended Finance reports |
+| Access boundary | The change has not added edit/export permissions; controlled checks keep those actions denied |
 | Later reporting collection | ISC's account observation reflects the added permission |
 
-These are supplied outcomes, not timings, separate mandatory screens, or a promise that collection automatically follows every write.
+The two conditions now pass because FIN equals FIN and ACTIVE equals ACTIVE. That explains the new qualification.
 
-Processing completion establishes neither successful provisioning nor usable access by itself. A successful provisioning report describes the operation result; checking the application's permission and the allowed operation addresses further questions.
+The later evidence establishes delivery and use. Identity-processing completion alone would not validate successful provisioning. A reported successful addition also does not replace checking the current target and the intended action.
 
-Use authorized checks and non-sensitive reports. Confirm both what should work and what should remain unavailable.
+Use authorized checks with non-sensitive reports. The supplied application checks current permissions for the operation, and the viewing right is sufficient for this collection. There is no future start, activation wait or extra application condition in this successful path.
 
-The corrected identity department can now be FIN while directory department remains OPS. Why? The mapping changed which input supplies the identity. It did not write a new value into the directory.
+These observations are supplied outcomes, not fixed timings or mandatory separate screens. The later collection is an observed event in the example, not an automatic round trip after every write.
 
-**Attribute synchronization** is a separate configured mechanism that writes selected identity values to corresponding account attributes through supported provisioning. It has its own mapping, account, and integration conditions.
+### Why can the directory still say OPS?
 
-If the organization wants identity department written to the directory, that needs its own supported configuration and validation. Collecting a value, using it for role eligibility, and writing it to another system are different operations.
+The mapping changed where identity department gets its value. It did not write department back to the directory.
 
-## Keep the sign-in relationship separate
+**Attribute synchronization** is a separate configured mechanism that writes selected identity values to corresponding account attributes through supported provisioning.
 
-The employee's successful sign-in was useful evidence at the start. It did not establish permission to view every report.
+It works on existing, correctly associated accounts under its applicable mappings and configuration. Having a collected account and an identity value does not automatically enable that write.
 
-**Authentication** verifies who is signing in. **Authorization** decides whether an actor may perform a particular operation on a resource. Opening a Finance report is an authorization question, even after sign-in succeeds.
+If the organization also wants identity department written to the directory, establish the supported synchronization design and verify its target result.
 
-The **front end** is the interface the user sees. A missing report tile is a clue, but hiding a tile is not enough to protect its report. Trusted application processing, the **back end**, must enforce the protected operation.
+Collecting an input, choosing it for the identity, using the output for role eligibility and writing a value to another account are different operations.
 
-An **identity provider** can carry out sign-in checks for an application that trusts it. The application must also identify which of its own accounts the sign-in represents. That sign-in account relationship is different from ISC's correlation between collected accounts and an identity.
+## Keep report permission separate from sign-in
 
-A **session** is the application's continuing signed-in context. If a person has several accounts, you must establish which account that session uses.
+**Authentication** verifies the claimed identity during sign-in using the configured checks. **Authorization** decides whether an actor may perform an action on a resource.
 
-For the main example, the account and current-permission evaluation are confirmed. Change those conditions and the conclusion may change.
+The employee's working sign-in establishes successful entry under that sign-in arrangement. The report-viewing action still needs its own authorization decision.
 
-Suppose the viewing permission was added to the intended account, but the user is signed in through a different one. Another grant to the first account will not fix that session's account choice.
+The **front end** is the page and controls the person sees. The **back end** is the trusted application processing that handles protected requests.
 
-Alternatively, an application may retain permission information in its session rather than immediately use a later change. Establish its documented reevaluation behavior before assuming a fresh permission is usable straight away. This is a conditional application behavior, not a claim that every application requires a new sign-in.
+A missing report tile can be a clue. Hiding the tile alone does not secure the report; the back end needs to enforce access when the report is requested.
 
-Check the actual account, resource, and permission rules before compensating for an unexplained denial with more access.
+An **identity provider** is a service the application trusts for sign-in checks. The application must also identify which of its own accounts that sign-in represents.
 
-## Changed evidence tells you where to look next
+That account selection is different from ISC account correlation. One connects a sign-in to an application account. The other connects collected accounts to an ISC identity.
 
-Keep the same symptom, but change one observation. The original mapping diagnosis no longer follows automatically.
+A **session** is the application's continuing signed-in context. Establish which account it uses.
 
-### HR is current, but its collected record is old
+In our main case, the correct session account and current-permission rule are confirmed. Different conditions can produce a different problem.
 
-HR shows FIN. ISC's collected HR account still shows OPS from before the transfer, and the mapping correctly selects HR.
+Suppose ISC delivered the right to the intended account, but the employee's session uses another account. Repeating the grant to the first account does not correct the session's account choice.
 
-The gap is now between current HR data and the information obtained by ISC.
+Another application may keep earlier permission information in its session. A new permission on the account might not immediately change that existing session's decisions.
 
-Inspect the record supplied by the export or connection, the population included, the relevant attribute, and the collection result. A job can complete without obtaining this person's changed value.
+Establish the application's actual reevaluation behavior before treating a new sign-in as necessary or sufficient. These are alternatives to investigate, not a rule that every application needs a fresh session after provisioning.
 
-Before changing the mapping, establish whether the approved input reached ISC at all.
+## Change the evidence, and the next check changes
+
+### HR changed, but its collected record did not
+
+HR now shows FIN. ISC's collected HR account still has OPS from before the transfer. The mapping correctly selects HR.
+
+This time, the selected input has not received the expected new value.
+
+Inspect the actual input supplied through the connection or export, the relevant record and attribute, collection coverage, results and times. A successful job can still exclude this person's updated data.
+
+Establish whether FIN reached the collected account before proposing a different mapping.
 
 ### The identity is correct, but the role is absent
 
-The identity shows FIN and ACTIVE. Finance Reports is not assigned.
+The identity now shows FIN and ACTIVE, but Finance Reports is not assigned.
 
-Inspect the actual enabled role, the complete criteria, their selected input types, and whether applicable processing evaluated the current values and configuration.
+Check the actual enabled role, its complete conditions and the types of records those conditions read. Establish whether applicable processing evaluated these values and the current configuration.
 
-A role's name does not prove its conditions. A correct current identity value does not prove that the relevant evaluation has already used it.
+The correct identity value does not establish that the required evaluation has already occurred. A role name does not establish its criteria either.
 
-Do not start with a connector-write fix before establishing that this path required a change and whether an attempt was made.
+Before changing connector privileges, determine whether this path required an addition and whether a delivery attempt was made.
 
-### The role is assigned, but delivery was rejected
+### The role is assigned, but the addition was rejected
 
-The criteria match and the role is present. Provisioning reports rejection because the integration lacks permission to add access.
+The criteria match and the role is present. The attempted permission addition was rejected for missing integration authority.
 
-A **technical account** is an account the integration uses to communicate with the application. Its authority to make changes is different from the recipient account's permission to read reports.
+Here, the technical account's authority to update the target is missing. That is different from the employee account's permission to view reports.
 
-The failing connection is now delivery, not department selection. Inspect the exact operation, recipient account, required integration privileges, reported error, and current application state.
+The gap is delivery. Inspect the exact operation, recipient account, required integration privileges, error and current target state.
 
-Choose an authorized recovery that fits those facts and supported behavior. Changing a correct identity mapping would not supply the integration's missing privilege.
+Arrange an authorized recovery suited to the actual state and supported behavior. Changing a correct department mapping would not supply that authority.
 
-### The permission is present, but the report is still denied
+### The permission is present, but a report is still denied
 
-The application confirms the viewing right on the intended account, yet one Finance report cannot be opened.
+The application confirms the viewing right on the intended account, yet a Finance report cannot be opened.
 
-Check the precise report, the signed-in account, session behavior, and additional application conditions. The real permission may be restricted to a business area or require another condition.
+Check the exact report, signed-in account, session behavior and complete application rule. Perhaps the right applies only to a particular business area or another condition is required. These are questions, not established causes.
 
-The main example assumed the stated viewing right was sufficient. New evidence of an additional requirement means the application rule needs a fuller explanation. It does not prove ISC failed to deliver the right already confirmed as present.
+The main example supplied a sufficient viewing right and a current-permission check. If those conditions differ, the application rule needs a fuller explanation.
 
-Also allow for more than one fault. Correcting an upstream input does not establish that later delivery or application behavior is healthy.
+Continued denial does not establish failure of the addition already confirmed as present. More than one fault can also coexist: correcting the input does not demonstrate healthy delivery or enforcement everywhere.
 
-## Read each screen for the question it can answer
+## Use each view to answer its own question
 
-A source-account view shows information ISC holds about that account. An identity's attributes show values on the person-level record. The identity profile's mapping shows how a value is configured to be obtained. The role definition shows the configured qualification conditions and access contents.
+A source-account view shows information ISC holds about that account. Identity attributes show values on the person-level record. Profile mappings show how those values are configured to be obtained.
 
-Provisioning Activity and Account Activity help investigate attempted changes and reported results. The application's own account and operation evidence address what exists and what the account can do there.
+The role definition shows qualification conditions and required access. Provisioning Activity and Account Activity help inspect attempted operations and reported outcomes or errors.
 
-Those views are not interchangeable versions of one fact.
+The application's current account and action evidence address what exists and what that account can do there.
 
-ISC Search provides searchable information, and updates can appear there later than in another record. Before drawing a conclusion from an empty result, check scope, relevant time, available history, and freshness. Do not wait blindly if you can obtain more direct evidence for the actual question.
+ISC **Search** queries searchable information. An update can become visible there later than in another view. An empty result therefore needs scope, time, available history and freshness checks.
 
-An investigation note should explain what its evidence establishes.
+Do not wait for a general refresh when more direct evidence can answer the actual question. Also do not turn one view's absence into a claim about every other system.
 
-"The HR account collected at 08:10 contains department FIN" establishes that this value reached that record. It does not establish that identity department uses it.
+An investigation note should connect its observation to the claim:
 
-"The department mapping selects the directory account" explains input selection.
+- “The HR account collected at 08:10 contains FIN” establishes that this value reached that record.
+- “The identity department mapping selects directory department” identifies the selected input.
+- “The role reads identity department, currently OPS” identifies the comparison input.
 
-"The criterion reads identity department, currently OPS" explains the condition's input. With the configured FIN comparison, you can then explain why it does not match.
+Together with the FIN condition, those findings explain the mismatch.
 
-Keep record identifiers and system context in actual investigation notes, even though invented keys are unnecessary for this illustration. Include relevant observation times. A screenshot without those details may leave the next engineer unable to tell which record or point in time it represents.
+Keep the real record identifiers, source/system context and observation times in working notes. The time a screenshot was taken is not necessarily when its account information was collected.
 
-## Mark a connection unknown until you have evidence
+## Leave an unchecked connection unknown
 
-You can make this investigation map on paper or in an ordinary document. It does not require a special ISC diagram feature.
+You can keep this evidence trail in an ordinary document. It does not require a special ISC diagram feature.
 
-For each connection, record the input, configuration, expected result, and evidence for the observed result. A short evidence trail for the main case would read:
+For each connection, identify the input, instruction, expected result and evidence of the actual result.
 
-- HR to collected HR account: FIN is present in the 08:10 observation.
-- Collected data to identity department: the design expects HR, but the mapping selects directory OPS.
-- Identity to role: department OPS fails the configured FIN condition.
-- Role to permission: this automatic path has not reached the condition that requires the new grant.
-- Permission to report use: the application confirms the missing right and corresponding denial.
+For our case, the trail is:
 
-If you have not checked a connection, mark it unknown. That gives you a next question rather than a false conclusion.
+- HR to its collected account: FIN arrived in the 08:10 observation.
+- Collected inputs to identity: the design expects HR, but the mapping selects directory OPS.
+- Identity to role: OPS fails the identity-department FIN condition.
+- Role to new grant: this automatic path has not qualified the identity for the expected addition.
+- Account to report use: the application confirms the missing right and corresponding denial.
 
-Do not label every later component faulty because an earlier dependency is wrong. In the main example, the application is correctly refusing an operation whose required permission is missing.
+If you have not checked a connection, mark it unknown. That leaves a useful next question.
 
-After correcting one connection, verify the rest. A good explanation identifies both what caused the supplied result and which outcomes still need evidence.
+An incorrect upstream selection does not make every later component faulty. In this case, the application correctly refuses an action whose required permission is absent.
+
+After correcting one connection, verify what follows. A cause explanation and a complete recovery are different results.
 
 ## Work through the changed records
 
 ### FIN is on the HR account, but OPS is on the identity
 
-The role is enabled. Its only qualifying path requires identity department FIN and employment status ACTIVE. The identity's status is ACTIVE, but its department is OPS. The collected HR account has FIN.
+An enabled role's only qualification path requires identity department FIN and employment status ACTIVE. The identity has ACTIVE and OPS. The collected HR account has FIN.
 
-Does FIN on that HR account satisfy the department condition?
+Does the HR value satisfy the department condition?
 
-**Worked reasoning**
+No. The condition reads the identity department. The HR account's value is not interchangeable with that input.
 
-No. The configured condition reads the identity department, not any record that happens to contain FIN.
+Inspect the mapping and applicable processing to explain the identity's OPS. If the approved design selects HR, compare that requirement with the actual selection.
 
-Inspect the mapping and applicable processing to establish why the identity has OPS. If the approved design selects HR, compare that requirement with the actual selection. The same field name on two records does not make their values interchangeable.
+### Repeating the same HR collection
 
-### Another successful HR collection is proposed
+HR FIN is already collected. The mapping still selects directory OPS. An engineer proposes collecting HR repeatedly until Finance Reports appears.
 
-HR FIN has already reached ISC. The identity mapping still selects directory OPS. An engineer proposes repeating HR collection until Finance Reports appears.
+Which instruction would change?
 
-What connection would remain unchanged?
+None in the supplied proposal. Reading FIN again does not make the mapping select it.
 
-**Worked reasoning**
+Assess the shared selection and dependent access, then correct it through the authorized process when it conflicts with the design. Other events during a new collection could have other effects; they would not make repetition a correction for this selection defect.
 
-The mapping would still select the directory. Reading an unchanged FIN value again does not redirect it.
+### Role assigned, permission absent
 
-Assess the shared mapping and dependent access decisions, then correct the selection through an authorized change if it conflicts with the design. Other changes during a new collection might have other effects, but they would not make repetition a repair for the supplied selection defect.
+The corrected identity qualifies and Finance Reports is assigned. The addition was rejected, and the application confirms the permission is missing.
 
-### The role is present, but the permission is absent
+Has the access requirement been delivered?
 
-The corrected identity qualifies. Finance Reports is assigned. The provisioning addition was rejected, and the application confirms that the permission is missing.
+No. The role establishes the requirement. The operation and target evidence show that delivery has not fulfilled it.
 
-Has the access requirement been fulfilled?
-
-**Worked reasoning**
-
-No. The assignment establishes required access through that role; the operation and account evidence show delivery has not fulfilled it.
-
-Investigate the rejection and applicable integration conditions. After authorized recovery, verify the actual permission and permitted operation. Changing correct role criteria is not justified merely because a write failed.
+Investigate the rejection and applicable integration conditions, arrange supported authorized recovery and verify the actual right and intended action. A failed write does not justify changing correct qualification criteria.
 
 ### Make every active employee qualify
 
-An engineer proposes replacing the Finance-and-active criteria with employment status ACTIVE alone.
+An engineer proposes replacing department FIN AND employment status ACTIVE with employment status ACTIVE alone.
 
-Would that repair the mapping defect?
+Would this fix the mapping?
 
-**Worked reasoning**
+It would widen eligibility to active employees outside Finance while leaving the selected department input unchanged.
 
-No. It would change who qualifies, including active employees outside Finance, without correcting the department selection.
+The condition would stop expressing the approved Finance requirement. Correct the input selection, or obtain a separately authorized broader design if the business requirement genuinely changes.
 
-The condition would no longer express the approved requirement. Repair the input selection, or obtain a separately authorized design if the business genuinely wants a broader population. Making the reported employee qualify is not sufficient evidence that a shared rule is correct.
+Making one reported employee qualify does not establish that a shared rule is correct.
 
-## Trace the same relationships in a different setting
+## Trace a contractor's warehouse access
 
-A contractor should receive warehouse-dashboard viewing access while assigned to location WH2. The contractor register is the approved source for location, and a directory also stores location.
+A contractor should receive warehouse-dashboard viewing access while assigned to location WH2.
 
-You are given these facts:
+The contractor register is the approved source for location. A directory also stores location.
 
-- The current contractor register and its collected ISC account both show WH2.
+The supplied facts are:
+
+- The current register and its collected ISC account show WH2.
 - The identity location mapping selects directory location.
-- The directory's collected location and the identity location are WH1.
-- An enabled automatic role requires identity location WH2.
+- The directory's collected location and identity location show WH1.
+- An enabled automatic role's complete qualification condition is identity location equals WH2.
+- The role was not previously assigned, and no other grant supplies the viewing right.
 - The existing dashboard account is correctly associated with the identity.
 - The viewing permission is absent.
 - Applicable processing has run with these values and configuration.
 
-Explain the connection from the approved requirement to the missing permission. What would you correct, and what would still need checking afterward?
+WH1 and WH2 are hypothetical location codes. Explain why this automatic path has not produced the expected permission.
 
-**Worked reasoning**
+WH2 reached ISC, but the location mapping selected WH1 from the directory. The role reads identity location, so its WH2 condition does not match.
 
-WH2 reached ISC from the approved input. The location mapping selected directory WH1 instead. The role condition reads identity location, so it does not match WH2. That explains why this supplied automatic path has not generated the expected new grant.
+Assess the shared mapping and dependent access before an authorized correction. Then check the applied identity value, role assignment, delivery outcome, current permission and controlled dashboard use by the intended account on the intended resource.
 
-Assess the shared mapping and its dependent access before an authorized correction. Then verify the applied identity value, role assignment, delivery outcome, current permission, and controlled dashboard use by the intended account on the intended resource.
+The corrected input does not establish all those later results. Delivery support, successful operation and actual application use still need evidence.
 
-Check the affected population too. The correction should not grant access to people outside the approved location or change other access unexpectedly. A corrected input is necessary here, but it is not proof of every downstream result.
+Check the affected population too. The correction should not grant access outside the approved location or change other access unexpectedly.
 
-Now describe the map in connected sentences: which record supplies the information, which configuration selects it, which condition uses it, what change is required, and what evidence shows the intended operation works.
-
-That explanation lets another engineer check the cause and the remaining uncertainty, even when the application and permission names are unfamiliar.
+Now explain the connections in your own words: which record supplies information, which instruction selects it, which condition uses the result, what change should follow and what evidence shows the intended operation works.

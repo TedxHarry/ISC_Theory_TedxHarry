@@ -1,60 +1,68 @@
 # Entitlements, access profiles, and roles: how the access objects fit together
 
-Reading an invoice can require more than one permission. You may need access to the invoice itself and access to the supplier details that explain who sent it. If the same work also needs a Finance workspace managed by another system, the complete requirement crosses a system boundary.
+An employee needs to read invoices, look up supplier details and use a Finance workspace.
 
-In SailPoint Identity Security Cloud (ISC), you can group the related finance permissions without losing sight of the individual access items. You can also connect that package with access from the other system to describe the whole responsibility.
+“Give them Finance access” sounds like one instruction. The systems need more precise instructions: which permissions, on which accounts?
 
-## Start with the permissions the systems provide
+SailPoint Identity Security Cloud, or **ISC**, lets us describe those access requirements using entitlements, access profiles and roles. Each has a different job. Let's build the requirement from the permissions the applications actually provide.
 
-Suppose an employee needs to read invoices, look up suppliers, and use the Finance workspace. The employee already has an account in the finance application and another in the directory that manages the workspace group.
+## Start with what the accounts need to do
 
-An **account** is a record in one of those systems. An **identity** is ISC's person-level representation, connecting the employee's information with their associated accounts and access.
+A **permission** allows an action, such as reading an invoice.
 
-ISC represents each system or account dataset through a **source**. Our hypothetical sources are `Invoice-System` for the finance integration and `Corporate-Directory` for the directory integration. A **connector** provides the integration used to read information and carry out supported changes.
+An **account** is a record in a particular system. In our example, the employee has a finance application account and a separate directory account.
 
-Collecting source data into ISC is **aggregation**. Matching and assigning a source account to the appropriate identity is **account correlation**. For this example, both existing accounts have been collected and correctly associated with the employee's identity. There is one relevant account on each source.
+The directory stores accounts and groups. A **group** brings accounts together and can be used to give its members access. Here, one directory group is used for the Finance workspace.
 
-The systems provide these access items:
+ISC uses a **source** to represent a system's account data and its connection configuration. Call our finance source **Invoice-System** and our directory source **Corporate-Directory**.
 
-| Source | Access item | Supplied meaning in the external system |
+The required access items are:
+
+| Source | Access item | What it allows in this example |
 |---|---|---|
-| `Invoice-System` | `InvoiceRead` | Read invoice records |
-| `Invoice-System` | `SupplierRead` | Read supplier details |
-| `Corporate-Directory` | `FinanceWorkspace` | Membership in the group used for the Finance workspace |
+| Invoice-System | `InvoiceRead` | Read invoice records |
+| Invoice-System | `SupplierRead` | Read supplier details |
+| Corporate-Directory | `FinanceWorkspace` | Belong to the group used for the Finance workspace |
 
-These names and effects are hypothetical, not standard SailPoint permission names. The example assumes the relevant integrations can read the items and perform the membership changes we describe.
+These names and effects describe our hypothetical applications. They are not standard SailPoint permission names.
 
-An **entitlement** is an access item represented from a source, such as a permission or group membership. Here, ISC represents the finance permissions and directory membership as entitlements so the organization can manage and review them.
+ISC represents source access items, such as permissions and group memberships, as **entitlements**. Here, InvoiceRead, SupplierRead and FinanceWorkspace are the entitlements we will work with.
 
-The representation does not replace the application's permission rules. Renaming SupplierRead to "Invoice approval" in ISC would not make it permit invoice approval. The finance application determines what that permission actually allows.
+The finance application still determines what InvoiceRead allows. ISC's name for that entitlement does not rewrite the application's permission rules. Calling SupplierRead “Invoice approval” would not make it approve invoices.
 
-Keep the source alongside the entitlement, too. Reader in a finance system and Reader in a document system are different access items even when their names match.
+The source also remains part of the item's identity. An entitlement called Reader in finance and another called Reader in a document system are different access items. A matching name does not make them interchangeable.
 
-## Why give the finance permissions a shared name?
+## Put related permissions into an access profile
 
-Imagine asking every invoice reader to choose InvoiceRead and SupplierRead separately. Someone could select the first and miss the second. They would then have permission to open invoices but lack the supplier information needed for the intended work.
+Why keep InvoiceRead and SupplierRead together?
 
-The organization decides that these two items belong together. An **access profile** is a bundle of related entitlements from one source. We name this profile `Invoice reading` and include InvoiceRead and SupplierRead from Invoice-System.
+The employee needs both for the agreed work. If someone selects only InvoiceRead, they can open invoice records but cannot obtain the supplier details they need.
 
-The profile gives that related set a business meaning. Someone can discuss the invoice-reading package without having to remember every underlying permission. An engineer can still open its definition and establish exactly what it contains.
+An **access profile** bundles related entitlements from one source. We create one called **Invoice reading** and include InvoiceRead and SupplierRead from Invoice-System.
 
-Its name describes the purpose; its selected entitlements determine its contents. A broad name does not add permissions that were never included.
+Now someone can ask for the invoice-reading package without having to remember those two individual permissions. An engineer can open the profile's definition and see exactly which entitlements it contains.
 
-An access profile must contain at least one entitlement, and its contents come from one source. FinanceWorkspace cannot go into this profile because it belongs to Corporate-Directory. Calling the profile "Everything for Finance" would not change that boundary.
+The name explains the purpose. The selected contents determine the access being described.
 
-The access profile also does not create a native group in the finance application. It is an ISC object referencing the underlying entitlements. When that access is delivered, the account receives the supported permissions represented by the profile, not necessarily a new application object called Invoice reading.
+An access profile must contain at least one entitlement, and all its entitlements must come from the same source. FinanceWorkspace belongs to Corporate-Directory, so it cannot join our Invoice-System profile.
 
-An **identity profile** is different: it provides configuration for a population of identities, including how person-level attributes are populated. It does not package the finance permissions. The shared word "profile" does not make these objects interchangeable.
+Renaming that profile “Everything for Finance” would not make the second source fit inside it.
 
-## A role brings the wider requirement together
+The profile is an object in ISC: a saved grouping that refers to those entitlements. Creating it does not create a new group called Invoice reading in the finance application. When its access is delivered, the account receives the underlying supported permissions.
 
-The employee's responsibility needs the finance package and the workspace membership. A single-source access profile cannot express both as its entitlement contents.
+There is another ISC term that sounds similar: **identity profile**. An identity is ISC's record representing a person, with their information and links to their accounts. An identity profile supplies configuration for a group of those people, including where their person-level information comes from.
 
-An ISC **role** groups access for a responsibility or population. It can contain access profiles, entitlements directly, or both. It can span sources, although a role does not have to use more than one source.
+An access profile packages access. An identity profile configures identity information. The shared word profile does not give them the same job.
 
-Our role is `Accounts payable reader`. Its definition includes the Invoice reading access profile and the FinanceWorkspace entitlement directly.
+## Bring the wider responsibility together with a role
 
-**Direct entitlement** here means "included in the role without an access-profile intermediary." It does not mean "skip the integration or bypass the target's permissions." Delivery still needs the supported source and account operations.
+The complete responsibility needs our invoice-reading package and the directory workspace membership.
+
+An ISC **role** groups access for a responsibility or a group of people with a shared need. It can bring together access profiles, entitlements directly, or both. It can span sources, although using multiple sources is not a requirement.
+
+We create a role called **Accounts payable reader**. It contains the Invoice reading profile plus the FinanceWorkspace entitlement directly.
+
+**Directly** means that we put the entitlement in the role without first putting it inside an access profile. The entitlement still belongs to its source and still needs the correct account-change operation.
 
 ```text
 ISC role: Accounts payable reader
@@ -67,245 +75,306 @@ ISC role: Accounts payable reader
  +-- Direct entitlement: FinanceWorkspace
      Source: Corporate-Directory
 
-Branches mean "contains".
-They are not a sequence of grants.
-Each entitlement keeps its source.
+Each branch means "contains".
+It does not mean "grant this next".
+The items keep their original sources.
 ```
 
-Read each branch as "contains." The role contains one profile and one direct entitlement. The profile contains two entitlements from Invoice-System. The directory entitlement remains on Corporate-Directory.
+Follow the finance branch. The role refers to Invoice reading; that profile refers to two finance entitlements.
 
-This is a relationship map, not a sequence of actions. Adding an item to the role does not move it to a different source, assign it to a person, or prove an account change occurred.
+Follow the directory branch. The role refers to FinanceWorkspace without an intervening profile.
 
-You could put FinanceWorkspace in a separate directory access profile if that is a useful reusable package. You do not have to create a one-item profile merely to make every branch look alike. Both designs can express the requirement while preserving each profile's single-source boundary.
+Both branches describe required access. Neither branch tells us which person should receive it or whether any account has changed yet.
 
-Another role can reference Invoice reading as well. It shares the profile definition rather than copying a separate profile for every recipient. Before changing a shared profile, identify the roles and people affected; the change is broader than the one employee you happen to be investigating.
+We could instead create a useful directory profile containing FinanceWorkspace and include that profile in the role. A one-entitlement profile is valid. We simply need a reason for that reusable package; we do not need to make every branch look identical.
 
-The owner of a role or access profile is the identity assigned responsibility for that object. Ownership does not automatically give the owner its access. "Who maintains this package?" and "Who should receive it?" are separate questions.
+A different role can use the same Invoice reading profile. ISC references the shared definition rather than requiring a separate copy for every role or person.
 
-## What if the application calls one of its own items a role?
+That also explains why changing a shared profile needs care. First establish which roles and people depend on it. A change made while investigating one employee can affect a wider group.
 
-A finance application might have native roles such as Viewer or Invoice Reviewer. Where supported by its connector and configuration, ISC can represent such an application role as a source entitlement.
+A role or profile also has an **owner**, an identity responsible for that object. Ownership does not assign its access to the owner. Being responsible for maintaining a package and being entitled to receive it are separate decisions.
 
-That native role is an access item in the application. The ISC role is an access-model grouping that can include it alongside other items.
+## Check which kind of role someone means
 
-If someone asks you to "add the Reviewer role," establish which object they mean. Are they asking for an ISC role assignment or for a native role membership on a particular application account?
+An application may call one of its own access items a role, such as Viewer or Invoice Reviewer.
 
-Our Accounts payable reader definition does not create a native role of that name in either system. It describes the combined requirement using the access already represented in ISC.
+That is a **native application role**: a role defined inside that application.
 
-## The contents do not choose the recipient
+A **connector** provides the integration used to read source information and carry out supported changes. Where the chosen connector and configuration support it, ISC can represent the native role as a source entitlement.
 
-So far, we have defined what the responsibility needs. No fact about the contents alone tells ISC which person should receive them.
+The **ISC role** is our grouping of access requirements. It can include that native-role entitlement alongside other access.
 
-An **assignment** associates access with a recipient under the applicable configuration or request. In this example, the recipient is the employee's ISC identity. The resulting application changes concern that person's associated accounts.
+If someone asks to “add the Reviewer role,” clarify the object and system involved. Do they mean assigning an ISC role to the person, or adding a native Reviewer membership to a particular application account?
 
-Suppose automatic assignment uses these two **identity attributes**, named pieces of information recorded on the person-level identity:
+Our Accounts payable reader definition does not create native roles of that name in either application.
+
+## Decide who should receive the role
+
+We have described what the role contains. We still need a recipient.
+
+An **assignment** associates access with a recipient through an applicable configuration or request. Here, the recipient is the employee's ISC identity. The application changes will concern that person's accounts.
+
+For our main path, the identity and both application accounts already exist.
+
+The account information has already been collected into ISC through **aggregation**. Each account has also been matched and assigned to the correct identity through **account correlation**.
+
+Collection supplies the account information. Correlation establishes whose account it is. In this example, there is one relevant account on each source, and the integrations support reading and delivering the access items we use.
+
+Now suppose we configure automatic role assignment using two **identity attributes**, named fields on the person-level identity:
 
 `department = Finance` **AND** `jobCode = AP_READER`
 
-AND means both comparisons must match. Finance identifies the department; AP_READER is the agreed job code for this responsibility.
+The first comparison asks whether the identity's department is Finance. The second asks whether its job code is AP_READER, our agreed code for this responsibility.
 
-Our employee has both values, so the supplied conditions match. A person in Finance with AP_MANAGER does not match this expression because the job-code comparison fails. Being in Finance alone is insufficient.
+**AND** means both comparisons must match.
 
-Notice what the expression does not read: a job title that happens to resemble Accounts payable reader. The role's name is a label for the requirement, not hidden matching logic.
+Our employee has Finance and AP_READER, so both match. Someone with Finance and AP_MANAGER fails the second comparison. Being in Finance alone is not enough.
 
-For the main path, assume the required Provisioning service is available, the role is enabled, and its access and assignment configuration are ready for the applicable processing. These two comparisons illustrate a decision; an actual eligibility design must include all required business conditions.
+The expression does not inspect the employee's title. Even if their title reads “Accounts Payable Reader,” the configured job-code comparison still uses jobCode. The role's name does not supply hidden matching logic.
 
-**Identity processing** evaluates identity information and applicable configured access. It can run in response to relevant changes and through applicable scheduled or manual processing. Role configuration changes must be applied through that work; saving a role is not proof that every affected identity has been evaluated.
+For this example, assume the service needed to deliver configured account and access changes, called Provisioning, is available. The role and its access profile are enabled, and the assignment configuration is ready. These two comparisons illustrate the decision. A real assignment design must include all required business conditions.
 
-During the relevant evaluation here, ISC compares the two identity values with the configured conditions. Both match, so it assigns the role through this automatic path.
+**Identity processing** evaluates identity information and applicable configured access. It can follow relevant changes or run through applicable scheduled or manual processing.
 
-That answers "Why does this role apply to the identity?" It does not yet answer "Did both applications accept the required account changes?"
+During the relevant evaluation here, ISC compares the identity's values with the conditions. Both match, so ISC assigns Accounts payable reader through this automatic path.
 
-## Follow the assignment to the existing accounts
+Saving a role's configuration and applying it to identities are different actions. A saved definition is not evidence that every affected identity has been evaluated.
 
-**Provisioning** carries out supported account or access changes through the configured delivery method. The role assignment can initiate the work needed to put its underlying access on the intended accounts.
+We can now explain why this role applies to the person. We still need to follow how its access reaches the accounts.
 
-For this successful continuation, neither account initially has the listed entitlements. There are no competing assignments or alternate grants. All listed access is provisioned access with no separate activation step.
+## Deliver the underlying access to each system
 
-The finance account needs InvoiceRead and SupplierRead because the role includes Invoice reading. The directory account needs FinanceWorkspace because the role includes that entitlement directly.
+**Provisioning** carries out supported account or access changes through a configured delivery method.
 
-The different paths through the model therefore lead to changes in two systems. The role does not turn those systems into one application or give the employee one shared account.
+For the successful path below, neither account initially holds the listed entitlements. This role is the only assignment path for this access; there are no competing grants. The access is delivered to the accounts without a separate user activation step.
+
+The role assignment can initiate provisioning for what its contents require.
+
+On the finance branch, Invoice reading requires InvoiceRead and SupplierRead on the finance account. On the directory branch, FinanceWorkspace must be added to the directory account.
+
+A **target** is a system receiving a change. The finance application and the directory are separate targets, each with its own account and operations.
 
 ```text
-Employee's ISC identity
+ISC identity
 department = Finance
 jobCode = AP_READER
-             |
-  identity processing evaluates
-  Finance AND AP_READER criteria
-             v
-Assignment: Accounts payable reader
-             |
-  configured, supported provisioning
-             |
- +-----------+-------------------+
- |                               |
- v                               v
-Invoice-System        Corporate-Directory
-finance account       directory account
-+ InvoiceRead         + FinanceWorkspace
+        |
+        | identity processing:
+        | both assignment comparisons match
+        v
+Role assigned: Accounts payable reader
+        |
+        | configured provisioning
+        |
+ +------+------------------+
+ |                         |
+ v                         v
+Finance application        Directory
+finance account            directory account
++ InvoiceRead              + FinanceWorkspace
 + SupplierRead
 
-Each system reports operation results.
-Success here is a supplied outcome.
-
-Separate human verification:
-inspect activity and current accounts.
-Check later collection separately.
-
-Arrows show work, not private services.
-No source order or shared transaction
-is promised.
+Each branch needs its own successful delivery.
+The branches do not promise an order
+or a single cross-system transaction.
 ```
 
-The arrows trace the selected assignment and delivery work. The branches identify the required source-account changes. They do not promise that the systems run simultaneously, run in a particular order, or succeed or fail as one transaction.
+The first arrow is a decision about the identity. The later branches concern changes to accounts.
 
-In the supplied successful outcome, both systems accept the changes and the intended accounts hold the listed access. That is the result to verify, not an outcome implied merely by seeing the role name on the identity.
+The role does not merge the two applications, give the person one shared account or move the directory entitlement into finance.
 
-Here, **target** means the system receiving an attempted change. Invoice-System's application and the directory are separate targets for their respective operations.
+For our successful outcome, both systems accept the changes and the intended accounts hold the required access. That acceptance is a supplied result for this example. It does not follow merely from seeing the role name on the identity.
 
-The distinction is useful during investigation. The definition tells you what should be required. The assignment tells you the role applies through a particular path. Activity tells you about attempted operations and reported outcomes. Current target evidence tells you what the accounts actually hold.
+The branches also do not mean that both systems run simultaneously or that one must finish first. If one operation fails, we cannot assume the other system undoes its successful change. The example does not establish a shared transaction across them.
 
-A later aggregation can refresh ISC's collected observations. It is separate from checking the current target, and this flow does not guarantee an immediate full aggregation after every write. Completion of identity processing does not validate every provisioning outcome.
+To verify delivery, inspect the relevant activity and results, then the current intended accounts. A later aggregation can refresh what ISC has collected about them.
 
-## Which account receives the access?
+Completion of identity processing does not validate every provisioning outcome. Nor does each write guarantee an immediate full aggregation or simultaneous updates across all screens.
 
-Our example deliberately has one relevant existing account per source. The finance changes concern that finance account, and the workspace change concerns that directory account.
+## Make sure the permission reaches the intended account
 
-If a person has both a daily-use account and an administrative account on the finance source, deciding that they need the role is not enough. The design must also establish which account should receive the relevant access.
+We deliberately gave the employee one relevant account on each source. That made the destination clear.
 
-Access profiles offer multiple-account selection criteria for the applicable automatically provisioned path. Those criteria are not a universal selection rule for every access request or for a direct entitlement in a role. Establish the account-selection mechanism for the actual assignment and delivery path.
+Now suppose they have a daily-use finance account and a separate administrative finance account. “This person needs invoice reading” still does not tell us which finance account should receive it.
 
-That distinction prevents a real design error: correctly assigning the responsibility to the person but putting the permission on the wrong account.
+Access profiles provide multiple-account selection criteria for the applicable automatic provisioning path. Those criteria help choose among accounts on the profile's source. They are a different decision from choosing which people qualify for the role.
 
-## Automatic criteria are not the only route
+First ask “Which identity qualifies?” Then ask “Which of that identity's accounts should receive this source access?”
 
-ISC also supports a configured identity list for role assignment. Instead of calculating membership from department and job code, the configuration explicitly selects the identities that should receive the role. The role's access contents and delivery requirements remain.
+Those profile criteria do not apply to access requests. They are also not a universal account-selection rule for a directly included role entitlement. Establish the selection mechanism for the actual path being used.
 
-A separate route is an **access request**, asking for specified access for a specified recipient. A role, an access profile, or an applicable individual entitlement can be configured as **requestable**, meaning available to ask for under that process.
+A role can be correctly assigned to the person while the intended work remains unavailable on their daily-use account. Check the receiving account as well as the recipient identity.
 
-Requestability is not approval or delivery. The configured process determines any required review and the outcome of the request. A resulting grant still needs the appropriate account changes.
+## Use the assignment route that matches the requirement
 
-A requestable role can serve an approved need outside its automatic criteria. Therefore, finding AP_MANAGER instead of AP_READER establishes that the person does not match our automatic expression; it does not prove they cannot have a separately approved role assignment.
+Data-based criteria are one way to assign a role. ISC also supports an **identity list**, where the configuration explicitly selects the identities that should receive it.
 
-You can also manage an access profile without putting it inside a role. Someone with an approved need for the finance reading package does not necessarily need the directory workspace. Requesting the narrower package can express that requirement without assigning the broader role.
+The access contents and required account changes stay the same. What changes is how the recipients are selected.
 
-Check which path applies rather than using "has the role" as a complete explanation of how or why access arrived.
+A separate route is an **access request**: asking for specified access for a specified recipient.
 
-## One successful branch does not make the whole requirement complete
+A role, access profile or applicable individual entitlement can be configured as **requestable**, meaning people can ask for it through the request process. The applicable configuration determines any review or approval.
 
-Now change the supplied outcome. FinanceWorkspace is present on the directory account. The finance application accepts InvoiceRead but rejects SupplierRead because the integration is not permitted to add that item.
+Being available to request is not an approval. An approved request still needs successful delivery of the required changes.
 
-The application has accepted some changes and rejected another. This is a hypothetical partial outcome, not a universal claim about connector transaction behavior.
+A requestable role can meet an approved need for someone outside its automatic assignment criteria. So AP_MANAGER tells us that our AP_READER comparison fails. It does not prove that a separate requested role assignment is impossible.
 
-A **credential** is authentication information, such as a token, that the integration presents. The target controls which operations that integration identity is allowed to perform. A credential can allow the demonstrated successful operations while lacking authority for another one.
+An access profile can also be managed without putting it inside a role. Someone who only needs invoice reading could request the narrower finance package where configured, without receiving the broader role and workspace access.
 
-The employee can use the workspace and read invoices, but the supplier lookup needed for the work is missing. The role's required access is not completely delivered.
+When investigating existing access, identify the route involved. The words “has Accounts payable reader” do not explain by themselves whether it came from criteria, an identity list or a request.
 
-Focus the investigation on SupplierRead on the intended finance account under Invoice-System. Check the role's reference to Invoice reading, the profile's SupplierRead content, the applicable assignment, the selected account, and the attempted operation's error.
+## Follow a missing permission rather than blaming the whole role
 
-The supplied evidence identifies a rejection for insufficient operation authority. Another business approval does not give the credential that authority. Reprocessing the identity also does not repair the external permission configuration.
+Change the delivery outcome.
 
-An authorized correction should address the specific missing permission or configuration. Before retrying or resubmitting, inspect current and outstanding work so that recovery does not ignore a partial result or repeat an uncertain operation blindly. Use the applicable supported recovery path, then verify the intended account and missing item.
+The directory accepts FinanceWorkspace. Finance accepts InvoiceRead but rejects SupplierRead because the integration is not permitted to add it.
 
-Do not assume every failure retries forever, or that the success of InvoiceRead proves SupplierRead was delivered. "The role doesn't work" is less useful than naming the missing entitlement, account, source, and reported failure.
+This is a hypothetical partial outcome. It is not a rule that every connector applies changes separately in this way.
 
-## A profile can describe access that was already there
+A **credential** is authentication information, such as a token, presented by the integration. The application determines which operations that authenticated integration identity is allowed to perform.
 
-Consider a different starting situation. An application administrator had already given the employee InvoiceRead and SupplierRead before the Invoice reading profile was created. No new access request or permission-add operation is supplied.
+In this case, successful invoice-read delivery did not establish authority to add SupplierRead.
 
-ISC collects the existing memberships. During identity processing, it can recognize that the person holds all entitlements in the defined profile and represent the bundle as Invoice reading.
+The employee has the workspace membership and invoice-reading permission, but lacks the supplier lookup required for the work. Other application-use requirements would still need their own checks.
 
-This is **access-profile detection**: recognizing the profile in access already held. It does not show who originally granted the permissions or prove that ISC delivered them.
+We can now name the issue precisely: SupplierRead was rejected on the intended finance account under Invoice-System.
 
-The same profile name in an identity's access view can therefore have different histories. For newly delivered access, investigate its assignment and provisioning activity. For a detected bundle, establish the collected contents and processing, then investigate the earlier grant and business justification if those are the question.
+Follow that item through the definition and delivery. Is SupplierRead in Invoice reading? Is the profile referenced by the role? Does the applicable assignment exist? Which account was selected? What does this attempted operation report?
 
-Detection does not create FinanceWorkspace or establish assignment of the broader Accounts payable reader role. That role includes additional access and has its own assignment context.
+The supplied error identifies insufficient target-operation authority. Another business approval does not change that authority. Reprocessing an unchanged identity does not repair the external permission configuration either.
 
-Even finding all of a role's underlying permissions is not, by itself, evidence of which assignment or historical operation produced them.
+An authorized correction must address the specific missing authority or configuration. Before retrying or resubmitting, inspect current account state and outstanding work. We already have partial success, so recovery must take that state into account.
 
-## Match the screen to the question you are asking
+Use the supported recovery path and verify SupplierRead on the intended account afterward. Do not assume every error will retry forever or treat a neighboring successful permission as proof that this one arrived.
 
-The **front end** is the interface you inspect. Access-model views show definitions, ownership and configuration. An identity's access view shows represented access associated with that identity. Provisioning activity shows attempted changes and reported results.
+## Recognize a profile in access that was already present
 
-The **back-end work** evaluates applicable assignment logic, derives required account changes, uses configured integrations, and handles operation results. Screens expose information about that work; they do not turn all of it into the same event.
+There is another reason Invoice reading can appear on an identity.
 
-| Question | Useful evidence | Limit of that evidence alone |
+Suppose an application administrator already gave the finance account InvoiceRead and SupplierRead before the profile was created. No new permission-add operation or access request occurs in this example.
+
+ISC collects those existing memberships. During identity processing, it can recognize that the person holds all the entitlements in Invoice reading and show the person as holding that already-defined profile.
+
+This is **access-profile detection**: recognizing a defined package in access already held.
+
+The reasoning starts with existing permissions. ISC sees that they satisfy the profile's contents. It does not need to deliver those same permissions for this example to explain why the profile appears.
+
+Detection does not tell us who originally granted the permissions or whether that original grant had approval. Those are questions about earlier history.
+
+It also does not create FinanceWorkspace or prove that Accounts payable reader was assigned. The role requires additional access and has its own assignment context.
+
+Even finding every underlying item in a role is not, by itself, proof of which assignment or past operation produced them.
+
+## Ask each screen the question it can answer
+
+The **front end** is the interface where we inspect definitions, a person's represented access and activity.
+
+The **back-end work** evaluates assignment logic, determines required account changes, uses configured integrations and handles operation results.
+
+The views show information from different parts of that work:
+
+| Question | Evidence to inspect | What it does not establish alone |
 |---|---|---|
-| What is in the role? | Role contents and referenced profile contents | Does not establish receipt by a person |
-| Why does the automatic path apply? | Assignment configuration and relevant identity values | Does not establish successful target changes |
-| What access does ISC represent for the person? | Identity's roles, profiles and entitlements | Does not establish original grant history or live application behavior |
-| What happened to SupplierRead? | Source/account operation, result and error | A neighboring successful operation cannot prove this one succeeded |
-| What does the account hold now? | Relevant current target evidence | Does not establish that every ISC view has refreshed |
+| What does the role require? | Role contents and referenced profile contents | That a person received the access |
+| Why did the automatic criteria match? | Assignment configuration and relevant identity values | Successful delivery to accounts |
+| What access does ISC represent for the person? | Identity's roles, profiles and entitlements | Original grant history or live application behavior |
+| What happened to SupplierRead? | Its source/account operation, result and error | That another item's success applies to this one |
+| What does the account hold now? | Current evidence from the intended target account | That all ISC views have refreshed |
 
-You may need to combine records, configuration and activity. There is no assumption that one screen provides the complete history of every grant.
+You may need to combine several records with activity and current application evidence. One screen need not contain a complete history of every grant.
 
-## Removing the assignment and deleting the definition are different
+## Remove an assignment with its remaining requirements in view
 
-Suppose the employee changes work and no longer meets the automatic criteria. Keep the main-path condition that this role is their only assignment path for the listed access.
+Suppose the employee changes work and no longer meets our automatic criteria.
 
-Applicable processing can remove that automatic role assignment and initiate the corresponding access removal. Carrying out a supported access-removal change is **deprovisioning**. Its fulfillment and target result still need verification.
+For this first removal case, keep the condition that Accounts payable reader is their only assignment path for the listed access.
 
-Now add another assigned role that also requires InvoiceRead. The documented overlap behavior retains access still required through that other assigned role.
+Applicable identity processing can remove that automatic assignment and initiate the corresponding access removal. **Deprovisioning** carries out supported removal of access. Initiating the work and confirming the target removal remain separate steps.
 
-Removing the old role therefore does not necessarily remove every entitlement it once contained. Check the remaining assignment before manually stripping a permission that a valid role still requires. This example does not establish one removal rule for every native, requested, manual, or inherited grant.
+Now add another assigned role that also requires InvoiceRead.
 
-Deleting a definition is different again. Deleting an access profile does not deprovision its previously held entitlements. The grouping and association are removed; the previous permissions are not thereby removed from accounts. The profile must first be removed from provisioning configurations that use it before it can be deleted.
+Removing Accounts payable reader no longer means that InvoiceRead should disappear. The other assigned role still requires it, and ISC's documented role-overlap behavior retains that required access.
 
-Disabling or deleting an ISC role likewise prevents future automatic assignment and removes its association, but does not deprovision the access previously granted through it.
+Check that remaining assignment before manually removing a shared entitlement.
 
-If the requirement is "remove this person's access," choose the applicable revocation path and verify its execution. Do not substitute "delete the thing that described the access."
+This example concerns overlapping assigned roles. It does not establish the same retention rule for every independently requested, native, manual or inherited grant.
 
-Also distinguish changing a role's contents from removing someone's assignment. Changes to an enabled role's contents have their own propagation configuration, controlling whether applicable access removals are carried through to existing recipients. Do not infer the result from a changed definition alone.
+Entitlement removal also does not delete source accounts. That remains true even if role provisioning originally created the account or all its entitlements are removed. Account deletion is a separate requirement and operation.
 
-Finally, entitlement removal does not delete source accounts, even when role provisioning originally created them or all their entitlements are removed. Deleting an account would be a separate requirement and operation.
+## Keep definition changes separate from revocation
 
-## Work through a few changed conditions
+**Revocation** withdraws someone's access through the applicable removal path.
 
-**A proposed profile contains two sources.**
+Deleting a profile's definition answers a different question: do we still want that grouping in the access model?
 
-A designer wants one profile containing InvoiceRead from Invoice-System and FinanceWorkspace from Corporate-Directory. Can that be an access profile, and how could you preserve the combined requirement?
+Deleting an access profile does not deprovision the entitlements previously held through it. The accounts keep those permissions even though they are no longer associated with that profile. Before deleting it, remove its references from provisioning configurations that use it.
 
-Not as that one profile: its entitlements must come from one source. A role can combine the finance profile with the directory entitlement directly, or with a useful separate directory profile. The separate source accounts still need their supported delivery paths.
+Disabling or deleting an ISC role similarly prevents future automatic assignment and removes the role association. It does not deprovision the access previously granted through the role.
 
-**The title matches the role name.**
+That is why “delete the role” is not a complete instruction for “remove this person's access.” Establish the relevant revocation path and verify the resulting operations.
 
-An employee's title is "Accounts Payable Reader," but their identity jobCode is AP_MANAGER. The automatic expression requires Finance AND AP_READER. Does the title establish assignment, or tell you all their access?
+Editing the contents of an enabled role is another distinct change. The person may still need the role, but the role may no longer need one permission.
 
-It does neither. The supplied job code fails this automatic comparison; the expression does not compare the title. Inspect other assignment paths and existing access separately. A requested assignment or another role has not been ruled out.
+ISC has **role change propagation** configuration governing whether applicable content removals are carried through to existing recipients. Propagation means carrying the definition change through to those recipients. Check that setting, the role's enabled state and the applicable processing before predicting account removals.
 
-**The profile appears without a new request.**
+For example, remove the directly included FinanceWorkspace item while leaving the role assigned. With propagation disabled, that definition edit does not deprovision the workspace membership previously delivered. With propagation enabled and the role enabled, the applicable processing can carry the removal through to existing recipients. Delivery results and any remaining requirements still need verification.
 
-The employee already held InvoiceRead and SupplierRead. Collection and processing are followed by Invoice reading appearing on the identity. No new grant operation is supplied. Did ISC grant those permissions?
+A changed definition alone is not proof that the old target permissions have been removed.
 
-The facts support recognition of the already-held bundle, not proof of a new target grant. Inspect collected memberships and processing for detection. Establish original grant and approval history from relevant separate evidence rather than treating the displayed profile as a receipt.
+## Work through the changed conditions
 
-**The role is assigned, but one item was rejected.**
+**A proposed access profile includes InvoiceRead from Invoice-System and FinanceWorkspace from Corporate-Directory. How can we keep the combined requirement?**
 
-FinanceWorkspace and InvoiceRead are present on the intended accounts; SupplierRead was rejected for insufficient integration permission. Would another approval fix the supplied cause?
+One access profile cannot contain those two sources.
 
-No. Investigate the specific SupplierRead operation on the finance account, including the definition, assignment, account selection and rejection. An authorized correction must address target-operation authority. Check current and outstanding work, use controlled recovery, and verify the missing item instead of repeating approval as if it changed the credential's privileges.
+A role can combine the finance profile with the directory entitlement directly, or with a useful separate directory profile. Both designs preserve the complete requirement while keeping each profile within one source. Both systems still need their own supported account changes.
 
-**InvoiceRead remains after the old role is removed.**
+**A title says Accounts Payable Reader, but jobCode is AP_MANAGER. Does the title establish automatic assignment?**
 
-The employee no longer has Accounts payable reader, but another assigned role still includes InvoiceRead. Does its continued presence prove removal failed?
+Our expression compares department and jobCode. The job code fails the required AP_READER comparison, and the expression does not compare the title.
 
-No. The second role still requires it under the supplied overlap condition. Check that assignment and target state. The continued entitlement alone does not establish a failed removal of the old assignment.
+That does not tell us all the person's access. Inspect other assignment routes and existing permissions separately; a requested assignment or another role has not been ruled out.
 
-**The team deletes the object instead of revoking access.**
+**Invoice reading appears after collection and processing. The account already held both permissions, and no new grant occurred. Did ISC deliver them?**
 
-An unused profile is deleted after its provisioning references are removed, or an ISC role is disabled. The team assumes the old permissions are gone. What evidence is missing?
+The supplied facts explain detection of the existing bundle.
 
-Neither action performs the deprovisioning being assumed. Establish the appropriate revocation path, affected accounts and permissions, remaining requirements, execution results and current target state. Account deletion must not be inferred either.
+Inspect the collected memberships and processing for that recognition. If the question is who first granted or approved the access, investigate the earlier evidence. The displayed profile alone is not a receipt for a new grant.
+
+**The role is assigned, but SupplierRead was rejected for insufficient integration authority. Would another approval repair it?**
+
+No. Approval and target-operation authority answer different questions.
+
+Inspect this permission's definition, assignment, selected account and rejected operation. Correct the authorized integration configuration, consider current and outstanding work, use supported recovery and verify the missing permission. The successful workspace and InvoiceRead operations do not prove SupplierRead succeeded.
+
+**InvoiceRead remains after Accounts payable reader is removed. Another assigned role still requires it. Has removal failed?**
+
+Continued InvoiceRead is consistent with the supplied remaining role requirement.
+
+Check the old assignment, the other role and the current account state. Continued access alone does not establish that the old assignment's removal failed.
+
+**The team deletes a profile after clearing its provisioning references, or disables a role. Are the previous permissions gone?**
+
+Neither action performs the assumed deprovisioning.
+
+Identify the required revocation, affected accounts and permissions, remaining requirements, execution results and current target state. Do not infer account deletion either.
 
 ## Design the same relationships for another responsibility
 
-A support analyst needs two ticketing permissions, View tickets and Add internal notes, plus Knowledge reader from a separate knowledge-base source. All three are supported entitlements in this hypothetical design.
+A support analyst needs View tickets and Add internal notes from a ticketing system, plus Knowledge reader from a separate knowledge-base source. Assume all three are supported entitlements.
 
-Which items could form one access profile? How could a role combine the complete responsibility? What if the ticketing account already has View tickets, but the knowledge-base grant is rejected?
+Which items belong together in a profile? How could a role describe the complete responsibility?
 
-You can package the two related ticketing permissions in a single-source profile. A role can combine that profile with Knowledge reader directly or with a useful knowledge-base profile. The two systems still have separate accounts and operations.
+The two related ticketing permissions can form one single-source profile. A role can combine that profile with Knowledge reader directly or with a useful knowledge-base profile.
 
-The preexisting View tickets permission is not evidence of a new ISC grant. The knowledge-base rejection leaves that part of the requirement unfulfilled even if the ticketing work succeeds. Investigate the specific rejected operation; the role's definition and assignment cannot prove delivery.
+The role describes one responsibility. Delivery still concerns separate accounts in the two systems.
 
-Now choose a two-system responsibility yourself. Explain its entitlements, useful bundles, recipient logic and intended accounts. Change one condition: existing access, a rejected operation, or overlap during removal. Follow what should change and which evidence would establish it, keeping the definition, assignment and target operation distinct.
+Now suppose the ticketing account already has View tickets, and the knowledge-base grant is rejected.
+
+The existing View tickets permission does not prove a new ISC grant. Even if the remaining ticketing change succeeds, the rejected knowledge-base operation leaves that part of the requirement unfulfilled.
+
+Investigate the rejected operation and its intended account. The role's contents and assignment cannot establish delivery.
+
+Choose a two-system responsibility yourself. Explain the entitlements, any useful bundles, how recipients qualify and which accounts should receive each item.
+
+Then change one condition: preexisting access, a rejected operation or another assigned role that needs the same permission during removal. Follow the effect and identify the evidence needed at each point.
