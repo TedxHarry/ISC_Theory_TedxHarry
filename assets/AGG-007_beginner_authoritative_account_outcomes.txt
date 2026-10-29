@@ -1,0 +1,9 @@
+[Authoritative account removed]
+              |
+[Another authoritative account?]
+     yes /             \ no
+[Reassign profile]  [Nightly attempt]
+[Remap values]              |
+                   [Deletion blocked?]
+                      yes /     \ no
+                   [Hidden]   [Eligible]

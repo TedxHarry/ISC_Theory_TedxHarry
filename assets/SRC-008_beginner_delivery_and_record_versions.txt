@@ -1,0 +1,9 @@
+Approved worker record
+  revision 18
+  contractEnd: 2026-12-31
+
+       Same workerKey, different version
+
+Delivered worker record
+  revision 17
+  contractEnd: 2026-11-30

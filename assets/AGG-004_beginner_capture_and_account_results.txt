@@ -1,0 +1,7 @@
+[Database records account changes]
+                 |
+[Connector reads relevant changes/data]
+                 |
+[ISC handles reported account changes]
+
+[Engineer verifies resulting records]

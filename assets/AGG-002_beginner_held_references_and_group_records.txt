@@ -1,0 +1,4 @@
+Account: invoice-user      Recorded groups
+  G-520 ----------------> G-520 + details
+  G-521 ----------------> G-521 + details
+                          G-599 + details

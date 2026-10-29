@@ -1,0 +1,12 @@
+[Helpdesk selects the ISC account]
+                |
+[Connector looks up support-user]
+                |
+[Application returns account values]
+[locked true, office HYD]
+                |
+[Extract values using the mappings]
+                |
+[ISC account records true / HYD]
+
+[Engineer verifies the account record]

@@ -1,0 +1,16 @@
+HR approves contractEnd
+          |
+          v
+Producer delivers approved worker row
+          |
+          v
+ISC collects HR account value
+          |
+          v
+Profile mapping supplies identity date
+          |
+          v
+Configured sync provisions expiryDate
+          |
+          v
+Human verifies actual application value

@@ -1,0 +1,3 @@
+09:00  Account read: G-520, G-521
+09:20  Application: remove G-520 membership
+09:30  Group read: G-520 still exists

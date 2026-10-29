@@ -1,0 +1,15 @@
+Account record reaches ISC
+            |
+     Existing account?
+       /          \
+      no          yes
+      |            |
+   Process    Data changed?
+                /      \
+              yes       no
+               |         |
+            Process   Optimization on?
+                        /       \
+                      yes        no
+                       |          |
+                      Skip     Reprocess

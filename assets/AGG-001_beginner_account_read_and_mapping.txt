@@ -1,0 +1,10 @@
+Request account collection
+          |
+          v
+Connector reads the application
+          |
+          v
+Returned account selected and mapped
+          |
+          v
+ISC represents the source account

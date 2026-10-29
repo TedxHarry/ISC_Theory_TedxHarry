@@ -1,0 +1,9 @@
+Application operating office HYD
+               |
+               v
+Collected account office HYD
+
+HR home office CHN
+          |
+          v
+Mapped identity office CHN

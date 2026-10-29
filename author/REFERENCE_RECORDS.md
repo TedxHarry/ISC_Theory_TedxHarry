@@ -6,7 +6,7 @@ Publication update, October 28: the current authorized snapshot includes all 91 
 
 ## Record maintenance
 
-October 28 beginner-explanation publication: all 28 individual revisions through SRC-007 are published at 3.0. See [beginner batch 2 verification](PUBLICATION_2026-10-28_BEGINNER_BATCH_2.md): exact content commit 3bb59f8965597010f19e8970a5cd86b3ae05ef13 built and all 91 routes/404 assets verified. Earlier individual records retain authoring-time local/published-version statements as history; this batch supersedes those pointers. SRC-008 is next locally; the other 63 lessons retain earlier wording. Actual beginner validation remains separate and pending.
+October 28 beginner-explanation publication: all 28 individual revisions through SRC-007 are published at 3.0. See [beginner batch 2 verification](PUBLICATION_2026-10-28_BEGINNER_BATCH_2.md): content 3bb59f8965597010f19e8970a5cd86b3ae05ef13 built and all 91 routes/404 assets verified. Earlier publication pointers describe authoring history. The published site retains earlier wording in its other 63 learners. As of October 29, SRC-008 and AGG-001 through AGG-008 revisions 3.0 are saved locally: 37 of 91 individually revised, 54 remain and AGG-009 is next. All Module 4 and the first eight Module 5 lessons are individually revised. Actual learner validation remains separately pending.
 
 Keep official sources mapped to lesson sections or claims, together with the revision reviewed, documentation-check date, limitations, and review status. A saved citation is not evidence of fresh verification. Update these records when technical content is checked or changed.
 
@@ -1715,20 +1715,20 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## SRC-008: Data ownership agreements
 
-- Current revision: 2.0. Course placement: Module 4.8. Teaching specification: 3.1.
-- Current coverage, first-use explanations, official references, supplied conditions, preserved assessments and executed checks: [SRC-008 revision record](revisions/SRC-008_Concept_Led_Revision_Record.md).
-- Documentation checked: October 26, 2026; eight primary references cover source ownership/views, profiles/required values/Preview, schema-change warnings, aggregation/processing, attribute-sync prerequisites/direction/null, lifecycle states and dateFormat.
-- Author review: 89 purposes reconciled; successful approved-record/producer/ISC/target mechanism precedes stale variation; all eight cases and independent laboratory transfer retained.
-- Neutral example: HR-Production workerKey worker-record, personNumber W-28, managerNumber M-4 and Projects-Production account project-user. Worker and target accounts are already associated with the same intended existing identity; other required inputs and supported account designations are valid. No named employee, biography, company brand or numbered account.
-- HR is the configured authoritative source; applicable profile maps contractEnd. Target expiryDate supports updates, is directly mapped from identity contractEnd in Create Account definition and has eligible attribute synchronization configured for its existing correlated account. No account creation by sync is implied.
-- Supplied normal/corrected date is 2026-12-31, producer revision 18. The stale case preserves approval at 08:45 UTC on November 20, export at 09:20, read at 09:30 and delivered revision 17/2026-11-30. Correction fixes the producer view under the same workerKey, then source/identity/actual target values are checked.
-- Date contract is last authorized UTC day: 2026-11-30 gives required boundary 2026-12-01T00:00:00Z; 2026-12-31 gives 2027-01-01T00:00:00Z. These aren't ISC defaults or proven future operations.
-- Current editable diagrams: [value responsibility and delivery](../assets/SRC-008_value_responsibility_and_delivery.txt) and [approved record versus stale delivery](../assets/SRC-008_approved_record_and_stale_delivery.txt); exact inline matches, maximum widths 41 and 31 characters.
-- Historical [correction responsibility handoffs](../assets/SRC-008_correction_responsibility_handoffs.txt) and [approved and exported revisions](../assets/SRC-008_approved_and_exported_revisions.txt) remain unchanged.
-- Role assignments and data contracts are illustrative operating practices, not native automatic validation/quarantine/order arbitration. Null sync, manual target overrides, missing partial rows, business authority and timestamp freshness remain explicitly scoped.
-- No actual producer/source/account/identity/profile/mapping/sync/transform/lifecycle/collection/processing/credential/permission/provisioning/target operation. Actual beginner validation, full graphical review and formal approval remain pending.
-- Publication: revision 2.0 local only; published SRC-008 remains 1.0. SRC-003 through SRC-007 revisions 2.0 also remain local. The 23 revised lessons through SRC-002 remain the [verified published snapshot](PUBLICATION_2026-10-26_BATCH_2.md). No staging/commit/push/deployment; original ISC_Theory_Learning unchanged.
-- All eight Module 4 lessons are individually revised. Next existing lesson: AGG-001, learner body unopened in this task. New authoring remains paused at reserved ROL-007.
+- Current revision: 3.0. Module 4.8. Teaching specification 3.2. October 28, 2026.
+- [Current coverage, primary sources and executed checks](revisions/SRC-008_Beginner_Explanation_Revision_Record.md); [preserved revision 2.0 record](revisions/SRC-008_Concept_Led_Revision_Record.md).
+- All 89 purposes, eight original cases and independent laboratory transfer retained. Different worker/account/identity fields, responsibility and normal delivery/sync precede the stale-export case. Full simulated-beginner author read-through is separate from pending actual learner validation.
+- Eight primary references freshly inspected October 28, 2026: source ownership/views, profile/required inputs/Preview, schema selection risks, collection/processing, synchronization prerequisites/direction/null/manual deviation, lifecycle and dateFormat.
+- HR-Production workerKey worker-record, personNumber W-28, managerNumber M-4 and Projects-Production project-user retain separate purposes. Both account records are already associated with the intended identity; other required inputs are valid. No biography or fictional company.
+- HR authoritative profile supplies identity contractEnd. Target expiryDate supports updates, is directly mapped from identity contractEnd in Create Account definition and has eligible synchronization configured for the existing correlated account. Sync doesn't create an account.
+- Normal/corrected revision 18 gives 2026-12-31. Stale delivery gives revision 17/2026-11-30 for the same workerKey; approval November 20 at 08:45 UTC, export 09:20, read 09:30. Correct producer delivery, collected account, mapped identity and actual target are verified separately.
+- Last authorized UTC day gives November30/December1 and December31/January1 boundaries as explicit business choices, not ISC defaults or proven future execution. Missing/null/write, future-effective facts, revision ordering and temporary exceptions require supported explicit handling.
+- Current editable diagrams: [approved value to target](../assets/SRC-008_beginner_approved_value_to_target.txt) and [delivery versus record versions](../assets/SRC-008_beginner_delivery_and_record_versions.txt), exact inline matches, maximum widths 39 and 40 characters. Four historical assets and earlier author record remain unchanged.
+- Diagrams show responsibilities/dependencies and a version comparison, not private execution order or automatic stale-row rejection. Operating agreements aren't a native universal validation/quarantine feature.
+- Publication completed first: 25 earlier local revisions through SRC-007 pushed and verified in [beginner batch 2](PUBLICATION_2026-10-28_BEGINNER_BATCH_2.md); 28 are published at 3.0. Content 3bb59f8965597010f19e8970a5cd86b3ae05ef13 and author-only follow-up 4ba5a300978aa741d0178fe33f1b9d14d9a5c532 built successfully.
+- SRC-008 revision 3.0 remains local; published SRC-008 remains 2.0. No SRC-008 staging, commit, push, deployment or actual ISC/producer/target operation.
+- Progress: 29 of 91 existing learners individually revised; 62 remain. All eight Module 4 lessons complete; AGG-001 next, its learner body unopened here. ROL-007 remains reserved without a stub.
+- Actual beginner validation and graphical publication review remain separately pending. Sources and author metadata remain outside learner prose.
 
 ### Historical verification record: revision 1.0
 
@@ -1782,20 +1782,19 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## AGG-001: Following an account record from a source into ISC
 
-- Current revision: 2.0. Course placement: Module 5.1. Teaching specification: 3.1.
-- Current coverage, first-use meanings, official references, supplied conditions, preserved assessments and executed checks: [AGG-001 revision record](revisions/AGG-001_Concept_Led_Revision_Record.md).
-- Documentation checked: October 26, 2026; nine primary references cover account loading/modes/history/Search, Web Services mapping, schemas, correlation/shadow/source views, identity profiles/processing, entitlement aggregation and provisioning.
-- Author review: 81 purposes reconciled; complete returned-record-to-existing-account trace precedes ownership/value/mode variations; all eight cases and independent HR-record transfer remain.
-- Neutral main example: Case-Production non-authoritative source, key case-account, designated login case-user, account employeeRef W-31 matching identity employeeNumber W-31 under supplied unique existing association; operating office BLR-to-HYD, HR home office CHN, existing G-51 case-reviewers membership. No employee biography, brand, numbered account/login or identity-ID stand-in.
-- Conditions: intended source/read/actor/scope and complete pages supplied; valid unchanged account ID/Name, correct extraction from items and profile.siteCode-to-office mapping, verified intended existing owner. Selected raw/represented JSON fragments aren't complete population or ISC API responses.
-- Normal result updates the existing account to office HYD; identity remains HR-mapped CHN, membership stays G-51, no external account/grant change reported. Non-authoritative concerns origin, not inability to supply supported mapped values. Unmatched-account shadow representation isn't a verified new HR person.
-- Independent variations: first representation, missing profile.branchCode path, W-13 person-reference mismatch, unchecked pagination, changed correlation with unchanged input, later configured provisioning and newly delivered stale file. None is a simultaneous hidden defect in the main trace.
-- Current editable diagrams: [account read and representation](../assets/AGG-001_account_read_and_representation.txt) and [separate account and identity inputs](../assets/AGG-001_separate_account_and_identity_inputs.txt); exact inline matches, maximum widths 37 and 34 characters.
-- Historical [account read to representation](../assets/AGG-001_account_read_to_representation.txt) and [account and identity value paths](../assets/AGG-001_account_and_identity_value_paths.txt) remain unchanged.
-- Diagrams show logical dependencies and separate input paths, not private jobs/commits/hosts or write instructions. Optimized/delta/single-account behaviour and identity processing don't collapse into universal reread/recalculate/provisioning equivalence.
-- No actual source/schema/mapping, actor/credential, account/identity, correlation, read/processing, provisioning or target operation. Actual beginner validation, full graphical review and formal approval remain pending.
-- Publication: revision 2.0 local only; published AGG-001 remains 1.0. SRC-003 through SRC-008 revisions 2.0 also remain local. The 23 revised lessons through SRC-002 remain the [verified published snapshot](PUBLICATION_2026-10-26_BATCH_2.md). No staging/commit/push/deployment; original ISC_Theory_Learning unchanged.
-- Next existing lesson: AGG-002, learner body unopened in this task. New authoring remains paused at reserved ROL-007. Subsequent legacy +## author-reference sections are preserved.
+- Current revision: 3.0. Module 5.1. Teaching specification 3.2. October 29, 2026.
+- [Current coverage, primary sources and executed checks](revisions/AGG-001_Beginner_Explanation_Revision_Record.md); [preserved revision 2.0 record](revisions/AGG-001_Concept_Led_Revision_Record.md).
+- All 81 purposes, eight cases and independent HR transfer retained. Selected nested response and correct mapping lead to the normal existing-account result; separate ownership, identity input, read-mode and expected-write questions follow. Full saved simulated-beginner author review is separate from actual learner validation.
+- Nine primary references freshly inspected October 29, 2026: loading/modes/history/Search, Web Services mapping, account schemas, configured correlation, source/shadow views, profiles/Apply Changes, processing, entitlement collection and provisioning.
+- Case-Production is non-authoritative. Existing case-account and designated login case-user remain stable; employeeRef W-31 matches identity employeeNumber W-31 under a supplied configured unique existing association. Application operating office BLR changes to HYD while HR home office CHN remains the identity input. G-51 case-reviewers membership already exists.
+- Supplied complete read includes the account and required fields, with actor visibility, valid unchanged identification, correct items/profile.siteCode extraction and mapping. Selected returned/represented JSON aren't complete population or API account payloads. Normal result updates the existing account office without a new account or membership grant.
+- Non-authoritative concerns identity origin, not inability to supply supported mapped values. Two office paths describe different business facts. Uncorrelated/shadow representation, W-13 mismatch and first-representation cases are distinct variations.
+- Documented single-account action, delta, optimized processing, changed criteria and saved profile Apply Changes retain different purposes. Existing memberships can feed later configured access decisions, but their collection isn't a new grant.
+- Current editable diagrams: [account read and mapping](../assets/AGG-001_beginner_account_read_and_mapping.txt) and [separate office inputs](../assets/AGG-001_beginner_separate_office_inputs.txt), exact inline matches, maximum widths 36 and 32 characters. Four historical assets and earlier author record remain unchanged.
+- Frontend/backend, source/account/identity/mapping views, History and Search freshness support different evidence. Investigation branches avoid invented universal errors, private job/storage order or rerun equivalence. Legacy downstream +## reference headings remain unchanged.
+- Publication: revision 3.0 local only; published AGG-001 remains 2.0, confirmed by local comparison with published main 4ba5a300978aa741d0178fe33f1b9d14d9a5c532. No live verification, staging, commit, push or deployment; SRC-008's local work remains unchanged.
+- Progress: 30 of 91 existing learners individually revised; 61 remain. First Module 5 lesson revised; AGG-002 next, its learner body unopened here. ROL-007 remains reserved without a stub.
+- Actual learner validation and graphical publication review remain separately pending. No actual ISC/connector/target operation; source and review metadata stay outside learner prose.
 
 ### Historical verification record: revision 1.0
 
@@ -1850,22 +1849,20 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## AGG-002: Account aggregation and entitlement aggregation
 
-- Current revision: 2.0. Course placement: Module 5.2. Teaching specification: 3.1.
-- Learner title: The group is in ISC. Does the account hold it?
-- Current coverage, first-use meanings, official sources, supplied conditions, preserved assessments and executed checks: [AGG-002 revision record](revisions/AGG-002_Concept_Led_Revision_Record.md).
-- Documentation checked: October 26, 2026; nine primary-reference rows map ten official account/object-loading, schema/type-linking, entitlement-management, source/correlation, provisioning and Web Services operation/multi-call pages.
-- Author review: 81 purposes reconciled; complete account-held/object-details/link mechanism before count, type, scope, time and metadata variants; all eight original cases and project-file transfer retained.
-- Neutral example: Invoice-Production, existing invoice-user holding G-520/G-521, account-b holding G-520, account-c holding G-521; correct intended identity association supplied/verified. No employee biography/number, company brand or numbered account. Unnecessary employeeRef sample field removed while ownership meaning/evidence remains.
-- Selected complete account population: three accounts, four direct membership occurrences, two held group IDs. Object read returns G-520 Invoice Reviewers, G-521 Archive Readers and G-599 Exception Reviewers, with G-599 unheld within that supplied population.
-- Schema agreement: groups entitlement-marked/multi-valued and connected to supported groups type; groupKey selected ID, label selected Name. Account-derived representations gain details, and G-599 becomes known under supplied complete reads/no protected-description blocking. No grant or target-group creation is implied.
-- Source/type/ID context, direct versus indirect/effective access, actor/read scope, endpoint multi-call collection and selected-type coverage remain distinct. No universal read order or native schedule for flat-file entitlement imports is promised.
-- Independent UTC timing variation: account observation at 09:00, external G-520 membership removal at 09:20, group existence observation at 09:30. Later object read doesn't refresh old account membership or reverse removal. T-22/T-90 project files are separate transfer.
-- Current editable diagrams: [held values and object details](../assets/AGG-002_held_values_and_object_details.txt) and [membership change and later object read](../assets/AGG-002_membership_change_and_later_object_read.txt); exact inline matches, maximum widths 36 and 38 characters.
-- Historical [two collection responsibilities](../assets/AGG-002_two_collection_responsibilities.txt) and [separate observation times](../assets/AGG-002_separate_observation_times.txt) remain unchanged.
-- Metadata edits aren't source writes; manual descriptions can persist after a successful read. Account aggregation doesn't delete entitlements; partial object absence isn't proven deletion or revocation.
-- No actual tenant/source/schema/type, account/identity, actor/permission, read/schedule/import, manual metadata, membership or provisioning operation. Actual beginner validation, full graphical review and formal approval remain pending.
-- Publication: revision 2.0 local only; published AGG-002 remains 1.0. SRC-003 through SRC-008 and AGG-001 revisions 2.0 also remain local. The 23 revised lessons through SRC-002 remain the [verified published snapshot](PUBLICATION_2026-10-26_BATCH_2.md). No staging/commit/push/deployment; original ISC_Theory_Learning unchanged.
-- Next existing lesson: AGG-003, learner body unopened. This task corrects only the owned AGG-002 legacy header; earlier author records and the downstream AGG-003 tail remain preserved. New authoring stays paused at reserved ROL-007.
+- Current revision: 3.0. Module 5.2. Teaching specification 3.2. October 29, 2026.
+- [Current coverage, primary sources and executed checks](revisions/AGG-002_Beginner_Explanation_Revision_Record.md); [preserved revision 2.0 record](revisions/AGG-002_Concept_Led_Revision_Record.md).
+- All 81 purposes, eight cases and independent project-file transfer retained. Explained account/group JSON and normal source/type/ID linking precede incremental count, scope, timing and metadata variations. Full saved simulated-beginner author read-through is distinct from pending actual learner validation.
+- Nine primary-reference rows covering ten official pages freshly inspected October 29, 2026: entitlement/account collection, schema/type/linking, catalog/manual/no-holder rules, source/correlation, provisioning and Web Services operation/multi-call examples.
+- Invoice-Production invoice-user holds G-520/G-521, account-b G-520, account-c G-521. Intended invoice-user identity association is supplied and verified. The complete selected population gives three accounts, four relationships and two distinct held IDs; object read returns those groups plus unheld G-599.
+- GroupKey supplies ID and label supplies Name. Groups account field is entitlement-marked/multi-valued and connected to supported groups. Two account-origin representations gain descriptions; G-599 becomes known as an object. No earlier manual edits block normal updates; no target group creation or grant is implied.
+- First current diagram explicitly links the two held references to their records and leaves G-599 without an account arrow. Source/type context and direct/indirect/effective access are distinct; counts concern their stated population and execution.
+- Independent UTC variation: 09:00 account memberships, 09:20 external G-520 removal, 09:30 group existence. Later group observation doesn't update account evidence or reverse removal. Files can carry similarly independent observation times.
+- Current editable diagrams: [held references and group records](../assets/AGG-002_beginner_held_references_and_group_records.txt) and [independent observations](../assets/AGG-002_beginner_independent_read_observations.txt), exact inline matches, maximum widths 42 and 43 characters. Four older assets and historical author record remain unchanged.
+- Direct/file/account-only capabilities, selected types, actor authority, scopes, pagination and multi-call endpoints remain explicit. No universal read order or native recurring flat-file entitlement schedule is promised.
+- Frontend/backend, configuration/account/catalog/history/Search and manual metadata evidence support distinct conclusions. Metadata edits aren't source writes; account reads don't delete entitlement records; missing/partial observations aren't proven revocation.
+- Publication: revision 3.0 local only; published AGG-002 remains 2.0, confirmed by local comparison with published main 4ba5a300978aa741d0178fe33f1b9d14d9a5c532. Earlier local SRC-008/AGG-001 work remains unchanged; no live verification, staging, commit, push or deployment.
+- Progress: 31 of 91 existing learners individually revised; 60 remain. First two Module 5 lessons revised; AGG-003 next, its learner body unopened here. ROL-007 remains reserved without a stub.
+- Actual learner validation and graphical publication review remain separately pending. No actual ISC/connector/target operation; source/review metadata stays outside learner prose.
 
 ### Historical verification record: revision 1.0
 
@@ -1921,16 +1918,17 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## AGG-003: Full aggregation, optimization and reprocessing unchanged records
 
-- Current revision: 2.0, local only. Course placement: Module 5.3. Teaching specification: 3.1.
-- Fresh official-document checks: October 26, 2026, including the generated V2025 operation reference rather than relying on its redirect wrapper.
-- Current review: neutral account records and causal beginner explanation; full coverage/processing distinction, fixed-input two-run trace, request-local option, first-use terms, eight worked cases and identity-profile transfer reconciled against original purposes.
-- Current [revision record](revisions/AGG-003_Concept_Led_Revision_Record.md) contains coverage, primary-source applicability, assumptions, assessments and executed checks.
-- Current [read/process choice](../assets/AGG-003_read_then_process_choice.txt) and [two-run comparison](../assets/AGG-003_two_runs_same_records.txt) match inline blocks, maximum widths 40 and 41. Historical assets remain unchanged.
-- No tenant/API execution. Equipment-Production, four account records, W-33/W-30 identifiers and completed association results are supplied examples, not observed operations.
-- Publication: revised snapshot remains 23 lessons through SRC-002; AGG-003 revision 2.0 and prior SRC-003 through SRC-008/AGG-001/002 drafts remain local. Published AGG-003 is revision 1.0.
-- Actual beginner validation, full graphical review and formal approval remain pending. No fixed diagram/table/word quota is applied.
+- Current revision: 3.0, saved locally October 29, 2026. Module 5.3. Teaching specification 3.2.
+- Thirty-second of 91 existing beginner-explanation revisions; 59 remain. AGG-004 is next.
+- The first 28 through SRC-007 are published at 3.0. SRC-008 and AGG-001 through AGG-003 are local 3.0; published AGG-003 remains 2.0, freshly confirmed against main 4ba5a300978aa741d0178fe33f1b9d14d9a5c532. Historical local/publication statements below describe earlier authoring stages.
+- [Current revision record](revisions/AGG-003_Beginner_Explanation_Revision_Record.md) reconciles all 80 prior purposes, sources, examples, eight worked cases, office-profile transfer and executed checks. [Revision 2.0 record](revisions/AGG-003_Concept_Led_Revision_Record.md) and all historical assets remain unchanged.
+- Full saved simulated-beginner author read-through completed. Actual learner validation and graphical publication review remain separately pending; no fixed structure or visual quota.
+- [Read and reprocessing choice](../assets/AGG-003_beginner_read_and_reprocessing_choice.txt) and [same accounts, two runs](../assets/AGG-003_beginner_same_accounts_two_runs.txt) match inline text, maximum widths 40 and 43.
+- No tenant/API execution, staging, commit, push or deployment is included.
 
 ### Current official sources by claim
+
+Fresh October 29 checks include the wrapper redirect and the specific generated V2025 importAccounts operation. The administrator guide illustrates beta; no endpoint/version equivalence or runnable request is supplied.
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -1946,9 +1944,15 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ### Current reasoning boundaries
 
-The account was initially uncorrelated, with valid stable identification, exactly one intended existing identity under the corrected comparison and no manual override. The old email mismatch existed before initial collection. Changing configuration doesn't establish input changes or unlink a previously assigned account. Run A uses a complete optimized four-record read: two process and two skip. After recording its changed/new records, no further external or mapped account-value changes occur; unoptimized Run B reprocesses all four. Model counts are not exact UI field formulas.
+Account/identity/source/connector/attribute/correlation meanings lead into selected JSON. Initial email mismatch already left equipment-account uncorrelated; the approved employeeRef/employeeNumber comparison has W-33 on each side, exactly one intended existing identity, valid stable account identification and no manual override. No previously assigned account is silently unlinked.
 
-Full read coverage, unchanged processing, identity calculations and external writes remain separate. A processing choice doesn't prove delivery through a delta/filter/permission gap, correct unequal values, remove a manual association or apply every configuration change. The profile-office transfer uses existing current inputs and supported manual identity processing. Deletion safeguards and downstream access consequences remain in scope.
+Complete optimized Run A returns four accounts: equipment-account and steady-account unchanged/skip, changed-account OPS-to-FIN/process and newly-seen-account existing externally but first ISC representation/process. Four read/two processed/two skipped. Run B carries forward A's recorded information, with no further external or mapped-value changes; all four existing unchanged records reprocess, four read/four reprocessed/zero skipped. Counts are logical examples, not universal UI formulas or observed tenant runs.
+
+The form-data disableOptimization flag belongs to the current request. Source selection, caller authority, acceptance/completion and documented optimized UI runs are explained separately. Delta delivery, single-account data-only UI behavior, entitlement reads and profile/manual identity processing keep distinct responsibilities. Correct identifiers stay unchanged; unequal values, manual ownership, missing records and denied external writes need their own diagnosis. Deletion safeguards, scope, processing cost and dependent access consequences remain explicit.
+
+### Historical revision 2.0 evidence
+
+[Preserved revision 2.0 record](revisions/AGG-003_Concept_Led_Revision_Record.md) contains its full reconciliation, sources and executed checks. The learner was subsequently published at 2.0 before this local 3.0 pass. Its original local-only statements remain authoring history. The revision 1.0 record below is preserved verbatim.
 
 ### Historical verification record: revision 1.0
 
@@ -2002,16 +2006,17 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## AGG-004: Delta aggregation and connector-specific limitations
 
-- Current revision: 2.0, local only. Course placement: Module 5.4. Teaching specification: 3.1.
-- Fresh official-document checks: October 26, 2026, including JDBC SaaS change tables, Active Directory reference/DirSync/permissions, Okta SaaS interfaces/90-day retention and ISC aggregation/processing boundaries.
-- Current review: neutral account records; explain the normal baseline/capture/selection/value/result mechanism before connector variants and failure recovery. All original assessment purposes retained.
-- Current [revision record](revisions/AGG-004_Concept_Led_Revision_Record.md) records coverage, assumptions, primary references, assessment reasoning and executed checks.
-- Current [capture responsibilities](../assets/AGG-004_captured_changes_to_records.txt) and [unchanged-account inventory](../assets/AGG-004_delta_keeps_unchanged_accounts.txt) match inline blocks; widths 38 and 34. Historical assets remain unchanged.
-- No tenant/database/API execution. Service-Production, SERVICE_ACCOUNTS/SERVICE_CHANGES, acct-a/b/c/d, W-44 and completed outcomes are supplied examples.
-- Publication: revised snapshot remains 23 lessons through SRC-002. SRC-003 through SRC-008 and AGG-001 through AGG-004 revisions 2.0 remain local; published AGG-004 remains 1.0.
-- Actual beginner validation, full graphical review and formal approval remain pending.
+- Current revision: 3.0, saved locally October 29, 2026. Module 5.4. Teaching specification 3.2.
+- Thirty-third of 91 existing beginner-explanation revisions; 58 remain. AGG-005 is next.
+- First 28 through SRC-007 published at 3.0; SRC-008 and AGG-001 through AGG-004 local at 3.0. Published AGG-004 remains 2.0, freshly confirmed against main 4ba5a300978aa741d0178fe33f1b9d14d9a5c532. Older local/publication statements below describe authoring history.
+- [Current revision record](revisions/AGG-004_Beginner_Explanation_Revision_Record.md) maps all 85 purposes, sources, eight worked cases, STAFF/STAFF_GROUPS transfer and executed verification. [Revision 2.0 record](revisions/AGG-004_Concept_Led_Revision_Record.md) and four historical diagram assets remain unchanged.
+- Full saved simulated-beginner author review complete. Actual independent learner validation and graphical publication review remain separately pending; no fixed structure or visual quota.
+- [Capture and account results](../assets/AGG-004_beginner_capture_and_account_results.txt) and [baseline, changes and result](../assets/AGG-004_beginner_baseline_changes_and_result.txt) exactly match inline diagrams; maximum widths 39 and 34.
+- No actual database/SQL/API/read/capture/permission/tracking/account/identity/provisioning operation, staging, commit, push or deployment.
 
 ### Current official sources by claim
+
+Fresh October 29 checks cover all ten cited pages. The deletion result is supplied under reviewed supported connector handling, not generalized from the action label or from general account-loading/single-account guidance.
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -2028,9 +2033,15 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ### Current reasoning boundaries
 
-The main example starts from completed acct-a/b/c baseline and continuous correct capture. A supported completed read handles Update acct-a, Insert acct-d and Delete acct-c, resulting in acct-a/b/d while acct-a gains FIN. Acct-b is omitted unchanged, not deleted. Account key and employee reference are distinct; acct-a's correct existing ownership and supported deletion result are supplied rather than inferred.
+The main JDBC SaaS teaching design establishes a complete full baseline acct-a/b/c, continuous correct capture, valid stable account identification, an existing correct acct-a association and reviewed supported reads/deletion handling. Change entries Update acct-a, Insert acct-d and Delete acct-c report external changes already made. Account key acct-a differs from worker reference W-44; selection, query results and schema/mapping connect to account department FIN. The completed account set is acct-a/b/d; unchanged acct-b remains. Equal starting/final totals are three plus one minus one, not an unchanged population or three new/live accounts.
 
-A query capable of returning the right value doesn't establish selection of the affected account. A delta count isn't a full population or live-account count. Capture gaps, partial results, tracking state, retention, table relationships and scope changes need supported handling; no atomic rollback, exactly-once replay or universal checkpoint is asserted. Supported cleanup isn't an invitation to clear unread evidence. JDBC account delta isn't group-object delta. Profile/log, OU-move and permission limits stay connector-specific.
+Database capture, connector reads, ISC handling and human verification have distinct responsibilities. Missed capture and membership-table gaps separate query correctness from account selection. Bookkeeping permission/cleanup requirements do not justify unrestricted business-data writes or clearing unread tracking information after failure.
+
+AD DirSync/full reference/additional permissions/OU moves, JDBC group-delta limits and Okta account-only users/logs/90-day retention are connector-specific. Pagination and across-run progress differ; no universal checkpoint, private commit timing, global rollback or exactly-once replay is asserted. Current-state recovery does not reconstruct expired historical events. Time-field/boundary, expanded scope and ISC-only configuration changes need supported handling. Delivery, reprocessing, identity calculation and external delivery remain separate evidence questions.
+
+### Historical revision 2.0 evidence
+
+[Preserved revision 2.0 record](revisions/AGG-004_Concept_Led_Revision_Record.md) contains its full coverage, sources, assumptions and executed checks. The learner was subsequently published at 2.0 before this local 3.0 pass. Original local-only statements remain authoring history. The revision 1.0 verification record below is preserved verbatim.
 
 ### Historical verification record: revision 1.0
 
@@ -2087,16 +2098,17 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## AGG-005: Single-account aggregation and its boundaries
 
-- Current revision: 2.0, local only. Course placement: Module 5.5. Teaching specification: 3.1.
-- Fresh official-document checks: October 26, 2026, especially the explicit UI single-account contract and current Accounts SDK stored-read/asynchronous reload distinction.
-- Current review: neutral account records, causal beginner explanation, separate account/identity/external states, correct existing profile input, eight original worked cases and support-button transfer preserved.
-- Current [revision record](revisions/AGG-005_Concept_Led_Revision_Record.md) records coverage, sources, assumptions, assessment purposes and executed checks.
-- Current [selected lookup and values](../assets/AGG-005_selected_lookup_and_values.txt) and [UI refresh scope](../assets/AGG-005_ui_refresh_scope.txt) match inline diagrams; maximum widths 33 and 34. Historical assets remain unchanged.
-- No tenant/API/source operation. Support-Production, support-user/support-admin, W-55, status mappings and completed results are supplied examples.
-- Publication: revised snapshot remains 23 through SRC-002. SRC-003 through SRC-008 and AGG-001 through AGG-005 revisions 2.0 remain local; published AGG-005 remains 1.0.
-- Actual beginner validation, full graphical review and formal approval remain pending.
+- Current revision: 3.0, saved locally October 29, 2026. Module 5.5. Teaching specification 3.2.
+- Thirty-fourth of 91 existing beginner-explanation revisions; 57 remain. AGG-006 is next.
+- First 28 through SRC-007 published at 3.0; SRC-008 and AGG-001 through AGG-005 local at 3.0. Published AGG-005 remains 2.0, freshly confirmed against main 4ba5a300978aa741d0178fe33f1b9d14d9a5c532. Older local/publication statements below describe authoring history.
+- [Current revision record](revisions/AGG-005_Beginner_Explanation_Revision_Record.md) maps all 80 purposes, primary sources, examples, eight cases, support-button transfer and executed checks. [Revision 2.0 record](revisions/AGG-005_Concept_Led_Revision_Record.md) and all four historical diagram assets remain unchanged.
+- Full saved simulated-beginner author review complete. Actual independent learner validation and graphical publication review remain separately pending; structure and visuals follow the topic without quotas.
+- [Selected account to values](../assets/AGG-005_beginner_selected_account_to_values.txt) and [account, identity and external state](../assets/AGG-005_beginner_account_identity_and_external_state.txt) match inline text; maximum widths 38 and 34.
+- No actual tenant/API/lookup/unlock/permission/removal/identity-processing/provisioning operation, staging, commit, push or deployment.
 
 ### Current official sources by claim
+
+Fresh October 29 checks cover all ten pages. The current Accounts SDK get-account-v1 and submit-reload-account-v1 sections were inspected specifically. Documented UI behavior is not generalized to every API/custom workflow/connector extension.
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -2113,9 +2125,17 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ### Current reasoning boundaries
 
-The main external account already exists and is correctly associated with an established identity. Source support/authority, stable account identification, lock-status interpretation and profile office mapping from this application account are supplied. Before UI action: external true/HYD, ISC account false/BLR, identity office BLR. After successful specified read: ISC account true/HYD, identity office still BLR, external account still locked. Correct profile mapping doesn't imply this operation applies identity attributes.
+The source is Support-Production with supported Web Services SaaS specified-account lookup, valid identification and correct existing association. External accountKey/native identity support-user, text employeeRef W-55 and omitted generated ISC account object ID have distinct purposes. Main external state is true/HYD, old ISC account false/BLR and identity office BLR. The supplied selected response is true/HYD. Status interpretation and schema/response mapping are supplied configuration, not universal fields.
 
-No UI-read side effect is inferred from a nearby independent process. Not found, explicit delta deletion, full-source deletion and representation removal have different contracts. Stored-account retrieval and accepted connector reload aren't completed fresh-source observations. Selected source/account, actual returned/extracted values, completed operation and resulting record evidence remain separate. File import time doesn't upgrade export freshness. Transfer manager input is HR, not the refreshed application.
+The profile correctly maps identity office from this account. Completed UI Aggregate Account updates the account to true/HYD without identity-attribute synchronization or provisioning. The identity stays BLR and external account stays locked; the separately authorized supported unlock is unrequested. Response success, represented account state, identity values, external change and actual sign-in/function outcomes remain separate evidence.
+
+Get Object's native key/request/response and POST business-read example differ from assuming bulk/connection success proves lookup capability. File import freshness depends on export contents/time. Not found keeps this UI action's account record unchanged and does not prove current external existence. Explicit supported delta deletion, full-source deletion handling and Remove Account representation removal are distinct.
+
+Stored account-detail retrieval differs from asynchronous connector reload. Acceptance/task reference is not completion. Identifier, version and operation behavior must match; UI limits are not asserted universally across APIs. Independent wrong-account, not-found, unlock, async, denied-interface, old-export and missing-function cases retain their conditions. The support-button transfer separates application office, HR manager, selected read, authorized unlock and unapproved deletion policy.
+
+### Historical revision 2.0 evidence
+
+[Preserved revision 2.0 record](revisions/AGG-005_Concept_Led_Revision_Record.md) contains its coverage, sources, assumptions and executed checks. The learner was subsequently published at 2.0 before this local 3.0 pass. Its local-only statements remain authoring history. The revision 1.0 verification record below is preserved verbatim.
 
 ### Historical verification record: revision 1.0
 
@@ -2169,16 +2189,17 @@ Questions, supplied facts and worked reasoning remain in the learner file. No be
 
 ## AGG-006: Schedules, scope, dependencies and data freshness
 
-- Current revision: 2.0, local only. Course placement: Module 5.6. Teaching specification: 3.1.
-- Fresh official-document checks: October 26, 2026, including daily recurrence windows, queue submission, runtime-specific time zones, entitlement/file controls and migration clock warnings.
-- Current review: neutral worker record and causal beginner explanation; all timeline events, freshness/offset/window calculations, eight original worked cases and contractor-disable design transfer preserved.
-- Current [revision record](revisions/AGG-006_Concept_Led_Revision_Record.md) records coverage, primary sources, assumptions, assessment reasoning and executed checks.
-- Current [publication/observation trace](../assets/AGG-006_publication_and_observation_times.txt) and [required handoffs](../assets/AGG-006_required_handoffs_and_outcomes.txt) match inline blocks, widths 30 and 37. Historical assets remain unchanged.
-- No tenant/API/schedule/time-zone/runtime/source/target changes. HR-Production, worker-a/W-66, department codes, batches/times and completed outcomes are supplied.
-- Publication: revised snapshot remains 23 through SRC-002. SRC-003 through SRC-008 and AGG-001 through AGG-006 revisions 2.0 remain local; published AGG-006 remains 1.0.
-- Actual beginner validation, full graphical review and formal approval remain pending.
+- Current revision: 3.0, saved locally October 29, 2026. Module 5.6. Teaching specification 3.2.
+- Thirty-fifth of 91 existing beginner-explanation revisions; 56 remain. AGG-007 is next.
+- First 28 through SRC-007 published at 3.0; SRC-008 and AGG-001 through AGG-006 local at 3.0. Published AGG-006 remains 2.0, freshly confirmed against main 4ba5a300978aa741d0178fe33f1b9d14d9a5c532. Earlier publication/local statements below describe authoring history.
+- [Current revision record](revisions/AGG-006_Beginner_Explanation_Revision_Record.md) maps all 86 purposes, sources, examples, eight cases, contractor-disable transfer and executed checks. [Revision 2.0 record](revisions/AGG-006_Concept_Led_Revision_Record.md) and four historical diagram assets remain unchanged.
+- Full saved simulated-beginner author review complete. Actual independent learner validation and graphical publication review remain separately pending. Structure, length and visual counts follow the topic without quotas.
+- [Two reads around publication](../assets/AGG-006_beginner_publication_reads_and_confirmation.txt) and [conditional dependency and target observation](../assets/AGG-006_beginner_dependency_and_target_observation.txt) exactly match inline text; maximum widths 30 and 37.
+- No actual tenant/source/schedule/time-zone/runtime/migration/read/account/identity/provisioning operation, staging, commit, push or deployment.
 
 ### Current official sources by claim
+
+Fresh October 29 checks cover all eight cited pages. Feature-specific time-zone guidance qualifies broad VA-offset notes: VA-based connections use cluster time and SaaS uses tenant time. No single clock, overlap policy, recovery mechanism or guaranteed runtime is generalized across sources.
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -2193,9 +2214,19 @@ Questions, supplied facts and worked reasoning remain in the learner file. No be
 
 ### Current reasoning boundaries
 
-Main tenant UTC and daily 00:10/hourly collection are explicit. Business WH-to-DIST change is 03:00, producer publication 03:40. Due/start/read/end are 03:10/03:15/03:17/03:22 (WH) and 04:10/04:15/04:18/04:24 (DIST). Account is confirmed 04:24; identity 04:26. Confirmation isn't exact persistence timing or a universal identity-processing wait. 86-minute elapsed time comprises 40 + 30 + 5 + 9 + 2 in this trace. At 04:30, change/publication/read/confirmation ages are 90/50/12/4.
+HR-Production is a neutral supported cloud-run SaaS example, with complete published batches, full intended scope, correct worker-a identity association and correct department profile input. workerKey worker-a differs from text employeeNumber W-66. Tenant UTC and daily 00:10/hourly scheduling govern the main supplied trace.
 
-Daily 14:00/eight-hour recurrence yields 14:00/22:00 then next-day 14:00, a 16-hour opportunity gap and 15h59 wait from supplied 22:01. Fixed GMT-06 02:00 equals 08:00 UTC, business GMT-05 03:00. Full scope, complete freshness and target delivery don't follow from more frequent jobs. Object/membership observations, Search and producer/file timing remain independent. Conditional handoffs don't imply every collection changes access or every source must run in one serial chain.
+HR changes WH to DIST at 03:00, with publication 03:40. First due/start/read/end 03:10/03:15/03:17/03:22 returns WH; second 04:10/04:15/04:18/04:24 returns DIST and account confirmation. Identity DIST is separately confirmed 04:26. At 04:30, business/publication/read/confirmation ages are 90/50/12/4 minutes. Total 86 = 40 + 30 + 5 + 9 + 2; the last gap is human confirmation, not measured identity-processing time. No instantaneous source snapshot or task-end identity gate is asserted.
+
+Daily 14:00/eight-hour recurrence ends at midnight, producing 14:00/22:00 then next-day14:00, a 16-hour gap and 15h59 wait from22:01. VA GMT-06 02:00 equals UTC08:00 and business GMT-05 03:00. Dates, browser/report clocks and runtime migration effects remain distinct.
+
+Scope/filter/actor/query/endpoint and full/delta/optimization affect coverage and processing independently of frequency. Account membership, entitlement object definitions and their controls/types/times differ. Native file mechanisms and separately designed import automation retain their boundaries. Conditional handoffs connect producer, collected inputs, identity evaluation, access decisions, supported provisioning and later target observation without universal success or serial scheduling.
+
+The 30-minute disablement transfer includes effective-time arrivals, hourly independent publication/collection, no universal preloading/timed action, variable work and missing target confirmation. Outcome start/stop, supported design, authority, capacity, recovery, exceptions and escalation require evidence; a calendar frequency or accepted request is insufficient.
+
+### Historical revision 2.0 evidence
+
+[Preserved revision 2.0 record](revisions/AGG-006_Concept_Led_Revision_Record.md) contains its coverage, sources, assumptions and executed checks. The learner was subsequently published at 2.0 before this local 3.0 pass. Its original local-only statements remain authoring history. The revision 1.0 verification record below is preserved verbatim.
 
 ### Historical verification record: revision 1.0
 
@@ -2253,16 +2284,17 @@ Supplied facts, questions and worked reasoning remain in learner prose. No begin
 
 ## AGG-007: Missing records, account deletion and safeguards
 
-- Current revision: 2.0, local only. Course placement: Module 5.7. Teaching specification: 3.1.
-- Fresh official-document checks: October 26, 2026; source deletion/rounding/authoritative/hidden handling, profile priority, representation removal, correlation, explicit JDBC delta Delete and provisioning/lifecycle boundaries.
-- Current review: neutral records, connected beginner explanation, all original guard/identity/hidden/recovery purposes and eight cases plus HR-file transfer retained.
-- Current [revision record](revisions/AGG-007_Concept_Led_Revision_Record.md) records coverage, sources, assumptions, assessment reasoning and executed checks.
-- Current [exclusion/volume guard](../assets/AGG-007_exclusion_and_volume_guard.txt) and [authoritative-loss outcomes](../assets/AGG-007_authoritative_loss_outcomes.txt) match inline blocks; widths 37 and 40. Historical assets, including the older 45-column diagram, stay unchanged.
-- No tenant/source/API/deletion/threshold/permission/protection/ownership/target change. Application-Production, app-user, HR-Production/worker-record, W-77 and completed outcomes are supplied examples.
-- Publication: revised snapshot remains 23 through SRC-002. SRC-003 through SRC-008 and AGG-001 through AGG-007 revisions 2.0 remain local; published AGG-007 remains 1.0.
-- Actual beginner validation, full graphical review and formal approval remain pending.
+- Current revision: 3.0, saved locally October 29, 2026. Module 5.7. Teaching specification 3.2.
+- Thirty-sixth of 91 existing beginner-explanation revisions; 55 remain. AGG-008 is next.
+- First 28 through SRC-007 published at 3.0; SRC-008 and AGG-001 through AGG-007 local at 3.0. Published AGG-007 remains 2.0, freshly confirmed against main 4ba5a300978aa741d0178fe33f1b9d14d9a5c532. Older local/publication statements below describe authoring history.
+- [Current revision record](revisions/AGG-007_Beginner_Explanation_Revision_Record.md) maps all 81 purposes, primary sources, examples, eight cases, HR-file transfer and executed checks. [Revision 2.0 record](revisions/AGG-007_Concept_Led_Revision_Record.md) and all four historical assets remain unchanged.
+- Full saved simulated-beginner author review complete. Actual independent learner validation and graphical publication review remain separately pending. Structure and visual counts follow the topic without quotas.
+- [Missing population and safeguard](../assets/AGG-007_beginner_missing_population_and_safeguard.txt) and [authoritative account outcomes](../assets/AGG-007_beginner_authoritative_account_outcomes.txt) exactly match inline text; maximum widths 37 and 40.
+- No actual source/filter/limit/protection/profile/API/read/account/identity/provisioning/target operation, staging, commit, push or deployment.
 
 ### Current official sources by claim
+
+Fresh October 29 checks cover all seven primary pages. Exact small-source examples, authoritative outcomes, all seven blockers and hidden handling were checked directly. No cancellation rollback, universal denominator, strictly-greater-than comparator or immediate completed identity/target removal is inferred.
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -2276,11 +2308,17 @@ Supplied facts, questions and worked reasoning remain in learner prose. No begin
 
 ### Current reasoning boundaries
 
-All 1,000 expected external application accounts remain present, including 150 disabled. The unintended active-only result returns 850 with no new/key changes. 150/1,000=15% is clearly above 10%; cancellation and separately retained app-user are supplied, not inferred atomic rollback. Approved corrected full read includes all 1,000 without target enable/create/delete. Five/1,000=0.5% illustrates a small incorrect omission below a volume guard.
+Main Application-Production is not authoritative for the identity. Disabled app-user exists externally and has a correct ISC association; HR-Production worker-record remains. Person-related W-77 differs from the two source account keys. The expected 1,000 accounts all still exist, with no new records or key changes. An unintended active-only read returns 850, omitting all 150 disabled accounts. Supplied 15% versus 10% cancels/warns; app-user retention is separately checked, not inferred from rollback.
 
-Ten-account 1% gives raw0.1, rounding to zero under the documented limitation; ten-account 5% raw0.5 becomes one according to the explicit product example, with cancellation at one or more. No general comparator or rounding implementation is invented. Main record keys app-user and worker-record differ from employee number W-77.
+The approved corrected full read returns all 1,000, with keys, actor authority and association unchanged. Coverage repair does not create, enable or delete externally; app-user remains disabled. Five/1,000 = 0.5%, equal totals with 20 substituted identifiers and the ten-account 1%/5% examples expose volume-only limitations. Full, delta and single-account absence have different meanings. Explicit JDBC Delete information is not omission of an unchanged account.
 
-Authoritative profile fallback, no-authoritative nightly attempt, all seven blockers and hidden-account review treatment are qualified. Eligible means not blocked, not completed deletion. Not-found/delta/full/Remove Account have different contracts. Hidden isn't terminated lifecycle state, and removed ISC data isn't external access-removal evidence. Recovery checks actual ownership/profile/account state rather than guaranteeing original IDs or relationships.
+The authoritative-account variation requires actual external HR deletion and supported configured representation removal. A remaining eligible authoritative account leads to profile fallback/remapping; otherwise the automatic nightly job attempts identity deletion. All seven blockers remain. Hidden retains the identity without profile-driven mapping/normal listing, keeps prior account links but treats them as uncorrelated, and uses shared grouping in the relevant uncorrelated review. Hidden is not a lifecycle state or proof of external disablement.
+
+Supported recovery checks actual existence, ownership, profile and relationships without promising original object IDs/history. Offboarding uses explicit authoritative facts, retained status/end-date design as applicable, target operations and external evidence. Feed omission and low percentage cannot prove a leaver outcome.
+
+### Historical revision 2.0 evidence
+
+[Preserved revision 2.0 record](revisions/AGG-007_Concept_Led_Revision_Record.md) contains its coverage, sources, assumptions and executed checks. The learner was subsequently published at 2.0 before this local 3.0 pass. Its original local-only statements remain authoring history. The revision 1.0 verification record below is preserved verbatim.
 
 ### Historical verification record: revision 1.0
 
@@ -2336,16 +2374,17 @@ No beginner read-through or transfer validation has been performed. Source and a
 
 ## AGG-008: Reading aggregation outcomes
 
-- Current revision: 2.0, local only. Course placement: Module 5.8. Teaching specification: 3.1.
-- Fresh official-document checks: October 26, 2026, including dedicated Web Services SaaS paging guidance, loading/history/termination/retries and entitlement-count semantics.
-- Current review: neutral records and connected beginner explanation; input/task/inventory distinctions, partial evidence, all original eight cases and dashboard transfer preserved.
-- Current [revision record](revisions/AGG-008_Concept_Led_Revision_Record.md) records coverage, references, assumptions, assessments and executed checks.
-- Current [page/record evidence](../assets/AGG-008_pages_and_verified_records.txt) and [required outcome checks](../assets/AGG-008_required_outcome_evidence.txt) match inline blocks, maximum widths 36 and 35. Historical assets remain unchanged.
-- No tenant/source/API/retry/permission/guard/delta/account/identity/target changes. Dispatch-Production, dispatch-user/received-user, counts/pages/times and completed results are supplied.
-- Publication: revised snapshot remains 23 through SRC-002. SRC-003 through SRC-008 and AGG-001 through AGG-008 revisions 2.0 remain local; published AGG-008 remains 1.0.
-- Actual beginner validation, full graphical review and formal approval remain pending.
+- Current revision: 3.0, saved locally October 29, 2026. Module 5.8. Teaching specification 3.2.
+- Thirty-seventh of 91 existing beginner-explanation revisions; 54 remain. AGG-009 is next.
+- First 28 through SRC-007 published at 3.0; SRC-008 and AGG-001 through AGG-008 local at 3.0. Published AGG-008 remains 2.0, freshly confirmed against main 4ba5a300978aa741d0178fe33f1b9d14d9a5c532. Older local/publication statements below describe authoring history.
+- [Current revision record](revisions/AGG-008_Beginner_Explanation_Revision_Record.md) maps all 83 purposes, primary sources, examples, eight cases, dashboard-health transfer and executed checks. [Revision 2.0 record](revisions/AGG-008_Concept_Led_Revision_Record.md) and four historical assets remain unchanged.
+- Full saved simulated-beginner author review complete. Actual independent learner validation and graphical publication review remain separately pending. Structure, length and visual counts follow the topic without quotas.
+- [Partial read and checked values](../assets/AGG-008_beginner_partial_read_and_account_checks.txt) and [required outcome evidence](../assets/AGG-008_beginner_required_outcome_evidence.txt) match inline text; maximum widths 36 and 35.
+- No actual connector/paging/permission/mapping/retry/deletion/API/read/account/identity/provisioning/target operation, staging, commit, push or deployment.
 
 ### Current official sources by claim
+
+Fresh October 29 checks cover all eight primary pages. The Web Services SaaS paging guide's documented default is not confused with the supplied configured 30/30/30/10 example. Main partial-output observations are supplied, not a universal storage/rollback or retry/resume model.
 
 | Official reference | Claim / section and applicability |
 |---|---|
@@ -2360,9 +2399,19 @@ No beginner read-through or transfer validation has been performed. Source and a
 
 ### Current reasoning boundaries
 
-All 100 expected accounts already exist in ISC and remain stable between supplied runs. Pages are configured 30/30/30/10, not default size. Run A 09:00-09:08 fails at page 3 after 60 unique accounts; received-input comparison 50 same/10 different doesn't certify 10 updated outputs. Dispatch-user is among 40 unread and remains EAST; received-user CENTRAL is independently confirmed. No other operation changes ISC values between Run A and checks. Same 100 inventory keys don't prove fresh coverage or universal rollback.
+Dispatch-Production is a neutral supported Web Services SaaS design. dispatch-user has a correct existing association; account site changes EAST to CENTRAL externally. The same 100 existing expected account keys remain across A/B, with no create/delete/key changes.
 
-After resolved cause/review, Run B 10:00-10:06 obtains all 100 expected keys, and 10:07 confirms dispatch-user CENTRAL. Requirement is population/account evidence, not invented identity-site/access outcome. Independent cases test 90/100 scope, 95 unchanged, failure events versus unread accounts, administrative termination, 5 discovered/8 inventory groups and 100 rows/99 keys. The second diagram is human conditional verification, not backend automation.
+Run A is 09:00–09:08 Error. Two distinct 30-account pages yield 60 received inputs, 50 matching earlier values and ten different. Page 3 connection reset leaves 40 unread, including dispatch-user. Same 100 inventory keys remain; received-user CENTRAL and dispatch-user EAST are separately checked, with no other intervening ISC-value operation. Input comparisons are not all verified output updates, and Error is not a universal rollback or preservation guarantee.
+
+Run B follows resolved connection cause and supported full-read review. It is 10:00–10:06 Success with all 100 expected distinct keys obtained; dispatch-user CENTRAL is checked separately at10:07. This supplies the stated account/population recovery evidence, not invented identity-site or new-access requirements.
+
+Counters need object/scope/stage and actual field definitions. Unchanged can mean read then skipped processing; force processing cannot deliver failed pages. Success/Warning/Error/Terminated and pending work need actual messages and execution context. One error event can affect 40 accounts. Rows/keys/set membership, actor visibility, full/delta/specified reads, empty response and deletion consequences remain distinct.
+
+Five discovered/eight inventory groups do not prove three duplicates; two account memberships in one group are two relationships and one object. Conditional engineer checks separate account, required identity and target outcomes. Search is an indexed view, retries are supported-operation-specific, and diagnostic subsets do not establish full coverage. Dashboard health preserves verified/incomplete/failed/unknown evidence rather than assuming healthy from no Error and familiar count.
+
+### Historical revision 2.0 evidence
+
+[Preserved revision 2.0 record](revisions/AGG-008_Concept_Led_Revision_Record.md) contains its coverage, sources, assumptions and executed checks. The learner was subsequently published at 2.0 before this local 3.0 pass. Its original local-only statements remain authoring history. The revision 1.0 verification record below is preserved verbatim.
 
 ### Historical verification record: revision 1.0
 

@@ -1,73 +1,77 @@
 # The account refreshed. What actually changed?
 
-A user can't sign in to an application. The application reports that the account is locked, but SailPoint Identity Security Cloud (ISC) still shows the earlier unlocked state.
+A user cannot sign in to an application. The application says the account is locked, but SailPoint Identity Security Cloud (ISC) still shows it as unlocked.
 
-You need to establish the current state of that account. Do you need to collect every account in the application?
+You want ISC to show the account's current condition. Do you need to read every account in that application to check this one?
 
-A **single-account aggregation** reads data for one specified account. Where the source supports it, this can update ISC's collected account information and status without collecting the whole configured population.
+A **single-account aggregation** reads information for one specified account. Where the integration supports it, ISC can update its collected account data and status without collecting the whole account population.
 
-Now suppose the read succeeds and ISC shows that the account is locked. The user still can't sign in.
+Suppose the read completes and ISC now shows the account as locked. The user still cannot sign in.
 
-That doesn't mean the read failed. It means ISC's recorded information now agrees with the application. Removing the lock requires a different operation.
+The read has done its job: ISC's recorded information now agrees with the application. It has not removed the lock. That requires a different operation.
 
-## Which account are we talking about?
+Let's follow the selected record and see exactly where the new information goes.
 
-An **account** is a record in an application or directory. ISC holds its own representation of that external account.
+## Which record are we refreshing?
 
-An **identity** is ISC's representation of a person or another entity. It can connect to accounts in different systems and hold information at the identity level, such as an office value.
+An **account** is a record in an application or directory. ISC holds its own representation of that external account: the account information it has collected.
 
-An account's office and the identity's office are therefore separate values. They can contain the same text without becoming one shared field.
+An **identity** is ISC's representation of a person or other managed subject. It can connect to accounts on several systems and hold its own information, such as an office.
 
-A **source** is ISC's configured representation of a system or collection of account data. Its **connector** provides supported operations for reading that system and, where supported, changing it.
+That gives us separate places where an office value might exist: the external account, ISC's account record, and the identity record. Updating one does not mean the other two automatically share the same value.
 
-Our neutral source is Support-Production. It already represents an external account named support-user, correctly associated with an existing identity. The account has employeeRef W-55.
+A **source** is ISC's configured representation of a system or collection of account data. Its **connector** provides the supported integration for reading that system and, where supported, making changes there.
 
-For the main example, assume a supported Web Services SaaS integration with a working specified-account lookup. **SaaS**, software as a service, identifies the cloud-based connector variant here. The lookup returns account data and lock status. A separate unlock operation is supported and authorized, but hasn't been requested.
+For our example, Support-Production already contains an ISC account record for the external account `support-user`. The account has employee reference `W-55` and is correctly associated with an existing identity.
 
-“Locked” means the application has applied its account-lock condition. A disabled account has a different state. Even removing a lock doesn't establish that the account is enabled, that the password is correct or that the required application permissions are present.
+Assume this source uses a supported Web Services SaaS integration with a working lookup for one specified account. **SaaS** means software as a service; it identifies the cloud-based connector variant here.
 
-The records, configuration choices and completed results below are supplied examples, not observations from a real tenant.
+The configured lookup returns the account's data and lock condition. A separate unlock operation is supported and authorized, but nobody has requested it during the read.
 
-## The selection identifies a record, not a person-wide refresh
+“Locked” means the application has applied its account-lock condition. It is different from a disabled account. Even after a lock is removed, signing in can still depend on the account being enabled and the credentials being correct. Using application functions also requires the relevant permissions.
 
-The helpdesk opens the identity's Accounts view and chooses **Aggregate Account** for its Support-Production account.
+These are the starting conditions for our example, rather than a promise about every connector.
 
-This action identifies an existing ISC account record in a particular source. It doesn't ask ISC to search for every account with a similar name.
+## Which account did the helpdesk select?
 
-The identifiers have different responsibilities:
+The helpdesk opens the identity's Accounts view and chooses **Aggregate Account** for the Support-Production account.
 
-| Reference | What it identifies |
+This is an action in the **UI**, the screens used to operate ISC. It selects an existing account record within a particular source. It does not request a refresh of every account belonging to that identity.
+
+Several identifiers are involved, and they do different jobs:
+
+| Reference | What it identifies here |
 |---|---|
-| Employee reference W-55 | The employee associated with the example account |
-| ISC account object ID | The account representation inside ISC; its actual generated value is omitted |
-| External account key support-user | The specific account the connector must look up |
-| Source Support-Production | The integration and external environment in which that key has meaning |
+| Employee reference `W-55` | The worker associated with the account |
+| ISC account object ID | This account's representation inside ISC; its generated value is omitted |
+| External account key `support-user` | The account the connector must look up in the application |
+| Source `Support-Production` | The integration and external environment in which that account key has meaning |
 
-In connector contexts, the external key is also called the account's **native identity**. It identifies the external account; it isn't automatically a person's employee number or name.
+The external account key is also called its **native identity** in connector contexts. Despite the word “identity,” this identifies an account in the external system. It is not automatically the person's employee number or ISC identity.
 
-A **schema** describes the account fields ISC represents and their uses. Here, accountKey is configured as the identifying attribute, with value support-user. EmployeeRef is a separate field containing W-55.
+An **account schema** defines the fields ISC represents and their uses. Here, `accountKey` is the configured identifying field, and its value is `support-user`. The separate `employeeRef` field contains `W-55`.
 
-Why keep them separate? A person can have an ordinary account and an administrative account. Those accounts can share an employee reference while needing different external account keys. Selecting one account must identify which record to read.
+Why does this distinction matter? One person can have an ordinary account and an administrative account. Both might carry the same worker reference, but the connector needs different account keys to read them.
 
-Similarly, a software operation requiring the ISC account object ID isn't asking for the employee reference or the external key. The selected operation determines which identifier it needs.
+An operation asking for the ISC account object ID needs a different identifier again. Use the identifier required by the selected operation; do not substitute a worker reference because it refers to the same person.
 
-For now, our main action selects only support-user in Support-Production.
+For the main action, we have selected only `support-user` in Support-Production.
 
-## Follow what the application returns
+## Follow the values from the application into ISC
 
-Before the action, the relevant values are:
+The lock field uses **Boolean** values: `true` means the lock condition is present, and `false` means it is absent under this configuration. `HYD` and `BLR` are illustrative office codes.
+
+Before the read, the relevant values are:
 
 | Location | Lock value | Office value |
 |---|---|---|
-| External support-user account | true | HYD |
-| ISC's representation of that account | false | BLR |
+| External `support-user` account | true | HYD |
+| ISC's record of that account | false | BLR |
 | Existing ISC identity | Not this account's lock field | BLR |
 
-True and false are **Boolean** values meaning yes and no. HYD and BLR are illustrative office codes used consistently by this configuration.
+The application has already changed. Its account is locked and has office `HYD`. ISC's older account record still contains the earlier unlocked condition and office `BLR`.
 
-The external account is already locked and has office HYD. ISC's older account representation still has unlocked status and office BLR.
-
-The supported lookup returns these selected values in **JSON**, JavaScript Object Notation, a format for named properties and values:
+The supported lookup returns these selected values:
 
 ```json
 {
@@ -78,264 +82,280 @@ The supported lookup returns these selected values in **JSON**, JavaScript Objec
 }
 ```
 
-The quotation marks identify text values. True is written without quotation marks because it is a Boolean, not the word “true” stored as text.
+This is **JSON**, a text format that pairs field names with values. `office` is a field name; `HYD` is its text value. Quotation marks identify text. The unquoted `true` is a Boolean, rather than the word “true” stored as text.
 
-These fields aren't a complete system response. The field names and the interpretation of the external lock condition as an ISC status are supplied configuration choices, not universal defaults.
+The fragment shows only the fields needed here. Their names and the interpretation of the external lock condition as ISC status are supplied configuration choices, not universal defaults.
 
-A **mapping** determines which input supplies a represented value. The connector must look up the correct external account, obtain the relevant fields and provide values in the shapes expected by the schema and mappings.
+A **mapping** specifies how an input supplies a represented value. The connector must find the correct account, obtain its data and extract the fields in the form expected by the account schema and mappings.
 
-That connection matters. A successful response containing HYD doesn't prove that ISC represented HYD if the response mapping extracted the wrong field.
+For example, the response may contain `HYD`, but ISC will not necessarily record it as office if the response mapping extracts a different field. Receiving a successful response and representing the intended value are separate steps.
 
-Under the supplied successful handling, the dependencies are:
+Under the successful setup we established, the read follows these dependencies:
 
 ```text
-[Helpdesk selects ISC account]
-              |
+[Helpdesk selects the ISC account]
+                |
 [Connector looks up support-user]
-              |
-[External account returns values]
+                |
+[Application returns account values]
 [locked true, office HYD]
-              |
-[Extract and represent values]
-              |
-[ISC account now locked / HYD]
+                |
+[Extract values using the mappings]
+                |
+[ISC account records true / HYD]
 
-[Engineer verifies the record]
+[Engineer verifies the account record]
 ```
 
-Follow the connected lines as information passing through the read. The selected account identifies the lookup. The application returns values, and the configured extraction and representation make them available on the ISC account.
+The selected ISC record supplies the context for the lookup. The connector reads the external account. The configured extraction and representation carry its returned values into ISC's account record.
 
-The connector performs the external lookup; ISC holds the resulting account representation. The separate engineer line is a human verification step, not an automatic guarantee of correctness.
+The engineer's check is separate because verifying the result is a human activity, not an automatic guarantee that the preceding work succeeded.
 
-This isn't a diagram of private service calls, queues or database commits. One selected account also doesn't mean one network request. Authentication, response handling or additional supported reads can require connector-specific work.
+The diagram shows information dependencies. It does not describe ISC's private service calls, queues or database transactions. Selecting one account also does not promise one network request: connection setup and additional supported reads can require more work.
 
-For example, the Web Services SaaS **Get Object** operation retrieves a specified account using its native identity. Its configuration includes the request and response mapping.
+## What does the connector need to perform that lookup?
 
-Its documented example uses an **HTTP POST** request. HTTP is a protocol for exchanging requests and responses; POST is one request method. In this connector example, it is used for the account read. The method name alone doesn't establish whether the business operation observes data or changes it.
+In Web Services SaaS, **Get Object** retrieves a specified account using its native identity. Its configuration includes how to construct the request and how to interpret the response.
 
-Get Object can also participate in other workflows. Its availability doesn't make every workflow using it identical to the UI's Aggregate Account action.
+That is different from assuming a working account-list operation automatically provides a working one-account lookup. The application may expose different interfaces for those operations, with different request formats and permissions.
 
-## Why can the account office change while the identity office stays the same?
+The documented Get Object example uses **HTTP POST**. **HTTP** is a set of rules for exchanging requests and responses, and POST is one of its request methods. In this example, POST performs the business operation of reading an account.
 
-An **identity attribute** is a value on the identity, rather than on an individual source account.
+The method name alone therefore does not establish whether the business operation reads data or changes it. Inspect the operation and its supported configuration.
 
-An **identity profile** configures identities and their attribute mappings. In this example, the existing profile explicitly takes identity office from the Support-Production account's office field.
+Get Object can also be used within other workflows. That does not make every workflow using it equivalent to the UI's Aggregate Account action.
 
-That's a real input relationship in our supplied configuration. We aren't explaining the old identity value by saying that office intentionally comes from another source.
+A successful connection test tells you that the tested operation worked. Likewise, successful bulk account collection tells you about that collection. Neither establishes that the specified-account lookup has the correct key, authority, request and response mapping.
 
-After the documented UI Aggregate Account action, ISC's account representation has locked true and office HYD. The identity's office remains BLR, and the application account remains locked.
+For a **direct-connect source**, the connector communicates with the external system through its supported integration. Check that exact lookup operation.
 
-Why didn't HYD reach the identity? Because this particular UI action updates account data without synchronizing its new values into identity attributes. The correct mapping identifies an input; it doesn't mean every operation that updates that input also evaluates the identity value.
+A **file-based source** instead obtains account information from supplied file data. Importing yesterday's export today does not establish today's live application state. If there is no supported live-read path, an on-demand live lookup cannot be assumed.
 
-**Provisioning** performs supported changes to external accounts or access. This UI action has no impact on provisioning. Reading a lock condition and removing it are separate responsibilities.
+The useful question is specific: can this integration read this account, under its connection's authority, and represent the required values?
 
-The scope of the action looks like this:
+## Why does the identity's office still show BLR?
+
+An **identity attribute** is a value on the identity itself, rather than on one application account.
+
+An **identity profile** configures how a population of identities is built and managed, including mappings that obtain identity values from account information.
+
+In our example, the profile already maps identity office from the Support-Production account's office. It is correctly configured to use this account as the input.
+
+After the documented UI Aggregate Account action, the results are:
+
+- ISC's selected account record shows locked `true` and office `HYD`.
+- The identity's office remains `BLR`.
+- The external account remains locked.
+
+Why did the new office stop at the account record?
+
+This particular UI action updates account data without synchronizing the new values into identity attributes. The profile mapping says where identity office should come from. It does not mean that every operation updating that input also evaluates the identity value.
+
+**Provisioning** carries out supported changes to external accounts or access. The documented UI action has no impact on provisioning, so reading the lock condition does not request an unlock.
+
+Keep the action's scope in view:
 
 ```text
 [UI Aggregate Account]
           |
-[ISC account representation]
+[ISC account updated]
 [locked true, office HYD]
 
-[Identity office remains BLR]
+[Identity office stays BLR]
 [No identity-attribute sync]
 
 [External account stays locked]
 [No provisioning from this action]
 ```
 
-The connected account block is the result updated by the action. The separated identity and external-account blocks describe values it doesn't change. They aren't later stages waiting for the account read to finish.
+The connected block is the account record updated by the action. The separate identity and external-account blocks show states the action does not change. They are not stages waiting to run afterward.
 
-If the task is to update identity office, inspect the actual profile mapping and choose the appropriate supported identity-processing or source-aggregation path for that situation.
+**Identity processing** evaluates identity information and the relevant access configuration. For example, applying profile configuration changes can require manual identity processing even when source data has not changed.
 
-**Identity processing** evaluates identity information under the relevant identity and access configuration. Profile configuration changes can require manual identity processing even when source data hasn't changed.
+If identity office needs updating, inspect the actual profile mapping and available input, then choose the supported identity-processing or source-aggregation path for that situation.
 
-That doesn't create a universal instruction to run identity processing after every account refresh. Establish the intended input, affected identities, required operation and possible access consequences. Then verify the identity result and any separately initiated external changes.
+This is not a rule to run identity processing after every account read. Establish which identity value needs evaluation, its required input, the affected identities and the consequences of the chosen operation. Verify the identity result and any separately initiated external changes.
 
-A **lifecycle state** is a configured identity state used to control access behavior, such as a state related to employment. A **role** groups access for a business responsibility. A manager relationship links the person's identity with their manager's identity. The single-account UI action isn't a shortcut for recalculating all of these.
+The same scope distinction applies to other identity information. A **lifecycle state** is a configured identity state used to control access behavior. A **role** groups access for a business responsibility. A manager relationship connects a person's identity to the identity of their manager.
 
-If another process changes the identity or its access around the same time, inspect that process's evidence separately. A nearby change doesn't establish that this account read caused it.
+The single-account UI read does not recalculate all those identity relationships and access decisions.
 
-## How would you actually remove the lock?
+If another process changes identity information around the same time, examine its own execution evidence. Two changes occurring close together do not establish that the account read caused both.
+
+## How would the lock actually be removed?
 
 Suppose support now has approval to unlock the account.
 
-The supported **Unlock Account** action asks the integration to change the application's lock condition. It requires that change capability and the appropriate permissions. Read permission alone doesn't establish unlock permission.
+The supported **Unlock Account** action asks the integration to change the application's lock condition. It requires a supported change operation and permission to perform it. Being able to read the account does not establish permission to unlock it.
 
-You now have separate results to verify.
+There are now different results to verify.
 
-The change operation's execution evidence helps establish whether the unlock completed. A subsequent supported read helps establish what the application currently reports. An actual sign-in attempt provides evidence about whether the user can sign in.
+First, inspect the change operation's completion. Next, a supported read can show what the application currently reports. An actual sign-in attempt can establish whether the user can sign in.
 
-Even those results aren't interchangeable. **Authentication** establishes who is signing in. **Authorization** determines what that signed-in account may do.
+Those results answer different questions. The application reporting locked `false` does not establish that the password is correct or every other sign-in requirement is satisfied.
 
-A reported lock value of false doesn't, on its own, prove successful authentication or permission to use every function. A user can sign in successfully yet be unable to close a support case because the account lacks that permission.
+**Authentication** establishes who is signing in. **Authorization** determines what the signed-in account is allowed to do.
 
-The same reasoning applies to enabling or disabling an account, changing its password or modifying access. Choose the approved supported change operation, then verify its result. Repeating an account read doesn't perform those changes.
+A user could sign in after the unlock but still be unable to close a support case because the account lacks that function's permission. Reading the account again does not grant the missing permission.
 
-## What does “not found” mean for this action?
+Enabling or disabling an account, changing a password and modifying access also need the appropriate supported change operations. Choose the approved operation and verify its result rather than expecting another read to carry it out.
+
+## What if the application says “not found”?
 
 For the documented UI single-account action, an account not found on the source leaves the existing ISC account record unchanged.
 
-That retained record isn't proof that the external account still exists. It is the documented handling of this action's unsuccessful lookup.
+The retained record therefore tells you how ISC handled this lookup. It does not prove that the account still exists externally.
 
-The account may have been deleted externally. But investigate other explanations too: the wrong environment, an incorrect external key, an unsuitable lookup configuration or insufficient visibility.
+Deletion is one possible explanation. Other possibilities include the wrong source environment, an incorrect external key, a lookup that does not find the intended account or insufficient visibility.
 
-The **integration actor** is the account or application identity under which the connector reaches the external system. A person with broader application access can see a record the actor cannot see. Keep that difference in mind when comparing evidence.
+The **integration actor** is the account or application identity the connector uses to reach the external system. An application administrator may be able to see a record that this actor cannot see. Compare observations made under the relevant authority.
 
-An explicit access-denied error isn't a successful observation that the account is absent. It identifies an authority problem that needs its own investigation.
+An explicit access-denied error is also different from successfully observing absence. It identifies an authority problem to investigate.
 
-For this single-account scenario, the account-loading guidance directs deletion handling to full source aggregation. A **full aggregation** reads the source's configured population. Its deletion behavior, scope and safeguards need review before a wider run.
+For this UI action, the account-loading guidance directs deletion handling to full source aggregation. A **full aggregation** reads the configured account population. Before a broader run, establish the supported deletion behavior, intended scope and safeguards against unintended removals.
 
-This doesn't cancel connector-specific support for explicit deletion information through **delta aggregation**, collection through a supported changes-only mechanism. An unsuccessful single-account lookup and a supported explicit deletion event are different evidence.
+This guidance should not be generalized to cancel a connector's explicit deletion support through **delta aggregation**, which collects changes through a supported change mechanism. An unsuccessful one-account lookup and explicit supported deletion information are different evidence.
 
-There is also a **Remove Account** action. It removes the representation from ISC, rather than deleting the external account. If the external account remains, a subsequent full aggregation can represent it again.
+The **Remove Account** action has another purpose: it removes the account representation from ISC, not the external account itself. If the external account remains, a later full aggregation can represent it again.
 
-Removing the record isn't a routine fix for an old lock indicator. Establish the intended outcome and supported handling before changing the representation.
+Removing an account record is not a routine fix for an old lock indicator. Establish the intended result and the supported handling before changing the representation.
 
-## Can the integration perform this particular read?
+## Does reading account details ask the application for fresh data?
 
-A working full aggregation doesn't establish that single-account lookup is supported and correctly configured.
+An **API** is an interface through which software requests an operation. Different account operations can do different work even if their names sound similar.
 
-The application can expose a bulk list interface and a different interface for one account. Each needs supported request construction, credentials, authority and response handling.
+One operation retrieves the account details ISC already stores. Another requests that the connector reload the account from the external system.
 
-Likewise, a successful connection test establishes only what that test exercised. It doesn't prove every account operation works.
+Reading the stored details again may return the old value because that operation has not asked the application for anything new.
 
-For a **direct-connect source**, the connector reads the external system through its supported integration. Check the exact specified-account operation and required key. With Web Services SaaS, inspect Get Object's request and response mapping rather than assuming Account Aggregation configuration supplies everything.
+SailPoint also documents an **asynchronous** connector reload that performs a one-time aggregation. Asynchronous means the request can be accepted before its work has finished.
 
-A **file-based source** instead reads supplied account data from a file. Loading yesterday's export today doesn't establish today's live application state. If the integration has no supported live-read path, don't promise an on-demand live lookup.
+Suppose a script receives acceptance and a task reference, then immediately retrieves ISC's stored account details. The earlier value can still be present; fetching that record does not force the reload to finish.
 
-The practical question is specific: can this configured integration read this account, under the actor's authority, and represent the required returned values?
+Follow the chosen operation to completion and inspect the resulting account data. A task reference is evidence of an accepted request, not proof that the application's latest value has been represented.
 
-## Reading stored details and requesting a reload are different API operations
+Use the ISC account object ID where the API requires it. The connector uses the external key for its lookup. The worker reference `W-55` is not a substitute for either identifier.
 
-An **API**, application programming interface, lets software request an operation.
+Check the API version and the operation's documented behavior: what does it request, which work does it start and how is completion established?
 
-One operation can fetch the account details ISC already stores. Another can ask the connector to reload the account. Reading the stored record again can return the same old value without consulting the application.
+The identity-attribute and provisioning limits explained earlier belong to the documented UI Aggregate Account action. They are not a claim that every API, custom workflow or connector extension called “reload” has identical effects.
 
-SailPoint also documents an asynchronous connector reload that performs a one-time aggregation. **Asynchronous** means request acceptance and completed work are separate events.
+## Which operation fits the missing result?
 
-If a script receives an acceptance result or a task reference, it has evidence that the request was accepted. It doesn't yet have evidence that the latest source values are represented.
+A one-account read fits a question about supported current information or status for an already represented account. It does not establish a complete application inventory.
 
-Establish the operation's completion and inspect the identified account's resulting data. Fetching stored details immediately after acceptance doesn't force the reload to finish.
+If the requirement is to discover new accounts across the source, use supported population collection. Guessing account keys individually does not establish that the collection is complete.
 
-Use the ISC account object ID when that API requires it. The connector uses the external account key for its lookup. Don't substitute W-55 for either identifier merely because it identifies the associated employee.
+An **entitlement** represents an access right, such as membership of an application group. **Entitlement aggregation** collects information about the access objects themselves, such as group definitions.
 
-Keep the chosen API version and operation contract in view. The identity-attribute and provisioning limits explained here are the documented UI action's limits. They aren't a claim that every API, custom workflow or connector hook using the word “reload” has identical effects.
+An account read can include its held-access values where supported. That is different from collecting the complete group inventory.
 
-Ask what the selected entry point requests, which work it initiates and which result establishes completion.
+**Account correlation** matches and associates a source account with its owning identity. If ownership is wrong, investigate that association and its applicable comparisons. A successful UI account refresh is not a universal ownership repair, especially for an association an administrator supplied manually.
 
-## Choose the operation from the result you need
+Full aggregation and unoptimized aggregation also describe different things. Full describes which population is read. An **unoptimized aggregation** re-evaluates unchanged account data, including account correlation, rather than skipping its further processing.
 
-A single-account read fits a question about current supported data or status for an already represented account. It doesn't establish the state of the entire source.
+That source-wide operation has a different purpose from checking one account's current status. Identify the missing outcome before choosing the operation.
 
-If you need to discover new accounts across the application, use supported population collection. Guessing individual account keys doesn't establish a complete inventory.
+## Follow the evidence for one identified account
 
-An **entitlement** represents an access right, such as group membership. **Entitlement aggregation** collects supported information about access objects themselves, such as group definitions. Account collection can include held-access values, but reading one account doesn't refresh the complete group inventory.
+Start with the source and external key. Check what the integration actor actually received, what the response mapping extracted and what ISC recorded.
 
-If ownership is wrong, investigate **account correlation**, the matching and assignment that associates a source account with an identity. A successful UI refresh isn't a universal ownership repair or a promise to override an administrator's manual association.
+If the application returns locked `true` but ISC still shows unlocked, inspect the supported status interpretation, mapping and completion evidence. A successful response alone does not establish correct representation.
 
-Full aggregation and **unoptimized aggregation** also answer different questions. Full describes population coverage. An unoptimized run re-evaluates unchanged account data, including correlation, instead of skipping its further processing.
+If account office becomes `HYD` while identity office remains `BLR`, that matches this UI action's documented scope. It does not, by itself, establish a broken profile mapping.
 
-That source-wide re-evaluation has a different purpose from checking one account's status. Decide which outcome is missing before choosing the next operation.
+If another screen looks old, first establish which object it displays. An account field and an identity field are different observations. ISC Search is also a recorded view, not a new live request to the application.
 
-## Follow one identified record when a screen looks wrong
+Record when the account was read and which operation produced that observation. It describes the data returned at that time, under that source scope and authority. The application can change again afterward.
 
-Start with the source and external key. Then inspect the data returned under the integration actor, the values extracted by the response mapping and the actual ISC account representation.
+Refreshing a browser page does not establish a new source read. An old browser view alone is also insufficient reason to collect the whole source.
 
-If the application returns locked true but ISC still shows unlocked, check the supported status mapping and completion evidence. A successful network response alone doesn't prove correct representation.
+## Work through the results
 
-If account office becomes HYD while identity office stays BLR, that matches this UI action's documented scope. It doesn't, by itself, establish a broken profile mapping.
+Each variation below changes a condition independently of the successful main read.
 
-If the source account is current but another view looks old, establish which object that view displays and how current it is. ISC Search isn't another live read of the application.
+### 1. ISC now shows locked, but sign-in still fails
 
-Record when the account was observed and which operation produced that observation. A read establishes what was returned at that time, under that scope and authority. The application can change again afterward.
+The lookup returned locked `true`, and ISC represented that status correctly. An engineer says the aggregation failed because the user still cannot sign in.
 
-A browser refresh doesn't establish a new source read. Equally, an old browser view alone doesn't justify collecting the whole source.
+What did the read accomplish?
 
-## Work through these results
+It updated the account information in ISC. The application account remains locked because the read did not request an unlock. If support approves removing the lock, use the separate supported operation and verify its result. Continued sign-in failure does not establish collection failure.
 
-Each variation below is independent of the supplied successful main read.
+### 2. The account office changes, but identity office does not
 
-### 1. The refresh now shows locked
+The UI action records account office `HYD`. Identity office stays `BLR`, even though its profile correctly maps office from this account.
 
-The supported lookup returns locked true, and ISC represents that status correctly. An engineer says, “Aggregation failed because the user still can't sign in.”
+Must the mapping be wrong?
 
-What did the action accomplish?
+No. This action does not synchronize the new account data into identity attributes. Inspect the actual mapping and choose the supported identity-update path for the situation. Do not change a correct mapping to make a read perform a different operation.
 
-**Worked reasoning:** It updated account evidence. The external account remains locked because no unlock was requested by the read. If support approves removing the lock, inspect the separate supported unlock operation and its result. Continued sign-in failure alone doesn't establish collection failure.
+### 3. The lookup finds no matching account
 
-### 2. Account office changes, but identity office doesn't
+The lookup for `support-user` returns not found, while its ISC record remains visible.
 
-The UI action updates account office to HYD. Identity office remains BLR. The existing profile correctly maps office from this account.
+Does the retained record establish that the external account exists?
 
-Must that mapping be wrong?
+No. Retention is the documented handling of this UI action. Check the external system, source environment, key, lookup and actor visibility. If deletion handling is needed, establish the supported mechanism and safeguards rather than treating the retained record as a fresh existence observation.
 
-**Worked reasoning:** No. This action doesn't synchronize the new account data into identity attributes. Verify the actual mapping and choose the appropriate supported identity-update path. Don't change a correct mapping to make one operation behave like another.
+### 4. Only the administrative account was selected
 
-### 3. The lookup reports no matching account
-
-The lookup for support-user returns not found, while its ISC representation remains visible.
-
-Does ISC's retained record establish that the external account exists?
-
-**Worked reasoning:** No. Keeping it unchanged is the documented handling here. Inspect the external account, source environment, key, lookup and actor visibility. If deletion handling is needed, review the supported mechanism and safeguards rather than treating the retained record as current existence evidence.
-
-### 4. The administrative account was selected
-
-An independent variation has ordinary account support-user and administrative account support-admin on one identity. Only support-admin is aggregated. Its data is current; support-user's earlier status remains.
+An independent variation has ordinary account `support-user` and administrative account `support-admin` on one identity. Only `support-admin` is read. Its information updates, while `support-user` keeps its earlier status.
 
 Did the ordinary account's refresh fail?
 
-**Worked reasoning:** It wasn't selected. Confirm the source and external key in the operation context. Sharing an identity doesn't make two account records one read target.
+It was not selected. Check the source and external key in the operation. Sharing an identity does not make the two accounts a single read target.
 
-### 5. The script receives a task reference
+### 5. A script receives a task reference
 
-A script requests asynchronous connector reload and receives acceptance with a task reference. It immediately fetches stored account details and gets the earlier value. No completion evidence is available.
+The script requests asynchronous connector reload, receives acceptance and immediately fetches stored account details. It gets the earlier value, with no completion evidence available.
 
-Has the connector ignored the application's new value?
+Has the connector ignored the new external value?
 
-**Worked reasoning:** That conclusion isn't established. Obtain completion and resulting-account evidence. Request acceptance isn't completion, and fetching stored details doesn't force the reload to finish or initiate another external read.
+That conclusion is not established. Follow completion and inspect the resulting account data. Request acceptance is not completed work; retrieving stored details neither forces completion nor starts another external lookup.
 
-### 6. Listing works, but the specified-account lookup is denied
+### 6. Bulk listing works, but one-account lookup is denied
 
-Bulk account listing succeeds. The application team confirms that an access-denied response from the single-account interface is caused by the actor lacking that interface's required permission.
+The application team confirms that the lookup is denied because the actor lacks that interface's required permission.
 
 Should you change the office mapping?
 
-**Worked reasoning:** The supplied failure occurs before a valid account payload is available to that mapping. Resolve approved operation-specific authority and retest the supported lookup. Listing permission doesn't establish lookup permission; don't grant broader authority than required.
+No. This failure occurs before the mapping receives valid account data. Resolve the approved operation-specific authority and retest the lookup. Bulk-list permission does not establish lookup permission, and the remedy should match the required operation.
 
 ### 7. Yesterday's export is imported today
 
-The source has no live specified-account integration. This morning's import uses yesterday's export. The account changed externally after that export.
+There is no live specified-account integration. Today's import uses yesterday's export, and the application account changed after the export.
 
-Does the recent import establish current application data?
+Does the new import time establish current application data?
 
-**Worked reasoning:** No. The evidence is bounded by export time and contents. Obtain appropriately fresh input and a supported import, or design a supported live integration if the project needs one. Import time doesn't make older source information current.
+No. The observation is limited by the export's time and contents. Obtain appropriately fresh data through a supported import, or design a supported live integration if that is the requirement. A recent import does not make older information current.
 
-### 8. The lock is gone, but a function is denied
+### 8. Sign-in works, but case closing is denied
 
-A separate verified unlock succeeds, a later read reports locked false, and the user signs in. The application team confirms that case-closing permission is missing.
+A separate unlock completes, a later read reports locked `false`, and the user signs in. The application team confirms that case-closing permission is missing.
 
-Will another single-account aggregation grant it?
+Will another account aggregation grant it?
 
-**Worked reasoning:** No. Authentication succeeded, but authorization for the function is missing. Use the approved access definition and supported provisioning path, then verify delivery and application behavior. A read isn't the permission-grant operation.
+No. Authentication succeeded; authorization for the function is missing. Use the approved access definition and supported provisioning path, then verify delivery and application behavior. The read is not a permission-grant operation.
 
 ## A project asks for one refresh button
 
-A support project proposes this requirement:
+A support project proposes: “Refresh the selected account, update the person's office and manager, unlock the account if needed, and remove the ISC record if the application says not found.”
 
-“Refresh the selected account, update the person's office and manager, unlock the account if needed, and remove the ISC record when the application says not found.”
+The integration supports a one-account read and a separately authorized unlock. No automatic deletion policy is approved. Identity office comes from this application's account, while manager information comes from Human Resources (HR).
 
-The integration supports a single-account read and a separately authorized unlock. No automatic deletion policy is approved. The identity profile takes office from this application's account and manager information from Human Resources (HR).
+Would connecting the button to Aggregate Account provide all that behavior?
 
-Why doesn't mapping the whole requirement to Aggregate Account establish the required behavior? What should the team separate and verify?
+Separate the required results first. The documented UI action can update the selected account's information. It does not perform the requested identity-attribute synchronization or unlock.
 
-**Worked reasoning:** Separate account observation, identity evaluation and external change. The documented UI action can update the selected account's data; it doesn't perform the requested identity-attribute synchronization or unlock.
+Office needs the correct account input and the appropriate supported identity-update process. Manager information has a different origin: HR. Reading this application's account does not obtain a new HR manager input or establish the updated reporting relationship.
 
-Office needs the correct account input and an appropriate supported identity-update process. The manager relationship identifies which identity is the person's manager. Because its information comes from HR, reading this application's account doesn't establish a new HR manager input or the resulting relationship.
+Unlock needs its supported, authorized change operation and a verified external result.
 
-Unlock needs its separately supported authorized operation and target outcome. Not found leaves the account representation unchanged in the documented UI action; it isn't proof of deletion or an approved deletion policy.
+Not found leaves the account record unchanged in this UI action. It is neither proof of deletion nor an approved policy to remove records automatically.
 
-Agree which account is selected, the authority for each operation, completion evidence, identity-value checks and deletion safeguards. If an API or workflow combines operations behind the button, verify that specific contract and its possible effects.
+Agree which account is selected, what authority each operation needs, how completion will be established, which identity values must be checked and how deletion safeguards apply.
 
-When a project says “refresh,” establish which record it means and which result it needs. That gives you a reason to read account data, evaluate identity information, request an external change or investigate missing evidence.
+If an API or workflow combines the work behind one button, verify its documented behavior and possible effects. One button can hide several responsibilities; it does not make their inputs or results interchangeable.
+
+When someone asks for a “refresh,” establish which record should change and what outcome they need. That gives you a reason to read account information, evaluate identity values, request an external change or investigate the evidence that is still missing.

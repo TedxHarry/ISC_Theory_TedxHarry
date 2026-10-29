@@ -1,0 +1,10 @@
+Run A: full read, optimization on
+  Read: 4 accounts
+    Process: 2  (changed + newly seen)
+    Skip:    2  (existing, unchanged)
+
+Run B: full read, optimization off
+  After A; no further account-value changes
+  Read: 4 accounts
+    Reprocess: 4
+    Skip:      0

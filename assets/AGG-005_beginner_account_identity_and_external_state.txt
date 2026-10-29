@@ -1,0 +1,10 @@
+[UI Aggregate Account]
+          |
+[ISC account updated]
+[locked true, office HYD]
+
+[Identity office stays BLR]
+[No identity-attribute sync]
+
+[External account stays locked]
+[No provisioning from this action]

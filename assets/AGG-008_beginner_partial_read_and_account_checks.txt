@@ -1,0 +1,12 @@
+[Expected: 100 existing accounts]
+                 |
+[Page 1: 30] + [Page 2: 30]
+                 |
+[60 read: 50 same, 10 different]
+                 |
+[Page 3 fails; task ends in error]
+[40 unread, including dispatch-user]
+
+[Engineer checks actual ISC values]
+[received-user now CENTRAL]
+[dispatch-user still EAST]

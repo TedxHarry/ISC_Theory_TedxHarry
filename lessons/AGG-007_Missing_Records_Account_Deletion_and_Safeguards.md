@@ -1,87 +1,101 @@
 # The account is missing. Should ISC remove it?
 
-An application account is disabled, but still exists. SailPoint Identity Security Cloud (ISC) already represents it and connects it to the correct person.
+An application account is disabled, but it still exists. SailPoint Identity Security Cloud (ISC) already has a record of it and knows which identity owns it.
 
-Then a collection returns 850 accounts instead of the agreed population of 1,000. The disabled account is among the 150 not returned.
+The next collection returns 850 accounts instead of the agreed population of 1,000. The disabled account is among the 150 missing from the result.
 
-The run reports a deletion-related warning. Someone suggests increasing the deletion limit so it can finish.
+The run reports a deletion warning. Someone suggests raising the deletion limit so it can finish.
 
-Before changing that limit, establish why the account is missing from the result. Was it deleted from the application, or did the read stop including it?
+First, ask why those records were not returned. Were they deleted in the application, or did the read stop including them?
 
-The application can still contain a record that ISC didn't receive. That difference determines whether removing ISC's representation would reflect reality or hide a collection problem.
+Those are different situations. Removing ISC's account record can reflect a genuine external deletion. It can also hide a collection error if the external account is still there.
 
-## First, identify what would be removed
+## Which record would be removed?
 
-An **account** is a record in an external system. ISC keeps its own representation of that account.
+An **account** is a record in an application or another source system. ISC keeps its own representation of that account: the account information collected into ISC.
 
-An **identity** is ISC's representation of a person or another entity. It connects accounts and holds information at the identity level.
+An **identity** is ISC's representation of a person or other managed subject. It holds identity-level information and connects accounts belonging to that subject.
 
-A **source** is ISC's configured representation of a system or collection of account data. Its **connector** provides the supported integration operations. **Aggregation** reads supported data and represents it in ISC.
+A **source** is ISC's configured representation of a system or collection of data. Its **connector** provides the supported integration. **Aggregation** collects the supported data and represents it in ISC.
 
-These definitions give us three distinct objects to follow. Deleting an account externally removes the application record. Removing its ISC representation removes the account record ISC holds. Deleting an ISC identity removes the identity record.
+Keep three possible changes separate:
 
-An action affecting one doesn't establish that the others were removed.
+- Delete the account in the external application.
+- Remove ISC's representation of that account.
+- Delete the identity record in ISC.
 
-For our main example, the facts are:
+Each affects a different record. Evidence that one happened does not establish the other two.
 
-| Record or state | Supplied fact |
+For our main example, these records already exist:
+
+| Record or state | Starting fact |
 |---|---|
-| Application-Production source | Represents 1,000 existing expected accounts, including disabled accounts |
-| External account app-user | Still exists and is disabled |
-| ISC representation of app-user | Exists and has the correct association with an identity |
+| Application-Production source | Represents 1,000 expected accounts, including disabled accounts |
+| External account `app-user` | Exists and is disabled |
+| ISC record for `app-user` | Exists and is associated with the correct identity |
 | Existing identity | Established through a separate Human Resources (HR) source, HR-Production |
-| HR source account worker-record | Still exists and remains associated with that identity |
-| Employee number W-77 | Person-related input, distinct from either source account's identifying key |
+| HR account `worker-record` | Still exists and remains associated with the identity |
+| Employee number `W-77` | Person-related information, separate from both account identifiers |
 
-App-user and worker-record are different source accounts. Both can refer to employee number W-77 without sharing an account identifier. The application source isn't the source establishing the identity in this example.
+The application account and HR account are different records. They can refer to the same worker without using the same account key.
 
-All counts, settings, records and completed results below are supplied examples, not observations from a live tenant.
+In this example, HR establishes the person's identity in ISC. The application source supplies an additional account; it is not the source establishing that identity.
 
-## Why did the account disappear from this read?
+The counts, settings and completed outcomes are assumptions for this example, not observed operations in a live environment.
 
-A **disabled account** remains an external record with a state that restricts its use. It can still have an owner, attributes and group memberships. An **attribute** is a named value on a record; a group membership associates an account with an application group.
+## Disabled is not the same as deleted
 
-External deletion removes the record. Excluding it from a read leaves the external record intact.
+A **disabled account** still exists externally, with a state restricting its use. It can retain an owner, information and group memberships.
 
-The **collection scope** is the population and information a read is meant and permitted to include. A **filter** selects or excludes records under supported conditions.
+An **attribute** is a named piece of information on a record. A **group membership** connects an account to an application group and its associated access.
 
-Our agreed population includes disabled accounts, but an unintended active-only filter returns just the 850 active accounts. It excludes all 150 disabled accounts, including app-user.
+Deleting the external account removes the record. Filtering the account out of a read leaves the external record intact.
 
-There are no new accounts or changed account keys in this comparison. All 1,000 external records still exist.
+**Collection scope** is the population and information a read is meant and permitted to include. A **filter** applies conditions that select or exclude records.
 
-So the arithmetic is straightforward: 1,000 expected records minus 850 returned records leaves 150 absent from the response. It doesn't establish 150 external deletions.
+Our agreed inventory includes disabled accounts. An unintended active-only filter now returns just 850 active accounts and excludes 150 disabled accounts, including `app-user`.
 
-A filter isn't the only way coverage can fail. The identity used to read the application can lose visibility. A file can be incomplete. A response split into pages can be only partly collected.
+All 1,000 external accounts still exist. There are no new accounts or changed account keys in this comparison.
 
-**Pagination** is the mechanism for obtaining a large result in successive portions. The first successful portion doesn't establish that every required page was obtained.
+The count difference is therefore:
 
-The point to establish is the same in each case: does the result reliably describe the population it is supposed to cover?
+> 1,000 expected accounts − 850 returned accounts = 150 accounts absent from the response.
 
-## What does Enable Account Deletion permit?
+That is a statement about the response. It is not evidence of 150 external deletions.
+
+A filter is only one possible cause of missing coverage. The connection can lose permission to see records. A file can contain an incomplete population. A read can stop before obtaining every required page.
+
+**Pagination** divides a large result into portions. A successful first page establishes that those records were returned, not that the whole population was collected.
+
+Before interpreting absence, establish whether the result reliably covers what this operation was supposed to read.
+
+## What does Enable Account Deletion allow ISC to do?
 
 The source's account-aggregation settings include **Enable Account Deletion**.
 
-For the source-level collection described here, enabling this setting permits ISC to remove its account representations when accounts aren't detected during aggregation. It doesn't instruct the connector to delete those records from the external application.
+For the source-level collection discussed here, enabling it permits ISC to remove its account representations when accounts are not detected during aggregation. It does not ask the connector to delete those accounts in the application.
 
-That explains why a read-scope mistake can have consequences beyond an old display value. If the result is meant to describe the whole configured population, an unintended exclusion can resemble a removed account to the consumer.
+The setting connects collection to removal of recorded information. That is why scope matters: an unintended exclusion can make an existing account appear missing from the population being compared.
 
-When deletion isn't enabled, don't expect this absence-based mechanism to remove representations of externally deleted accounts. The retained information can then be stale. Its continued presence in ISC isn't proof of current external existence.
+If deletion is disabled, this absence-based mechanism will not perform that cleanup. But ISC can then retain representations of accounts genuinely deleted externally. Their continued presence does not prove those external accounts still exist.
 
-Both configurations therefore need reliable collection. With deletion enabled, missing coverage can threaten represented accounts. With it disabled, genuine external removals still need appropriate reconciliation.
+Both choices need reliable data. Enabling deletion does not validate the read, and disabling it does not make retained records current.
 
-The configured deletion settings apply to manual and scheduled source aggregations. Manually starting the run doesn't turn it into a harmless preview.
+The settings apply to manual and scheduled source aggregations. Starting the run manually does not make it a preview.
 
-Flat-file account imports have deletion controls too. Before uploading only a few changed records, establish whether the supported import expects a complete population or changes-only information. If absence from the expected population drives removal, a partial file can misrepresent that population.
+Flat-file account imports have deletion controls too. Establish whether the supported import expects a complete population or changes-only data before supplying a partial file. A file containing only a few changes cannot safely be interpreted as the complete population merely because its format is accepted.
 
-## What does the percentage guard actually check?
+## What does the percentage safeguard tell you?
 
-When account deletion is enabled, **Percentage of Deleted Accounts Allowed** limits the removal volume before the aggregation is canceled and a warning is generated.
+With account deletion enabled, **Percentage of Deleted Accounts Allowed** limits the removal volume before the aggregation is canceled and a warning is generated.
 
-It can catch an unexpected quantity of proposed removals. It doesn't establish why an individual account is missing.
+It helps identify an unexpectedly large removal. It does not determine whether a missing account was genuinely deleted externally.
 
-In the supplied configuration, deletion is enabled and the guard is 10%. Our comparison has 1,000 existing expected accounts and 150 not returned: 150 divided by 1,000 is 15%, clearly beyond 10%.
+In our example, the setting is 10%. The comparison population is 1,000, and the read omits 150:
 
-The supplied run is canceled with a deletion warning. A separate check confirms that app-user's ISC representation is still present.
+> 150 ÷ 1,000 × 100 = 15%.
+
+That is clearly beyond 10%. The supplied outcome is a canceled run with a deletion warning. A separate account check confirms that `app-user` is still represented in ISC.
 
 ```text
 [1,000 external accounts still exist]
@@ -97,74 +111,76 @@ The supplied run is canceled with a deletion warning. A separate check confirms 
 [Engineer checks app-user separately]
 ```
 
-The connector performs the filtered read; ISC applies the configured safeguard. The connected lines describe the logical progression of this example. The separate engineer line is a human check of the account record.
+The connector supplies the filtered result. ISC applies the configured safeguard. The separate engineer check establishes the account's retained state.
 
-This isn't a private threshold algorithm or transaction diagram. Cancellation alone doesn't establish that every update already made during the run was rolled back. Our retained-account result is separately supplied evidence.
+The diagram follows this example's decisions, not a private threshold or transaction algorithm. Cancellation alone does not prove that every earlier update in the run was undone. Our retained-account result is separate evidence.
 
-The warning gives you a reason to investigate. It doesn't confirm that the proposed removals are correct.
+Raising the setting to 20% would leave the same active-only read and the same 150 omitted records. It would weaken the safeguard without repairing the cause.
 
-Would raising the limit from 10% to 20% repair this incident? The active-only filter would still exclude the same 150 accounts. The change would weaken the guard without correcting the population.
+Investigate the omission, restore the approved scope and verify the supported rerun's results.
 
-Verify the read's cause, restore the approved scope through the appropriate change process, and review the supported rerun and its actual results.
+A small mistake can pass a volume check. Five incorrectly omitted accounts out of 1,000 are only 0.5%; that does not make their removal correct.
 
-A smaller error can pass a volume check. Five incorrectly omitted records out of 1,000 are only 0.5%. That doesn't make those removals correct.
+Even equal totals can conceal missing accounts. A result can omit 20 expected accounts and include 20 different ones while still containing 1,000 records. Compare identifiers as well as counts.
 
-Compare identifiers as well as totals. A result containing 1,000 accounts can still omit 20 expected accounts while including 20 different ones. Equal totals don't establish equal populations.
+## Why can a lower percentage be less protective on a small source?
 
-## A percentage smaller than one account needs special care
+The percentage has to be interpreted as a number of whole accounts. For a small source, a low percentage can represent less than one account.
 
-On a small source, a low percentage can correspond to less than one account.
+The account-loading guidance documents a specific limitation: if the percentage does not round to at least one account, cancellation occurs only when 100% of the source's accounts would be deleted.
 
-The account-loading guidance documents whole-account rounding. If the selected percentage doesn't round to at least one account, the aggregation is canceled only when 100% of the source's accounts would be deleted.
+For a source containing ten accounts:
 
-For a ten-account source:
-
-| Configured percentage | Raw amount | Documented consequence |
+| Setting | Raw account amount | Documented handling |
 |---|---|---|
 | 1% | 0.1 account, rounding to zero | Under this limitation, cancellation occurs only at 100% deletion |
-| 5% | 0.5 account, rounding to one | The documented example treats this as 10%, or one account, and cancels if one or more accounts would be deleted |
+| 5% | 0.5 account, rounding to one | The documented example treats this as 10%, or one account, and cancels if one or more would be deleted |
 
-That's why “1% is lower, so it must be more protective” is incomplete reasoning. You need to know what that percentage means in whole accounts.
+So “1% is lower than 5%, therefore it must be more protective” misses the whole-account behavior.
 
-The ten-account 5% example explains documented behavior. It isn't a recommended value for every source.
+The ten-account 5% example describes the documented behavior. It is not a recommended setting for every source.
 
-Likewise, don't infer a universal “strictly greater than” test from the field's label. The documented one-account example explicitly says one or more. Check the applicable source/configuration behavior without using destructive production tests to discover an edge condition.
+Do not infer a universal “strictly greater than” rule from the field's label. The documented one-account example explicitly says one or more. Establish the applicable behavior without experimenting with destructive changes in production.
 
-Our main 15%-versus-10% trace deliberately stays away from that boundary. Its simple comparison explains the supplied warning without claiming an undocumented general denominator or threshold algorithm.
+Our main 15%-versus-10% example stays away from that equality boundary. Its arithmetic uses the supplied comparison population; it does not establish every connector's internal denominator or threshold algorithm.
 
-## Does absence mean the same thing in every operation?
+## Does a missing account mean the same thing in every read?
 
-A **full aggregation** reads the source's configured population. It is still limited by filters, supported behavior and the **integration actor's** permissions. The integration actor is the account or application identity under which the connector reads.
+A **full aggregation** reads the configured account population. Filters and the connection's permissions still limit it.
 
-A **delta aggregation** instead collects supported changes. An unchanged account can be correctly omitted from a delta result because no change needs reporting.
+The **integration actor** is the account or application identity the connector uses to access the external system. Its visibility is part of the read's coverage.
 
-If app-user doesn't appear in a changes-only response, that omission isn't deletion evidence. A connector can separately support explicit deletion information. For example, the JDBC SaaS change-table mechanism has account-key entries with a Delete action.
+A **delta aggregation** collects changes through a supported mechanism. An unchanged account can correctly be absent because it has no change to report.
 
-**JDBC**, Java Database Connectivity, is a standard way for software to work with databases. **SaaS**, software as a service, identifies the cloud-based connector variant in this example. Its explicit Delete entry isn't the same fact as absence from a response.
+If `app-user` is omitted from a changes-only result, that alone is not deletion evidence. A connector may separately support explicit deletion information identifying the removed account.
 
-The UI **Aggregate Account** action reads one specified account. Its documented not-found handling leaves the ISC account unchanged. That action isn't a substitute for source-level deletion reconciliation.
+**JDBC**, Java Database Connectivity, is a standard interface for working with databases. **SaaS**, software as a service, identifies the cloud-based connector variant here. The JDBC SaaS connector's change-table mechanism records an account key with an action such as Delete.
 
-Before comparing the result with ISC's existing accounts, establish what the operation was supposed to return: a full population, changes, or one selected account.
+That explicit change entry and an unchanged account's absence are different facts.
 
-## Why does an authoritative account need a different discussion?
+The **UI**, the screens used to operate ISC, offers **Aggregate Account** to read one selected account. Its documented not-found behavior leaves the existing ISC account record unchanged.
 
-An **authoritative source** establishes identities through an **identity profile**. The profile connects the source population with identity creation and mappings that supply identity attributes. A **mapping** determines which input supplies a value.
+Before deciding what absence means, identify the result's purpose: a full population, changes to a population, or one specified account. That tells you whether the missing record should have been included in the first place.
 
-Removing an ordinary application-account representation isn't equivalent to losing the authoritative account that supports the identity.
+## Now consider losing the HR account instead
 
-In our main example, the HR account worker-record remains. The app-user collection problem doesn't establish loss of the person's authoritative identity context.
+An **authoritative source** establishes identities through an **identity profile**. The profile connects its source population to identity creation and mappings that supply identity information.
 
-Now consider a separate variation. The authoritative HR account really is deleted externally. A supported aggregation with deletion enabled removes that authoritative account representation from ISC.
+A **mapping** specifies which input supplies a value. Identity attributes are values on the identity, such as its department or email.
 
-ISC then evaluates the identity's remaining authoritative context.
+In our main incident, the HR account `worker-record` remains. The missing application account does not establish loss of the HR-supported identity.
 
-If the identity still has an account on another, lower-priority authoritative source, it is reassigned to that source's identity profile. Its identity values are recalculated from that profile's mappings.
+Consider a separate variation: the authoritative HR account really is deleted externally. A supported aggregation with deletion enabled removes its ISC account representation.
 
-**Profile priority** selects the highest-priority eligible authoritative profile when multiple authoritative sources contain the person. An identity has one identity profile at a time.
+The next decision is whether another authoritative source still has an account supporting this identity.
 
-Reassignment can therefore preserve the identity while changing its mapped information. Keeping the identity doesn't guarantee that every old profile value remains.
+If another, lower-priority authoritative source still has an account supporting that identity, ISC reassigns the identity to that source's profile and recalculates its mapped values.
 
-If no authoritative source remains, ISC attempts identity deletion during its automatic nightly job. Losing the HR account isn't an immediate guarantee that the identity has been deleted.
+**Profile priority** determines which eligible authoritative profile takes precedence. ISC uses the highest-priority eligible profile, and an identity has one profile at a time.
+
+The identity can therefore remain while its mapped information changes. Reassignment does not promise that every value from the previous profile stays the same.
+
+If no authoritative source remains, ISC attempts identity deletion during its automatic nightly job. The lost HR account is not evidence of immediate, completed identity deletion.
 
 ```text
 [Authoritative account removed]
@@ -178,164 +194,176 @@ If no authoritative source remains, ISC attempts identity deletion during its au
                    [Hidden]   [Eligible]
 ```
 
-The branches summarize documented outcomes after the authoritative account is removed from ISC. “Another authoritative account?” refers to an account supporting the identity through another eligible authoritative profile.
+“Another authoritative account?” means an account supporting the identity through another eligible authoritative profile.
 
-On the no branch, a nightly deletion attempt can encounter a blocking condition. Hidden means the identity is retained under the documented hidden-identity handling. Eligible means deletion isn't prevented by those conditions; it doesn't prove that deletion completed.
+On the no branch, deletion can encounter a blocker. **Hidden** means the identity is retained under the documented hidden-identity handling. **Eligible** means the listed conditions do not prevent deletion; it is not a confirmation that deletion finished.
 
-This is a logical outcome map, not a private job sequence or a guaranteed completion time. Verify the actual profile, identity values and account relationships.
+This is an outcome map, not a private job sequence or completion-time guarantee. Inspect the actual profile, mapped values and account relationships.
 
-**Provisioning** performs supported changes to external accounts or access. Neither profile reassignment nor disappearance of an ISC record establishes that a required external disablement or permission removal succeeded.
+**Provisioning** carries out supported changes to external accounts and access. Neither profile reassignment nor an ISC record disappearing establishes that a required external disablement or access removal succeeded.
 
-## What can prevent identity deletion?
+## Why might ISC retain the identity?
 
-An identity can have responsibilities or relationships that still need attention after its authoritative profile is lost.
+The identity can still have accounts, ownership or work attached to it after its authoritative account is lost.
 
-Before looking at the blockers, separate having access from owning an access definition. A **role** or **access profile** defines access. Owning that definition is an administrative responsibility; it isn't simply holding its access.
+Having access and owning its definition are different responsibilities. **Roles** and **access profiles** define access that can be assigned to identities. Being responsible for one of those definitions is an administrative duty, not simply holding its access.
 
-A **work item** is a task needing action, such as approval of an access request. A **certification** is an access review; a **campaign** organizes such review work. These responsibilities can remain relevant even when an HR account is gone.
+An **access request** asks for access to be granted. A **work item** is a task requiring action, such as deciding whether that request should be approved. A **certification** is an access review, and a **campaign** organizes that review work.
 
-The documented identity-deletion blockers are:
+Those relationships help explain why removing the HR input is not the end of every responsibility associated with the identity.
 
-- Accounts from other sources remain correlated to the identity. **Correlation** is the matching and association of an account with its owning identity.
+The documented identity-deletion blockers include:
+
+- Accounts from other sources remain correlated to the identity. **Correlation** means matching and associating an account with its owning identity.
 - The identity owns a role, access profile, application or source.
 - The identity owns or requested an active work item.
-- Another identity names this person as its manager.
+- Another identity designates this person as its manager.
 - The identity has an elevated administrative user level, such as helpdesk or organization administrator.
-- The identity is marked as protected through supported API-level configuration. An **API**, application programming interface, lets software request system operations.
+- The identity is marked as protected through supported configuration using an **API**, an interface through which software requests system operations.
 - The identity is linked to an active campaign or certification.
 
-A blocker doesn't mean every collection or external operation failed. It means a deletion condition prevents removing this identity.
+A blocker identifies a condition preventing identity deletion. It does not mean every source collection or external operation failed.
 
-When these conditions prevent deletion after loss of authoritative context, ISC retains a **hidden identity**.
+When these conditions prevent deletion after the authoritative context is lost, ISC retains a **hidden identity**.
 
-Hidden doesn't mean all the person's external accounts were disabled.
+## What does hidden mean for the remaining records?
 
-The identity has no identity profile. Its last name, email and UID, the user-name identifier, are no longer mapped, and it doesn't appear on the normal Identities page. “No longer mapped” describes loss of that profile-driven relationship; it isn't a claim that every historical value was erased.
+A hidden identity is retained, but it no longer has an identity profile. Its last name, email and **UID**, the user-name identifier, are no longer mapped, and it does not appear on the normal Identities page.
 
-Previously correlated accounts remain attached to the hidden identity, but are treated as uncorrelated because they no longer belong to an authoritative identity. In an uncorrelated-accounts certification that includes their sources, those accounts are grouped under a shared uncorrelated identity.
+“No longer mapped” describes loss of the profile-driven relationship. It does not establish that every historical value was erased.
 
-That explains how the identity can disappear from the usual list while account and review responsibilities remain.
+Previously correlated accounts remain attached to the hidden identity, but ISC treats them as uncorrelated because they no longer belong to an authoritative identity.
 
-Don't clear protection or remove ownership, manager references or administrative levels merely to make a cleanup list empty. Establish the approved retention and responsibility-transfer decision.
+These two facts can coexist: the earlier account links remain, while the authoritative identity context is gone. Do not read “uncorrelated” here as proof that those links or external accounts were deleted.
 
-A **lifecycle state** is a configured identity state used in identity and access behavior, such as an employment-related state. Hidden identity handling isn't a normal lifecycle state called terminated. Those concepts have different purposes and consequences.
+In an uncorrelated-accounts certification covering the accounts' sources, the accounts are grouped under a shared uncorrelated identity. This explains why account-review work can remain even when the identity is absent from the usual list.
 
-## What should offboarding use as its evidence?
+Hidden also does not mean that all external accounts were disabled.
 
-Offboarding needs an explicit decision about which access must stop, when it must stop and how the external result will be confirmed.
+Removing protection, administrative levels, manager references or ownership merely to clear a cleanup list changes real responsibilities. Establish the approved retention and responsibility-transfer decision instead.
 
-Deleting HR data immediately can remove the authoritative inputs and profile context needed for that process. It can also leave a hidden identity with other accounts still attached.
+A **lifecycle state** is a configured identity state used to describe status and drive access behavior, such as an employment-related state. Hidden-identity handling is not a normal lifecycle state named terminated.
 
-An approved design can retain the worker record with employment status or an end date while configured identity and access processes handle the required changes. The source contract and retention rules determine the actual design.
+## What should offboarding actually establish?
 
-That isn't a universal requirement to keep every HR record forever. It is a reason to agree how employment information remains available for the decisions and evidence the process needs.
+When someone leaves, **offboarding** includes ending the access that should no longer remain. Decide which access should stop, when it should stop and how the external result will be confirmed.
 
-Don't substitute accidental absence from a feed for an offboarding decision. An active-workers-only query or empty file doesn't prove that omitted workers' application access was removed.
+Deleting HR data immediately can remove the authoritative inputs and profile context the process needs. It can also leave a hidden identity with application accounts still attached.
 
-Verify the authoritative facts, identity evaluation, required provisioning and target state separately. An ISC record disappearing doesn't prove external account disablement, permission removal or session termination.
+An approved design can retain a worker record with employment status or an end date while configured identity and access processes carry out the required changes. The source contract and retention rules determine the actual design.
 
-## How would you investigate and recover the main incident?
+This is not a requirement to retain every HR record indefinitely. It is a reason to establish which information the offboarding process needs and how long that information must remain available.
 
-Start with the source and external account key. App-user identifies the application account; worker-record identifies the separate HR source record. Employee-related information can be shared across those records without making their account keys interchangeable.
+An active-workers-only read or empty file does not establish that omitted workers' access was removed.
 
-Check actual external existence under the intended actor's visibility. Then compare the approved scope, returned identifiers, file revision or page coverage, and the expected population.
+Verify the authoritative facts, identity evaluation, required provisioning and actual target state. Disappearance from ISC does not confirm external disablement, permission removal or termination of an active session.
 
-The source's **Aggregation History** supplies status, start and stop times, scanned counts and available warning details. A deletion warning needs investigation; it doesn't authorize its proposed volume.
+## Recover the missing population, then verify the result
 
-For our supplied incident, the evidence is specific. App-user still exists externally and is disabled. The active-only filter excluded it. The deletion guard canceled the run, and its ISC representation was separately confirmed as retained.
+Begin with the correct source and external account key. `app-user` identifies the application account; `worker-record` identifies the separate HR account. Their shared worker information does not make the keys interchangeable.
 
-The team approves restoring the intended population. A later supported full read includes all 1,000 expected accounts, including app-user. The required actor permissions, account keys and correct ownership association remain unchanged.
+Check external existence under the intended actor's visibility. Compare the approved scope and returned identifiers, including the relevant file revision or page coverage.
 
-That correction doesn't create, enable or delete the external account. It repairs collection coverage. The disabled account remains disabled.
+The source's **Aggregation History** supplies execution status, start and stop times, scanned counts and warning details. A deletion warning is evidence to investigate, not approval for the proposed removals.
 
-If a representation was already removed by mistake, review the actual state before reintroducing it. The supported **Remove Account** action removes ISC's representation, not the external account. An existing external account can be represented again by a later full aggregation.
+In our incident, the cause is known: `app-user` still exists, the active-only filter excluded it, the safeguard canceled the run, and its ISC record was separately confirmed as retained.
 
-Recollection doesn't guarantee the same ISC object identifier, every historical relationship or the exact earlier identity state. Check ownership as well as existence.
+The team approves restoring the intended scope. A later supported full read returns all 1,000 expected accounts, including `app-user`. The actor permissions, account keys and correct ownership association are unchanged.
 
-If authoritative identity removal or hidden-identity handling has already occurred, inspect the actual profile/account/identity relationships and use the supported recovery path, with SailPoint Support where needed.
+The correction repairs coverage. It does not create, enable or delete the external account; `app-user` remains disabled.
 
-Preserve affected identifiers, warnings and configuration evidence. Repeated destructive retries don't establish which records or relationships have already changed.
+If a representation was already removed incorrectly, first inspect the actual state. The supported **Remove Account** action removes ISC's representation rather than deleting externally. An existing external account can be represented again by a later full aggregation.
+
+Recollection does not guarantee the same ISC object identifier, every historical relationship or the exact earlier identity state. Verify ownership as well as existence.
+
+If authoritative removal or hidden-identity handling has already occurred, inspect the actual profile, account and identity relationships and use the supported recovery path, involving SailPoint Support where needed.
+
+Preserve affected identifiers, warnings and configuration evidence. Repeating destructive attempts can make it harder to establish which records and relationships have already changed.
 
 ## Work through the evidence
 
-### 1. Fifteen percent are missing, but all still exist
+### 1. All 150 missing accounts still exist
 
-The active-only read returns 850 of 1,000 agreed accounts. The 150 excluded accounts still exist and are disabled. The guard cancels the run with a warning.
+The active-only read returns 850 of 1,000 expected accounts. The 150 omitted accounts are disabled, not deleted. The 10% safeguard cancels the run.
 
-Should the limit be raised from 10% to 20%?
+Should the setting be raised to 20%?
 
-**Worked reasoning:** No. The supplied cause is unintended exclusion, not external deletion. Raising the limit doesn't repair it. Review the approved scope correction, inspect actual ISC state and verify the supported rerun. Canceled status alone isn't proof that every update rolled back.
+No. It would leave the cause in place. Restore the approved scope, inspect actual ISC state and verify the supported rerun. Cancellation alone does not establish that every prior update was undone.
 
-### 2. Only five accounts are omitted
+### 2. Only five accounts are incorrectly omitted
 
-In an independent variation, five of 1,000 accounts are incorrectly omitted. The guard is 10%.
+Five of 1,000 accounts are missing because of a read error. The safeguard is 10%.
 
-Does being below the limit establish that removal is correct?
+Does being below the limit make removal correct?
 
-**Worked reasoning:** No. Five is 0.5% of the comparison population. Inspect those keys, external existence, actor visibility and scope. A small harmful omission can pass a volume check.
+No. Five out of 1,000 is 0.5%. Investigate their identifiers, external existence, actor visibility and scope. A volume check can miss a small harmful omission.
 
-### 3. The source has ten accounts
+### 3. A ten-account source uses 1%
 
-A ten-account source uses 1%. An engineer calls it more protective than 5%.
+An engineer calls 1% more protective than 5%.
 
-What has that reasoning missed?
+What is missing from that comparison?
 
-**Worked reasoning:** One percent of ten is 0.1, rounding to zero. The documented limitation then cancels only at 100% deletion. Its ten-account 5% example rounds to one and cancels at one or more proposed deletions. Check whole-account behavior and actual configuration rather than copying either value.
+Whole-account rounding. One percent of ten is 0.1 account, rounding to zero. Under the documented limitation, cancellation then occurs only at 100% deletion.
+
+The documented 5% example rounds 0.5 to one account and cancels at one or more proposed deletions. Establish the actual behavior rather than copying either setting.
 
 ### 4. Delta omits an unchanged account
 
-A supported delta result reports three changed accounts. App-user is unchanged and absent. No deletion event for it was returned.
+A supported delta reports three changed accounts. `app-user` is unchanged and absent; no deletion information for it is returned.
 
 Should it count as deleted?
 
-**Worked reasoning:** No. Delta can omit unchanged accounts by design. Establish supported explicit deletion evidence separately. Don't treat the response as a complete current population.
+No. Omission of an unchanged account is normal for changes-only collection. Establish supported explicit deletion evidence separately.
 
-### 5. Another authoritative profile remains available
+### 5. Another authoritative account remains
 
-The current HR account is genuinely removed, including its ISC representation under supported configured handling. Another lower-priority authoritative account still supports the identity.
+The current HR account was genuinely deleted, and its ISC representation was removed under supported configured handling. Another lower-priority authoritative account supports the identity.
 
 Must the identity be deleted overnight?
 
-**Worked reasoning:** No. The documented outcome is reassignment to the remaining authoritative profile and recalculation of mapped values. Verify the resulting profile and attributes; don't assume the prior profile's values remain unchanged.
+No. The documented outcome is reassignment to the remaining authoritative profile and recalculation of mapped values. Verify the new profile and values rather than assuming the previous values remain.
 
-### 6. No HR account remains, but an application account does
+### 6. An application account remains after HR removal
 
 The identity has no authoritative account, but another source's application account remains correlated.
 
-Does the nightly deletion attempt establish that the application account was deleted externally?
+Does a nightly deletion attempt establish external account removal?
 
-**Worked reasoning:** No. That correlated account is a documented blocker. The identity can be retained as hidden, with accounts attached but treated as uncorrelated. Inspect the external account and required access-removal result separately.
+No. The remaining account is a documented blocker. The identity can be hidden, with accounts attached but treated as uncorrelated. Check the external account and required access-removal result separately.
 
 ### 7. An emergency identity is protected
 
-An identity with no other authoritative source is protected through supported configuration. Someone proposes clearing protection so the cleanup completes.
+There is no remaining authoritative source, but the identity is protected. Someone proposes clearing protection to finish cleanup.
 
-Does the cleanup goal justify that change?
+Is the cleanup goal enough reason?
 
-**Worked reasoning:** No. Protection is a documented deletion blocker. Review the emergency-access purpose, authority, retention and accountable ownership. An approved different decision may be possible, but an empty cleanup list isn't enough justification.
+No. Review the emergency-access purpose, authority, retention and accountable ownership. Protection is a documented blocker; an empty cleanup list does not establish that removing it is appropriate.
 
-### 8. Remove Account succeeds, but the external account remains
+### 8. Remove Account finishes, but the application account remains
 
-An administrator uses Remove Account. The application team confirms that the account still exists externally.
+The application team confirms that the external account still exists after Remove Account was used.
 
-Did removal necessarily fail?
+Did the action necessarily fail?
 
-**Worked reasoning:** No. Its target is ISC's representation. An existing external account can be represented again during a later full aggregation. If external disablement or deletion was required, verify a separately supported approved change and its target result.
+No. It removes the ISC representation. A later full aggregation can represent an existing external account again. If external disablement or deletion was required, use the separately supported approved operation and verify its target result.
 
-## Review an active-workers-only HR feed
+## Review an active-workers-only HR file
 
-A project proposes a nightly file containing only active workers. It will enable account deletion, set a low percentage guard and call disappearance from ISC proof of successful offboarding.
+A project proposes a nightly file containing only active workers. It will enable account deletion, choose a low percentage and treat disappearance from ISC as proof of successful offboarding.
 
-Former workers can retain application accounts and open review responsibilities. No external disablement evidence is defined.
+Former workers can retain application accounts and open review responsibilities. The proposal defines no evidence of external disablement.
 
-Would that design establish safe leaver handling? What must the team agree?
+Does this establish the intended leaver outcome?
 
-**Worked reasoning:** It doesn't establish the required outcome. Feed omission replaces explicit employment and access-removal decisions with a filter. The percentage guard checks volume, and small-population rounding still applies.
+No. It substitutes a feed filter for explicit employment and access-removal decisions. The percentage safeguard checks volume; small-source rounding still matters.
 
-Loss of authoritative accounts can lead to profile reassignment, nightly deletion attempts or hidden identities with remaining dependencies. None proves external disablement or permission removal.
+Loss of authoritative accounts can cause profile reassignment, nightly deletion attempts or hidden identities with remaining dependencies. None of those outcomes proves external access was removed.
 
-Agree the authoritative status/end-date contract and retention period, complete-population versus changes-only file semantics, stable identifiers, profile consequences, access-removal rules, supported target operations and authority, safeguards, responsibilities and result evidence.
+Agree the authoritative status/end-date contract and retention period, whether the file supplies a complete population or changes, stable account identifiers, profile consequences and access-removal rules.
 
-Retained data may eventually be removed under an approved design. Establish its retention and relationship consequences, and confirm the required external result. Absence from the Identities page isn't that confirmation.
+Also establish the supported target operations and authority, safeguards, ownership of remaining responsibilities and evidence of the external result.
 
-When an account is missing, establish what the read included, what still exists, which object would be removed and what that removal would accomplish.
+Data can eventually be removed under an approved design. Review the retention and relationship consequences, and confirm the required access outcome. Absence from the Identities page is not that confirmation.
+
+When an account is missing, identify what the read included, what still exists, which record would be removed and what that removal would accomplish.

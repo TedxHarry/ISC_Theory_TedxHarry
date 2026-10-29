@@ -1,44 +1,46 @@
 # The group is in ISC. Does the account hold it?
 
-An account has two group memberships, G-520 and G-521. ISC has collected those values, but their names and descriptions aren't useful yet.
+An account belongs to two groups, G-520 and G-521. ISC has collected those membership values, but it doesn't yet have useful names and descriptions for them.
 
-A separate group read returns details for G-520, G-521 and a third group, G-599.
+A separate group read returns details for G-520, G-521 and G-599.
 
-What did ISC learn about the account's access? It learned more about the groups, including one that the account doesn't hold. The third definition isn't a third membership.
+The account still holds two groups. ISC now knows about three group objects.
 
-To understand why, keep the account record and the access-object record separate, then follow how their information connects.
+That difference matters. Let's follow what each read contributes, then connect the information without turning a group definition into an account assignment.
 
-## One record describes a group; another refers to it
+## Separate the account, the group and the relationship
 
-An **account** is a record in an external system. In SailPoint Identity Security Cloud (ISC), an **identity** represents a person or another entity and connects relevant information, accounts and access.
+An **account** is a record used to access an external system. In SailPoint Identity Security Cloud (ISC), an **identity** represents a person or another entity and can bring together its accounts and access.
 
-A **source** is ISC's configured representation of a system or collection of account data. Its **connector** supplies supported integration behaviour.
+A **source** is ISC's configured representation of a system or collection of account data. Its **connector** supplies the supported integration used to read information and, where supported and configured, make changes.
 
-Our hypothetical source is `Invoice-Production`. The existing account `invoice-user` is already associated with its intended ISC identity. Supported account and group reads are correctly configured, and the supplied account values describe direct group memberships.
+Suppose our source is Invoice-Production. The existing account invoice-user is already associated with the intended ISC identity.
 
-A **group** is an application object that can associate accounts with access. A **membership** is the relationship between an account and that group.
+A **group** is an application object that can associate accounts with access. The group has its own record, separate from any one account.
 
-An **entitlement** represents an access right in ISC. Here, application groups are represented as entitlements:
+A **membership** is the relationship between an account and that group. An **entitlement** represents an item of access in ISC; here, the application's groups are represented as entitlements.
 
-G-520 identifies Invoice Reviewers. G-521 identifies Archive Readers. G-599 identifies Exception Reviewers.
+For this example:
 
-The identifier says which group a reference identifies. The readable name helps someone recognize the access.
+- G-520 identifies Invoice Reviewers.
+- G-521 identifies Archive Readers.
+- G-599 identifies Exception Reviewers.
 
-Knowing the name Exception Reviewers doesn't establish a membership between invoice-user and G-599. We need the account's access information for that relationship.
+The identifying value tells us which group a reference points to. The readable name helps a person recognize the access.
 
-An **attribute** is a named piece of information, such as groups on an account or description on a group. A **schema** defines represented attributes and their uses.
+Knowing that Exception Reviewers exists doesn't tell us whether invoice-user belongs to it. For that, we need evidence of the membership relationship.
 
-An **entitlement type** identifies a supported category of access object, such as groups.
+An **attribute** is a named piece of information on a record, such as groups on an account or description on a group. A **schema** defines the attributes ISC represents and their designated uses.
 
-All records, reads, mappings and outcomes below are supplied examples, rather than observations from a real tenant.
+An **entitlement type** identifies a supported category of access object on a source. In this design, that category is groups.
 
-## What account aggregation contributes
+The records and outcomes below are supplied examples. Supported account and group reads are correctly configured, and the account values describe direct group memberships.
 
-**Aggregation** collects information into ISC.
+## What the account read tells ISC
 
-**Account aggregation** collects account records and their attributes, including supported access values associated with those accounts.
+**Aggregation** collects information into ISC. **Account aggregation** reads account records and their attributes, including supported access values associated with those accounts.
 
-An **API**, or application programming interface, lets software interact with a system. This selected **JSON**, JavaScript Object Notation, illustrates account attributes produced by the supplied read:
+An **API**, or application programming interface, lets software interact with a system. These selected account attributes illustrate the supplied read using **JSON**, JavaScript Object Notation, a format for exchanging structured data:
 
 ```json
 {
@@ -47,29 +49,31 @@ An **API**, or application programming interface, lets software interact with a 
 }
 ```
 
-Curly braces enclose an object with named properties. Square brackets enclose an array, a collection of values. The groups array has two text identifiers.
+The braces enclose one object. Each property has a name on the left of the colon and a value on the right.
 
-This isn't a complete ISC Accounts API response. It shows which account and membership values we're following.
+The groups property contains an **array**, or collection, inside square brackets. Its two items are strings, meaning text values: G-520 and G-521.
 
-**Account correlation** associates a source account with its appropriate ISC identity using configured comparisons. The correct existing association is supplied and verified here. An account name alone wouldn't establish ownership.
+This fragment shows the account and memberships we're following. It isn't a complete ISC Accounts API response.
 
-The account schema marks groups as an entitlement attribute and connects it to the supported groups type. It is **multi-valued**, so it permits a collection rather than just one value.
+**Account correlation** matches and associates an account with its appropriate ISC identity through configured comparisons. The correct existing association is supplied and verified here. The account's name alone wouldn't establish its owner.
 
-The collection setting describes structure; the entitlement designation describes access meaning. A collection of phone numbers wouldn't become access merely because it also used square brackets.
+The account schema marks groups as an entitlement attribute and connects it to the supported groups type. The field is also **multi-valued**, meaning it can hold a collection.
 
-In the supplied successful result, ISC represents G-520 and G-521 on invoice-user.
+Those settings answer different questions. Multi-valued describes structure; Entitlement describes access meaning. A list of phone numbers wouldn't become access rights just because it also used square brackets.
 
-Entitlement records can also arise from these collected account values before a separate object read supplies richer descriptions. Here, the account read establishes representations of those two held groups with limited descriptive information.
+In the supplied successful read, ISC represents G-520 and G-521 on invoice-user.
 
-So account aggregation can create entitlement representations in ISC. It hasn't created the corresponding groups in the external application; they already existed.
+These account values can also establish entitlement records in ISC before a separate group read supplies richer details. Here, the two held groups become represented with limited descriptive information.
 
-**Provisioning** performs supported external account or access changes. Discovering existing membership isn't an instruction to grant it again.
+That creation happens in ISC's records. The application groups and their memberships already existed.
 
-## What entitlement aggregation adds
+**Provisioning** carries out supported external account or access changes. Reading an existing membership doesn't require granting it again.
 
-**Entitlement aggregation** collects information about access objects under the source's supported types and schemas. It can collect objects that no account currently holds.
+## What the group read adds
 
-For this example, the supported group read supplies:
+**Entitlement aggregation** reads information about access objects under the source's supported types and schemas. It can collect objects that no account currently holds.
+
+Our group read supplies these selected objects:
 
 ```json
 [
@@ -91,55 +95,56 @@ For this example, the supported group read supplies:
 ]
 ```
 
-The array contains three selected group objects. It isn't a complete API response or connector configuration.
+The outer array contains three group objects. Each has an identifying field, a readable label and a description of the group's purpose. This isn't a complete connector configuration or API response.
 
-The group schema selects groupKey as **Entitlement ID**, the attribute supplying an object's identifying value. It selects label as **Entitlement Name**, the attribute supplying its naming value.
+The group schema selects groupKey as **Entitlement ID**, the attribute supplying each object's identifying value. It selects label as **Entitlement Name**, the attribute supplying its naming/display value.
 
-`groupKey` is the selected field; G-520 is a value in that field. Description supplies additional information about the access item's purpose.
+GroupKey is the selected field. G-520 is a value in that field. Selecting groupKey doesn't make the word groupKey the identifier of every group.
 
-Those are group details, rather than assignments to invoice-user.
+Description adds meaning: Invoice Reviewers can review invoices awaiting approval; Archive Readers can read archived records. Those details help explain the access, but they don't assign it to an account.
 
-The **entitlement catalog** is ISC's recorded inventory of access items. In our supplied result, it contains the three groups and their collected descriptions.
+The **entitlement catalog** is ISC's inventory of recorded access items. In our supplied result, it contains all three groups and their descriptions.
 
-Two existing representations gain details. G-599 becomes known through the group read. The example assumes no protected manual description prevents those intended updates.
+The two account-derived group representations gain useful details. G-599 becomes known through the object read. Assume these descriptions can be updated by aggregation; no earlier manual edits prevent that in this example.
 
-“Three definitions returned” therefore doesn't mean three newly granted memberships. It doesn't even mean three newly created ISC entitlement records, because two were already represented from account data.
+Notice the three different outcomes: three definitions were returned, two existing representations were enriched, and one additional object became known. No new membership was granted.
 
-A returned-object count, a created-record count and an assignment count describe different things.
+A returned-object count, a created-record count and an assignment count aren't interchangeable.
 
-## Connect each held value to the right object
+## Connect a held value to its object record
 
-The account has G-520, and the group's selected identifying field contains G-520. That is the reference we need to preserve.
+The account carries G-520. The corresponding group's selected ID field also contains G-520.
 
-The documented linking model requires an entitlement-marked account attribute whose name matches the entitlement type name, and values matching the selected entitlement IDs.
+The values agree, and the configuration must identify the relationship too.
 
-Here groups is marked Entitlement, connects to the supported groups type and contains G-520. The corresponding group record has groupKey G-520 in the same Invoice-Production source context.
+For the documented account-attribute linking model, the account field must be marked as an entitlement. Its name must match the entitlement type name. Its collected values must match the values selected as Entitlement ID on the collected objects.
 
-With those supported conditions met, ISC automatically links the account-derived access information with the separately collected object details.
+Here, the account field is groups, marked Entitlement and connected to the supported groups type. The group schema selects groupKey as ID. Both records belong to the intended Invoice-Production source.
+
+Under those supported conditions, ISC automatically links the account-derived access information to the separately collected object details.
+
+Follow the two held references:
 
 ```text
-[Account read]       [Object read]
-      |                   |
-[Held group IDs]     [Group details]
-      |                   |
-      +---------+---------+
-                |
- [Linked access information in ISC]
+Account: invoice-user      Recorded groups
+  G-520 ----------------> G-520 + details
+  G-521 ----------------> G-521 + details
+                          G-599 + details
 ```
 
-The branches show the information each read supplies. The lower connection represents linking under the schema agreement. It isn't a grant, a private storage model or a requirement for simultaneous execution.
+Each arrow connects a held identifier to its group record. G-599 has details but no membership arrow from this account.
 
-The account side supplies held identifiers. The object side describes the access those identifiers refer to.
+The diagram describes reference relationships, not grants, private storage steps or simultaneous jobs.
 
-A **mapping** determines which input supplies a represented attribute. If an account mapping substitutes Invoice Reviewers for G-520 while groupKey remains G-520, another group read won't correct the account-side value.
+A **mapping** specifies which input supplies a represented attribute. Suppose an account mapping substitutes Invoice Reviewers for G-520 while the group remains identified by groupKey G-520.
 
-A matching readable label doesn't replace the selected identifier relationship.
+A person can recognize the name, but the intended identifying values no longer agree. Another read of the same group definition won't correct the account-side reference.
 
-Changing a working Entitlement ID or Entitlement Name designation isn't a harmless way to hide that mismatch. Post-aggregation designation changes can produce duplicate entitlements and affect dependent references; assess supported change handling first.
+Inspect and correct the supported mapping rather than casually redesigning a working identifier. Changing Entitlement ID or Entitlement Name selections after aggregation can cause duplicate entitlements and affect dependent references.
 
-## Count accounts, relationships and objects separately
+## Count each kind of record or relationship separately
 
-Assume these are all accounts in the selected population:
+Now consider all accounts in the supplied complete selected population:
 
 | Account | Collected groups | Membership occurrences |
 |---|---|---|
@@ -147,207 +152,221 @@ Assume these are all accounts in the selected population:
 | account-b | G-520 | 1 |
 | account-c | G-521 | 1 |
 
-You have three accounts and four account-to-group relationships. G-520 occurs on two accounts, and G-521 occurs on two accounts.
+There are three accounts.
 
-There are only two distinct held group identifiers. Repeated membership in the same group doesn't create another group object.
+Count the relationships next. Invoice-user contributes two, account-b one and account-c one: four account-to-group membership occurrences.
 
-The group read returns three definitions. G-599 has no membership in the supplied complete account population.
+Now count distinct held group identifiers. They are G-520 and G-521: only two. Finding G-520 on another account doesn't create another group object.
 
-The totals are therefore three accounts, four relationships, two distinct held groups and three known objects. They aren't expected to match.
+Finally, the group read returned three object definitions, including G-599. No account in this supplied complete population holds G-599.
 
-One group can have many members. One account can hold many groups. A group can also exist without members.
+So the four totals are **three accounts, four relationships, two distinct held groups and three known objects**. They describe different things and needn't match.
 
-A particular entitlement run's summary may differ from the complete Entitlements list too. The list can include records originating from previous account and entitlement aggregations; the execution summary concerns that run's discovered population.
+This is a **many-to-many relationship**: one account can belong to several groups, and one group can have several accounts as members. A group can also exist with zero members.
 
-For every total, establish what it counts, its source and type, and which execution and population it describes.
+A particular entitlement run's discovered count can differ from the full Entitlements list. The list can include records created by earlier account and entitlement reads; the run summary concerns that execution.
 
-“No account in this supplied complete population holds G-599” follows from the table. A filtered or incomplete account result wouldn't justify saying that nobody anywhere holds it.
+For any total, identify what it counts, which source and type it covers, and the population and execution behind it.
+
+The complete table supports “none of these accounts holds G-599.” A filtered or incomplete account result wouldn't establish that nobody anywhere holds it.
 
 ## Keep source, type and access path with the identifier
 
-The same G-520 text in a test environment isn't established as the production group. Nor does a group and an application role sharing a short code make them one object.
+The text G-520 in a test environment doesn't establish that it is the production group.
 
-An **application role** is defined in the external application. An ISC **role** groups access for business assignment. If a source exposes groups and application roles, each needs its supported type, schema and read coverage.
+Different access categories can also reuse the same short identifier. A group and an application role with equal identifier text aren't thereby the same object.
 
-The selected example describes direct group memberships. Supported object data can also describe relationships between access objects, such as indirect grants through another group.
+An **application role** is defined in the external application. An ISC **role** organizes access for business assignment. Where a source exposes both groups and application roles, each needs its supported type, schema and read coverage.
 
-That indirect path isn't the same as an extra direct membership on invoice-user.
+The main example describes direct group memberships. A supported model may also expose relationships between access objects, such as access obtained through membership in another group.
 
-A **permission** is an allowed operation on a resource. **Effective access** concerns what an account can actually do after relevant grants and restrictions.
+That indirect path differs from an additional direct membership on invoice-user.
 
-These two direct membership values alone don't establish a complete effective-access calculation. First identify which relationships the integration represents and which target rules matter.
+A **permission** is an allowed operation on a resource. **Effective access** is what an account can actually do after relevant grants and restrictions are considered.
 
-This lets you answer the precise question being asked: object inventory, direct membership or effective access.
+Two direct group values don't establish every indirect path or restriction. Identify which relationships the integration represents and which application rules matter before claiming a complete effective-access picture.
 
-## A successful read still needs the right scope and authority
+That helps you distinguish the actual question: which objects are known, which are directly held, or what access ultimately works.
 
-A **direct-connect source** uses a configured connector connection. Supported entitlement collection can be started manually or scheduled, separately from account aggregation.
+## Check each read's authority and scope
 
-A schedule requests recurring work. It doesn't prove that any particular account, group or field was collected.
+A **direct-connect source** reads through a configured connector connection. Where supported, entitlement aggregation can be started manually or scheduled separately from account aggregation.
 
-On supported sources, entitlement aggregation can include all configured types or selected types. A groups-only success doesn't establish that application roles were read too.
+A schedule requests recurring work. The execution result must establish which objects were actually read.
 
-The **integration actor** is the account or application identity used to read the external system. Its authority can differ by operation. Permission to list accounts doesn't establish permission to list groups or retrieve descriptions.
+Supported entitlement runs can include all configured types or selected types. A successful groups-only run doesn't establish that application roles were collected too.
 
-**Scope** identifies the records and information a read covers. A **filter** selects or excludes records under supported conditions. Inspect account and object scopes separately.
+The **integration actor** is the account or application identity used to read the external system. Its permissions can differ by operation. Being allowed to list accounts doesn't establish permission to list groups or retrieve their descriptions.
 
-**Extraction** selects records or values from delivered data. A correct schema can't supply a description that the actor didn't receive or the mapping didn't select.
+**Scope** is the boundary of records and information being read. A **filter** selects or excludes records under supported conditions. Check account scope and object scope separately.
 
-**Pagination** splits a result into pages. The first successful response isn't evidence that the remaining selected objects were consumed.
+**Extraction** selects records or values from delivered data. A schema definition can't supply a description that the actor never received or the mapping didn't select.
 
-Compare actual delivery, extraction, mapping, supported continuation and relevant errors before blaming the wrong collection.
+**Pagination** divides a result into pages. A successful first response doesn't establish that the remaining selected objects were read.
 
-An **endpoint** is a particular external interface address used by an operation. Its name alone doesn't prove which ISC collection responsibility completed.
+Trace delivery, extraction, mapping, continuation and errors to find the missing information. Changing memberships isn't a repair for a denied group-list operation.
 
-A supported connector can use multiple external calls to assemble account information. Calling an interface associated with groups during that work doesn't by itself complete a separate entitlement aggregation.
+## One aggregation can use several external calls
 
-**SaaS** means software operated as a hosted service. The Web Services SaaS connector documents such multi-call account collection and distinguishes account, group and entitlement-change operations. These are supported connector examples, rather than a universal call sequence.
+An **endpoint** is an external interface address used by an operation. The address's name doesn't establish which ISC responsibility completed.
 
-## Choose the order around the outcome you need
+A connector may need several calls to assemble account information: one to list accounts and another to retrieve related data.
 
-There isn't a universal rule that entitlement aggregation must always finish first.
+Calling an interface associated with groups during that work doesn't automatically mean a separate entitlement aggregation completed. Check what records the operation was configured to produce and what its result contains.
 
-Account collection can establish held values before richer details arrive. Object collection can establish group definitions before any account memberships are collected.
+**SaaS** means software operated as a hosted service. The Web Services SaaS connector documents multi-call account aggregation and distinguishes account aggregation, group aggregation and entitlement-change operations.
 
-For a useful access review, you need the intended account relationship and understandable object details. For an inventory of unassigned groups, you need object coverage beyond values found on accounts.
+Those examples explain supported responsibilities. They aren't a universal call sequence or a complete configuration for Invoice-Production.
 
-Our main successful trace starts with account collection and then collects groups. The supplied result confirms their link. That sequence isn't a requirement for every connector or an instant-refresh promise.
+## Plan the reads around the information you need
 
-Also check each fact's observation time. Two successful reads don't automatically form one frozen picture of the target.
+There isn't one universal rule that entitlement aggregation must always finish first.
 
-## A later group read doesn't refresh an older membership
+Account collection can establish held values before richer group details arrive. Object collection can establish group definitions before account memberships are collected.
 
-Consider a separate timing variation for invoice-user. All times use **UTC**, Coordinated Universal Time, as their shared reference.
+For a useful access review, you need the intended account relationship and understandable group details. For an inventory of unassigned groups, you need object coverage beyond the values found on accounts.
+
+Our main trace starts with accounts, then groups, and confirms their link. That sequence is supplied for this example; it isn't a requirement for every connector or a promise of immediate refresh.
+
+Timing matters too. Two successful reads needn't describe one frozen application state.
+
+## A newer group read can coexist with older membership information
+
+Consider a separate timing variation for invoice-user. The times use **UTC**, Coordinated Universal Time, as their common reference.
 
 ```text
-09:00  Account: G-520, G-521
-09:20  Target: remove G-520 membership
-09:30  Group read: G-520 exists
+09:00  Account read: G-520, G-521
+09:20  Application: remove G-520 membership
+09:30  Group read: G-520 still exists
 ```
 
-At 09:00, the account is observed with both memberships. At 09:20, the target changes that account's membership, removing G-520. The group itself remains.
+At 09:00, the account is observed with both memberships. At 09:20, an external operation removes its membership in G-520. The group itself remains.
 
-At 09:30, the group read confirms G-520 still exists. That is consistent with the removal: other accounts can hold it, and the object can exist without members.
+At 09:30, the group read confirms G-520 exists. That is consistent with the removal: the group can have other members or no members.
 
-The lines are separate observations and an external change, rather than stages of one aggregation. The later read doesn't undo the removal or refresh the older account observation.
+These are separate observations and an external change, not stages of one aggregation. The later object read doesn't reverse the removal or update the older account observation.
 
-To establish current membership, obtain and verify the applicable account-access evidence.
+To establish current membership, obtain and verify the applicable current account-access evidence.
 
-**Freshness** concerns when the relevant fact was observed. One recent job time doesn't make every related record current.
+**Freshness** concerns when the relevant fact was observed. A recent group-read time doesn't make the earlier account-membership information current.
 
-The same reasoning applies to separately produced files. A new group file doesn't refresh an older account export.
+Separately produced files have the same issue. A new group file doesn't refresh an older account export.
 
-## File imports need both information responsibilities too
+## File imports still need the two kinds of information
 
 A **flat-file source** imports supplied files instead of reading through a live connector connection.
 
-An account file supplies accounts and their access references. An entitlement file describes the access objects. Uploading the latter doesn't assign every listed object to every account.
+The account file supplies account records and their access references. The entitlement file describes access objects. Importing the definitions doesn't assign every listed group to every account.
 
-**CSV**, comma-separated values, represents records as rows and fields as columns. Its structure and the configured schema determine how those fields are interpreted.
+**CSV**, comma-separated values, represents records as rows and fields as columns under its format rules. The configured schema determines how those fields are represented.
 
-Use the source-specific entitlement template and required identifying column. Its ID values must agree with the account's entitlement values. Arbitrary column headings aren't interchangeable across sources.
+Use the source-specific entitlement template and required identifying column. Its ID values must agree with the account's entitlement values. Column headings from one source aren't automatically interchangeable with another source's template.
 
 The documented flat-file entitlement mechanism is manual. It doesn't provide recurring entitlement schedules or multiple entitlement types through that mechanism.
 
-If the project needs recurring collection or multiple access types, establish a supported ingestion design. Adding files doesn't give a source every direct-connect capability.
+If a project needs those capabilities, establish a supported way to bring in the data. Having a file doesn't establish that its source has every direct-connect capability.
 
-An account-only connector has another boundary: creating a schema doesn't implement an unsupported object-read operation.
+An account-only connector has another boundary: adding a schema doesn't implement an object-read operation the connector doesn't support.
 
-## Check what each screen represents
+## Ask what a screen is showing
 
-The **user interface**, or UI, presents data and configuration from different responsibilities.
+The **frontend**, or user interface (UI), presents collected records and configuration on different pages. The **backend** is the software handling reads, processing and requests behind those screens.
 
 Source Accounts and account details show collected accounts. The source's Entitlements view and wider Entitlements page show recorded access items.
 
-Entitlement Types and Schemas describes configuration. It doesn't establish that G-599 was delivered.
+Entitlement Types and Schemas describes configuration. Seeing a field definition there doesn't establish that G-599 was delivered.
 
-Aggregation History and latest-aggregation information describe executions. Inspect operation, selected types, status, counts and warnings or errors. Starting a read isn't completion; completed work still has a scope.
+Aggregation History and latest-aggregation information describe executions. Check the operation, selected types, status, counts and warnings or errors.
 
-| Question | Evidence to compare | What it doesn't establish alone |
+Starting a read isn't completion. Completed work still has a scope.
+
+| Question | Evidence to compare | What remains separate |
 |---|---|---|
-| Is G-599 recorded? | Correct entitlement record and group-read evidence | That invoice-user holds it |
-| What does this account hold? | Source, invoice-user and collected groups | Current descriptions for every object |
-| Whose account is it? | Actual identity association and matching evidence | That group inventory established ownership |
-| Why is a description old? | Delivered object, mapping, read and manual-update state | That account collection failed |
-| Was target access changed? | Applicable change operation and target membership | That a catalog update granted or revoked access |
+| Is G-599 recorded? | Correct entitlement record and group-read evidence | Does invoice-user hold it? |
+| What does this account hold? | Source, invoice-user and collected groups | Are descriptions current for all the objects? |
+| Whose account is it? | Actual identity association and matching evidence | What group inventory was collected? |
+| Why is a description old? | Delivered object, mapping, read and manual-update state | Did account collection fail? |
+| Did target access change? | Applicable change operation and actual membership | What changed only in the catalog? |
 
-Search results can also lag a change present in the underlying account or entitlement records. Compare identified records, execution evidence and view freshness before treating one stale result as a read failure.
+Search can reflect a record change later than the account or entitlement view. Compare identified records, execution evidence and view freshness before treating one stale result as a read failure.
 
-## Preserved metadata can explain an old description
+## An old description can be deliberately preserved
 
 **Metadata** is descriptive or governance information about an access item.
 
-An administrator can edit an entitlement's Display Name or Description in ISC. Those edits aren't sent to the external source, and manually maintained values can be preserved against later aggregations.
+Editing an entitlement's Display Name or Description in ISC changes that information. These edits aren't sent to the external source. Manually maintained values can also be preserved against later aggregation.
 
-If a group read returns a new description while ISC retains manual wording, inspect that manual-update state and the agreed owner of the explanation.
+Suppose the group read returns a new description, but ISC retains the item's manual wording. Check its manual-update state and who owns that explanation before deciding what to correct.
 
-The issue may be descriptive-data responsibility rather than a missing read. Repeating account aggregation or clearing a protected value merely to make the screens match wouldn't establish the right correction.
+The read may have worked. The remaining issue may be which description should be maintained.
 
-An **access request** asks for access through a configured process. A **certification** is a responsible person's review of recorded access.
+Repeating account aggregation won't resolve that ownership decision. Clearing protected wording merely to force the screens to match doesn't establish the intended description.
 
-Clear details help those decisions. Collecting them doesn't approve a request, make an item requestable to everyone or prove that existing members should retain it.
+An **access request** asks for access through a configured process. A **certification** is an access review in which a responsible person evaluates recorded access.
 
-## A missing membership doesn't delete the group
+Useful group details help a requester or reviewer understand the item. Collecting those details doesn't approve a request, make it requestable to everyone or decide that current members should retain it.
 
-If account collection no longer reports G-520 on invoice-user, the group can still exist and belong to other accounts.
+## Missing membership and missing object are different findings
 
-Account aggregations don't delete entitlement records, including when no accounts currently hold them.
+If account collection no longer reports G-520 on invoice-user, the group can still exist and have other members.
 
-Conversely, a group absent from an object read needs investigation. It might be absent from the target or outside that read's scope. Permissions, filters, continuation and stale input can produce different evidence.
+Account aggregation doesn't delete entitlement records, even when no account currently holds them. The access object may still exist externally.
 
-Review actual completeness and existing-record consequences before using a partial result as a cleanup plan.
+A group absent from an object read needs different investigation. It may be gone from the application, outside scope, hidden from the actor, omitted by a filter or missing because the result wasn't completely read.
 
-Removing access requires its separately authorized change mechanism and target evidence. Collected information can feed configured decisions that initiate provisioning, but observation and external change remain different operations.
+Compare target state, permissions, filters, continuation and input freshness. Review completeness and existing-record consequences before treating a partial result as a cleanup plan.
+
+Access removal needs its separately authorized change mechanism and target evidence. Collected information can feed configured decisions that initiate provisioning, but the observation and the external change remain different operations.
 
 ## Test the distinction with changed evidence
 
 ### 1. Three accounts, four memberships
 
-The complete account table has three rows. The group read returns G-520, G-521 and G-599. How many held group identifiers and object definitions are there?
+The complete account table has three rows. The group read returns G-520, G-521 and G-599. How many held group identifiers and definitions are there?
 
-**Worked reasoning:** Two distinct held identifiers and three definitions. The four occurrences are account-to-group relationships. G-599 has no supplied member, while repeated G-520 and G-521 don't create extra group objects.
+**Worked reasoning:** Two distinct held identifiers and three definitions. Four occurrences describe the account-to-group relationships. G-599 has no member in this supplied population; repeated G-520 or G-521 doesn't create another group.
 
 ### 2. G-599 appears in inventory
 
 The account still contains groups = ["G-520", "G-521"]. What changed in its represented memberships when the group read discovered G-599?
 
-**Worked reasoning:** Nothing in the supplied outcome. The inventory gained an object; no assignment or provisioning operation was supplied.
+**Worked reasoning:** Nothing in the supplied outcome. The inventory gained an object. No assignment or provisioning operation was supplied.
 
 ### 3. Membership arrives before description
 
-Account collection represents G-520, but separate group collection isn't confirmed. Its description is missing. Where would you investigate?
+The account read represents G-520, but separate group collection isn't confirmed. Its description is missing. Where would you investigate?
 
-**Worked reasoning:** Establish supported object collection, delivered fields, scope and mappings. Limited description doesn't negate the membership. Identify where the details should originate before repeating an unrelated account read.
+**Worked reasoning:** Check supported object collection, delivered fields, scope and mappings. Missing details don't negate the membership. Identify where the description should originate before repeating an unrelated account read.
 
 ### 4. A readable label replaces the ID
 
 The account mapping supplies Invoice Reviewers while the group remains identified by groupKey G-520. Will another group read repair the link?
 
-**Worked reasoning:** Not by rereading the same definition. Correct the account-side identifying relationship through supported mapping and change review. Don't casually redesign working identifiers to conceal the mismatch.
+**Worked reasoning:** Re-reading the same definition won't repair the account reference. Correct the supported mapping with appropriate change review; don't casually redesign working identifiers to conceal the mismatch.
 
 ### 5. Accounts are readable; groups are denied
 
-The actor can list accounts, but the target denies its group-list request. Should the team change memberships to fix the inventory?
+The actor can list accounts, but the application denies its group-list request. Should the team change memberships to fix the inventory?
 
-**Worked reasoning:** No. Investigate the required group-read operation and appropriate permission through the authorized owner. Account-read success doesn't establish group-read authority, and no missing membership was demonstrated.
+**Worked reasoning:** No. Investigate the group-read operation and its required permission through the authorized owner. Account-read success doesn't establish group-read authority, and no missing membership was demonstrated.
 
 ### 6. The group read follows a removal
 
 G-520 membership is removed at 09:20. The latest account observation is 09:00, and the 09:30 group read returns G-520. What does it prove?
 
-**Worked reasoning:** The group still exists at that observation. It doesn't update the old account membership or reverse the removal. Obtain the relevant current account-access evidence.
+**Worked reasoning:** The group still exists at that observation. It doesn't update the old membership or reverse the removal. Obtain current account-access evidence.
 
 ### 7. Manual wording survives a read
 
-A supported group read returns a new description. ISC retains the identified entitlement's manually maintained description. Is another account aggregation the first correction?
+The group read returns a new description. ISC retains the identified entitlement's manually maintained description. Is another account aggregation the first correction?
 
-**Worked reasoning:** Inspect manual-update preservation and descriptive ownership. The observation can be consistent with intended metadata protection; account collection doesn't resolve that policy choice.
+**Worked reasoning:** Inspect manual-update preservation and descriptive ownership. The result can be consistent with intended metadata protection. Account collection doesn't decide which wording should be kept.
 
 ### 8. Only one type completes
 
-A source supports groups and application roles. A successful entitlement run selected only groups. Is the application-role inventory complete?
+The source supports groups and application roles. A successful entitlement run selected only groups. Is the application-role inventory complete?
 
-**Worked reasoning:** Not established. Check that type's supported schema, configuration, actor visibility, selected scope and completed results. A successful scoped run doesn't prove work it excluded.
+**Worked reasoning:** That isn't established. Check its supported schema, configuration, actor visibility, selected scope and completed results. A successful scoped run doesn't prove work it excluded.
 
 ## Review a project-file proposal
 
@@ -355,14 +374,14 @@ An account export contains teams = ["T-22"]. A separately produced team file lis
 
 The proposal says: “Import both teams, assign both to the person and schedule the flat-file entitlement import hourly.” No account association or current target-state evidence is supplied.
 
-What must change before acceptance?
+What needs changing before acceptance?
 
-**Worked reasoning:** Preserve T-22 as the supplied membership and connect it to the matching object under the supported source/schema relationship. T-90 is inventory information, rather than an assignment to this account.
+**Worked reasoning:** Preserve T-22 as the supplied membership and connect it to its object under the supported source/schema relationship. T-90 supplies inventory information, not an assignment to this account.
 
-Establish the account's owner, each export's population and observation time, the identifying values and source-specific template. Verify actual imports and collected records rather than treating available files as completed work.
+Establish the account's owner, each export's population and observation time, identifying values and source-specific template. Verify completed imports and collected records rather than treating available files as completed work.
 
-The documented flat-file entitlement mechanism doesn't provide that recurring schedule. Establish a supported ingestion design instead of calling an unimplemented scheduler a native capability.
+The documented flat-file entitlement mechanism doesn't provide that recurring schedule. Use a supported way to bring in the data instead of describing an unimplemented scheduler as a native capability.
 
-If a new membership is required, identify its separately authorized fulfillment operation and verify the target result. Don't alter access to compensate for incomplete inventory evidence.
+If another membership is required, establish its separately authorized account-change operation and verify the target result. Changing access won't compensate for incomplete inventory evidence.
 
-Explain it through the two records: “This account holds these identifiers. Those object records describe what the identifiers mean, including objects nobody holds. Importing the definitions doesn't assign their contents to the account.”
+Explain the connection through the records: “This account holds these identifiers. Those object records describe the access, including objects no account in our observed population holds. Importing the definitions doesn't assign them to the account.”

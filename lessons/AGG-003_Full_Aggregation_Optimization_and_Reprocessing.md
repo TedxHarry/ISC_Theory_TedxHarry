@@ -1,26 +1,26 @@
 # Every account was read. Why wasn't this one re-evaluated?
 
-Suppose SailPoint Identity Security Cloud (ISC) has already collected an application account, but hasn't connected it to the person who owns it. You correct the comparison used to find that owner. Then you run another collection, and it finishes successfully.
+You correct the rule that ISC uses to find an account's owner. You run a full aggregation. The job completes, and the account is still uncorrelated.
 
-The account is still unassigned.
+It is reasonable to think, “ISC has just read the account again. Surely it used the new rule?”
 
-It would be reasonable to check the comparison again. Before changing it, though, there's another question to answer: did ISC repeat the comparison for this account, or did it read the account and skip further processing because its data hadn't changed?
+There is another decision between reading the account and doing that work. If ISC recognizes an existing account whose collected data has not changed, an optimized aggregation can skip its further processing. The new rule may therefore be saved correctly without being evaluated for that account in this run.
 
-Those are different outcomes. Once you can separate them, a successful collection with an unchanged ownership result starts to make sense.
+Let's follow the account through both decisions.
 
-## First, separate the account data from the matching configuration
+## What is being read, and what needs to be decided?
 
-An **account** is a record in an external system. An **identity** is ISC's representation of a person or another entity. ISC connects accounts to identities so that it can associate the accounts and their access with their owners.
+An **account** is a record in an application or directory. An **identity** is ISC's representation of a person or other managed subject. A person can have several accounts, and ISC needs to know which accounts belong to that identity.
 
-A **source** is ISC's configured representation of a system or collection of account data. Its **connector** provides the supported integration with that system. We'll use a source named Equipment-Production to keep the records identifiable.
+A **source** is the configuration in ISC through which account data from a system is managed. Its **connector** supplies the supported integration for reading that system and, where supported, making changes there.
 
-**Account aggregation** collects accounts and their information into ISC. Each named piece of information is an **attribute**, such as an account's email address or department.
+**Account aggregation** collects account information into ISC. An **attribute** is a named piece of information, such as an account's email address or department. **Account correlation** is the matching process that associates a collected account with its identity.
 
-Collecting a record gives ISC information about an account. ISC also needs to establish which identity owns it. **Account correlation** is the matching and assignment of a source account to its owning identity using the applicable comparison logic.
+For example, the configured comparison might ask:
 
-For example, a source can be configured to compare an account's employee reference with an identity's employee number. The account field supplies one value; the identity field supplies the other. The configured comparison tells ISC which values to examine.
+> Does this account's email address match an existing identity's work email?
 
-Let's make the distinction visible with a small record. **JSON**, JavaScript Object Notation, writes named properties and their values inside curly braces:
+Consider a source named Equipment-Production. One account has these selected values:
 
 ```json
 {
@@ -31,318 +31,337 @@ Let's make the distinction visible with a small record. **JSON**, JavaScript Obj
 }
 ```
 
-These are selected account values, not a complete API response. The email addresses are illustrative, not real contact details. Assume the account has valid, stable identification and was collected successfully.
+This is JSON, a text format that pairs field names with values. Here, `employeeRef` is a field name and `W-33` is its text value. The fragment shows the account values we need to discuss; it is not the complete set of information returned by ISC.
 
-The intended owner's existing identity has work email `current@example.invalid` and employeeNumber `W-33`. Both employee identifiers are text.
+ISC already contains the intended identity. Its work email is `current@example.invalid`, and its `employeeNumber` value is the text `W-33`.
 
-The original comparison used account mail and identity work email. When the account was first collected, those addresses already differed. In the supplied starting state, ISC did not establish an association between this account and the intended identity.
+When this account was first collected, the email addresses were already different. The configured email comparison did not establish its owner, and the account remained **uncorrelated**: ISC had collected it without associating it with the intended identity. That is our starting condition. We are not assuming that a previously associated account became uncorrelated simply because its email changed.
 
-That's an **uncorrelated account**: its ownership hasn't been resolved to an established identity. An uncorrelated record can be represented with a technical **shadow identity**, a placeholder used by the system. That doesn't establish that Human Resources (HR) has recorded another employee.
+You may encounter a **shadow identity** around unresolved account ownership. Think of that as a placeholder representation associated with the unresolved account. Its presence does not mean a new employee has joined or that HR has supplied another person record.
 
-Now the approved comparison changes to account employeeRef against identity employeeNumber. Both values already contain W-33, and exactly one existing identity is the intended match. There is no manual ownership assignment overriding automatic matching.
+After checking the data, an administrator approves a different comparison:
 
-Notice what changed: ISC's matching configuration.
+> Compare the account's `employeeRef` with the identity's `employeeNumber`.
 
-Notice what stayed the same: the account's mail, employeeRef and department. Saving the comparison doesn't rewrite the external account. It also doesn't, by itself, establish that the new comparison has been applied to every previously collected record.
+Both values are `W-33`. For this example, that comparison identifies exactly one existing, intended identity. The account also has valid, stable identification, so ISC can recognize it as the same account when reading it again. Nobody has manually assigned its owner.
 
-The runs and completed results below are supplied examples, not observations from a real tenant.
+Notice what changed: the **comparison configuration in ISC**. The account's email, employee reference and department did not change in the application.
 
-## What does a full aggregation actually read?
+That distinction explains the next result.
 
-A **full aggregation** reads the source's configured account population, rather than collecting only accounts reported as new or changed. Here, that population contains four accounts.
+## A full read answers a question about coverage
 
-“Configured” matters. A full run doesn't mean every account in every connected system, or even every account that someone expects to see in this particular application.
+A **full aggregation** reads the account population defined for that source, rather than asking only for accounts reported as changed.
 
-The read has a **scope**, meaning the records and information it is intended to include. A **filter** selects or excludes records under supported conditions. The **integration actor**, the account or application identity used to reach the external system, also needs permission to read the intended information.
+“Full” still has a context. A source may be configured to read one part of a directory, one application environment or accounts matching a filter. A **filter** is a condition that limits which records are included.
 
-If the application returns results in pages, **pagination** is the mechanism for collecting those successive portions. Receiving the first page doesn't prove that the remaining pages were collected.
+The connection also acts through an account or other authorized identity in the external system. This **integration actor** needs permission to read the intended records and fields. If the external system returns results in pages, the connector must retrieve the required pages. **Pagination** means dividing a large result into smaller batches.
 
-For our four-account example, assume the supported read returns all four intended accounts, with the required attributes. There are no missing pages or visibility gaps.
+These details matter because “the job completed” alone does not establish that a missing account was visible, in scope and returned.
 
-That settles one question: which records reached ISC during this run?
+For our main example, those questions have been checked. The complete configured population contains four accounts. All four and their required fields are returned; there is no missing page or visibility gap.
 
-It doesn't settle the next question: how much processing did ISC repeat for each returned record?
+Now we know that `equipment-account` reached ISC. We still need to ask what ISC did with it.
 
-## Why would ISC skip an account it has just read?
+## Why an optimized aggregation can read an account and then skip it
 
-An **optimized aggregation** reads account data and avoids repeating further processing for existing accounts whose data hasn't changed. Optimization is the documented default.
+**Optimization** avoids repeating account processing when an existing account's collected data has not changed. It is the default behavior for account aggregation.
 
-Think about a record ISC already collected yesterday. Today's read supplies the same account information. Repeating work for that unchanged record would consume resources even though the input hasn't changed. Optimization lets ISC skip that repeated work.
+The logic is practical: if the same account returns with the same data, repeating work for it may add cost without producing a different result.
 
-For an existing unchanged account, the skipped work includes evaluating account correlation and **manager correlation** through this aggregation. Manager correlation establishes the relationship between an employee's identity and the identity of their manager. It answers who the employee reports to; account correlation answers who owns an application account.
+For an unchanged account that is skipped, neither account correlation nor manager correlation is evaluated through this aggregation. **Manager correlation** establishes which identity is another identity's manager. That employee-to-manager relationship is a different question from which identity owns an application account.
 
-That phrase “through this aggregation” matters. A skipped record in this run doesn't prove that no other supported process could evaluate the identity. We are following this run's handling of the account.
-
-Newly collected accounts and existing accounts with changed data take the processing path. Existing unchanged accounts can take the skip path when optimization is enabled:
+New accounts and accounts with changed data take the processing path instead:
 
 ```text
-[Account returned by the scoped read]
-                  |
-       [Existing and unchanged?]
-          no /             \ yes
- [Process record]   [Optimization on?]
-                      yes /     \ no
-                    [Skip]   [Reprocess]
+Account record reaches ISC
+            |
+     Existing account?
+       /          \
+      no          yes
+      |            |
+   Process    Data changed?
+                /      \
+              yes       no
+               |         |
+            Process   Optimization on?
+                        /       \
+                      yes        no
+                       |          |
+                      Skip     Reprocess
 ```
 
-Read the lines as a logical choice after account data has been returned. A no answer to “Existing and unchanged?” includes a newly represented account or an existing account with changed data. A yes answer leads to the optimization choice: skip repeated processing when optimization is on, or reprocess when it is disabled.
+This diagram follows the relevant decisions after a record arrives. It does not describe ISC's private comparison algorithm, storage design or exact internal ordering.
 
-The connector obtains the supported account data; ISC applies the relevant account-processing behavior. The diagram doesn't describe a private comparison algorithm, storage mechanism or exact internal execution order.
+The connector supplies the account data. ISC makes the account-processing decisions using that data and the applicable configuration. A record can therefore be collected successfully and then skipped for further processing.
 
-Also, “unchanged” says nothing about whether the account is active or useful. An active account can have the same data as yesterday. A disabled account can have a newly changed department or status. The decision concerns the account information available to processing, not a judgment about the account's importance.
+“Unchanged” describes the collected data, not whether the account is active. A disabled account whose returned status has just changed is a changed record. An active account whose returned data stays the same can be unchanged.
 
-Now return to our corrected comparison. The input data stayed the same, but the configuration that should interpret it changed. Optimization can therefore skip work whose result you now need to reconsider.
+Nor does “skipped” mean no other process in ISC could ever affect that account or identity. We are describing what this aggregation does with this record.
 
-## Follow the first run, one account at a time
+Usually, avoiding repeated work is useful. Our ownership problem exposes the condition behind that shortcut: the account's data is the same, but the administrator has changed how ISC should interpret it.
 
-Call the first full aggregation after the comparison change **Run A**. It uses optimization.
+## Follow the first run account by account
 
-| Account | What the read supplies compared with ISC's existing record | Run A handling |
+Call the optimized full aggregation **Run A**.
+
+Alongside `equipment-account`, the source contains three other accounts. This table compares each returned record with the information ISC had before Run A:
+
+| Account | What ISC receives in Run A | Relevant handling |
 |---|---|---|
-| equipment-account | Existing account, unchanged data | Skip repeated processing |
-| changed-account | Existing account, department changes from OPS to FIN | Process changed data |
-| steady-account | Existing account, unchanged data | Skip repeated processing |
-| newly-seen-account | Account already exists externally; first representation in ISC | Process newly collected account |
+| `equipment-account` | Existing account; selected data is unchanged | Skip further processing under optimization |
+| `changed-account` | Existing account; department changes from `OPS` to `FIN` | Process the changed record |
+| `steady-account` | Existing account; data is unchanged | Skip further processing under optimization |
+| `newly-seen-account` | Account already exists externally, but this is its first representation in ISC | Process the new record |
 
-All four records were read. The changed account and the newly collected account take the processing path. Equipment-account and steady-account take the unchanged skip path.
+All four were read. Two took the processing path and two were skipped.
 
-That gives us four read, two processed and two skipped.
+Here, **processed** means that the account was not bypassed by the unchanged-record shortcut and received the applicable account processing. It does not mean all information on the identity changed, every owner was resolved or every external operation succeeded.
 
-Here, “processed” means the record wasn't skipped and received the applicable account processing. It doesn't mean every identity value changed, every account found an owner, or any requested application change finished.
+The name `newly-seen-account` also needs care. The application account already existed. ISC is learning about it for the first time; aggregation is not creating that account in the application.
 
-Equipment-account is the account we wanted to fix. Although its employeeRef W-33 could support the intended match under the corrected comparison, that comparison wasn't re-evaluated for it through this optimized run.
+Creating or changing external accounts and access belongs to **provisioning**. Reading an existing account into ISC and provisioning a new account are different operations.
 
-So the run can finish successfully while the ownership association remains unresolved. The read succeeded. The particular repeated comparison you needed was skipped.
+Return to `equipment-account`. Run A read its `employeeRef` value, but its data was unchanged. With optimization enabled, the record was skipped. The newly approved comparison was not evaluated for it through this run, so its ownership remained unresolved.
 
-There is another distinction in the table. Newly-seen-account was already present in the external application. ISC discovering it for the first time doesn't mean ISC created a new application account.
+The successful collection and unresolved owner can both be true. They describe different stages.
 
-**Provisioning** performs supported changes to external accounts or access. Reading an account, establishing its owner in ISC and creating an account in the application are separate outcomes.
+## Reprocessing gives the changed comparison a chance to run
 
-The table counts logical record handling in this supplied example. These aren't universal formulas or exact labels for every task counter shown in ISC.
+An **unoptimized aggregation** reads the source accounts and attributes and re-evaluates account correlation and manager correlation even for accounts whose data has not changed.
 
-## How do you apply the comparison without changing correct data?
+For our account, that removes the unchanged-record shortcut. ISC can evaluate the current comparison using:
 
-An **unoptimized aggregation** scans the source's accounts and attributes and re-evaluates account and manager correlation even when account data hasn't changed.
+- Account `employeeRef`: `W-33`.
+- Identity `employeeNumber`: `W-33`.
 
-The difference is the handling of unchanged records. You don't need to give a correct account an artificial department change just to get that record past the skip decision.
+Before choosing that operation, check the assumptions that make this a sensible remedy. Is this the correct source and account? Is the approved comparison actually saved? Do the real values match? Does that comparison identify the intended existing identity uniquely? Is the account still uncorrelated, with no manual ownership assignment?
 
-Before requesting this operation, confirm what you expect the current comparison to do. For equipment-account, that means checking the correct source and account, the approved employeeRef-to-employeeNumber comparison, the actual W-33 values, and the one intended existing identity. Our starting account is uncorrelated and has no manual ownership override.
+Those checks prevent a plausible explanation from becoming a guess.
 
-Then a supported unoptimized full aggregation can include and re-evaluate that unchanged record.
+Under the conditions we established, the completed reprocessing associates `equipment-account` with the intended existing identity. Check the recorded owner to confirm that result.
 
-In the supplied completed result, equipment-account becomes associated with the intended existing identity. Its employeeRef is still W-33. The result changed because the current comparison was applied to data already present.
+Its employee reference remains `W-33`. No new HR person or external account is needed. Correct account data should not be changed to an invented value simply to make ISC notice a difference.
 
-Nothing in that correction requires a new employee record or a new application account.
+Likewise, resetting the source, deleting collected records or recreating identities is not a routine substitute for understanding which processing was skipped. Those actions affect existing data and relationships.
 
-Reprocessing gives the comparison another evaluation. It doesn't make incorrect data correct. If the account supplied W-30 and the intended identity had W-33, disabling optimization wouldn't make those unequal identifiers equal.
+Reprocessing also does not repair unequal values. If an account says `W-30` while the intended identity says `W-33`, evaluating the comparison again still compares two different values.
 
-It also isn't a universal instruction to move already associated accounts to new owners. We began with unresolved ownership, not an account that had an established or manually assigned different owner.
+And this example does not establish a method for moving every already-associated account. An existing owner, especially a manually assigned owner, introduces a separate question that we will return to.
 
-Avoid changing correct business data merely to trigger work. That hides the actual reason for the run and can affect other decisions based on the field. Resetting a source, deleting records or recreating identities is also not a routine substitute for the supported reprocessing mechanism.
+## What does disableOptimization=true actually ask for?
 
-## The option belongs to the requested run
+An **API** is an interface through which software can ask a service to perform an operation. ISC provides a supported account-aggregation API that an authorized caller can use.
 
-An **API**, application programming interface, allows software to interact with a system. ISC's account-aggregation API provides a supported way for an authorized caller to request this reprocessing.
+For the relevant aggregation request, `disableOptimization=true` asks ISC to disable the unchanged-record shortcut. Read it slowly: “disable optimization” is true, so unchanged records are reprocessed.
 
-The documented option is `disableOptimization=true`.
+This is a named **form-data field in the request body**. Form-data is a request format containing named fields. The option is not an attribute to add to the account JSON above, and it is not a permanent edit to the source configuration.
 
-Read it from left to right: disable optimization, true. The caller is asking ISC to turn off the shortcut that skips unchanged records for this aggregation.
+The source ID selects the source involved. It does not grant permission to operate on it. **Authentication** establishes who the caller is; **authorization** determines whether that caller may perform the operation.
 
-The option belongs to the aggregation request. It isn't an attribute of equipment-account and isn't something to add to the selected account JSON above. The current account-aggregation API describes it as a form-data field in the request body, not an account field or a permanent source setting. Form data is a request format that submits named fields.
+The option applies to that aggregation run. Subsequent API aggregations use optimization unless the option is set again. Documented scheduled and manual account aggregations started through the **UI**, the screens you use to operate ISC, run with optimization enabled.
 
-The caller also needs appropriate authority. **Authentication** establishes who the caller is; **authorization** determines what that caller may do. Supplying a source's identifier selects the source. It doesn't grant permission to aggregate it.
+That means “we disabled optimization yesterday” is not enough evidence about today's run. Find the actual execution and establish how it ran.
 
-The option applies to the current aggregation only. A later API aggregation uses optimization unless the caller requests that it be disabled again. Scheduled and manual account aggregations through the documented **user interface (UI)** run with optimization enabled.
+Also distinguish a request being accepted from its work being complete. An API response acknowledging a task does not prove that every account was processed or that this account's owner association changed. Follow the task to completion and inspect the result.
 
-That explains why “we disabled optimization yesterday” is insufficient evidence about today's run. You need the option and execution information for the run that was meant to re-evaluate the account.
+When implementing this in a real environment, use the supported API version, request format, authentication and source behavior together. An option name copied from one request does not establish that a differently constructed request will do the same thing.
 
-An API accepting the request isn't the final association result either. Verify the completed execution and the identified account's actual owner.
+## Follow the same four accounts through Run B
 
-For real work, the supported API version, request format, authentication, permissions and source behavior need to be checked together. The option explains the processing choice; it isn't a complete executable request.
+Call the next full, unoptimized aggregation **Run B**.
 
-## Read the same four accounts again
+We need to carry forward what Run A recorded. ISC now has `changed-account` with department `FIN`. It also has a representation of `newly-seen-account`, so that account is no longer new to ISC.
 
-After Run A, ISC has recorded changed-account's new department. Newly-seen-account now has a representation in ISC too.
+Between the two runs, no account values change in the application or in the values supplied through the account mappings. A **mapping** specifies where a represented value comes from or how it is obtained. A mapping change could change the input ISC receives even if the external account stayed the same; that is not happening between these runs.
 
-A **mapping** determines which input supplies a represented value. Assume no further external or mapped account-value changes occur before the next read. All four records now exist in ISC, and each read supplies unchanged data.
+Consequently, all four accounts in Run B are existing, unchanged accounts.
 
-Call the next supported full aggregation **Run B**. This time optimization is explicitly disabled.
+With optimization disabled, all four are reprocessed:
 
 ```text
-Run A: 4 read / 2 processed / 2 skipped
-Run B: 4 read / 4 reprocessed / 0 skipped
+Run A: full read, optimization on
+  Read: 4 accounts
+    Process: 2  (changed + newly seen)
+    Skip:    2  (existing, unchanged)
+
+Run B: full read, optimization off
+  After A; no further account-value changes
+  Read: 4 accounts
+    Reprocess: 4
+    Skip:      0
 ```
 
-The reads cover the same four accounts. Run A processed the changed and newly collected records. By Run B, those records are existing and unchanged, but the unoptimized run still re-evaluates all four.
+These are counts for the decisions in our example. They are not a formula for interpreting every counter name in every aggregation screen.
 
-Steady-account is included too. It wasn't the reason for the investigation, yet the source operation also reprocesses it.
+The wider effect matters: Run B reprocesses `steady-account` as well as the account we are investigating. A source-wide operation does work across the source population, even when one account prompted it.
 
-That is why scope and impact matter. A source-wide operation doesn't become a one-account correction just because one account prompted it. The counts above describe these two supplied runs, not exact task-summary field names or a promise about every connector's counters.
+## What if the account never arrives?
 
-## What if the read only returns changed accounts?
+A **delta aggregation** asks for changes reported by the source, such as added, changed or removed data, where that source supports delta behavior.
 
-A **delta aggregation** uses a supported changes-only mechanism. Its purpose is to collect the accounts reported as created or changed, instead of reading the full configured population. Support and behavior depend on the connector.
+Changing a comparison in ISC does not itself edit the external account or necessarily create an entry in the external system's change feed. A delta read could therefore omit `equipment-account`.
 
-Changing a comparison inside ISC doesn't, by itself, change the external account. It also doesn't establish that the application's change mechanism will report that account.
+If the record does not arrive, there is no returned record on which to make the processing decision shown earlier.
 
-Suppose a delta read doesn't return equipment-account. You now have a delivery problem as well as a processing question: the record you need to examine didn't arrive in that operation.
+Keep the two questions in order:
 
-Disabling an unchanged-record shortcut doesn't, by itself, prove that a record omitted by the selected read mechanism was collected. Establish which records the supported operation will return, then establish how those returned records will be processed.
+1. Will this supported read operation include the account and required fields?
+2. Once the record arrives, will ISC perform the work this change requires?
 
-Don't assume this option universally resets a connector's delta state, removes a filter or widens the source population. Our main example explicitly uses a full-population read with all four records returned.
+Disabling optimization answers the second question about unchanged-record processing. By itself, it does not prove that a delta read delivered an omitted record.
 
-A **single-account aggregation** reads one specified account. The documented UI action updates that account's collected information, but doesn't synchronize the new data with identity attributes or perform provisioning.
+Do not infer that this option universally resets a delta mechanism, removes filters or widens the connection's permissions. Choose the documented operation for the connector and source, and establish its actual coverage.
 
-That makes it useful for its supported account-data purpose. It doesn't make it a general substitute for re-evaluating the source population after a matching configuration change. Choose the supported operation by the outcome you need.
+Our four-account example explicitly uses complete full reads. A real missing-record investigation must establish that condition rather than borrow it from the example.
 
-An **entitlement** represents an access right, such as membership in a group. **Entitlement aggregation** collects information about access objects, such as group definitions. Reading a group successfully doesn't establish that an unchanged account's ownership was compared again.
+## Would reading one account or reading entitlements solve it?
 
-## What if the configuration change concerns an identity value?
+ISC has a documented UI action for aggregating a single account. It is useful when you need current collected account data without rereading the entire source.
 
-An account attribute belongs to a particular source account. An **identity attribute** belongs to the identity itself, such as the office value ISC uses to describe the person.
+That action updates the related account data. It does not synchronize that new data into identity attributes or have an impact on provisioning.
 
-An **identity profile** configures an identity population and the mappings that supply its identity attributes. For example, a profile can specify which existing account input should supply the identity's office.
+Its purpose should therefore guide its use. “I need to reload this account's recorded status” and “I need unchanged accounts re-evaluated under a revised ownership comparison” are different requirements. Do not assume the single-account UI action is a general substitute for the supported reprocessing operation.
 
-Saving a new office mapping is a different change from correcting the source's account-to-owner comparison. One changes how an identity value should be calculated; the other changes how an account should be matched.
+An **entitlement** represents an access right, such as membership of an application group. Entitlement aggregation reads information about those access objects.
 
-**Identity processing** evaluates identity information and the relevant access configuration. When aggregation or provisioning modifies an identity, that event initiates identity processing. It can apply profile mappings and evaluate configured access consequences.
+Learning that a group exists, or refreshing its description, does not establish that ISC reconsidered which identity owns `equipment-account`. Choose an operation by the information or relationship that needs to change.
 
-ISC also documents manual identity processing for identity-profile and access-model configuration changes, including changes that must be applied even though identity data hasn't changed. That is the relevant mechanism when the saved configuration, rather than missing source data, is the issue.
+## A changed identity mapping raises a different question
 
-So don't treat an unoptimized aggregation as a universal refresh for every configuration change. First identify the responsibility affected by the change.
+An **identity attribute** is information on the identity itself, such as an office or department. It is distinct from the attribute on one collected application account.
 
-Reading a source, matching an account to an owner, calculating identity values and changing an external account are distinct responsibilities. One workflow can connect them, but evidence that one happened doesn't prove that all the others finished.
+An **identity profile** defines how a population's identities are built and managed, including mappings that obtain identity attribute values from account information.
 
-For example, a changed identity value can affect configured access and lead to separate provisioning. Starting identity processing doesn't establish that the external change succeeded. Equally, a workflow that begins with reading data can have later access consequences; the complete workflow isn't automatically consequence-free.
+Suppose the current account data is already in ISC, but an administrator changes the mapping used to calculate an identity's office. The missing work is now applying the identity mapping to the available inputs.
 
-## Where can you see what happened?
+**Identity processing** performs applicable identity calculations and related configured decisions, such as evaluating access based on identity information. When aggregation or provisioning modifies an identity, that change can initiate **event-based processing**: processing in response to the change. ISC also provides manual processing to apply relevant identity-profile and access configuration changes, including when identity data has not changed.
 
-The source's **Aggregation History** and account-aggregation details provide execution evidence, including status, timing, accounts scanned and whether optimization was enabled. Relevant execution details can also report unchanged-account counts.
+For a profile mapping change, review the mapping and use Preview to inspect the values it would calculate. Then use the supported application of changes for the affected profile. Re-reading every source without optimization is not a universal response to every change made in ISC.
 
-A scanned count tells you about the read. It doesn't, on its own, prove that each account received another ownership evaluation.
+It helps to name the responsibility before choosing an operation:
 
-The source's **Account Correlation** configuration tells you which comparisons are saved. The source's **Accounts** view shows collected accounts and their associations. The identity's account list provides another view of the ownership relationship.
+- Collect account information from the source.
+- Evaluate which identity owns an account.
+- Calculate identity values using the relevant configuration.
+- Carry out any resulting external account or access changes.
 
-Use those views together. For equipment-account, compare the saved attribute pair with the collected employeeRef and the actual associated identity. A correct saved comparison and an unchanged association can coexist when repeated processing was skipped.
+These responsibilities connect, but evidence that one occurred is not evidence that all four completed.
 
-ISC Search has its own update timing. A stale search result alone isn't enough to establish that the completed re-evaluation failed.
+For example, an updated identity value may affect a configured access decision and lead to provisioning. Starting with a read does not guarantee that the wider configured process has no consequences. Equally, beginning identity processing does not prove that a later external change was delivered.
 
-| Question you need to answer | Evidence to compare | What that evidence doesn't establish alone |
-|---|---|---|
-| Was the required account delivered? | Correct source, actor visibility, scope, returned record and completed read | That ownership was re-evaluated |
-| Was unchanged-record reprocessing requested? | Applicable request and execution's optimization information | That the comparison or input values were correct |
-| Should the intended identity match? | Approved attribute pair, actual values and one intended matching identity | That the run completed or changed the association |
-| Did the account's owner change? | The identified account and its actual identity association | That an external permission changed |
-| Did an external change finish? | The separate provisioning result and resulting application state | That aggregation success alone proves delivery |
+## Use the screen to find evidence for the right question
 
-There isn't one status message that answers every question. Follow the evidence for the result you're trying to establish.
+The UI is where you inspect configuration and results. The aggregation task, collection through the connector and ISC's processing perform the work behind those views.
 
-## If the result is still wrong, narrow down the cause
+In account aggregation history and task details, look for the execution's status, time, accounts scanned, whether optimization was enabled and information about unchanged accounts. Read the labels in their actual context.
 
-Start with delivery. Was this the correct source and environment? Did the actor have visibility? Did the filter include the account? Were all required pages collected? If the record never arrived, repeating the matching configuration won't explain that absence.
+An accounts-scanned count is evidence about the read. It is not, by itself, a count of repeated ownership evaluations.
 
-Then check the information that arrived. A **schema** defines represented attributes and their uses. A mapping identifies which input supplies a represented value. An application screen can show a field that the integration doesn't return or that the source doesn't represent.
+The source's Account Correlation configuration shows the saved comparison. Its account information and the identity's account list help you check the actual association. These views answer different questions: what should be compared, what data is present, and which owner is recorded.
 
-For example, changing an application-only comment isn't proof of changed account data available to ISC if the delivered and represented fields remain unchanged. Check those actual fields rather than assuming every application edit affects the optimization decision. There is no need to invent ISC's private comparison algorithm to make that distinction.
+Search is another view of the data and can take time to reflect updates. A stale Search result does not by itself prove that a completed account operation failed. Check the relevant account and identity state and distinguish that state from when a particular view was refreshed.
 
-Next, inspect the matching inputs. Is employeeRef really W-33, or is it W-30? Is the selected identity attribute the approved employeeNumber field? Are you examining the intended identity? Reprocessing can't repair an incorrect pair or unequal values.
+| Question you need to answer | Evidence to examine |
+|---|---|
+| Did ISC receive the account and required fields? | Actual account read, source scope, actor visibility and returned data; a processing option alone is insufficient |
+| Was unchanged-record reprocessing requested and completed? | This execution's options, completion and errors; correct input still needs checking separately |
+| Should the comparison identify this identity? | Saved comparison, actual account and identity values, and uniqueness of the intended match |
+| Was the owner association established? | The account's actual association and the identity's account list; this does not establish external access delivery |
+| Did the external account or permission change? | The relevant provisioning operation and actual external state; an aggregation job label is insufficient |
 
-Then verify the operation. Did this run include the account and actually disable optimization when unchanged-record re-evaluation was required? Did it finish, or were there errors, warnings or partial results?
+The table follows the evidence from collection to any external result. You do not need to prove an external change when the task was only to establish ownership. You do need that separate evidence when an external change is part of the intended outcome.
 
-Ownership history needs its own check. **Manual correlation** is an administrator-supplied ownership association. ISC documents that an account manually linked to one identity won't move to another simply because account attributes change. An unoptimized aggregation doesn't remove that manual correlation.
+## When reprocessing does not resolve the problem
 
-That situation requires the documented authorized handling of the association. It isn't the initially uncorrelated condition used in our main example. If an account is already on a different identity, investigate the association and its history before proposing reassignment.
+First locate where the expected flow stops.
 
-Finally, identify the remaining failed outcome. If the correct identity owns the account but a permission is still missing in the application, inspect the separate provisioning work and target state. Repeating collection doesn't establish that a denied write has succeeded.
+**The record is absent.** Check the correct source and environment, connection actor, filters, permissions and required pages. A missing record is different from a returned record that was classified as unchanged and skipped.
 
-## Why not disable optimization for every run?
+**The record arrives, but a required value is absent or different.** Check the returned data and how the account is represented in ISC. An **account schema** defines the account attributes ISC manages and their uses. A value on an application screen is not automatically a field delivered through that schema and its mappings.
 
-An optimized full aggregation still reads the configured population. Its processing saving comes from skipping repeated work for existing unchanged records; it doesn't become a delta read.
+For example, somebody changes an application-only comment, while all the represented account fields remain the same. That edit alone does not prove ISC must treat the account as changed. Inspect the data it actually receives rather than guessing how an internal change-detection check works.
 
-Disabling optimization adds re-evaluation for those unchanged records. On a large source, that adds processing work beyond the accounts that originally drew your attention.
+**The inputs do not identify the intended identity.** Verify the selected fields, values and intended identity. An unchanged-record option cannot make `W-30` equal `W-33` or correct a comparison pointing to the wrong field.
 
-This doesn't establish a fixed duration, a particular increase in external calls or identical performance across connectors. It does give you a reason to choose reprocessing deliberately, based on the configuration change and the population affected.
+**The request started, but processing did not finish as expected.** Review the actual execution's option, completion, warnings, errors and any partial work. A remembered request setting is not a substitute for the run's evidence.
 
-Before a real operation, review expected ownership effects and any connected identity-processing or access consequences. Keep account-deletion settings and safeguards in view when assessing read scope and reruns. A record omitted from a read isn't an unchanged record that was examined and skipped.
+**The account already has a manually assigned owner.** In **manual correlation**, an administrator explicitly supplies the account-to-identity association. That association persists even if account attributes change. An unoptimized aggregation does not remove manual correlation.
 
-Don't remove safeguards to make an unexplained outcome disappear. Record what changed, which records need re-evaluation, which operation was requested, what completed and what result was verified. That gives the next engineer a reasoned account of the action.
+This is a different starting condition from our unresolved account. Verify the existing association, its history and the legitimate owner, then follow the supported, authorized handling for that association. Do not promise that rereading records will move every account, or use a source reset as a shortcut around the investigation.
 
-## Reason through these changes
+An account already linked to a different identity also deserves its own ownership investigation. The account we followed started without an owner association. That case does not establish the behavior of every existing association.
 
-### 1. Four accounts were read, and two were skipped
+**The owner is correct, but external access is still missing.** Investigate the requested provisioning operation and its result. A denied group-membership write is not an unchanged-account processing problem simply because both appear in the same incident.
 
-Run A reads the four accounts in the table. Equipment-account and steady-account are existing and unchanged.
+Finally, consider scope and cost. An optimized full aggregation still reads the configured population; it is not a delta read. An unoptimized full aggregation adds processing for unchanged accounts too. Neither description gives a fixed duration or a universal number of external calls.
 
-How many records take the processing path?
+Before running it, review the intended population, expected owner changes, any identity or access decisions that may follow, and the applicable deletion safeguards. These safeguards help protect against unintended removals when a source read appears to have lost accounts. If a collection unexpectedly omits accounts, that is a coverage issue with potentially different consequences from skipping returned, unchanged records. Investigate the omission instead of disabling safeguards just to get the run through.
 
-**Worked reasoning:** Two. Changed-account has new department data, and newly-seen-account is being represented in ISC for the first time. All four were read, but two unchanged records were skipped. Don't treat the scanned count as a count of repeated ownership evaluations.
+A useful incident record states what changed, which records needed to be included, what operation was requested, how the run completed and which result was actually verified.
 
-### 2. The comparison changed, but the employee reference didn't
+## Work through the decisions
 
-Account employeeRef W-33 and identity employeeNumber W-33 already exist. The approved comparison has just been saved. Another optimized run succeeds, but the account remains unassigned.
+### 1. Four accounts were read and two were skipped. How many took the processing path?
 
-Must someone edit the employee reference to trigger a match?
+Two. In Run A, those are `changed-account` and `newly-seen-account`.
 
-**Worked reasoning:** No. First check whether this run skipped processing for the unchanged record. The existing values can support the intended unique match. After verifying the comparison, scope and association conditions, use the supported re-evaluation mechanism rather than falsifying correct data.
+The four-account read and the two-account processing count describe different decisions. Reading all four does not contradict skipping two unchanged records.
 
-### 3. The application screen changed, but the collected fields didn't
+### 2. The comparison changed, but the correct account value is still W-33. Should you edit it to force processing?
 
-Someone changes a comment in the external application. The delivered account response and represented attributes remain unchanged.
+No. Keep the correct business data.
 
-Does the screen edit prove that optimization must process this account?
+Check the approved comparison, actual matching values, unique intended identity and unresolved association. Then establish a supported read and reprocessing operation for the unchanged record. The needed change is its evaluation under the current configuration.
 
-**Worked reasoning:** No. The screen edit doesn't establish that changed information reached ISC's account processing. Inspect the actual response, schema and mappings. Don't assume that a field outside the delivered and represented information changes the record available for this decision.
+### 3. An application comment changed. Why might the record still be unchanged to ISC?
 
-### 4. Yesterday's API request disabled optimization
+The comment may not be among the data returned and represented for that account.
 
-An authorized caller requested `disableOptimization=true`. Tomorrow, the normal scheduled UI aggregation runs.
+Compare the actual delivered values with the account schema and mappings. An edit visible in the application does not establish a changed input to ISC.
 
-Will that scheduled run inherit yesterday's choice?
+### 4. Yesterday's API run disabled optimization. Does tomorrow's UI aggregation inherit that setting?
 
-**Worked reasoning:** No. The option applies to the requested aggregation. Documented UI scheduled runs remain optimized. Check the relevant request and execution rather than treating the option as a permanent source setting.
+No. The option applies to the API aggregation for which it was supplied.
 
-### 5. The delta read didn't return the required account
+The documented UI runs use optimization. Establish tomorrow's execution from its own evidence rather than treating yesterday's request as a permanent source setting.
 
-The external account is unchanged. Only ISC's comparison configuration changed, and the selected changes-only operation doesn't return equipment-account.
+### 5. A delta read omits the unchanged account. Does disabling optimization prove it will be re-evaluated?
 
-What must be established before promising re-evaluation?
+No. The record first needs to reach ISC through a supported operation that includes it.
 
-**Worked reasoning:** Establish a supported read that includes the required record and the appropriate handling of unchanged records. Removing a processing shortcut doesn't prove collection of a record that the chosen read didn't deliver. Don't assume a universal delta reset.
+Only then does its unchanged-record processing choice become relevant. Check both delivery and processing; do not infer a universal delta reset.
 
-### 6. Reprocessing receives W-30 instead of W-33
+### 6. An unoptimized run finishes, but W-30 is being compared with W-33. Should ownership now be correct?
 
-In an independent variation, account employeeRef is W-30 and the intended identity's employeeNumber is W-33. An unoptimized aggregation completes.
+Re-evaluation does not make those values match.
 
-Should the intended match now be guaranteed?
+Check the approved identifiers, actual data and configuration. Confirm the resulting association rather than replacing a value silently or treating job completion as ownership proof.
 
-**Worked reasoning:** No. The operation permits re-evaluation; it doesn't make unequal values equal. Investigate the approved inputs and comparison. Don't silently rewrite an identifier to produce the desired-looking association.
+### 7. The account is manually linked to another identity. Will this operation remove that association?
 
-### 7. The account already has a manual owner
+No. Unoptimized aggregation does not remove manual correlation.
 
-An administrator manually associated an account with one identity. Someone expects an unoptimized run to move it to another automatically.
+Investigate the existing ownership and use the supported authorized handling if a correction is needed. The unresolved-account example cannot justify a mass reassignment or source reset.
 
-Is this the same condition as our initially uncorrelated account?
+### 8. Ownership is correct, but a group-membership update was denied. Should you repeat this read?
 
-**Worked reasoning:** No. The manual association has documented handling and isn't removed by an unoptimized aggregation. Verify the legitimate owner and use the supported authorized handling. A source reset or a promise of automatic mass reassignment doesn't follow from this example.
+First investigate the denied write. A **group membership** is the relationship that makes an account a member of a group and gives it the access associated with that membership.
 
-### 8. Ownership is corrected, but the group change is denied
+ISC can know the account's correct owner while the external system refuses the membership change. Check the provisioning request, the connection's authority for that operation and actual target membership. Repeating a successful read does not establish that the denied write will succeed.
 
-The correct identity now owns the account. A **group membership** associates an account with an application group. A separate provisioning operation tries to change that membership, but the application denies it.
+## Apply the reasoning to an office mapping
 
-What succeeded, and what still needs investigation?
+An administrator changes an identity profile's office mapping. The required HR account data is already current in ISC. A colleague proposes a full unoptimized aggregation across every application.
 
-**Worked reasoning:** The supplied ownership association succeeded. The external membership change didn't. Inspect the provisioning operation, its authority and the target state. A successful account read or association isn't evidence that the denied write succeeded.
+Before choosing it, ask what information is missing and what calculation must run.
 
-## Apply the distinction to a different configuration change
+Identify the affected profile, inspect its mapping and available account inputs, and establish the expected office value. Check whether the apparent old value is current identity state or a delayed view.
 
-A project already has current HR account data in ISC. An identity profile is changed so that the identity's office comes from a different existing input. Someone proposes unoptimized reads of every connected application.
+If the inputs are available and correct, the relevant work is applying the profile configuration through the supported identity-processing mechanism. Review the preview and processing result, then confirm the identity's office value.
 
-What would you establish before accepting that plan?
+If the HR inputs are stale, collect the necessary fresh data separately. That is a reason to read the relevant source, not evidence that every application must be reprocessed.
 
-**Worked reasoning:** Identify the affected profile, the changed mapping, the available inputs and the expected office value. Then establish whether any source data is actually missing or stale.
+If the resulting office change is meant to trigger an external update, verify that operation and the external result separately.
 
-In the supplied problem, the required current inputs are already present. The change concerns applying an identity-profile mapping. Follow the documented manual identity-processing mechanism for that configuration, review its impact and verify the resulting identity value. Re-evaluating every application's account ownership doesn't, by itself, answer the office-mapping question.
-
-If fresh source data is also needed, arrange that collection separately. If the resulting identity value drives an external change, verify the separate provisioning outcome and the application state.
-
-You can explain the choice to the project owner this way: “A full read establishes coverage. Optimization determines whether unchanged accounts skip repeated processing. Here, we need to apply an identity mapping to data we already have, so we'll use the mechanism for that change and verify the identity's office.”
+You can use the same sequence when explaining a new incident: establish what arrived, identify what needed to be re-evaluated, check which operation did that work, and confirm the result at the stage that matters.
