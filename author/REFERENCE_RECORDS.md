@@ -6,7 +6,7 @@ Publication update, October 28: the current authorized snapshot includes all 91 
 
 ## Record maintenance
 
-October 28 beginner-explanation publication: all 28 individual revisions through SRC-007 are published at 3.0. See [beginner batch 2 verification](PUBLICATION_2026-10-28_BEGINNER_BATCH_2.md): content 3bb59f8965597010f19e8970a5cd86b3ae05ef13 built and all 91 routes/404 assets verified. Earlier publication pointers describe authoring history. The published site retains earlier wording in its other 63 learners. As of October 29, SRC-008 and AGG-001 through AGG-008 revisions 3.0 are saved locally: 37 of 91 individually revised, 54 remain and AGG-009 is next. All Module 4 and the first eight Module 5 lessons are individually revised. Actual learner validation remains separately pending.
+October 29 beginner-explanation publication: all 37 individual revisions through AGG-008 are published at 3.0. See [beginner batch 3 verification](PUBLICATION_2026-10-29_BEGINNER_BATCH_3.md): content 5467e2fdced5760824d56e42edd5dbaca905f7f2 built; all 91 routes, 1,778 changed content units and 422 assets verified. The other 54 learners retain earlier wording. Older local/publication statements are authoring history. AGG-009 is next, locally. All Module 4 and the first eight Module 5 lessons are individually revised. Actual learner validation remains separately pending.
 
 Keep official sources mapped to lesson sections or claims, together with the revision reviewed, documentation-check date, limitations, and review status. A saved citation is not evidence of fresh verification. Update these records when technical content is checked or changed.
 
@@ -1715,6 +1715,10 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## SRC-008: Data ownership agreements
 
+Publication update, October 29: revision **3.0** is published in [beginner batch 3](PUBLICATION_2026-10-29_BEGINNER_BATCH_3.md), content 5467e2fdced5760824d56e42edd5dbaca905f7f2. Retained local/published-2.0 statements below describe authoring-time evidence and are superseded for publication status. Actual learner validation remains pending.
+
+### Authoring-time revision 3.0 evidence
+
 - Current revision: 3.0. Module 4.8. Teaching specification 3.2. October 28, 2026.
 - [Current coverage, primary sources and executed checks](revisions/SRC-008_Beginner_Explanation_Revision_Record.md); [preserved revision 2.0 record](revisions/SRC-008_Concept_Led_Revision_Record.md).
 - All 89 purposes, eight original cases and independent laboratory transfer retained. Different worker/account/identity fields, responsibility and normal delivery/sync precede the stale-export case. Full simulated-beginner author read-through is separate from pending actual learner validation.
@@ -1782,6 +1786,10 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## AGG-001: Following an account record from a source into ISC
 
+Publication update, October 29: revision **3.0** is published in [beginner batch 3](PUBLICATION_2026-10-29_BEGINNER_BATCH_3.md), content 5467e2fdced5760824d56e42edd5dbaca905f7f2. Retained local/published-2.0 statements below describe authoring-time evidence and are superseded for publication status. Actual learner validation remains pending.
+
+### Authoring-time revision 3.0 evidence
+
 - Current revision: 3.0. Module 5.1. Teaching specification 3.2. October 29, 2026.
 - [Current coverage, primary sources and executed checks](revisions/AGG-001_Beginner_Explanation_Revision_Record.md); [preserved revision 2.0 record](revisions/AGG-001_Concept_Led_Revision_Record.md).
 - All 81 purposes, eight cases and independent HR transfer retained. Selected nested response and correct mapping lead to the normal existing-account result; separate ownership, identity input, read-mode and expected-write questions follow. Full saved simulated-beginner author review is separate from actual learner validation.
@@ -1848,6 +1856,10 @@ Counterfactual first-collection, wrong branchCode path, employeeRef 51010, incom
 Questions and worked reasoning remain in the learner file. Source evidence, assessment intent and review limitations stay outside it.
 
 ## AGG-002: Account aggregation and entitlement aggregation
+
+Publication update, October 29: revision **3.0** is published in [beginner batch 3](PUBLICATION_2026-10-29_BEGINNER_BATCH_3.md), content 5467e2fdced5760824d56e42edd5dbaca905f7f2. Retained local/published-2.0 statements below describe authoring-time evidence and are superseded for publication status. Actual learner validation remains pending.
+
+### Authoring-time revision 3.0 evidence
 
 - Current revision: 3.0. Module 5.2. Teaching specification 3.2. October 29, 2026.
 - [Current coverage, primary sources and executed checks](revisions/AGG-002_Beginner_Explanation_Revision_Record.md); [preserved revision 2.0 record](revisions/AGG-002_Concept_Led_Revision_Record.md).
@@ -1917,6 +1929,10 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 
 ## AGG-003: Full aggregation, optimization and reprocessing unchanged records
+
+Publication update, October 29: revision **3.0** is published in [beginner batch 3](PUBLICATION_2026-10-29_BEGINNER_BATCH_3.md), content 5467e2fdced5760824d56e42edd5dbaca905f7f2. Retained local/published-2.0 statements below describe authoring-time evidence and are superseded for publication status. Actual learner validation remains pending.
+
+### Authoring-time revision 3.0 evidence
 
 - Current revision: 3.0, saved locally October 29, 2026. Module 5.3. Teaching specification 3.2.
 - Thirty-second of 91 existing beginner-explanation revisions; 59 remain. AGG-004 is next.
@@ -2005,6 +2021,10 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 
 ## AGG-004: Delta aggregation and connector-specific limitations
+
+Publication update, October 29: revision **3.0** is published in [beginner batch 3](PUBLICATION_2026-10-29_BEGINNER_BATCH_3.md), content 5467e2fdced5760824d56e42edd5dbaca905f7f2. Retained local/published-2.0 statements below describe authoring-time evidence and are superseded for publication status. Actual learner validation remains pending.
+
+### Authoring-time revision 3.0 evidence
 
 - Current revision: 3.0, saved locally October 29, 2026. Module 5.4. Teaching specification 3.2.
 - Thirty-third of 91 existing beginner-explanation revisions; 58 remain. AGG-005 is next.
@@ -2098,6 +2118,10 @@ Questions and worked reasoning remain in the learner file. Source evidence, asse
 
 ## AGG-005: Single-account aggregation and its boundaries
 
+Publication update, October 29: revision **3.0** is published in [beginner batch 3](PUBLICATION_2026-10-29_BEGINNER_BATCH_3.md), content 5467e2fdced5760824d56e42edd5dbaca905f7f2. Retained local/published-2.0 statements below describe authoring-time evidence and are superseded for publication status. Actual learner validation remains pending.
+
+### Authoring-time revision 3.0 evidence
+
 - Current revision: 3.0, saved locally October 29, 2026. Module 5.5. Teaching specification 3.2.
 - Thirty-fourth of 91 existing beginner-explanation revisions; 57 remain. AGG-006 is next.
 - First 28 through SRC-007 published at 3.0; SRC-008 and AGG-001 through AGG-005 local at 3.0. Published AGG-005 remains 2.0, freshly confirmed against main 4ba5a300978aa741d0178fe33f1b9d14d9a5c532. Older local/publication statements below describe authoring history.
@@ -2188,6 +2212,10 @@ Selected JSON parses and contains four stated fields. Two learner tables keep id
 Questions, supplied facts and worked reasoning remain in the learner file. No beginner read-through or transfer test has been performed; author/source review does not establish learner comprehension.
 
 ## AGG-006: Schedules, scope, dependencies and data freshness
+
+Publication update, October 29: revision **3.0** is published in [beginner batch 3](PUBLICATION_2026-10-29_BEGINNER_BATCH_3.md), content 5467e2fdced5760824d56e42edd5dbaca905f7f2. Retained local/published-2.0 statements below describe authoring-time evidence and are superseded for publication status. Actual learner validation remains pending.
+
+### Authoring-time revision 3.0 evidence
 
 - Current revision: 3.0, saved locally October 29, 2026. Module 5.6. Teaching specification 3.2.
 - Thirty-fifth of 91 existing beginner-explanation revisions; 56 remain. AGG-007 is next.
@@ -2284,6 +2312,10 @@ Supplied facts, questions and worked reasoning remain in learner prose. No begin
 
 ## AGG-007: Missing records, account deletion and safeguards
 
+Publication update, October 29: revision **3.0** is published in [beginner batch 3](PUBLICATION_2026-10-29_BEGINNER_BATCH_3.md), content 5467e2fdced5760824d56e42edd5dbaca905f7f2. Retained local/published-2.0 statements below describe authoring-time evidence and are superseded for publication status. Actual learner validation remains pending.
+
+### Authoring-time revision 3.0 evidence
+
 - Current revision: 3.0, saved locally October 29, 2026. Module 5.7. Teaching specification 3.2.
 - Thirty-sixth of 91 existing beginner-explanation revisions; 55 remain. AGG-008 is next.
 - First 28 through SRC-007 published at 3.0; SRC-008 and AGG-001 through AGG-007 local at 3.0. Published AGG-007 remains 2.0, freshly confirmed against main 4ba5a300978aa741d0178fe33f1b9d14d9a5c532. Older local/publication statements below describe authoring history.
@@ -2373,6 +2405,10 @@ Two learner tables separate objects/states and illustrate whole-account rounding
 No beginner read-through or transfer validation has been performed. Source and author checks do not establish learner comprehension or formal approval.
 
 ## AGG-008: Reading aggregation outcomes
+
+Publication update, October 29: revision **3.0** is published in [beginner batch 3](PUBLICATION_2026-10-29_BEGINNER_BATCH_3.md), content 5467e2fdced5760824d56e42edd5dbaca905f7f2. Retained local/published-2.0 statements below describe authoring-time evidence and are superseded for publication status. Actual learner validation remains pending.
+
+### Authoring-time revision 3.0 evidence
 
 - Current revision: 3.0, saved locally October 29, 2026. Module 5.8. Teaching specification 3.2.
 - Thirty-seventh of 91 existing beginner-explanation revisions; 54 remain. AGG-009 is next.

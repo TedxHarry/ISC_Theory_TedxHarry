@@ -15,7 +15,15 @@ Starting local main and fetched remote main agree at 4ba5a300978aa741d0178fe33f1
 
 ## Verification and deployment
 
-This record is prepared before the authorized push. Fresh checks, exact content commit, Pages build status and complete live verification results will be recorded after execution. Earlier author-time local/publication statements remain historical; this batch's verified result will supersede them.
+Content commit [5467e2fdced5760824d56e42edd5dbaca905f7f2](https://github.com/TedxHarry/ISC_Theory_TedxHarry/commit/5467e2fdced5760824d56e42edd5dbaca905f7f2) was pushed to main. Pages reports built for that exact SHA without error; [workflow 40852142542](https://github.com/TedxHarry/ISC_Theory_TedxHarry/actions/runs/40852142542) completed successfully.
+
+- Fresh navigation/disclosure tests: all four pass. All 1,360 relative links across the 41 reviewed publication files resolve. Eighteen author tables have consistent columns; tracked and new-file whitespace checks pass. Staging matched the reviewed file list exactly.
+- All 91 live lesson routes return HTTP 200 with all 91 ordered navigation links, twelve modules and the correct current/open module.
+- All 1,778 normalized content units in the nine revised lessons are present in the rendered articles. Every code/diagram block matches exactly. Eighteen diagrams and nineteen tables retain their keyboard/scroll wrappers.
+- All 422 current/historical text assets return HTTP 200 and match local content. The complete live verification reports zero errors.
+- The other 82 learner files, shared UI, manifest, site configuration and teaching specification are unchanged by this batch. The original ISC_Theory_Learning repository/site was not targeted.
+
+An author-only follow-up records these results and updates publication pointers. Earlier author-time local/publication statements remain historical; this verified batch supersedes them for publication status.
 
 Publishing and source/rendered-content checks are separate from observed beginner comprehension, a full graphical/device/accessibility audit and ISC tenant execution. Those are not claimed.
 
