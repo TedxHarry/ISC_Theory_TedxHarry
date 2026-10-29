@@ -6,7 +6,7 @@ Publication update, October 28: the current authorized snapshot includes all 91 
 
 ## Record maintenance
 
-October 28 beginner-explanation pass: the user authorized application from SYS-001 after TRN-004 pilot refinement. SYS-001 through SYS-003 revisions 3.0 and specification 3.2 are published in [beginner batch 1](PUBLICATION_2026-10-28_BEGINNER_BATCH_1.md). SYS-004 through SYS-006, FND-001 through FND-007, ARC-001 through ARC-008 and SRC-001 through SRC-007 revisions 3.0 remain local. All six Module 1 lessons, all seven Module 2 lessons, all eight Module 3 lessons and the first seven Module 4 lessons are individually revised; the other 63 learners retain their earlier revision status. Earlier local-only entries describe authoring history. Current individual records distinguish preserved coverage, source checks and simulated author read-through from pending real learner validation.
+October 28 beginner-explanation publication: all 28 individual revisions through SRC-007 are published at 3.0. See [beginner batch 2 verification](PUBLICATION_2026-10-28_BEGINNER_BATCH_2.md): exact content commit 3bb59f8965597010f19e8970a5cd86b3ae05ef13 built and all 91 routes/404 assets verified. Earlier individual records retain authoring-time local/published-version statements as history; this batch supersedes those pointers. SRC-008 is next locally; the other 63 lessons retain earlier wording. Actual beginner validation remains separate and pending.
 
 Keep official sources mapped to lesson sections or claims, together with the revision reviewed, documentation-check date, limitations, and review status. A saved citation is not evidence of fresh verification. Update these records when technical content is checked or changed.
 

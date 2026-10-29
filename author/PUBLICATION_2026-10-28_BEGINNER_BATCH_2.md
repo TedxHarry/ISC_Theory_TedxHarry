@@ -15,7 +15,16 @@ Starting main and remote main agree at 0b1a003ca94a8c4fc0665f5a1d4222665f4acba4.
 
 ## Verification and deployment
 
-Exact commit, build and live verification results will be recorded after execution. Publishing and rendering checks do not establish actual beginner comprehension or ISC tenant execution.
+Content commit [3bb59f8965597010f19e8970a5cd86b3ae05ef13](https://github.com/TedxHarry/ISC_Theory_TedxHarry/commit/3bb59f8965597010f19e8970a5cd86b3ae05ef13) was pushed to main. Pages reports built for this exact SHA with no error; workflow 40814310214 completed successfully.
+
+- All four existing navigation/disclosure tests passed. All 1,490 relative links across the 103 publication files resolve; tracked and new-file whitespace checks passed.
+- All 91 live lesson routes returned HTTP 200 with all 91 ordered navigation links, 12 modules and the correct current/open module.
+- All 5,173 normalized content units in the 25 revised lessons were found in the rendered articles. Every code/diagram block matched exactly; 47 diagrams and 58 tables retain their keyboard/scroll wrappers.
+- All 404 current/historical text assets returned HTTP 200 and matched local content. The first pass encountered one transient HTTP 503 for an unchanged TRN-006 asset; a fresh complete pass succeeded with zero errors.
+- Source/rendered-content checks passed. A full visual/device/accessibility audit was not performed and is not represented as complete.
+- Shared UI, manifest, site configuration and the other 66 learner sources remain unchanged from the start of publication. The original ISC_Theory_Learning repository/site was not targeted.
+
+An author-only follow-up records these results and updates publication pointers. Publishing and rendering checks do not establish actual beginner comprehension or ISC tenant execution.
 
 ## Continuation
 
